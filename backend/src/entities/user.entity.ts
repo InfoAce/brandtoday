@@ -1,14 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { AppEntity, CompanyEntity, RoleEntity } from './index';
-
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { CompanyEntity, RoleEntity } from './index';
+import { Seed, SeederContext, SeedRelation } from 'nestjs-class-seeder';
+import { Faker } from "@faker-js/faker";
+import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 @Entity("users")
 export class UserEntity {
+
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToMany(() => AppEntity, (app) => app.user, { eager: true })
-  apps: AppEntity[];
-
+  @SeedRelation(() => CompanyEntity)
   @ManyToOne(() => CompanyEntity, (company) => company.users)
   @JoinColumn({
     name:                 "company_id",
@@ -19,31 +21,45 @@ export class UserEntity {
   @Column()
   company_id: string;
 
+  @Seed('Root')
   @Column()
   first_name: string;
 
+  @Seed('User')
   @Column()
   last_name: string;
 
+  @Seed('super@app.com')
   @Column({
     unique: true
   })
   email: string
 
+  @Seed(new Date())
   @Column({
     nullable: true
   })
   email_verified_at: string
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   image: string;
 
+  @Seed( 
+    async(faker: Faker, ctx: SeederContext) => {
+      return bcrypt.hash('password', 10);
+    }
+  )
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   phone_number: string;
   
+  @SeedRelation(() => RoleEntity, (ctx, entities) => entities[ctx.currentIndex])
   @ManyToOne(() => RoleEntity, (role) => role.users,{ eager: true })
   @JoinColumn({
     name:                 "role_id",
@@ -54,6 +70,7 @@ export class UserEntity {
   @Column()
   role_id: string;
 
+  @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
   @Column()
   token: string;
 

@@ -26,14 +26,14 @@ var admin        = {
 }, app;
 
 async function init(){
-    app = await NestFactory.createApplicationContext({CompanyModule,RoleModule,UserModule});
+    // setEnvValue("APP_KEY",randomstring.generate(50));
+    // setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
     await run();
 }
 
 async function run(){
-    setEnvValue("APP_KEY",randomstring.generate(50));
-    setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
-
+    const app = await NestFactory.createApplicationContext({CompanyModule,RoleModule,UserModule});
+    console.log(CompanyModel)
     app.get(CompanyModel)
         .save(this.company)
         .then( (company) => {

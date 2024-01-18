@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
-
 @Injectable()
 export default class UserModel {
   constructor(

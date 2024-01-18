@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
 import { RoleEntity, UserEntity } from './index';
+import { Seed } from 'nestjs-class-seeder';
 
 @Entity("companies")
 export class CompanyEntity {
@@ -7,18 +8,24 @@ export class CompanyEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Seed('Test Company')
   @Column()
   name: string;
 
+  @Seed('info@company.com')
   @Column({
     unique: true
   })
   email: string
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   logo: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   phone_number: string;
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)

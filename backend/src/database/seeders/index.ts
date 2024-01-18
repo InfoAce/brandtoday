@@ -1,0 +1,1 @@
+export { CompaniesSeeder as CompaniesSeeder } from './companies.seeder';

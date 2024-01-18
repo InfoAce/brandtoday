@@ -1,7 +1,6 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controllers';
@@ -10,10 +9,9 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigDatabase } from './config';
-import { AuthService, OpenAIService } from './services';
-import { CompanyModule, MailModule, UserModule, RoleModule, AiAppModule, PromptModule } from './modules';
-import { AppEntity, CompanyEntity, PromptEntity, RoleEntity, UserEntity } from './entities';
-import { AiAppController } from './controllers/ai_app/ai.app.controller';
+import { AuthService } from './services';
+import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
+import { CompanyEntity, RoleEntity, UserEntity } from './entities';
 
 @Module({
   imports: [
@@ -23,21 +21,23 @@ import { AiAppController } from './controllers/ai_app/ai.app.controller';
       isGlobal: true
     }), 
     CacheModule.register(),
-    TypeOrmModule.forRoot({
-      type:        "mysql",
-      host:        process.env.DB_HOST,
-      port:        parseInt(process.env.DB_PORT),
-      database:    process.env.DB_DATABASE,
-      username:    process.env.DB_USERNAME,
-      password:    process.env.DB_PASSWORD,
-      entities:    [
-        AppEntity,
-        CompanyEntity,
-        PromptEntity,
-        RoleEntity,
-        UserEntity
-      ],
-      synchronize: true
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type:        "mysql",
+        host:        configService.get<string>('DB_HOST'),
+        port:        parseInt(configService.get<string>('DB_PORT')),
+        database:    configService.get<string>('DB_DATABASE'),
+        username:    configService.get<string>('DB_USERNAME'),
+        password:    configService.get<string>('DB_PASSWORD'),
+        entities:    [
+          CompanyEntity,
+          RoleEntity,
+          UserEntity
+        ],
+        synchronize: true
+      }),
+      inject:[ConfigService]
     }),
     PassportModule,
     JwtModule.register({
@@ -46,13 +46,11 @@ import { AiAppController } from './controllers/ai_app/ai.app.controller';
     }),
     MailModule,   
     CompanyModule,
-    AiAppModule,
-    PromptModule,
     RoleModule,
     UserModule 
   ],
-  controllers: [AppController,AuthController,AiAppController],
-  providers: [AppService,AuthService,OpenAIService,JwtStrategy,LocalStrategy],
+  controllers: [AuthController],
+  providers: [AuthService,JwtStrategy,LocalStrategy],
 })
 
 export class AppModule implements NestModule {
