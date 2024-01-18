@@ -16,7 +16,7 @@ const router = createRouter({
           name:      "Home",
           meta: {
             title:     'Home',
-            protected: false,
+            auth: false,
           },          
           component: () => import('@/views/home/Index.vue')
         },
@@ -25,7 +25,7 @@ const router = createRouter({
           name: "Login",
           meta: {
             title:     'Login',
-            protected: false,
+            auth: false,
           },
           component: () => import('@/views/home/Login.vue')
         },
@@ -34,7 +34,7 @@ const router = createRouter({
           name: "Register",
           meta: {
             title:    'Register',
-            protected: false,
+            auth: false,
           },
           component: () => import('@/views/home/Register.vue')
         }, 
@@ -43,19 +43,10 @@ const router = createRouter({
           name: "Forgot",
           meta: {
             title:     'Forgot Password',
-            protected:  false,
+            auth:  false,
           },
           component: () => import('@/views/home/Forgot.vue')
-        }, 
-        {
-          path: 'chatbot',
-          name: "Chatbot",
-          meta: {
-            title: 'Login',
-            protected:  true,
-          },
-          component: () => import('@/views/home/Chatbot.vue')
-        },         
+        }        
       ],
       path: '/home',
       component: () => import('@/views/layouts/Landing.vue')
@@ -68,42 +59,17 @@ const router = createRouter({
           name: "Overview",
           meta: {
             title:     'Overview',
-            protected:  true,
+            auth:  true,
             state: 0
           },
           component: () => import('@/views/dashboard/Overview.vue')
-        },
-        {
-          path: 'apps',
-          children: [
-            {
-              path: '',
-              name: "Apps",
-              meta: {
-                title:     'Apps',
-                protected:  true,
-                state: 0
-              },
-              component: () => import('@/views/dashboard/Apps.vue')
-            },
-            {
-              path: 'create',
-              name: "CreatApp",
-              meta: {
-                title:     'Create app',
-                protected:  true,
-                state: 0
-              },
-              component: () => import('@/views/dashboard/show/CreateApp.vue')
-            }        
-          ],
-        }, 
+        },      
         {
           path: 'clients',
           name: "Clients",
           meta: {
             title: 'Clients',
-            protected:  true,
+            auth:  true,
             state: 1
           },
           component: () => import('@/views/dashboard/Clients.vue')
@@ -113,7 +79,7 @@ const router = createRouter({
           name: "Company",
           meta: {
             title: 'Company',
-            protected:  true,
+            auth:  true,
             state: 2
           },
           component: () => import('@/views/dashboard/Company.vue')
@@ -123,7 +89,7 @@ const router = createRouter({
           name: "Profile",
           meta: {
             title: 'Profile',
-            protected:  true,
+            auth:  true,
             state: 0
           },
           component: () => import('@/views/dashboard/Profile.vue')
@@ -133,7 +99,7 @@ const router = createRouter({
           name: "System",
           meta: {
             title: 'System',
-            protected:  true,
+            auth:  true,
             state: 2
           },
           component: () => import('@/views/dashboard/System.vue')
@@ -143,7 +109,7 @@ const router = createRouter({
           name: "Staff",
           meta: {
             title: 'Staff',
-            protected:  true,
+            auth:  true,
             state: 2
           },
           component: () => import('@/views/dashboard/Users.vue')
@@ -155,11 +121,10 @@ const router = createRouter({
 });
 
 router.beforeEach( (to, from, next) => {
-  const { name: routeName, meta: { state } } = to;
+  const { name: routeName, meta: { auth, state } } = to;
   store.commit('loader',true);
   window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
   window.scrollTo({top: 0, behavior: 'smooth'});
-  console.log(store.getters.authUser);
   switch( !isEmpty(store.getters.authUser) ){
     case true:
       if( routeName == "Login"){
@@ -175,7 +140,7 @@ router.beforeEach( (to, from, next) => {
     break;
     case false:
       // store.commit('auth',{});
-      if( to.name != "Login" ){
+      if( auth && to.name != "Login" ){
         router.push({ name: "Login" });
       }
       next();
