@@ -38,11 +38,17 @@ seeder({
         [
             CompanyEntity, 
             RoleEntity, 
+            RoleEntity, 
+            RoleEntity, 
+            RoleEntity, 
             UserEntity
         ],
         [
             {count:1},
-            {count:4},
+            {count:1},
+            {count:1},
+            {count:1},
+            {count:1},
             {count:1}
         ]
     )

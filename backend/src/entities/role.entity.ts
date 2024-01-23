@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { CompanyEntity, UserEntity } from './index';
 import { Seed, SeederContext, SeedEnum, SeedRelation} from 'nestjs-class-seeder';
 import { Faker } from "@faker-js/faker";
+import { get, keys } from 'lodash';
 @Entity("roles")
 export class RoleEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -18,15 +19,39 @@ export class RoleEntity {
   @Column()
   company_id: string;
 
-  @Seed((faker: Faker, ctx: SeederContext) =>
-    faker.helpers.arrayElement(['super','admin','client','staff'])
-  )
-  @Column()
+  @Seed((faker: Faker, ctx: SeederContext) => {
+    const { name } = ctx.previousRecord;
+    switch(name){
+      case 'Test Company':
+        return 'admin';
+      case 'admin':
+        return 'client';
+      case 'client':
+        return 'staff';
+      case 'staff':
+        return 'super';
+    }
+  })
+  @Column({
+    unique: true
+  })
   name: string;
 
+  @Seed((faker: Faker, ctx: SeederContext) => {
+    const { name } = ctx.previousRecord;
+    switch(name){
+      case 'Test Company':
+        return 1;
+      case 'admin':
+        return 0;
+      case 'client':
+        return 1;
+      case 'staff':
+        return 1;
+    }
+  })
   @Column({
     nullable: false,
-    default: 0
   })
   state: number;
 
