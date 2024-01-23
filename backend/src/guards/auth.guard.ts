@@ -26,16 +26,20 @@ import {
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
+
       if (token == undefined) {
         throw new UnauthorizedException();
       }
+
       try {
         const { user: { email } } = await this.jwtService.verifyAsync(token,{secret: process.env.JWT_SESSION_KEY});
+        console.log(email);
         // 💡 We're assigning the payload to the request object here
         // so that we can access it in our route handlers
         set(request,'user', await this.userEntity.findOneBy({email}));
         // request.user =;
       } catch(err) {
+        console.log(err);
         throw new UnauthorizedException();
       }
       return true;

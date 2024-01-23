@@ -23,20 +23,26 @@ export class AuthController {
     @Post('login')
     async login(@Req() req: Request,  @Res() res: Response){
         const { email, password } = req.body;
+        console.log(req.body);
         try{
             const user = await this.authService.findOneByEmail(email);
-            if( !isNull(user) ){
-                // const hash    = await bcrypt.hash(password, parseInt(this.configService.get('SALT_LENGTH')));
-                const isMatch = await bcrypt.compare(password,user.password);
-                if( isMatch ){
-                    const token = await this.authService.signIn({user,password});
-                    return res.status(HttpStatus.OK).json({user,token});;
-                } else {
-                    return res.status(HttpStatus.UNAUTHORIZED).json({});
-                }
-            } else if(isNull(user)) {
+
+            if(isNull(user)) {
                 return res.status(HttpStatus.NOT_FOUND).json({});
             }
+
+            if( !isEmpty(user) ){
+                // const hash    = await bcrypt.hash(password, parseInt(this.configService.get('SALT_LENGTH')));
+                const isMatch = await bcrypt.compare(password,user.password);
+                console.log(isMatch);
+                if( isMatch ){
+                    const token = await this.authService.signIn({user,password});
+                    console.log(token);
+                    return res.status(HttpStatus.OK).json({user,token});
+                }
+                return res.status(HttpStatus.UNAUTHORIZED).json({});
+            }
+        
         } catch(err){
             return res.status(HttpStatus.GATEWAY_TIMEOUT);
         }
@@ -70,10 +76,4 @@ export class AuthController {
     getProfile(@Req() req: Request,  @Res() res: Response) {
         res.status(HttpStatus.OK).json(req['user']);
     } 
-
-    @Post('ai')
-    async ai_login(@Req() req: Request,  @Res() res: Response) {
-        res.status(HttpStatus.OK).json(req['user']);
-    } 
-
 }

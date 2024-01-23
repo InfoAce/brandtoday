@@ -1,6 +1,6 @@
 <template>
     <CCol lg="6" md="8" xs="12">
-        <CCard>
+        <CCard style="height:max-content">
             <CCardBody>
                 <CRow>
                     <CCol md="12" xs="12">
@@ -118,7 +118,8 @@ import { useStore } from 'vuex';
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
-            console.log(vm);
+            vm.fetchUser(),
+            next();
         });
     },
     data(){
@@ -137,108 +138,77 @@ export default {
     },
     created(){
         this.$has = has;
+
+        // Form schema
+        this.formSchema = yup.object().shape({
+            address:          yup.string()
+                                .required("*Email address is required"),
+            first_name:       yup.string()
+                                .required("*Email First Name is required"),
+            last_name:        yup.string()
+                                .required("*Email Last Name is required"),                                                  
+            email:            yup.string()
+                                .email("*Enter a valid email address")
+                                .required("*Email address is required"),
+            gender:           yup.string()
+                                .required("*Gender is required"),
+            phone_number:     yup.string()
+                                .required("*Phone number is required"),                         
+        });
+
+        // Validate the form
+        this.validateForm = (field) => {
+            this.formSchema()
+                .validateAt(field, this.form)
+                .then((value,key) => {
+                    console.log(value);
+                    delete errors[field];
+                })
+                .catch((err) => {
+                    errors[err.path] = err.message;
+                });
+        }
+
         // const store  = useStore();
         // const router = useRouter();
         // const $api   = inject('$api');
         // const toast  = useToast();
         // const swal   = inject('$swal');
     },
-    mounted(){
-        // watch(
-        //     () => form, 
-        //     (form) => {
-        //         each(form,(value,key) => {
-        //             validateForm(key);
-        //         });
-        //         isDisabled = !isEmpty(errors);
-        //     },
-        //     { 
-        //         deep: true,
-        //         immediate: true 
-        //     }
-        // )
+    methods:{
+        fetchUser(){
+            this.$store.commit('loader',true);
+            this.$api.get('/auth/user')
+                .then( ({ data:{ user }}) => {
+                    console.log(user);
+                    // store.commit('auth',{user, token});
+                    // swal.fire({
+                    // 	icon: 'success',
+                    // 	title: 'Alright!',
+                    // 	text: 'Login successfull.'
+                    // }).then((result) => {
+                    // 	window.location.reload();
+                    // });	
+                })
+                .catch( ({ response }) => {
+                })
+                .finally( () => {
+                    this.$store.commit('loader',false);
+                });
+        }
     },
-    setup(){
-
-        // const data   = reactive({
-        //     errors: {},
-        //     form: {
-        //         address:      String(),
-        //         first_name:   String(),
-        //         last_name:    String(),
-        //         email:        String(),
-        //         gender:       String(),
-        //         phone_number: String(),
-        //     },
-        //     isDisabled: true
-        // });
-
-        // const formSchema = yup.object().shape({
-        //     address:          yup.string()
-        //                         .required("*Email address is required"),
-        //     first_name:       yup.string()
-        //                         .required("*Email First Name is required"),
-        //     last_name:        yup.string()
-        //                         .required("*Email Last Name is required"),                                                  
-        //     email:            yup.string()
-        //                         .email("*Enter a valid email address")
-        //                         .required("*Email address is required"),
-        //     gender:           yup.string()
-        //                         .required("*Gender is required"),
-        //     phone_number:     yup.string()
-        //                         .required("*Phone number is required"),                         
-        // });
-
-        // const validateForm = (field) => {
-        //     formSchema.validateAt(field, form)
-        //         .then((value,key) => {
-        //             delete errors[field];
-        //         })
-        //         .catch((err) => {
-        //         errors[err.path] = err.message;
-        //         });
-        // }
-
-        // const fetchUser = () => {
-        //     store.commit('loader',true);
-        //     $api.post('/auth/user',form)
-        //         .then( ({ data:{ user }}) => {
-        //             console.log(user);
-        //             // store.commit('auth',{user, token});
-        //             // swal.fire({
-        //             // 	icon: 'success',
-        //             // 	title: 'Alright!',
-        //             // 	text: 'Login successfull.'
-        //             // }).then((result) => {
-        //             // 	window.location.reload();
-        //             // });	
-        //         })
-        //         .catch( ({ response }) => {
-        //             store.commit('loader',false);
-        //             if( !isEmpty(response.data) && response.statusCode == 400 ){
-        //                 response.message.forEach( (value) => {
-        //                     toast.info(value);
-        //                 });
-        //             }
-        //             if( response.status == 404 ){
-        //                 swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Oops!',
-        //                     text: 'Sorry we could not your account. Register a new account.'
-        //                 });
-        //             }
-        //             if( response.status == 401 ){
-        //                 swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Oops!',
-        //                     text: 'Your email or password is incorrect.',
-        //                 });
-        //             }
-        //         })
-        //         .finally( () => {
-        //             store.commit('loader',false);
-        //         });
-        //     }
-    },
+    watch:{
+        form: {
+            handler(form) {
+                const self = this;
+                each(form,(value,key) => {
+                    console.log(self);
+                    self.validateForm(key);
+                });
+                this.isDisabled = !isEmpty(this.errors);
+            },
+            deep: true,             
+        }
+    }
 }
 </script>

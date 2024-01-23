@@ -1,6 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, RedirectIfAuthMiddleware } from './middlewares';
-import { AppController } from './app.controller';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controllers';
@@ -40,9 +39,15 @@ import { CompanyEntity, RoleEntity, UserEntity } from './entities';
       inject:[ConfigService]
     }),
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SESSION_KEY,
-      signOptions: { expiresIn: process.env.JWT_SESSION_EXPIRES },
+    JwtModule.registerAsync({
+      imports:    [ConfigModule],
+      useFactory: async( configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SESSION_KEsY'),
+        signOptions: { 
+          expiresIn: configService.get<string>('JWT_SESSION_EXPIRES') 
+        },
+      }),
+      inject: [ConfigService]
     }),
     MailModule,   
     CompanyModule,
@@ -58,9 +63,7 @@ export class AppModule implements NestModule {
     consumer.apply(ApiMiddleware)
             .forRoutes("*");
     consumer.apply(RedirectIfAuthMiddleware)
-            .exclude(
-              'auth/logout'
-            )
+            .exclude('auth/logout')
             .forRoutes(AuthController)            
   }
 }
