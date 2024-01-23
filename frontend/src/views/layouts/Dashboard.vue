@@ -6,7 +6,7 @@
         <HeaderNav />
         <div class="body flex-grow-1">
           <CContainer fluid class="min-vh-100">
-            <CRow class="h-100">
+            <CRow class="h-100 py-2">
               <router-view />
             </CRow>
           </CContainer>

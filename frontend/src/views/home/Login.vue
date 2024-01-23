@@ -6,7 +6,7 @@
 		<CCardGroup>
 			<CCard class="p-4">
 			<CCardBody>
-				<CForm @submit.prevent="login">
+				<CForm @submit.prevent="login" autocomplete="off">
 				<h1>Login</h1>
 				<p class="text-medium-emphasis">Sign In to your account</p>
 				<CInputGroup class="mb-3">
@@ -15,7 +15,8 @@
 					</CInputGroupText>
 					<CFormInput
 						placeholder="Email"
-						v-model="data.form.email"
+						v-model="data.form.email"		
+						autocomplete="off"			
 					/>
 					<p class="text-danger col col-12 mb-0" v-show="has(data.errors,'email')">{{data.errors.email}}</p>								
 				</CInputGroup>
@@ -27,6 +28,7 @@
 						type="password"
 						placeholder="Password"
 						v-model="data.form.password"
+						autocomplete="off"
 					/>
 					<p class="text-danger col col-12 mb-0" v-show="has(data.errors,'password')">{{data.errors.password}}</p>								
 				</CInputGroup>
@@ -149,6 +151,7 @@ watch(
 		each(form,(value,key) => {
 			validateForm(key);
 		});
+		console.log(data.errors);
 		data.isDisabled = !isEmpty(data.errors);
 	},
 	{ 

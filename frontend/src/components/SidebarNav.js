@@ -1,5 +1,5 @@
 import { defineComponent, h, onMounted, ref, resolveComponent } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import {
   CBadge,
@@ -51,6 +51,7 @@ const SidebarNav = defineComponent({
   setup() {
 
     const route        = useRoute()
+    const router       = useRouter()
     const store        = useStore()
     const firstRender  = ref(true)
 
@@ -90,9 +91,9 @@ const SidebarNav = defineComponent({
               default: (props) => h(
                 resolveComponent(item.component),
                 {
-                  active: props.isActive,
-                  href: props.href,
-                  onClick: () => props.navigate(),
+                  active:  props.isActive,
+                  href:    props.route.path,
+                  onClick: () => console.log(arguments),
                 },
                 {
                   default: () => [
