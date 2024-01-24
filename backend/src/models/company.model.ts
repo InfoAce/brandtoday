@@ -12,8 +12,16 @@ export default class CompanyModel {
     private companyRepository: CompanyRepository,
   ) {}
   
+  async find(data:any): Promise<CompanyEntity>{
+    return await this.companyRepository.findOneOrFail(data);
+  }
+
   async first(): Promise<CompanyEntity>{
     return first(await this.companyRepository.find());
+  }
+
+  async updateOne(id: string, data: any): Promise<any>{
+    return await this.companyRepository.update({id},data);
   }
 
   async save(data: any): Promise<any>{

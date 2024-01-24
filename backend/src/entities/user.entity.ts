@@ -3,7 +3,12 @@ import { CompanyEntity, RoleEntity } from './index';
 import { Seed, SeederContext, SeedRelation } from 'nestjs-class-seeder';
 import { Faker } from "@faker-js/faker";
 import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
+
+export enum Gender {
+  MALE         = "male",
+  FEMALE       = "female",
+  PREFERNOTSAY = "",
+}
 @Entity("users")
 export class UserEntity {
 
@@ -11,7 +16,7 @@ export class UserEntity {
   id: string;
 
   @SeedRelation(() => CompanyEntity)
-  @ManyToOne(() => CompanyEntity, (company) => company.users)
+  @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true })
   @JoinColumn({
     name:                 "company_id",
     referencedColumnName: "id",
@@ -40,6 +45,14 @@ export class UserEntity {
     nullable: true
   })
   email_verified_at: string
+
+  @Column({
+    type:     "enum",
+    enum:     Gender,
+    default:  Gender.PREFERNOTSAY,
+    nullable: true
+  })
+  gender: string;
 
   @Column({
     nullable: true

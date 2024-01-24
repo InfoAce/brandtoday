@@ -100,7 +100,7 @@ const router = createRouter({
           meta: {
             title: 'System',
             auth:  true,
-            state: 2
+            state: 3
           },
           component: () => import('@/views/dashboard/System.vue')
         },                                      

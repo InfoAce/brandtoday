@@ -6,8 +6,8 @@ import { RegisterValidation } from 'src/validation';
 import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { isEmpty, isNull } from 'lodash';
-
+import { get, isEmpty, isNull, pick } from 'lodash';
+import * as path from 'path';
 @Controller('auth')
 export class AuthController {
 
@@ -23,7 +23,6 @@ export class AuthController {
     @Post('login')
     async login(@Req() req: Request,  @Res() res: Response){
         const { email, password } = req.body;
-        console.log(req.body);
         try{
             const user = await this.authService.findOneByEmail(email);
 
@@ -32,14 +31,13 @@ export class AuthController {
             }
 
             if( !isEmpty(user) ){
-                // const hash    = await bcrypt.hash(password, parseInt(this.configService.get('SALT_LENGTH')));
                 const isMatch = await bcrypt.compare(password,user.password);
-                console.log(isMatch);
+
                 if( isMatch ){
                     const token = await this.authService.signIn({user,password});
-                    console.log(token);
-                    return res.status(HttpStatus.OK).json({user,token});
+                    return res.status(HttpStatus.OK).json({user: pick(user,['first_name','last_name','email','role','company']),token});
                 }
+                
                 return res.status(HttpStatus.UNAUTHORIZED).json({});
             }
         
@@ -74,6 +72,13 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Get('user')
     getProfile(@Req() req: Request,  @Res() res: Response) {
-        res.status(HttpStatus.OK).json(req['user']);
+        res.status(HttpStatus.OK).json({user: get(req,'user') });
+    } 
+
+    @UseGuards(AuthGuard)
+    @Get('company')
+    getCompany(@Req() req: Request,  @Res() res: Response) {
+        const { company } = get(req,'user');
+        res.status(HttpStatus.OK).json({company});
     } 
 }

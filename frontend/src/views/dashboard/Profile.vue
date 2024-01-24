@@ -1,6 +1,6 @@
 <template>
     <CCol lg="6" md="8" xs="12">
-        <CCard style="height:max-content">
+        <CCard style="min-height: 100vh">
             <CCardBody>
                 <CRow>
                     <CCol md="12" xs="12">
@@ -11,11 +11,11 @@
                             <CCard>
                                 <CCardBody>
                                     <CRow>
-                                        <CCol :md="12" class="py-2 mx-auto">
+                                        <CCol :md="12" :xs="12">  
                                             <CImage align="center" rounded src="https://ajirahub.com/image/clients_1.jpg" width="200" height="200"/>
                                         </CCol>
-                                        <CCol :md="12" class="py-2 mx-auto" >
-                                            <CButton color="danger" shape="rounded-pill" size="sm">Danger</CButton>                                                         
+                                        <CCol :md="12" :xs="12" class="text-center">  
+                                            <CButton color="light" size="sm"> <CIcon name="cil-pencil"></CIcon> Edit Profile Image </CButton> 
                                         </CCol>
                                     </CRow>
                                 </CCardBody>
@@ -29,10 +29,10 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="First Name"
-                                    v-model="form.email"		
+                                    v-model="user.first_name"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'first_name')">{{errors.email}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -40,66 +40,59 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Last Name"
-                                    v-model="form.email"		
+                                    v-model="user.last_name"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'last_name')">{{errors.email}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-user" />
+                                    <CIcon icon="cil-envelope" />
                                 </CInputGroupText>
                                 <CFormInput
+                                    disabled
                                     placeholder="Email"
-                                    v-model="form.email"		
+                                    v-model="user.email"		
                                     autocomplete="off"			
                                 />
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-user" />
+                                    <CIcon icon="cilPhone" />
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Phone Number"
-                                    v-model="form.email"		
+                                    v-model="user.phone_number"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.email}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-user" />
+                                    <CIcon icon="cil-address-book" />
                                 </CInputGroupText>
                                 <CFormInput
-                                    placeholder="Email"
-                                    v-model="form.email"		
+                                    placeholder="Gender"
+                                    v-model="user.address"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
-                            </CInputGroup> 
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.email}}</p>								
+                            </CInputGroup>                             
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-user" />
+                                    <CIcon icon="cil-address-book" />
                                 </CInputGroupText>
                                 <CFormInput
-                                    placeholder="Email"
-                                    v-model="form.email"		
+                                    placeholder="Address"
+                                    v-model="user.address"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-user" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Email"
-                                    v-model="form.email"		
-                                    autocomplete="off"			
-                                />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
-                            </CInputGroup>                          
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.email}}</p>								
+                            </CInputGroup>   
+                            <CCol :md="12" :xs="12" class="d-flex justify-content-end">  
+                                <CButton color="success" class="text-light">Save Changes </CButton> 
+                            </CCol>                                                   
                         </CForm>
                     </CCol>
                 </CRow>
@@ -109,7 +102,7 @@
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';
-import { each, isEmpty, has } from 'lodash';
+import { each, isEmpty, has, pick } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
 import { useToast } from "vue-toastification";
@@ -125,11 +118,12 @@ export default {
     data(){
         return {
             errors: {},
-            form: {
+            user: {
                 address:      String(),
                 first_name:   String(),
                 last_name:    String(),
                 email:        String(),
+                image:        String(),
                 gender:       String(),
                 phone_number: String(),
             },
@@ -139,8 +133,8 @@ export default {
     created(){
         this.$has = has;
 
-        // Form schema
-        this.formSchema = yup.object().shape({
+        // user schema
+        this.userSchema = yup.object().shape({
             address:          yup.string()
                                 .required("*Email address is required"),
             first_name:       yup.string()
@@ -151,17 +145,16 @@ export default {
                                 .email("*Enter a valid email address")
                                 .required("*Email address is required"),
             gender:           yup.string()
-                                .required("*Gender is required"),
+                                .required("*Gender is required"),                             
             phone_number:     yup.string()
                                 .required("*Phone number is required"),                         
         });
 
-        // Validate the form
-        this.validateForm = (field) => {
-            this.formSchema()
-                .validateAt(field, this.form)
+        // Validate the user
+        this.validateProfile = (field) => {
+            this.userSchema
+                .validateAt(field, this.user)
                 .then((value,key) => {
-                    console.log(value);
                     delete errors[field];
                 })
                 .catch((err) => {
@@ -179,16 +172,8 @@ export default {
         fetchUser(){
             this.$store.commit('loader',true);
             this.$api.get('/auth/user')
-                .then( ({ data:{ user }}) => {
-                    console.log(user);
-                    // store.commit('auth',{user, token});
-                    // swal.fire({
-                    // 	icon: 'success',
-                    // 	title: 'Alright!',
-                    // 	text: 'Login successfull.'
-                    // }).then((result) => {
-                    // 	window.location.reload();
-                    // });	
+                .then( ({ data:{ user } }) => {
+                    this.user = pick(user,['first_name','last_name','email','phone_number','image','address','gender']);
                 })
                 .catch( ({ response }) => {
                 })
@@ -198,12 +183,12 @@ export default {
         }
     },
     watch:{
-        form: {
-            handler(form) {
+        user: {
+            handler(user) {
                 const self = this;
-                each(form,(value,key) => {
-                    console.log(self);
-                    self.validateForm(key);
+                each(user,(value,key) => {
+                    // console.log(key);
+                    // self.validateProfile(key);
                 });
                 this.isDisabled = !isEmpty(this.errors);
             },

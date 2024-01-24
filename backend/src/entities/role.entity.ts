@@ -41,13 +41,13 @@ export class RoleEntity {
     const { name } = ctx.previousRecord;
     switch(name){
       case 'Test Company':
-        return 1;
+        return 2;
       case 'admin':
         return 0;
       case 'client':
         return 1;
       case 'staff':
-        return 1;
+        return 3;
     }
   })
   @Column({

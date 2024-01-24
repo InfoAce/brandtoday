@@ -26,6 +26,11 @@ export class CompanyEntity {
   @Column({
     nullable: true
   })
+  icon: string;
+
+  @Column({
+    nullable: true
+  })
   phone_number: string;
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)
