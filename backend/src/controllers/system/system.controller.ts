@@ -7,9 +7,13 @@ import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { isEmpty, isNull } from 'lodash';
-
+import { sep } from 'path';
 @Controller('system')
 export class SystemController {
+
+    private readonly file_path = `${process.cwd()}${sep}configurations.json`;
+
+    private jsonPlugin = require('json-reader-writer');
 
     constructor(
 
@@ -17,11 +21,25 @@ export class SystemController {
 
     @UseGuards(AuthGuard)
     @Get('')
-    getProfile(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
-        const {readJSON, writeJson} = require('json-reader-writer');
-        console.log(body);
-        // writeJson(filePath, obj)
-        res.status(HttpStatus.OK).json(req['user']);
+    getConfigurations(@Req() req: Request,  @Res() res: Response) {
+        try{
+            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
+        } catch(err) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+
+    @UseGuards(AuthGuard)
+    @Post('configurations')
+    updateConfigurations(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        try{
+            this.jsonPlugin.writeJson(this.file_path, body)
+            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
+        } catch(err) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @UseGuards(AuthGuard)

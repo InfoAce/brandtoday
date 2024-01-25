@@ -7,7 +7,7 @@
                         <h5 class="mb-0">User Profile</h5><hr class="mb-2 mt-2">
                     </CCol>
                     <CCol md="8" xs="12">
-                        <CForm autocomplete="off">
+                        <CForm @submit.prevent="updateUser" autocomplete="off">
                             <CRow>
                                 <CCol :md="12" :xs="12">
                                     <h6 class="mb-2">Profile Image</h6>
@@ -39,9 +39,10 @@
                                 <CFormInput
                                     placeholder="First Name"
                                     v-model="user.first_name"		
-                                    autocomplete="off"			
+                                    autocomplete="off"		
+                                    :disabled="$store.getters.loader"	
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'first_name')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'first_name')">{{errors.first_name}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -51,12 +52,13 @@
                                     placeholder="Last Name"
                                     v-model="user.last_name"		
                                     autocomplete="off"			
+                                    :disabled="$store.getters.loader"	
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'last_name')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'last_name')">{{errors.last_name}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-envelope" />
+                                    <CIcon icon="cilEnvelope" />
                                 </CInputGroupText>
                                 <CFormInput
                                     disabled
@@ -73,20 +75,26 @@
                                 <CFormInput
                                     placeholder="Phone Number"
                                     v-model="user.phone_number"		
-                                    autocomplete="off"			
+                                    autocomplete="off"		
+                                    :disabled="$store.getters.loader"	
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.phone_number}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
-                                    <CIcon icon="cil-address-book" />
+                                    <CIcon icon="cilAddressbook" />
                                 </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Gender"
-                                    v-model="user.address"		
-                                    autocomplete="off"			
-                                />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.email}}</p>								
+                                <CFormSelect 
+                                    aria-label="Gender" 
+                                    v-model="user.gender" 
+                                    :disabled="$store.getters.loader"	                            
+                                >
+                                    <option>Open to select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="">Prefer Not To Say</option>
+                                </CFormSelect>
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'gender')">{{errors.gender}}</p>								
                             </CInputGroup>                             
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -96,11 +104,15 @@
                                     placeholder="Address"
                                     v-model="user.address"		
                                     autocomplete="off"			
+                                    :disabled="$store.getters.loader"	
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.email}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.address}}</p>								
                             </CInputGroup>   
                             <CCol :md="12" :xs="12" class="d-flex justify-content-end">  
-                                <CButton color="success" class="text-light">Save Changes </CButton> 
+                                <CButton color="success" class="text-light" :disabled="isDisabled" type="submit">
+                                    <CSpinner v-if="isDisabled && $store.getters.loader" component="span" size="sm" variant="grow" aria-hidden="true"/>
+                                    Save Changes 
+                                </CButton> 
                             </CCol>                                                   
                         </CForm>
                     </CCol>
@@ -111,12 +123,24 @@
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';
-import { each, debounce, isEmpty, has, pick } from 'lodash';
+import { each, debounce, isEmpty, keys, has, pick } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
 import vueDropzone from 'dropzone-vue3'
 
 export default {
+    beforeCreate(){
+        this.checkUser = debounce( (user) => {
+            const items = pick(user,['first_name','last_name','phone_number','address','gender','email']),self = this;
+            console.log(items);
+            each(
+                items,
+                (value,key) => {
+                    self.validateProfile(key,items);
+                }
+            );
+        },1000);
+    },
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.fetchUser(),
@@ -124,7 +148,7 @@ export default {
         });
     },
     components:{
-        vueDropzone
+        vueDropzone,
     },
     computed:{
         authToken(){
@@ -158,7 +182,7 @@ export default {
                 gender:       String(),
                 phone_number: String(),
             },
-            isDisabled: true
+            isDisabled: false
         }
     },
     created(){
@@ -168,31 +192,18 @@ export default {
         // user schema
         this.userSchema = yup.object().shape({
             address:          yup.string()
-                                .required("*Email address is required"),
+                                 .required("*Address is required"),
             first_name:       yup.string()
-                                .required("*Email First Name is required"),
+                                .required("*First Name is required"),
             last_name:        yup.string()
-                                .required("*Email Last Name is required"),                                                  
+                                .required("*Last Name is required"),                                                  
             email:            yup.string()
                                 .email("*Enter a valid email address")
                                 .required("*Email address is required"),
-            gender:           yup.string()
-                                .required("*Gender is required"),                             
+            gender:           yup.string(),
             phone_number:     yup.string()
                                 .required("*Phone number is required"),                         
         });
-
-        // Validate the user
-        this.validateProfile = (field) => {
-            this.userSchema
-                .validateAt(field, this.user)
-                .then((value,key) => {
-                    delete errors[field];
-                })
-                .catch((err) => {
-                    errors[err.path] = err.message;
-                });
-        }
 
         // Finish logo or icon update and trigger refetch of company
         this.imageUpdate = debounce(() => {
@@ -215,19 +226,46 @@ export default {
                     if( edit.image ) { this.edit.image = false }
                     this.$store.commit('loader',false);
                 });
+        },
+        updateUser(){
+            this.$store.commit('loader',true);
+            this.isDisabled = true;
+            this.$api
+                .post('/auth/user',pick(this.user,['first_name','last_name','phone_number','address','gender','email']) )
+                .then( ({ data:{ user } }) => {
+
+                })
+                .catch( ({ response }) => {
+                })
+                .finally( () => {
+                    this.$store.commit('loader',false);
+                });
+        },
+        // Validate the user
+        validateProfile(field,user){
+            this.userSchema
+                .validateAt(field, user)
+                .then((value,key) => {
+                    delete this.errors[field];
+                })
+                .catch((err) => {
+                    this.errors[err.path] = err.message;
+                });
         }
     },
     watch:{
-        user: {
-            handler(user) {
-                const self = this;
-                each(user,(value,key) => {
-                    // console.log(key);
-                    // self.validateProfile(key);
-                });
-                this.isDisabled = !isEmpty(this.errors);
+        errors: {
+            handler(errors){
+                this.isDisabled = !isEmpty(errors);
             },
-            deep: true,             
+            deep: true
+        },
+        user: {
+            handler(user){
+                this.checkUser(user)
+            },
+            deep: true,
+            immediate: true             
         }
     }
 }

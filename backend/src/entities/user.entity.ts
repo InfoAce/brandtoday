@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, AfterLoad } from 'typeorm';
 import { CompanyEntity, RoleEntity } from './index';
 import { Seed, SeederContext, SeedRelation } from 'nestjs-class-seeder';
 import { Faker } from "@faker-js/faker";
 import * as bcrypt from 'bcrypt';
+import { omit } from 'lodash';
 
 export enum Gender {
   MALE         = "male",
@@ -14,6 +15,11 @@ export class UserEntity {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
+  
+  @Column({
+    nullable: true
+  })
+  address: string
 
   @SeedRelation(() => CompanyEntity)
   @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true })
@@ -39,6 +45,13 @@ export class UserEntity {
     unique: true
   })
   email: string
+
+  @Seed('ke')
+  @Column({
+    nullable: true,
+    default: '254'
+  })
+  country_code: string
 
   @Seed(new Date())
   @Column({
@@ -95,4 +108,5 @@ export class UserEntity {
   
   @DeleteDateColumn()
   deleted_at: Date; // Deletion date   
+
 }

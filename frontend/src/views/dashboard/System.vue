@@ -70,7 +70,7 @@ import * as yup from "yup";
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
-            vm.fetchUser(),
+            vm.fetchConfigurations(),
             next();
         });
     },
@@ -123,7 +123,7 @@ export default {
 
     },
     methods:{
-        fetchSystem(){
+        fetchConfigurations(){
             this.$store.commit('loader',true);
             this.$api.get('/system')
                 .then( ({ data:{ system } }) => {
@@ -136,4 +136,5 @@ export default {
                 });
         }
     }
+}
 </script>

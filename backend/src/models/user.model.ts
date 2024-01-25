@@ -9,12 +9,12 @@ export default class UserModel {
     private usersRepository: UserRepository,
   ) {}
 
-  findAll(): Promise<UserEntity[]> {
-    return this.usersRepository.find();
+  async findAll(): Promise<UserEntity[]> {
+    return await this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<UserEntity | null> {
-    return this.usersRepository.findOneBy({ id });
+  async findOne(id: string): Promise<UserEntity | null> {
+    return await this.usersRepository.findOneBy({ id });
   }
 
   async findOneBy(data: object): Promise<UserEntity> {
@@ -23,6 +23,10 @@ export default class UserModel {
   
   async save(data: any): Promise<any>{
     return await this.usersRepository.save(data);
+  }
+
+  async updateOne(find:any, data: any): Promise<any>{
+    return await this.usersRepository.update(find,data);
   }
 
   async remove(id: number): Promise<void> {

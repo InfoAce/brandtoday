@@ -6,7 +6,7 @@ import { RegisterValidation } from 'src/validation';
 import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { get, isEmpty, isNull, pick } from 'lodash';
+import { get, isEmpty, isNull, pick, set } from 'lodash';
 import * as path from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -79,8 +79,15 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Post('user')
-    updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
-        res.status(HttpStatus.OK).json({user: get(req,'user') });
+    async updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        const authUser = get(req,'user');
+        try {
+            const updatedUser = await this.userModel.updateOne({id: authUser.id},body)
+            set(req,'user',updatedUser);
+            res.status(HttpStatus.OK).json({user: get(req,'user') });
+        } catch (err) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR);        
+        }
     } 
 
     @UseGuards(AuthGuard)
@@ -102,7 +109,6 @@ export class AuthController {
     )
     uploadImage(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
         const user = get(req,'user');
-        console.log(user)
         this.userModel.save({ id: user.id, image: file.filename });
         return res.status(HttpStatus.OK).json({});
     }
@@ -112,5 +118,17 @@ export class AuthController {
     getCompany(@Req() req: Request,  @Res() res: Response) {
         const { company } = get(req,'user');
         res.status(HttpStatus.OK).json({company});
+    } 
+
+    @UseGuards(AuthGuard)
+    @Post('company')
+    async updateCompany(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        const { company } = get(req,'user');
+        try{
+            const updatedCompany = await this.companyModel.updateOne(company.id,body);
+            return res.status(HttpStatus.OK).json({updatedCompany});
+        } catch(err) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     } 
 }

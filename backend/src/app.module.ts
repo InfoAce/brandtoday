@@ -13,6 +13,7 @@ import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
 import { CompanyEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path'
+import { UserSubscriber } from './subscribers';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -39,7 +40,8 @@ import { join } from 'path'
           RoleEntity,
           UserEntity
         ],
-        synchronize: true
+        synchronize: true,
+        subscribers: [UserSubscriber]
       }),
       inject:[ConfigService]
     }),

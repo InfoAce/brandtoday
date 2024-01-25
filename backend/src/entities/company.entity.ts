@@ -8,6 +8,11 @@ export class CompanyEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({
+    nullable: true
+  })
+  address: string;
+
   @Seed('Test Company')
   @Column()
   name: string;
@@ -32,6 +37,13 @@ export class CompanyEntity {
     nullable: true
   })
   phone_number: string;
+
+  @Seed('ke')
+  @Column({
+    nullable: true,
+    default: '254'
+  })
+  country_code: string
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)
   @JoinColumn({
