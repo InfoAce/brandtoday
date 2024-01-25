@@ -17,7 +17,10 @@ export class SystemController {
 
     @UseGuards(AuthGuard)
     @Get('')
-    getProfile(@Req() req: Request,  @Res() res: Response) {
+    getProfile(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        const {readJSON, writeJson} = require('json-reader-writer');
+        console.log(body);
+        // writeJson(filePath, obj)
         res.status(HttpStatus.OK).json(req['user']);
     }
 

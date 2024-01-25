@@ -4,24 +4,33 @@
             <CCardBody>
                 <CRow>
                     <CCol md="12" xs="12">
-                        <h5>User Profile</h5>
+                        <h5 class="mb-0">User Profile</h5><hr class="mb-2 mt-2">
                     </CCol>
                     <CCol md="8" xs="12">
                         <CForm autocomplete="off">
-                            <CCard>
-                                <CCardBody>
-                                    <CRow>
-                                        <CCol :md="12" :xs="12">  
-                                            <CImage align="center" rounded src="https://ajirahub.com/image/clients_1.jpg" width="200" height="200"/>
-                                        </CCol>
-                                        <CCol :md="12" :xs="12" class="text-center">  
-                                            <CButton color="light" size="sm"> <CIcon name="cil-pencil"></CIcon> Edit Profile Image </CButton> 
-                                        </CCol>
-                                    </CRow>
-                                </CCardBody>
-                            </CCard>                            
-                            <CCol :md="12" class="py-2 d-flex justify-content-center">
-
+                            <CRow>
+                                <CCol :md="12" :xs="12">
+                                    <h6 class="mb-2">Profile Image</h6>
+                                </CCol>
+                                <CCol :md="12" :xs="12">  
+                                    <vue-dropzone
+                                        v-if="edit.image"
+                                        ref="dropzoneLogo" 
+                                        @vdropzone-success="imageUpdate"
+                                        id="dropzoneLogo" 
+                                        :options="dropzoneOptions"
+                                    />
+                                    <template v-else>
+                                        <CImage v-if="!$isEmpty(user.image)" align="center" thumbnail class="col-12" :src="`${backendUri}${user.image}`" fluid />
+                                        <CIcon v-else name="cil-image"></CIcon>
+                                    </template>
+                                </CCol>
+                                <CCol :md="12" :xs="12" class="text-center mt-2">  
+                                    <CButton color="light" size="sm" @click="edit.image = true"> <CIcon name="cil-pencil"></CIcon> Edit Logo </CButton> 
+                                </CCol>
+                            </CRow>
+                            <CCol :md="12" :xs="12">
+                                <h6 class="my-4">User details</h6>                           
                             </CCol>
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -102,11 +111,10 @@
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';
-import { each, isEmpty, has, pick } from 'lodash';
+import { each, debounce, isEmpty, has, pick } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-import { useToast } from "vue-toastification";
-import { useStore } from 'vuex';
+import vueDropzone from 'dropzone-vue3'
 
 export default {
     beforeRouteEnter(to, from, next) {
@@ -115,8 +123,31 @@ export default {
             next();
         });
     },
+    components:{
+        vueDropzone
+    },
+    computed:{
+        authToken(){
+            return this.$store.getters.authToken;
+        }, 
+        backendUri(){
+            return this.env.VITE_API_BASE_URL.replace('api','');
+        },
+        env() {
+            return this.$store.getters.env;
+        }
+    },
     data(){
         return {
+            edit: {
+                image: false,
+            },
+            dropzoneOptions:     {
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 300,
+                maxFilesize:    2.0,   
+                headers:        {}             
+            },  
             errors: {},
             user: {
                 address:      String(),
@@ -131,7 +162,8 @@ export default {
         }
     },
     created(){
-        this.$has = has;
+        this.$isEmpty = isEmpty;
+        this.$has     = has;
 
         // user schema
         this.userSchema = yup.object().shape({
@@ -162,22 +194,25 @@ export default {
                 });
         }
 
-        // const store  = useStore();
-        // const router = useRouter();
-        // const $api   = inject('$api');
-        // const toast  = useToast();
-        // const swal   = inject('$swal');
+        // Finish logo or icon update and trigger refetch of company
+        this.imageUpdate = debounce(() => {
+            this.fetchUser();
+        },1000);
     },
     methods:{
         fetchUser(){
+            const { authToken, env: { VITE_API_BASE_URL }, edit } = this;
             this.$store.commit('loader',true);
             this.$api.get('/auth/user')
                 .then( ({ data:{ user } }) => {
-                    this.user = pick(user,['first_name','last_name','email','phone_number','image','address','gender']);
+                    this.user                    = user;
+                    this.dropzoneOptions.url     = `${VITE_API_BASE_URL}/auth/upload/image`;
+                    this.dropzoneOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};
                 })
                 .catch( ({ response }) => {
                 })
                 .finally( () => {
+                    if( edit.image ) { this.edit.image = false }
                     this.$store.commit('loader',false);
                 });
         }

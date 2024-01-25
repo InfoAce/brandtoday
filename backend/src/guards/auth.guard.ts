@@ -36,7 +36,7 @@ import {
         const authUser            =  await this.userEntity.findOneBy({email});
         // 💡 We're assigning the payload to the request object here
         // so that we can access it in our route handlers
-        set(request,'user',pick(authUser,['first_name','last_name','email','role','company']));
+        set(request,'user',pick(authUser,['id','first_name','last_name','email','role','company','image']));
         // request.user =;
       } catch(err) {
         throw new UnauthorizedException();

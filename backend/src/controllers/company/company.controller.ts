@@ -31,7 +31,7 @@ export class CompanyController {
                         const uniqueSuffix = Date.now();
                         const ext          = file.originalname.split('.');
                         cb(null, `${uniqueSuffix}.${ext[1]}`);
-                      },
+                    },
                 }),
             }
         )

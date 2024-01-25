@@ -8,50 +8,49 @@
                     </CCol>
                     <CCol md="8" xs="12">
                         <CForm autocomplete="off">
-                            <CCard class="my-3">
-                                <CCardBody>
-                                    <CRow>
-                                        <CCol :md="12" :xs="12">  
-                                            <vue-dropzone
-                                                v-if="edit.logo"
-                                                ref="dropzoneLogo" 
-                                                @vdropzone-success="imageUpdate"
-                                                id="dropzoneLogo" 
-                                                :options="dropzoneLogoOptions"
-                                            />
-                                            <template v-else>
-                                                <CImage v-if="!$isEmpty(company.logo)" align="center" rounded :src="`${backendUri}${company.logo}`" width="350" height="200"/>
-                                                <CIcon v-else name="cil-image"></CIcon>
-                                            </template>
-                                        </CCol>
-                                        <CCol :md="12" :xs="12" class="text-center mt-2">  
-                                            <CButton color="light" size="sm" @click="edit.logo = true"> <CIcon name="cil-pencil"></CIcon> Edit Logo </CButton> 
-                                        </CCol>
-                                    </CRow>
-                                </CCardBody>
-                            </CCard>                            
-                            <CCard class="mb-3">
-                                <CCardBody>
-                                    <CRow>
-                                        <CCol :md="12" :xs="12">
-                                            <vue-dropzone
-                                                v-if="edit.icon"
-                                                @vdropzone-success="imageUpdate"
-                                                ref="dropzoneIcon" 
-                                                id="dropzoneIcon" 
-                                                :options="dropzoneIconOptions"
-                                            />  
-                                            <template v-else>
-                                                <CImage v-if="!$isEmpty(company.icon)" align="center" rounded :src="`${backendUri}${company.icon}`" width="350" height="200"/>
-                                                <CIcon v-else name="cil-image"></CIcon>
-                                            </template>                                            
-                                        </CCol>
-                                        <CCol :md="12" :xs="12" class="text-center mt-2">  
-                                            <CButton color="light" size="sm" @click="edit.icon = true"> <CIcon name="cil-pencil"></CIcon> Edit Icon </CButton> 
-                                        </CCol>
-                                    </CRow>
-                                </CCardBody>
-                            </CCard>                            
+                            <CRow>
+                                <CCol :md="12" :xs="12">
+                                    <h6 class="mb-2">Company Logo</h6>
+                                </CCol>
+                                <CCol :md="12" :xs="12">  
+                                    <vue-dropzone
+                                        v-if="edit.logo"
+                                        ref="dropzoneLogo" 
+                                        @vdropzone-success="imageUpdate"
+                                        id="dropzoneLogo" 
+                                        :options="dropzoneLogoOptions"
+                                    />
+                                    <template v-else>
+                                        <CImage v-if="!$isEmpty(company.logo)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.logo}`" fluid/>
+                                        <CIcon v-else name="cil-image"></CIcon>
+                                    </template>
+                                </CCol>
+                                <CCol :md="12" :xs="12" class="text-center my-2">  
+                                    <CButton color="light" size="sm" @click="edit.logo = true"> <CIcon name="cil-pencil"></CIcon> Edit Logo </CButton> 
+                                </CCol>
+                                <CCol :md="12" :xs="12">
+                                    <h6 class="mb-2">Company Icon</h6>
+                                </CCol>
+                                <CCol :md="12" :xs="12">
+                                    <vue-dropzone
+                                        v-if="edit.icon"
+                                        @vdropzone-success="imageUpdate"
+                                        ref="dropzoneIcon" 
+                                        id="dropzoneIcon" 
+                                        :options="dropzoneIconOptions"
+                                    />  
+                                    <template v-else>
+                                        <CImage v-if="!$isEmpty(company.icon)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.icon}`" fluid />
+                                        <CIcon v-else name="cil-image"></CIcon>
+                                    </template>                                            
+                                </CCol>
+                                <CCol :md="12" :xs="12" class="text-center my-2">  
+                                    <CButton color="light" size="sm" @click="edit.icon = true"> <CIcon name="cil-pencil"></CIcon> Edit Icon </CButton> 
+                                </CCol>
+                            </CRow> 
+                            <CCol :md="12" :xs="12">
+                                <h6 class="my-4">Company details</h6>                           
+                            </CCol>                        
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
                                     <CIcon icon="cil-user" />

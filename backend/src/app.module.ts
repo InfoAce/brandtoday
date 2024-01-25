@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthController, CompanyController } from './controllers';
+import { AuthController, CompanyController, SystemController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -59,7 +59,7 @@ import { join } from 'path'
     RoleModule,
     UserModule 
   ],
-  controllers: [AuthController, CompanyController],
+  controllers: [AuthController, CompanyController, SystemController],
   providers: [AuthService,JwtStrategy,LocalStrategy],
 })
 

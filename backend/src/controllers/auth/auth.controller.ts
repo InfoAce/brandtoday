@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '../../guards';
 import { Request, Response } from 'express';
 import { AuthService, MailService } from 'src/services';
@@ -8,6 +8,8 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { get, isEmpty, isNull, pick } from 'lodash';
 import * as path from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 @Controller('auth')
 export class AuthController {
 
@@ -74,6 +76,36 @@ export class AuthController {
     getProfile(@Req() req: Request,  @Res() res: Response) {
         res.status(HttpStatus.OK).json({user: get(req,'user') });
     } 
+
+    @UseGuards(AuthGuard)
+    @Post('user')
+    updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        res.status(HttpStatus.OK).json({user: get(req,'user') });
+    } 
+
+    @UseGuards(AuthGuard)
+    @Post('upload/image')
+    @UseInterceptors(
+        FileInterceptor(
+            'file',
+            {
+                storage: diskStorage({
+                    destination: './public',
+                    filename: (req, file, cb) => {
+                        const uniqueSuffix = Date.now();
+                        const ext          = file.originalname.split('.');
+                        cb(null, `${uniqueSuffix}.${ext[1]}`);
+                    },
+                }),
+            }
+        )
+    )
+    uploadImage(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
+        const user = get(req,'user');
+        console.log(user)
+        this.userModel.save({ id: user.id, image: file.filename });
+        return res.status(HttpStatus.OK).json({});
+    }
 
     @UseGuards(AuthGuard)
     @Get('company')

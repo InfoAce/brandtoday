@@ -66,8 +66,6 @@ import { inject, reactive, ref, watch } from 'vue';
 import { each, isEmpty, has, pick } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-import { useToast } from "vue-toastification";
-import { useStore } from 'vuex';
 
 export default {
     beforeRouteEnter(to, from, next) {
@@ -125,11 +123,11 @@ export default {
 
     },
     methods:{
-        fetchUser(){
+        fetchSystem(){
             this.$store.commit('loader',true);
-            this.$api.get('/auth/company')
-                .then( ({ data:{ company } }) => {
-                    this.company = pick(company,['name','logo','email','favicon','address']);
+            this.$api.get('/system')
+                .then( ({ data:{ system } }) => {
+                    console.log(system);
                 })
                 .catch( ({ response }) => {
                 })
@@ -137,19 +135,5 @@ export default {
                     this.$store.commit('loader',false);
                 });
         }
-    },
-    watch:{
-        company: {
-            handler(company) {
-                const self = this;
-                each(company,(value,key) => {
-                    // console.log(key);
-                    // self.validateProfile(key);
-                });
-                this.isDisabled = !isEmpty(this.errors);
-            },
-            deep: true,             
-        }
     }
-}
 </script>
