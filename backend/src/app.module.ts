@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
-import { ConfigDatabase } from './config';
+import { ConfigDatabase, ConfigServices } from './config';
 import { AuthService } from './services';
 import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
 import { CompanyEntity, RoleEntity, UserEntity } from './entities';
@@ -18,7 +18,7 @@ import { UserSubscriber } from './subscribers';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development','.env.production', '.env'],
-      load:[ ConfigDatabase ],
+      load:[ ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
     CacheModule.register(),

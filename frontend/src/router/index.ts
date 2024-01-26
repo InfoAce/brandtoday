@@ -75,6 +75,36 @@ const router = createRouter({
           component: () => import('@/views/dashboard/Clients.vue')
         },
         {
+          path: 'products',
+          name: "Products",
+          meta: {
+            title: 'Products',
+            auth:  true,
+            state: 1
+          },
+          component: () => import('@/views/dashboard/Products.vue')
+        },
+        {
+          path: 'orders',
+          name: "Orders",
+          meta: {
+            title: 'Orders',
+            auth:  true,
+            state: 1
+          },
+          component: () => import('@/views/dashboard/Orders.vue')
+        },
+        {
+          path: 'staff',
+          name: "Staff",
+          meta: {
+            title: 'Staff Members',
+            auth:  true,
+            state: 2
+          },
+          component: () => import('@/views/dashboard/Staff.vue')
+        },
+        {
           path: 'company',
           name: "Company",
           meta: {

@@ -14,6 +14,24 @@ export default [
       name: 'Client',
       to: '/dashboard/clients',
       icon: 'cil-group',
+    },  
+    {
+      component: 'CNavItem',
+      name: 'Products',
+      to: '/dashboard/products',
+      icon: 'cil-group',
+    },  
+    {
+      component: 'CNavItem',
+      name: 'Orders',
+      to: '/dashboard/orders',
+      icon: 'cil-group',
+    }, 
+    {
+      component: 'CNavItem',
+      name: 'Staff',
+      to: '/dashboard/staff',
+      icon: 'cil-group',
     },       
     {
       component: 'CNavTitle',
