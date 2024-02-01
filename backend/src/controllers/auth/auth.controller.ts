@@ -97,7 +97,7 @@ export class AuthController {
             'file',
             {
                 storage: diskStorage({
-                    destination: './public',
+                    destination: './public/images',
                     filename: (req, file, cb) => {
                         const uniqueSuffix = Date.now();
                         const ext          = file.originalname.split('.');
@@ -109,7 +109,7 @@ export class AuthController {
     )
     uploadImage(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
         const user = get(req,'user');
-        this.userModel.save({ id: user.id, image: file.filename });
+        this.userModel.save({ id: user.id, image: `images/${file.filename}` });
         return res.status(HttpStatus.OK).json({});
     }
 

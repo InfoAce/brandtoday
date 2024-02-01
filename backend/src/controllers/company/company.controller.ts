@@ -26,7 +26,7 @@ export class CompanyController {
             'file',
             {
                 storage: diskStorage({
-                    destination: './public',
+                    destination: './public/images',
                     filename: (req, file, cb) => {
                         const uniqueSuffix = Date.now();
                         const ext          = file.originalname.split('.');
@@ -37,7 +37,7 @@ export class CompanyController {
         )
     )
     async uploadLogo(@Param('companyId') companyId: string, @UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
-        await this.companyModel.save({ id: companyId, logo: file.filename });
+        await this.companyModel.save({ id: companyId, logo: `images/${file.filename}` });
         return res.status(HttpStatus.OK).json({});
     }
 
@@ -48,7 +48,7 @@ export class CompanyController {
             'file',
             {
                 storage: diskStorage({
-                    destination: './public',
+                    destination: './public/images',
                     filename: (req, file, cb) => {
                         const uniqueSuffix = Date.now();
                         const ext          = file.originalname.split('.');
@@ -59,7 +59,7 @@ export class CompanyController {
         )
     )
     async uploadIcon(@Param('companyId') companyId: string, @UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
-        await this.companyModel.save({ id: companyId, icon: file.filename });
+        await this.companyModel.save({ id: companyId, icon: `images/${file.filename}` });
         return res.status(HttpStatus.OK).json({file});
     }
 

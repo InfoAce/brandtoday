@@ -17,21 +17,21 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Base URI"
-                                    v-model="configurations.base_uri"		
+                                    v-model="configurations.amrod.base_uri"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'base_uri')">{{errors.base_uri}}</p>								
-                            </CInputGroup> 
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'base_uri')">{{errors.amrod.base_uri}}</p>								
+                            </CInputGroup>
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
                                     <CIcon icon="cil-envelope" />
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Username"
-                                    v-model="configurations.username"		
+                                    v-model="configurations.amrod.username"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'username')">{{errors.username}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'username')">{{errors.amrod.username}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -39,10 +39,11 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Password"
-                                    v-model="configurations.password"		
+                                    type="password"
+                                    v-model="configurations.amrod.password"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'password')">{{errors.password}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'password')">{{errors.amrod.password}}</p>								
                             </CInputGroup>                             
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -50,12 +51,12 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Account Number"
-                                    v-model="configurations.account_number"		
+                                    v-model="configurations.amrod.account_number"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'account_number')">{{errors.account_number}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'account_number')">{{errors.amrod.account_number}}</p>								
                             </CInputGroup> 
-                            <CCol :md="12" :xs="12">
+                            <!-- <CCol :md="12" :xs="12">
                                 <h6 class="my-4">Payment Getway Settings</h6>                           
                             </CCol>   
                             <CInputGroup class="mb-3">
@@ -90,7 +91,7 @@
                                     autocomplete="off"			
                                 />
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'password')">{{errors.password}}</p>								
-                            </CInputGroup>                             
+                            </CInputGroup>                              -->
                             <CCol :md="12" :xs="12" class="d-flex justify-content-end">  
                                 <CButton color="success" class="text-light" :disabled="isDisabled" type="submit">
                                     <CSpinner v-if="isDisabled && $store.getters.loader" component="span" size="sm" variant="grow" aria-hidden="true"/>
@@ -132,16 +133,19 @@ export default {
         return {
             errors: {},
             configurations: {
-                base_uri:       String(),
-                username:       String(),
-                password:       String(),
-                account_number: String(),
+                amrod:{
+                    base_uri:       String(),
+                    username:       String(),
+                    password:       String(),
+                    account_number: String(),
+                }
             },
             isDisabled: true
         }
     },
     created(){
-        this.$has = has;
+        this.$has     = has;
+        this.$isEmpty = isEmpty;
 
         // Configurations schema
         this.configSchema = yup.object().shape({
@@ -176,7 +180,7 @@ export default {
             this.isDisabled = true;
             this.$api
                 .post(
-                    '/auth/company',
+                    '/system/configurations',
                     this.configurations 
                 )
                 .then( ({ data:{ company } }) => {

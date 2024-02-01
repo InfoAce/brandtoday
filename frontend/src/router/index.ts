@@ -133,17 +133,7 @@ const router = createRouter({
             state: 3
           },
           component: () => import('@/views/dashboard/System.vue')
-        },                                      
-        {
-          path: 'staff',
-          name: "Staff",
-          meta: {
-            title: 'Staff',
-            auth:  true,
-            state: 2
-          },
-          component: () => import('@/views/dashboard/Users.vue')
-        },
+        }                                      
       ],
       component: () => import('@/views/layouts/Dashboard.vue')
     }

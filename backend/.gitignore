@@ -2,6 +2,8 @@
 /dist
 /node_modules
 
+#configurations
+configurations.json
 
 #env
 .env

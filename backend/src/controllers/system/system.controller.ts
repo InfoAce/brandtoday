@@ -35,7 +35,8 @@ export class SystemController {
     @Post('configurations')
     updateConfigurations(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
         try{
-            this.jsonPlugin.writeJson(this.file_path, body)
+            const fs = require('fs');
+            fs.writeFileSync(this.file_path,JSON.stringify(body));
             return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
         } catch(err) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR);

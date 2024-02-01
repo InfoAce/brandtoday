@@ -6,61 +6,10 @@ const { isEmpty }  = require('lodash');
 const randomstring = require("randomstring");
 const fs           = require("fs");
 const os           = require("os");
-const company      = {
-    name: "Example",
-    email: "info@example.com",
-    phone_number: "+123455677"
-}
-
-const roles         = [
-    { name: "admin"  },
-    { name: "client" },
-    { name: "staff"  }
-];
-
-var admin        = {
-    email: "bryantkrotich@gmail.com",
-    first_name: "Bryant",
-    last_name: "Rotich",
-    password: "password"
-}, app;
 
 async function init(){
-    // setEnvValue("APP_KEY",randomstring.generate(50));
-    // setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
-    await run();
-}
-
-async function run(){
-    const app = await NestFactory.createApplicationContext({CompanyModule,RoleModule,UserModule});
-    console.log(CompanyModel)
-    app.get(CompanyModel)
-        .save(this.company)
-        .then( (company) => {
-            console.log("[COMPANY INSTALLATION DONE]")
-            Promise.all(
-                this.roles.map( async(role) => {
-                    this.app
-                        .get(RoleModel)
-                        .save(role)
-                        .then( () =>{
-                            console.log("[ROLES INSTALLATION DONE]")
-                        });
-                })
-            ).then( (roles) => {
-                console.log(roles);
-            //     this.admin['company_id'] = ;
-            //     this.admin['role_id']    = roles.filter( val => val.name == "admin").id;
-            //     this.userModel
-            //         .save(this.admin)
-            //         .then( () => {
-            //             console.log("[USER INSTALLATION DONE]")
-            //         });                 
-            // });
-            })
-        })
-
-
+    setEnvValue("APP_KEY",randomstring.generate(50));
+    setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
 }
 
 function setEnvValue(key, value) {
