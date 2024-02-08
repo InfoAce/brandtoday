@@ -5,3 +5,6 @@ export { CreateAppValidation as CreateAppValidation } from './create.app.validat
 export { CreatePromptValidation as CreatePromptValidation } from './create.prompt.validation';
 export { RegisterValidation as RegisterValidation } from './register.validation';
 export { UpdateAppValidation as UpdateAppValidation } from './update.app.validation';
+
+// List of Amrod Validation
+export { AmrodLoginValidation as AmrodLoginValidation } from './amrod/login.validator';
