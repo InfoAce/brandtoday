@@ -16,11 +16,22 @@
                                     <CIcon icon="cil-user" />
                                 </CInputGroupText>
                                 <CFormInput
-                                    placeholder="Base URI"
-                                    v-model="configurations.amrod.base_uri"		
+                                    placeholder="Vendor URI"
+                                    v-model="configurations.amrod.vendor_uri"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'base_uri')">{{errors.amrod.base_uri}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'vendor_uri')">{{errors.vendor_uri}}</p>								
+                            </CInputGroup>
+                            <CInputGroup class="mb-3">
+                                <CInputGroupText>
+                                    <CIcon icon="cil-user" />
+                                </CInputGroupText>
+                                <CFormInput
+                                    placeholder="Auth URI"
+                                    v-model="configurations.amrod.auth_uri"		
+                                    autocomplete="off"			
+                                />
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'auth_uri')">{{errors.auth_uri}}</p>								
                             </CInputGroup>
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -28,10 +39,11 @@
                                 </CInputGroupText>
                                 <CFormInput
                                     placeholder="Username"
+                                    name="username"
                                     v-model="configurations.amrod.username"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'username')">{{errors.amrod.username}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'username')">{{errors.username}}</p>								
                             </CInputGroup> 
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -40,10 +52,11 @@
                                 <CFormInput
                                     placeholder="Password"
                                     type="password"
+                                    name="password"
                                     v-model="configurations.amrod.password"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'password')">{{errors.amrod.password}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'password')">{{errors.password}}</p>								
                             </CInputGroup>                             
                             <CInputGroup class="mb-3">
                                 <CInputGroupText>
@@ -54,7 +67,7 @@
                                     v-model="configurations.amrod.account_number"		
                                     autocomplete="off"			
                                 />
-                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors.amrod,'account_number')">{{errors.amrod.account_number}}</p>								
+                                <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'account_number')">{{errors.account_number}}</p>								
                             </CInputGroup> 
                             <!-- <CCol :md="12" :xs="12">
                                 <h6 class="my-4">Payment Getway Settings</h6>                           
@@ -107,18 +120,18 @@
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';
-import { debounce, each, isEmpty, has, pick } from 'lodash';
+import { debounce, each, isEmpty, has, pick, cloneDeep } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
 
 export default {
     beforeCreate(){
-        this.checkConfig = debounce( (configurations) => {
+        this.checkConfig = debounce( (amrod) => {
             const self = this;
             each(
-                configurations,
+                amrod,
                 (value,key) => {
-                    self.validateConfigurations(key,configurations);
+                    self.validateConfigurations(key,amrod);
                 }
             );
         },500);
@@ -134,10 +147,11 @@ export default {
             errors: {},
             configurations: {
                 amrod:{
-                    base_uri:       String(),
+                    auth_uri:       String(),
                     username:       String(),
                     password:       String(),
                     account_number: String(),
+                    vendor_uri:     String(),
                 }
             },
             isDisabled: true
@@ -149,15 +163,17 @@ export default {
 
         // Configurations schema
         this.configSchema = yup.object().shape({
-            base_uri:       yup.string()
-                                .required("*Base URI is required"),
+            auth_uri:       yup.string()
+                               .required("*Auth URI is required"),
             username:       yup.string()
-                                .email("*Enter a valid email address")
-                                .required("*Username is required"),
+                               .email("*Enter a valid email address")
+                               .required("*Username is required"),
             password:       yup.string()
-                                .required("*Password is required"),                                                  
+                               .required("*Password is required"),                                                  
             account_number: yup.string()
-                                .required("*Account Number is required"),                       
+                               .required("*Account Number is required"),    
+            vendor_uri:       yup.string()
+                               .required("*Vendor URI is required"),                                                  
         });
 
     },
@@ -165,8 +181,8 @@ export default {
         fetchConfigurations(){
             this.$store.commit('loader',true);
             this.$api.get('/system')
-                .then( ({ data:{ system } }) => {
-                    console.log(system);
+                .then( ({ data:{ configurations } }) => {
+                    this.configurations = cloneDeep(configurations);
                 })
                 .catch( ({ response }) => {
                 })
@@ -193,9 +209,9 @@ export default {
                 });
         },
         // Validate the configurations
-        validateConfigurations(field,configurations){
+        validateConfigurations(field,data){
             this.configSchema
-                .validateAt(field, configurations)
+                .validateAt(field, data)
                 .then((value,key) => {
                     delete this.errors[field];
                 })
@@ -211,9 +227,9 @@ export default {
             },
             deep: true
         },
-        configurations: {
-            handler(configurations){
-                this.checkConfig(configurations)
+        "configurations.amrod": {
+            handler(amrod){
+                this.checkConfig(amrod)
             },
             deep: true,
             immediate: true             
