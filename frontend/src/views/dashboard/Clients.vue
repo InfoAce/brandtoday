@@ -1,130 +1,165 @@
 <template>
-    <CCol :md="12" :xs="12">
-      <CRow>
-        <CCol :md="12" :xs="12">
-          <h3>List of clients</h3>
+  <CCol :md="12" :xs="12">
+    <CRow>
+      <CCol :md="12" :xs="12">
+        <h3>List of clients</h3>
           <p>This is a list of registered clients in the system.</p>
-        </CCol>
-        <CCol :md="12" :xs="12" class="d-flex justify-content-between">
-        
-        </CCol>
-        <template v-for="(client,key) in clients">
-          <CCol :md="3" :xs="12">
-              <CCard>
-                <CCardImage orientation="top" src="https://images.pexels.com/photos/920382/pexels-photo-920382.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
-                <CCardBody>
-                  <CCardTitle>{{ client.first_name }} {{ client.last_name }}</CCardTitle>
-                  <CBadge color="success">active</CBadge>
-                </CCardBody>
-                <CListGroup flush>
-                  <CListGroupItem>Email:     {{ client.email }}</CListGroupItem>
-                  <CListGroupItem>Phone:     {{ client.phone_number }}</CListGroupItem>
-                  <CListGroupItem>Joined On: {{ client.joined_at }}</CListGroupItem>
-                </CListGroup>
-                <CCardBody>
-                  <CDropdown color="secondary" togglerText="Dropdown button">
-                    <CDropdownToggle component="a" color="primary">More</CDropdownToggle>
-                    <CDropdownMenu>
-                      <CDropdownItem href="#">Edit</CDropdownItem>
-                      <CDropdownItem href="#">Deactive</CDropdownItem>
-                      <CDropdownItem href="#">Remove</CDropdownItem>
-                    </CDropdownMenu>  
-                  </CDropdown>
-                </CCardBody>
-              </CCard>
-          </CCol>
-        </template>
-        <CCol :md="12" :xs="12" class="d-flex justify-content-center py-4">
-          <CPagination aria-label="Page navigation example">
-            <CPaginationItem href="#">Previous</CPaginationItem>
-            <CPaginationItem href="#">1</CPaginationItem>
-            <CPaginationItem href="#">2</CPaginationItem>
-            <CPaginationItem href="#">3</CPaginationItem>
-            <CPaginationItem href="#">Next</CPaginationItem>
-          </CPagination>
-        </CCol>
-      </CRow>
-    </CCol>
+      </CCol>
+      <CCol :md="12" :xs="12">
+          <CCard>
+              <CCardBody class="p-4">
+                  <DataTable
+                      class="display table-stripped"
+                      :columns="table.columns"
+                      :data="table.clients"
+                      :options="table.options"
+                      ref="table"
+                  >
+                      <thead>
+                          <tr>
+                              <th>#</th>
+                              <th>Name</th>
+                              <th>Email Address</th>
+                              <th>Phone Number</th>
+                              <th>Status</th>
+                              <th>Joined On</th>
+                              <th>Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(client,key) in clients" :key="key">
+                          <td>{{ key + 1 }}</td>
+                          <td>{{ client.name }}</td>
+                          <td>{{ client.email }}</td>
+                          <td>{{ client.phone_number }}</td>
+                          <td>{{ client.status }}</td>
+                          <td>{{ client.created_at }}</td>
+                          <td>
+                            <CDropdown color="secondary" togglerText="Dropdown button">
+                              <CDropdownToggle component="a" color="primary">More</CDropdownToggle>
+                              <CDropdownMenu>
+                                <CDropdownItem href="#">Edit</CDropdownItem>
+                                <CDropdownItem href="#">Deactive</CDropdownItem>
+                                <CDropdownItem href="#">Remove</CDropdownItem>
+                              </CDropdownMenu>  
+                            </CDropdown>
+                          </td>
+                        </tr>
+                      </tbody>
+                  </DataTable>
+              </CCardBody>
+          </CCard>      
+      </CCol>
+    </CRow>
+  </CCol>
 </template>
 
 <script>
-  export default {
-    data: () => {
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+
+DataTable.use(DataTablesCore);
+
+export default {
+  components:{
+      DataTable
+  },
+  data: () => {
       return {
-        clients:[
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
+        table:{
+          columns: [
+              { 
+                title: '#' 
+              },
+              {
+                data:  'name',
+                title: 'Name'
+              },
+              { 
+                data:  'email',
+                title: 'Email Address'
+              },
+              { 
+                data:  'phone_number',
+                title: 'Phone Number'
+              },
+              { 
+                data: 'status',
+                title: 'Account Status'
+              },
+              { 
+                data: 'created_at',
+                title: 'Joined On'
+              },
+              { 
+                title: 'Action' 
+              },
+          ],
+          clients: [
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+            {
+              name:"Bryant Rotich",
+              email:"bryantkrotich@gmail.com",
+              phone_number:"+254712182872",
+              status:"active",
+              created_at:"1st Feb 2024"
+            },
+          ],
+          options: {
+            columnDefs: [
+              {
+                  targets: -1,
+                  className: 'dt-body-right'
+              }
+            ]
           }
-        ],
-        columns: [
-          {
-            key: 'id',
-            label: '#',
-            _props: { scope: 'col' },
-          },
-          {
-            key: 'class',
-            _props: { scope: 'col' },
-          },
-          {
-            key: 'heading_1',
-            label: 'Heading',
-            _props: { scope: 'col' },
-          },
-          {
-            key: 'heading_2',
-            label: 'Heading',
-            _props: { scope: 'col' },
-          },
-        ],
-        items: [
-          {
-            id: 1,
-            class: 'Mark',
-            heading_1: 'Otto',
-            heading_2: '@mdo',
-            _cellProps: { id: { scope: 'row' } },
-          },
-          {
-            id: 2,
-            class: 'Jacob',
-            heading_1: 'Thornton',
-            heading_2: '@fat',
-            _cellProps: { id: { scope: 'row' } },
-          },
-          {
-            id: 3,
-            class: 'Larry the Bird',
-            heading_2: '@twitter',
-            _cellProps: { id: { scope: 'row' }, class: { colSpan: 2 } },
-          },
-        ]
+        }
       }
-    },
-  }
+  },
+}
 </script>
+
+<style>
+@import 'datatables.net-bs5';
+</style>
