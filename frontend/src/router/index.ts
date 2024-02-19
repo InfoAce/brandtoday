@@ -6,10 +6,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.BASE_URL),
   routes: [
     {
-      path: '',
-      redirect: '/home'
-    },
-    {
       children:[
         {
           path:      '',
@@ -48,7 +44,7 @@ const router = createRouter({
           component: () => import('@/views/home/Forgot.vue')
         }        
       ],
-      path: '/home',
+      path: '',
       component: () => import('@/views/layouts/Landing.vue')
     },
     {

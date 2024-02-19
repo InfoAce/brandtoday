@@ -65,7 +65,7 @@ import { RedisOptions } from './services/redis';
       }),
       inject: [ConfigService]
     }),
-    MailModule,   
+    // MailModule,   
     CompanyModule,
     RoleModule,
     UserModule 
