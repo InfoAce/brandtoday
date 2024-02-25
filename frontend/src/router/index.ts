@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouterView  } from 'vue-router'
 import { isEmpty } from 'lodash';
 import store from '../stores';
 
@@ -33,6 +33,36 @@ const router = createRouter({
             auth: false,
           },
           component: () => import('@/views/home/Register.vue')
+        }, 
+        {
+          path: 'categories',
+          children: [
+            {
+              path: ':path',
+              name: "Categories",
+              meta: {
+                title:    'Categories',
+                auth: false,
+              },
+              component: () => import('@/views/home/ViewCategory.vue')
+            }
+          ],
+          component: RouterView
+        }, 
+        {
+          path: 'products',
+          children: [
+            {
+              path: ':name',
+              name: "Product",
+              meta: {
+                title:    'Product',
+                auth: false,
+              },
+              component: () => import('@/views/home/ViewCategory.vue')
+            }
+          ],
+          component: RouterView
         }, 
         {
           path: 'forgot',

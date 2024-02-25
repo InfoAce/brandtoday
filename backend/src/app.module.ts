@@ -2,22 +2,24 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthController, CompanyController, LandingController, SystemController } from './controllers';
+import { AuthController, CategoryController, CompanyController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigDatabase, ConfigServices } from './config';
-import { AmrodService, AuthService } from './services';
+import { AmrodService, AuthService, MailService } from './services';
 import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
 import { CompanyEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path'
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
-import type { RedisClientOptions } from 'redis';
-import { redisStore } from 'cache-manager-redis-store';
 import { RedisOptions } from './services/redis';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AppService } from './app.service';
+import { resolve } from 'path';
+import { NestSessionOptions, SessionModule } from 'nestjs-session';
 
 @Module({
   imports: [
@@ -31,8 +33,18 @@ import { RedisOptions } from './services/redis';
       timeout: 5000,
       maxRedirects: 5,
     }),
+    ScheduleModule.forRoot(),
+    SessionModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService): Promise<NestSessionOptions> => {
+        return {
+          session: { secret: configService.get<string>('SESSION_KEY') },
+        };
+      },
+    }),    
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: resolve('./public'),
       exclude: ['/api/(.*)']
     }),
     TypeOrmModule.forRootAsync({
@@ -67,11 +79,23 @@ import { RedisOptions } from './services/redis';
     }),
     // MailModule,   
     CompanyModule,
+    MailModule,
     RoleModule,
     UserModule 
   ],
-  controllers: [AuthController, CompanyController, LandingController, SystemController],
+  controllers: [
+    AuthController,
+    CategoryController, 
+    CompanyController, 
+    HeaderController, 
+    HomeController, 
+    LoginController,
+    ProductsController,
+    SignupController,
+    SystemController
+  ],
   providers: [
+    AppService,
     AuthService,
     AmrodService,
     {
@@ -79,14 +103,17 @@ import { RedisOptions } from './services/redis';
       useClass: CacheInterceptor,
     },
     JwtStrategy,
-    LocalStrategy
+    LocalStrategy,
   ],
 })
 
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ApiMiddleware)
-            .forRoutes("*");
+            .forRoutes("api/*");
+    // consumer.apply(CsrfMiddleware)
+    //         .exclude("api/*")
+    //         .forRoutes("*");
     consumer.apply(RedirectIfAuthMiddleware)
             .exclude('auth/logout')
             .forRoutes(AuthController)            

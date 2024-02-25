@@ -1,7 +1,3 @@
-import { NestFactory } from '@nestjs/core';
-import { CompanyModule, RoleModule, UserModule } from './modules';
-import { CompanyModel, RoleModel, UserModel } from './models';
-
 const { isEmpty }  = require('lodash');
 const randomstring = require("randomstring");
 const fs           = require("fs");
@@ -10,6 +6,7 @@ const os           = require("os");
 async function init(){
     setEnvValue("APP_KEY",randomstring.generate(50));
     setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
+    setEnvValue("SESSION_KEY",randomstring.generate(100));
 }
 
 function setEnvValue(key, value) {

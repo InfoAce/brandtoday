@@ -18,7 +18,7 @@ export class AmrodService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache
     ){
         this.config = this.configService.get<string>('services.amrod');
-        set(this.config.endpoints,'vendor_uri',`${this.config.endpoints.vendor_uri}/${this.config.version}`)
+        set(this.config.endpoints,'vendor_uri',`${this.config.endpoints.vendor_uri}/${this.config.version}/`)
     }
 
     // Query builder
@@ -86,17 +86,38 @@ export class AmrodService {
                 )
         );
 
+
         this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry)
 
     }
         
+    async getProducts(){
+
+        const auth = await this.cacheManager.store.get('amrod_auth');
+
+        const { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
+                .get(`${this.config.endpoints.products.without_branding}`)
+                .pipe(
+                    catchError((error: any) => {
+                        console.log(error);
+                        // const { response: { status, data: { message }} } = error;
+                        throw new HttpException(error.message,error.status);
+                    })
+                )
+        );
+        
+        return data;
+
+    }
+
     async getCategories(){
 
         const auth = await this.cacheManager.store.get('amrod_auth');
 
         const { data } = await firstValueFrom(
             this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`/${this.config.endpoints.categories.all}`)
+                .get(`${this.config.endpoints.categories.all}`)
                 .pipe(
                     catchError((error: any) => {
                         console.log(error);
