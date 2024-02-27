@@ -12,26 +12,18 @@ export class HomeController {
 
 
     @Get('')
-    @Render('pages/home')
-    async index(@Req() req: Request,  @Res() res: Response) {
-      // try {
-      //   // const categories = await this.amrodService.getCategories();
+    async root(@Req() req: Request,  @Res() res: Response) {
+      try {
+        const categories = await this.amrodService.getCategories();
+        res.render(
+          'pages/home',
+          {
+            categories
+          }
+        );
+      } catch(err){
 
-      //   // return res.status(HttpStatus.OK).json({ categories });
-      //   return res.render(
-      //     'pages/home',
-      //     { 
-      //       title: 'Home'
-      //     },
-      //     (err, html) => {
-      //         // Here you have access to the generated HTML
-      //         res.send(html)
-      //     }
-      //   );
-      
-      // } catch(err){
-
-      // }
+      }
 
     }   
 

@@ -13,25 +13,16 @@ export class AppService {
   ){}
 
   // Check for amrod api credntials
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_HOUR)
   async amrodCredentials(){
     
-    // try {
+    try {
+      this.amrodService.login();
+    } catch (err) {
 
-    //   // Fetch cached credentials
-    //   let auth = await this.cacheManager.store.get('amrod_auth');
-    //   // this.amrodService.login();
-
-    //   // Check if the credentials are empty
-    //   if( isEmpty(auth) ){
-    //     this.amrodService.login();
-    //   }
+      console.log(err);
     
-    // } catch (err) {
-
-    //   console.log(err);
-    
-    // }
+    }
 
   }
 

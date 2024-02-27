@@ -1,5 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { ApiMiddleware, RedirectIfAuthMiddleware } from './middlewares';
+import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController, CategoryController, CompanyController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
@@ -12,7 +12,6 @@ import { AmrodService, AuthService, MailService } from './services';
 import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
 import { CompanyEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path'
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
 import { RedisOptions } from './services/redis';
@@ -111,9 +110,9 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ApiMiddleware)
             .forRoutes("api/*");
-    // consumer.apply(CsrfMiddleware)
-    //         .exclude("api/*")
-    //         .forRoutes("*");
+    consumer.apply(CsrfMiddleware)
+            .exclude("api/*")
+            .forRoutes("*");
     consumer.apply(RedirectIfAuthMiddleware)
             .exclude('auth/logout')
             .forRoutes(AuthController)            

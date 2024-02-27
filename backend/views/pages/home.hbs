@@ -4,6 +4,35 @@
     <meta name="author" content="multikart">
 {{/section}}
 
+{{#section 'sidebarmenus'}}
+    <ul id="sub-menu" class="sm pixelstrap sm-vertical">
+        {{#each categories}}
+        <li> 
+            <a href="#">{{ categoryName }}</a>
+            <ul>
+                {{#isNotEmpty children}}
+                    {{#each children}}
+                        <li>
+                            <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
+                                {{#isNotEmpty children}}
+                                    <ul>
+                                        {{#each children}}
+                                            <li>
+                                                <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
+                                            </li>
+                                        {{/each}}
+                                    </ul>
+                                {{/isNotEmpty}}
+                            </template>
+                        </li>
+                    {{/each}}
+                {{/isNotEmpty}}
+            </ul>
+        </li>      
+        {{/each}}                                    
+    </ul>
+{{/section}}
+
 {{!-- {{#title 'Home'}} --}}
 
 {{#section 'body'}}
