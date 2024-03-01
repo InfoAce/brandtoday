@@ -1,22 +1,43 @@
+{{#section 'sidebarmenus'}}
+    <ul id="sub-menu" class="sm pixelstrap sm-vertical">
+        <li v-for="(category,key) in categories"> 
+            <a href="#" v-html="category.categoryName"></a>
+            <ul v-show="!$isEmpty(category.children)">
+                <li v-for="(child_category,child_category_key) in category.children" :key="child_category_key">
+                    <a href="/products?category={{toBase64 child_category.categoryPath}}" v-html="child_category.categoryName"></a>
+                            <ul v-show="!$isEmpty(child_category.children)">
+                                <li v-for="(value,value_key) in child_category.children" :key="value_key">
+                                    <a href="/products?category={{toBase64 value.categoryPath}}" v-html="value.categoryName"></a>
+                                </li>
+                            </ul>
+                    </template>
+                </li>
+            </ul>
+        </li>                                      
+    </ul>
+{{/section}}
 {{#section 'body'}}
     <!--section start-->
-    <section class="login-page section-b-space">
+    <section id="app" class="login-page section-b-space">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
                     <h3>Login</h3>
                     <div class="theme-card">
-                        <form class="theme-form">
+                        <form class="theme-form" @submit.prevent="login">
                             <div class="form-group">
-                                {{_csrf}}
+                                {{{ @csrfInput csrf }}}
                                 <label for="email">Email</label>
-                                <input type="text" class="form-control" id="email" placeholder="Email" required="">
+                                <input type="text" class="form-control" id="email" placeholder="Email" required="" v-model="form.email">
                             </div>
                             <div class="form-group">
                                 <label for="review">Password</label>
-                                <input type="password" class="form-control" id="review"
-                                    placeholder="Enter your password" required="">
-                            </div><a href="#" class="btn btn-solid">Login</a>
+                                <input type="password" class="form-control" id="review" placeholder="Enter your password" required="" v-model="form.password">
+                            </div>
+                            <button class="btn btn-solid" type="submit" :disabled="loading">
+                                <i class="fa fa-spinner fa-spin" v-show="loading"></i>
+                                Login
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -25,7 +46,7 @@
                     <div class="theme-card authentication-right">
                         <h6 class="title-font">Create A Account</h6>
                         <p>Sign up for a free account at our store. Registration is quick and easy. It allows you to be
-                            able to order from our shop. To start shopping click register.</p><a href="#"
+                            able to order from our shop. To start shopping click register.</p><a href="/signup"
                             class="btn btn-solid">Create an Account</a>
                     </div>
                 </div>
@@ -33,4 +54,39 @@
         </div>
     </section>
     <!--Section ends-->
+{{/section}}
+
+{{#section 'scripts'}}
+<script type="text/javascript">
+    const { Vue: { createApp, ref }, axios } = window;
+    createApp({
+        created(){
+            this.$isEmpty = _.isEmpty;
+        },
+        data() {
+            return {
+                form:{
+                    email:    String(),
+                    password: String()
+                },
+                loading: false
+            }
+        },
+        methods: {
+            async login() {
+                window.axios   
+                        .post(`${origin}/login/auth`,{...form,_csrf:csrf})
+                        .then( ({ data: { categories } }) => {
+                            this.categories = categories;
+                        })
+                        .catch( (err) => {
+                            console.log(err);
+                        })
+                        .finally( () => {
+                            this.loading = false;            
+                        })
+            }
+        }
+    }).mount("#app")  
+</script>
 {{/section}}

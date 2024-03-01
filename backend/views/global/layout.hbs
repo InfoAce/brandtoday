@@ -2,9 +2,15 @@
 <html lang="en">
 {{> head}}
 <body class="theme-color-1">
+    
     {{> loader}}
+    
     {{> header}}
-    {{{_sections.body}}}
+
+    <div id="app">
+        {{{_sections.body}}}
+    </div>
+    
     {{> footer}}
 </body>
 </html>

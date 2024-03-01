@@ -8,7 +8,8 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { isEmpty, isNull } from 'lodash';
 import { sep } from 'path';
-@Controller('system')
+
+@Controller('api/system')
 export class SystemController {
 
     private readonly file_path = `${process.cwd()}${sep}configurations.json`;

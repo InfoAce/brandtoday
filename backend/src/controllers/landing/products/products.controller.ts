@@ -1,55 +1,38 @@
-import { Body, Controller, Get, HttpStatus, Inject, Injectable, Param, Post, Render, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../../guards';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { Controller, Get, Inject, Param, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AmrodService, AuthService, MailService } from 'src/services';
-import { isEmpty, get, has } from 'lodash';
-import { paginate } from "src/helpers";
+import { intersection, isEmpty } from 'lodash';
+import { paginate } from 'src/helpers';
 
 @Controller('products')
 export class ProductsController {
 
     constructor(
-        private amrodService: AmrodService,
+      @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
     @Get('')
     async index(@Req() req: Request,  @Res() res: Response) {
-      try {
-        let categories = await this.amrodService.getCategories(), 
-        products       = await this.amrodService.getProducts(), 
-        data           = { categories, products };
+      res.render('pages/products');
+    }   
 
-        if( !isEmpty(req.query) && has(req.query,'category') ){
-          products  = data.products.filter( products=> products.categories.find( category => btoa(category.path) == req.query.category ) );
+    @Get(':code')
+    async show(@Param('code') code: string, @Req() req: Request,  @Res() res: Response) {
+      
+      let products: any         = await this.cacheManager.store.get('amrod_products');
+      let product               = products.find( product => product.fullCode == code );
+      let related_products: any = products.filter( value => {
+        if( !isEmpty(intersection( value.categories.map( category => btoa(category.path) ), product.categories.map( item => btoa(item.path) ) )) ){
+          return value; 
         }
+      });
 
-        data.products = paginate({data:products,response:res});
-        console.log(data.products.links);
-        res.render('pages/products',data);
+      // console.log(product);
 
-      } catch(err){
-
-      }
-    }  
+      related_products = paginate(related_products);
+      
+      res.render('pages/product',{ product, related_products });
     
-    @Get(':category')
-    async indexCategory(@Param('category') category: string, @Req() req: Request,  @Res() res: Response) {
-      try {
-        let categories = await this.amrodService.getCategories(),
-        products       = await this.amrodService.getProducts();
-        
-        products       = products.filter( product => products.categories.find( category => btoa(category.path) == category ) );
-        console.log(products);
-        res.render(
-          'pages/products',
-          {
-            categories,
-            products
-          }
-        );
-      } catch(err){
-
-      }
-    } 
+    }  
 
 }

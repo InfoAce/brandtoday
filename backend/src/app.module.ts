@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthController, CategoryController, CompanyController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
+import { AccountController, ApiProductsController, AuthController, CategoryController, CompanyController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -19,6 +19,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
 import { resolve } from 'path';
 import { NestSessionOptions, SessionModule } from 'nestjs-session';
+import { RouterModule } from '@nestjs/core';
+import { SessionSerialize } from './utils';
 
 @Module({
   imports: [
@@ -65,13 +67,15 @@ import { NestSessionOptions, SessionModule } from 'nestjs-session';
       }),
       inject:[ConfigService]
     }),
-    PassportModule,
+    PassportModule.register({
+      session: true
+    }),
     JwtModule.registerAsync({
       imports:    [ConfigModule],
       useFactory: async( configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SESSION_KEY'),
+        secret: configService.get<string>('JWT_KEY'),
         signOptions: { 
-          expiresIn: configService.get<string>('JWT_SESSION_EXPIRES') 
+          expiresIn: configService.get<string>('JWT_EXPIRES') 
         },
       }),
       inject: [ConfigService]
@@ -83,6 +87,8 @@ import { NestSessionOptions, SessionModule } from 'nestjs-session';
     UserModule 
   ],
   controllers: [
+    AccountController,
+    ApiProductsController,
     AuthController,
     CategoryController, 
     CompanyController, 
@@ -103,6 +109,7 @@ import { NestSessionOptions, SessionModule } from 'nestjs-session';
     },
     JwtStrategy,
     LocalStrategy,
+    SessionSerialize
   ],
 })
 

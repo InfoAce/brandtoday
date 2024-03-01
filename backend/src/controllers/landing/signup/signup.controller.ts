@@ -1,38 +1,18 @@
-import { Body, Controller, Get, HttpStatus, Inject, Injectable, Post, Render, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../../guards';
+import { Controller, Get, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AmrodService, AuthService, MailService } from 'src/services';
+import { get } from 'lodash';
 
 @Controller('signup')
 export class SignupController {
-
-    constructor(
-        private amrodService: AmrodService,
-    ){}
-
-
     @Get('')
     @Render('pages/signup')
     async index(@Req() req: Request,  @Res() res: Response) {
-      // try {
-      //   // const categories = await this.amrodService.getCategories();
-
-      //   // return res.status(HttpStatus.OK).json({ categories });
-      //   return res.render(
-      //     'pages/home',
-      //     { 
-      //       title: 'Home'
-      //     },
-      //     (err, html) => {
-      //         // Here you have access to the generated HTML
-      //         res.send(html)
-      //     }
-      //   );
-      
-      // } catch(err){
-
-      // }
-
+      return res.render(
+        'pages/signup',
+        {
+          csrf: get(req,'csrfToken')()
+        }
+      )
     }   
 
 }

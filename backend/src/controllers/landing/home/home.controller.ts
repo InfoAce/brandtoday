@@ -13,18 +13,7 @@ export class HomeController {
 
     @Get('')
     async root(@Req() req: Request,  @Res() res: Response) {
-      try {
-        const categories = await this.amrodService.getCategories();
-        res.render(
-          'pages/home',
-          {
-            categories
-          }
-        );
-      } catch(err){
-
-      }
-
+      res.render('pages/home');
     }   
 
 }

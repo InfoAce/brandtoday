@@ -6,16 +6,8 @@ const router = createRouter({
   history: createWebHistory(import.meta.BASE_URL),
   routes: [
     {
+      path: '/',
       children:[
-        {
-          path:      '',
-          name:      "Home",
-          meta: {
-            title:     'Home',
-            auth: false,
-          },          
-          component: () => import('@/views/home/Index.vue')
-        },
         {
           path: 'login',
           name: "Login",
@@ -23,63 +15,8 @@ const router = createRouter({
             title:     'Login',
             auth: false,
           },
-          component: () => import('@/views/home/Login.vue')
+          component: () => import('@/views/dashboard/Login.vue')
         },
-        {
-          path: 'register',
-          name: "Register",
-          meta: {
-            title:    'Register',
-            auth: false,
-          },
-          component: () => import('@/views/home/Register.vue')
-        }, 
-        {
-          path: 'categories',
-          children: [
-            {
-              path: ':path',
-              name: "Categories",
-              meta: {
-                title:    'Categories',
-                auth: false,
-              },
-              component: () => import('@/views/home/ViewCategory.vue')
-            }
-          ],
-          component: RouterView
-        }, 
-        {
-          path: 'products',
-          children: [
-            {
-              path: ':name',
-              name: "Product",
-              meta: {
-                title:    'Product',
-                auth: false,
-              },
-              component: () => import('@/views/home/ViewCategory.vue')
-            }
-          ],
-          component: RouterView
-        }, 
-        {
-          path: 'forgot',
-          name: "Forgot",
-          meta: {
-            title:     'Forgot Password',
-            auth:  false,
-          },
-          component: () => import('@/views/home/Forgot.vue')
-        }        
-      ],
-      path: '',
-      component: () => import('@/views/layouts/Landing.vue')
-    },
-    {
-      path: '/dashboard',
-      children:[
         {
           path: '',
           name: "Overview",

@@ -1,172 +1,153 @@
-{{#section 'sidebarmenus'}}
-    <ul id="sub-menu" class="sm pixelstrap sm-vertical">
-        {{#each categories}}
-        <li> 
-            <a href="#">{{ categoryName }}</a>
-            <ul>
-                {{#isNotEmpty children}}
-                    {{#each children}}
-                        <li>
-                            <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
-                                {{#isNotEmpty children}}
-                                    <ul>
-                                        {{#each children}}
-                                            <li>
-                                                <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
-                                            </li>
-                                        {{/each}}
-                                    </ul>
-                                {{/isNotEmpty}}
-                            </template>
-                        </li>
-                    {{/each}}
-                {{/isNotEmpty}}
-            </ul>
-        </li>      
-        {{/each}}                                    
-    </ul>
-{{/section}}
+
+
 
 {{#section 'body'}}
-    <!-- breadcrumb start -->
-    <div class="breadcrumb-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="page-title">
-                        <h2>collection</h2>
-                    </div>
+<!-- breadcrumb start -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>Products</h2>
                 </div>
-                <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">collection</li>
-                        </ol>
-                    </nav>
-                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Products</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
-    <!-- breadcrumb end -->  
-    <!-- section start -->
-    <section class="section-b-space ratio_asos">
-        <div class="collection-wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="collection-content col">
-                        <div class="page-main-content">
-                            <div class="collection-product-wrapper">
-                                <div class="product-top-filter">
+</div>
+<!-- breadcrumb end -->  
+<!-- section start -->
+<section class="section-b-space ratio_asos">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="collection-content col">
+                    <div class="page-main-content">
+                        <div class="collection-product-wrapper">
+                            <div class="product-top-filter">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="product-filter-content">
+                                            <div class="search-count" v-show="!$isEmpty(products)">
+                                                <h5 v-html="`Showing Products 1-${ products.perPage } of ${ products.total } Result`"></h5>
+                                            </div>
+                                            <div class="collection-view">
+                                                <ul>
+                                                    <li><i class="fa fa-th grid-layout-view"></i></li>
+                                                    <li><i class="fa fa-list-ul list-layout-view"></i></li>
+                                                </ul>
+                                            </div>
+                                           
+                                            <div class="product-page-per-view">
+                                                <select>
+                                                    <option value="High to low">10 Products per Page</option>
+                                                    <option value="Low to High">20 Products per Page</option>
+                                                    <option value="Low to High">50 Products per Page</option>
+                                                </select>
+                                            </div>
+                                            <div class="product-page-filter">
+                                                <select>
+                                                    <option value="High to low">Sorting items</option>
+                                                    <option value="Low to High">10 Products</option>
+                                                    <option value="Low to High">20 Products</option>
+                                                    <option value="Low to High">50 Products</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-wrapper-grid">
+                                <div class="row margin-res" v-show="!$isEmpty(products)">
+                                    <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products.data" :key="index">
+                                        <div class="product-box">
+                                            <div class="img-wrapper">
+                                                <div v-if="!$isEmpty(product.images)">
+                                                    <div class="front">
+                                                        <a :href="`products/${product.fullCode}`">
+                                                            <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
+                                                        </a>
+                                                    </div>
+                                                    <div class="back" v-if="product.images.length > 1">
+                                                        <a :href="`products/${product.fullCode}`">
+                                                            <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img"alt="" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="cart-info cart-wrap">
+                                                    <button data-bs-toggle="modal"
+                                                        data-bs-target="#addtocart" title="Add to cart"><i
+                                                            class="ti-shopping-cart"></i></button> <a
+                                                        href="javascript:void(0)" title="Add to Wishlist"><i
+                                                            class="ti-heart" aria-hidden="true"></i></a> <a
+                                                        href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#quick-view" title="Quick View"><i
+                                                            class="ti-search" aria-hidden="true"></i></a> <a
+                                                        href="compare.html" title="Compare"><i
+                                                            class="ti-reload" aria-hidden="true"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="product-detail">
+                                                <div>
+                                                    <div class="rating">
+                                                        <i class="fa fa-star"></i> 
+                                                        <i class="fa fa-star"></i> 
+                                                        <i class="fa fa-star"></i> 
+                                                        <i class="fa fa-star"></i> 
+                                                        <i class="fa fa-star"></i>
+                                                    </div>
+                                                    <a :href="`products/${product.fullCode}`">
+                                                        <h6 v-html="product.productName"></h6>
+                                                    </a>
+                                                    <p v-html="product.description"></p>
+                                                    <h4>$45.00</h4>
+                                                    <ul class="color-variant">
+                                                        <li class="bg-light0"></li>
+                                                        <li class="bg-light1"></li>
+                                                        <li class="bg-light2"></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-pagination">
+                                <div class="theme-paggination-block">
                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="product-filter-content">
-                                                <div class="search-count">
-                                                    <h5>Showing Products 1-{{ products.perPage }} of {{ products.total }} Result</h5>
-                                                </div>
-                                                <div class="collection-view">
-                                                    <ul>
-                                                        <li><i class="fa fa-th grid-layout-view"></i></li>
-                                                        <li><i class="fa fa-list-ul list-layout-view"></i></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="collection-grid-view">
-                                                    <ul>
-                                                        <li><img src="../assets/images/icon/2.png" alt=""
-                                                                class="product-2-layout-view"></li>
-                                                        <li><img src="../assets/images/icon/3.png" alt=""
-                                                                class="product-3-layout-view"></li>
-                                                        <li><img src="../assets/images/icon/4.png" alt=""
-                                                                class="product-4-layout-view"></li>
-                                                        <li><img src="../assets/images/icon/6.png" alt=""
-                                                                class="product-6-layout-view"></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="product-page-per-view">
-                                                    <select>
-                                                        <option value="High to low">24 Products Par Page</option>
-                                                        <option value="Low to High">50 Products Par Page</option>
-                                                        <option value="Low to High">100 Products Par Page</option>
-                                                    </select>
-                                                </div>
-                                                <div class="product-page-filter">
-                                                    <select>
-                                                        <option value="High to low">Sorting items</option>
-                                                        <option value="Low to High">50 Products</option>
-                                                        <option value="Low to High">100 Products</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                        <div class="col-xl-6 col-md-6 col-sm-12">
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination">
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="" aria-label="Previous">
+                                                            <span aria-hidden="true">
+                                                                <i class="fa fa-chevron-left" aria-hidden="true"></i></span> 
+                                                            <span class="sr-only">Previous</span>
+                                                        </a>
+                                                    </li>
+                                                    <li :class="products.currentPage == (value+1) ? 'page-item active' : 'page-item'" v-for="(value,index) in $times(products.totalPages)">
+                                                        <a class="page-link" href="#" v-html="value+1"></a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="" aria-label="Next">
+                                                            <span aria-hidden="true">
+                                                                <i class="fa fa-chevron-right" aria-hidden="true"></i></span> 
+                                                            <span class="sr-only">Next</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>                                                                                                       
+                                            </nav>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="product-wrapper-grid">
-                                    <div class="row margin-res">
-                                        {{#each products.data}}
-                                        <div class="col-xl-3 col-6 col-grid-box">
-                                            <div class="product-box">
-                                                <div class="img-wrapper">
-                                                    {{#isNotEmpty images}}
-                                                        <div class="front">
-                                                            <a href="#">
-                                                                <img class="img-fluid blur-up lazyload bg-img" alt="">
-                                                            </a>
-                                                        </div>
-                                                    {{/isNotEmpty}}
-                                                    <div class="back">
-                                                        <a href="#"><img src="/assets/images/pro3/36.jpg"
-                                                                class="img-fluid blur-up lazyload bg-img"
-                                                                alt=""></a>
-                                                    </div>
-                                                    <div class="cart-info cart-wrap">
-                                                        <button data-bs-toggle="modal"
-                                                            data-bs-target="#addtocart" title="Add to cart"><i
-                                                                class="ti-shopping-cart"></i></button> <a
-                                                            href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                class="ti-heart" aria-hidden="true"></i></a> <a
-                                                            href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#quick-view" title="Quick View"><i
-                                                                class="ti-search" aria-hidden="true"></i></a> <a
-                                                            href="compare.html" title="Compare"><i
-                                                                class="ti-reload" aria-hidden="true"></i></a>
-                                                    </div>
-                                                </div>
-                                                <div class="product-detail">
-                                                    <div>
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i></div>
-                                                        <router :to="`products/${item.productName}`">
-                                                            <h6>{{ productName }}</h6>
-                                                        </router>
-                                                        <p v-html="item.description"></p>
-                                                        <h4>$45.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {{/each}}
-                                    </div>
-                                </div>
-                                <div class="product-pagination">
-                                    <div class="theme-paggination-block">
-                                        <div class="row">
-                                            <div class="col-xl-6 col-md-6 col-sm-12">
-                                                <nav aria-label="Page navigation">
-                                                   {{> pagination currentPage=products.currentPage totalPages=products.totalPages links=products.links }}
-                                                </nav>
-                                            </div>
-                                            <div class="col-xl-6 col-md-6 col-sm-12">
-                                                <div class="product-search-count-bottom">
-                                                    <h5>Showing Products 1-{{ products.perPage }} of {{ products.total }} Result</h5>
-                                                </div>
+                                        <div class="col-xl-6 col-md-6 col-sm-12">
+                                            <div class="product-search-count-bottom" v-show="!$isEmpty(products)">
+                                                <h5>Showing Products 1-{{ products.perPage }} of {{ products.total }} Result</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -177,7 +158,111 @@
                 </div>
             </div>
         </div>
-    </section>
-    <!-- section End -->
-    
+    </div>
+</section>
+<!-- section End -->
+{{/section}}
+
+{{#section 'extra_scripts'}}
+<script type="text/javascript">
+    window.Vue
+          .createApp({
+            computed:{
+                params(){
+                    return window.location.search
+                },
+            },
+            created(){
+                this.$isEmpty   = _.isEmpty;      
+                this.$times     = _.times;
+                this.changePage = _.debounce((page) => {
+                    let url = `${origin}/api/products`, { params, products: { perPage } } = this;
+                    switch( !_.isEmpty(params) ){
+                        case true: 
+                            url = `${url}${params}&page=${page+1}&perPage=${perPage}`;
+                        break;
+                        case false:
+                            url = `${url}?page=${page+1}&perPage=${perPage}`;
+                        break;
+                    }
+                    window.axios   
+                            .get(url)
+                            .then( ({ data: { products } }) => {
+                                this.$set(this.products,"currentPage",products.currentPage);
+                                this.$set(this.products,"total",products.total);
+                                this.$set(this.products,"totalPages",products.totalPages);
+                                this.$set(this.products,"perPage",products.perPage);
+                                this.$set(this.products,"data",products.data);
+                            })
+                            .catch( (err) => {
+                                console.log(err);
+                            })
+                            .finally( () => {
+                                this.loading = false;            
+                            })   
+                },500)     
+            },
+            data(){
+                return {
+                    products: Object()
+                }
+            },   
+            beforeMount(){
+                    window.axios   
+                            .get(this.generateUrl())
+                            .then( ({ data: { products } }) => {
+                                this.products = products;
+                            })
+                            .catch( (err) => {
+                                console.log(err);
+                            })
+                            .finally( () => {
+                                this.loading = false;            
+                            })    
+            },   
+            methods:{
+                generateUrl(){
+                    let url = `${origin}/api/products`,{ params, products: { perPage } } = this;
+                    switch( !_.isEmpty(params) ){
+                        case true: 
+                            switch(params.includes('page') ){
+                                case true:
+                                    url = `${url}${params}&page=${page+1}&perPage=${perPage}`;
+                                break;
+                                case false:
+                                    url = `${url}${params}`;
+                                break;
+                            }
+                        break;
+                        case false:
+                            url = `${url}?page=${page+1}&perPage=${perPage}`;
+                        break;
+                    }
+                    return url;
+                }
+            },
+            mounted(){            
+                this.$nextTick( 
+                    _.debounce( () => {
+                        jQuery('.bg-img').each(function () {
+
+                            var el = $(this),
+                                src = el.attr('src'),
+                                parent = el.parent();
+
+                            parent.css({
+                                'background-image': 'url(' + src + ')',
+                                'background-size': 'cover',
+                                'background-position': 'center',
+                                'display': 'block'
+                            });
+
+                            el.hide();
+                        }); 
+                    },1000)                
+                );           
+            },
+            name: "ProductsPage"
+        }).mount("#app")  
+</script>
 {{/section}}

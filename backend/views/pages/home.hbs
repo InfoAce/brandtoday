@@ -6,30 +6,20 @@
 
 {{#section 'sidebarmenus'}}
     <ul id="sub-menu" class="sm pixelstrap sm-vertical">
-        {{#each categories}}
-        <li> 
-            <a href="#">{{ categoryName }}</a>
-            <ul>
-                {{#isNotEmpty children}}
-                    {{#each children}}
-                        <li>
-                            <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
-                                {{#isNotEmpty children}}
-                                    <ul>
-                                        {{#each children}}
-                                            <li>
-                                                <a href="/products?category={{toBase64 categoryPath}}">{{ categoryName }}</a>
-                                            </li>
-                                        {{/each}}
-                                    </ul>
-                                {{/isNotEmpty}}
-                            </template>
-                        </li>
-                    {{/each}}
-                {{/isNotEmpty}}
+        <li v-for="(category,key) in categories"> 
+            <a href="#" v-html="category.categoryName"></a>
+            <ul v-if="!$isEmpty(category.children)">
+                <li v-for="(child_category,child_category_key) in category.children" :key="child_category_key">
+                    <a :href="`/products?category=${child_category.categoryPath}`" v-html="child_category.categoryName"></a>
+                            <ul v-if="!$isEmpty(child_category.children)">
+                                <li v-for="(value,value_key) in child_category.children" :key="value_key">
+                                    <a :href="`/products?category=${value.categoryPath}`" v-html="value.categoryName"></a>
+                                </li>
+                            </ul>
+                    </template>
+                </li>
             </ul>
-        </li>      
-        {{/each}}                                    
+        </li>                                      
     </ul>
 {{/section}}
 
@@ -1697,4 +1687,26 @@
         </div>
     </section>
     <!--  logo section end-->
+{{/section}}
+
+{{#section 'extra_scripts'}}
+<script type="text/javascript">
+    window.Vue
+          .createApp({
+            computed:{
+                params(){
+                    return window.location.search
+                }
+            },
+            created(){
+                this.$isEmpty = _.isEmpty;      
+            },
+            data() {
+                return {
+
+                }
+            },
+            name: "HomePage"
+        }).mount("#app")  
+</script>
 {{/section}}

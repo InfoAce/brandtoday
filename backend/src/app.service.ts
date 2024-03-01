@@ -19,9 +19,7 @@ export class AppService {
     try {
       this.amrodService.login();
     } catch (err) {
-
       console.log(err);
-    
     }
 
   }

@@ -10,7 +10,8 @@ import { get, isEmpty, isNull, pick, set } from 'lodash';
 import * as path from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-@Controller('auth')
+
+@Controller('api/auth')
 export class AuthController {
 
     constructor(
@@ -24,7 +25,7 @@ export class AuthController {
 
     @Post('login')
     async login(@Req() req: Request,  @Res() res: Response){
-        const { email, password } = req.body;
+        let { email, password } = req.body;
         try{
             const user = await this.authService.findOneByEmail(email);
 
