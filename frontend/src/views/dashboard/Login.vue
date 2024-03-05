@@ -139,6 +139,13 @@ const login = () => {
 					text: 'Your email or password is incorrect.',
 				});
 			}
+			if( response.status == 403 ){
+				swal.fire({
+					icon: 'error',
+					title: 'Oops!',
+					text: 'Your account has not been verified',
+				});
+			}
 		})
 		.finally( () => {
 			store.commit('loader',false);
@@ -151,7 +158,6 @@ watch(
 		each(form,(value,key) => {
 			validateForm(key);
 		});
-		console.log(data.errors);
 		data.isDisabled = !isEmpty(data.errors);
 	},
 	{ 

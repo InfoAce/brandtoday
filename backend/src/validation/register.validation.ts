@@ -18,6 +18,9 @@ export class RegisterValidation {
   password: string;
 
   @IsNotEmpty()
+  phone_number: string
+
+  @IsNotEmpty()
   @IsString()
   @MinLength(4,{message:"Password confirmation should not be less than 4 characters." })
   @Matches(RegisterValidation['password'],{message: "Password confirmation should match the password."})

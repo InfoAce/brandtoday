@@ -11,16 +11,18 @@ export class MailService {
   ) {}
 
   async sendUserConfirmation(user: UserEntity) {
-    const url = `${this.configService.get('APP_URL')}/email/confirmation/${user.token}`;
+    const url = `${this.configService.get('APP_URL')}/verify/email/${user.token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Welcome to Nice App! Confirm your Email',
-      template: 'register', // `.hbs` extension is appended automatically
+      subject: `Welcome to  ${this.configService.get<string>('APP_NAME') } Confirm your Email`,
+      template: 'welcome', // `.hbs` extension is appended automatically
       context: { // ✏️ filling curly brackets with content
+        app:  this.configService.get<string>('APP_NAME'),
         name: `${user.first_name} ${user.last_name}`,
         url,
+        contact: this.configService.get<string>('MAIL_FROM')
       },
     });
   }

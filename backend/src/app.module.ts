@@ -80,7 +80,7 @@ import { SessionSerialize } from './utils';
       }),
       inject: [ConfigService]
     }),
-    // MailModule,   
+    MailModule,   
     CompanyModule,
     MailModule,
     RoleModule,

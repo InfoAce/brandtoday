@@ -1,19 +1,160 @@
 import { createRouter, createWebHistory, RouterView  } from 'vue-router'
 import { isEmpty } from 'lodash';
 import store from '../stores';
+import { useHead } from '@unhead/vue';
+import { theme } from '../config';
+import { loadScript } from "vue-plugin-load-script";
 
 const router = createRouter({
   history: createWebHistory(import.meta.BASE_URL),
   routes: [
     {
-      path: '/',
-      children:[
+      path: '',
+      redirect: '/home'
+    },
+    {
+      path: '/home',
+      component: () => import('@/views/layouts/Landing.vue'),
+      children: [
+        {
+          path: '',
+          name: "Home",
+          meta: {
+            title: 'Home',
+            auth: false,
+            landing: true
+          },
+          component: () => import('@/views/home/Index.vue')
+        },
+        {
+          path: ':pathMatch(.*)*',
+          name: "Error404",
+          meta: {
+            title: 'Not Found',
+            auth: false,
+            landing: true
+          },
+          component: () => import('@/views/home/Error404.vue')
+        }, 
         {
           path: 'login',
           name: "Login",
           meta: {
-            title:     'Login',
+            title: 'Login',
             auth: false,
+            landing: true
+          },
+          component: () => import('@/views/home/Login.vue')
+        },     
+        {
+          path: 'products',
+          children: [
+            {
+              path: ':category?',
+              name: "Products",
+              meta: {
+                title: 'Products',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Products.vue')
+            },
+          ]
+        },   
+        {
+          path: 'signup',
+          name: "Signup",
+          meta: {
+            title: 'Signup',
+            auth: false,
+            landing: true
+          },
+          component: () => import('@/views/home/Signup.vue')
+        },  
+        {
+          path: 'verify',
+          children: [
+            {
+              path: 'email/:token',
+              name: "VerifyEmail",
+              meta: {
+                title: 'Email Verification',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Verify.vue')
+            }
+          ],
+          component: RouterView
+        },  
+        {
+          path: 'account',
+          children: [
+            {
+              path: 'profile',
+              name: "AccountProfile",
+              meta: {
+                title: 'Account Profile',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Account.vue')
+            },
+            {
+              path: 'orders',
+              name: "AccountOrders",
+              meta: {
+                title: 'Client Orders',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Orders.vue')
+            },
+            {
+              path: 'favourites',
+              name: "AccountFavourites",
+              meta: {
+                title: 'Favourites',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Favourites.vue')
+            },
+            {
+              path: 'cards',
+              name: "AccountCards",
+              meta: {
+                title: 'Cards',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Cards.vue')
+            },
+            {
+              path: 'security',
+              name: "AccountSecurity",
+              meta: {
+                title: 'Client Security',
+                auth: false,
+                landing: true
+              },
+              component: () => import('@/views/home/Security.vue')
+            }
+          ],
+          component: () => import('@/views/home/Profile.vue')
+        },  
+      ]
+    },
+    {
+      path: '/dashboard',
+      children:[
+        {
+          path: 'login',
+          name: "AdminLogin",
+          meta: {
+            title: 'Login',
+            state: 1,
+            auth:  false,
           },
           component: () => import('@/views/dashboard/Login.vue')
         },
@@ -23,7 +164,7 @@ const router = createRouter({
           meta: {
             title:     'Overview',
             auth:  true,
-            state: 0
+            state: 1
           },
           component: () => import('@/views/dashboard/Overview.vue')
         },      
@@ -36,16 +177,6 @@ const router = createRouter({
             state: 1
           },
           component: () => import('@/views/dashboard/Clients.vue')
-        },
-        {
-          path: 'products',
-          name: "Products",
-          meta: {
-            title: 'Products',
-            auth:  true,
-            state: 1
-          },
-          component: () => import('@/views/dashboard/Products.vue')
         },
         {
           path: 'orders',
@@ -83,7 +214,7 @@ const router = createRouter({
           meta: {
             title: 'Profile',
             auth:  true,
-            state: 0
+            state: 1
           },
           component: () => import('@/views/dashboard/Profile.vue')
         },       
@@ -104,22 +235,22 @@ const router = createRouter({
 });
 
 router.beforeEach( (to, from, next) => {
-  const { name: routeName, meta: { auth, state } } = to;
+  const { name: routeName, meta: { auth, state, landing } } = to;
   store.commit('loader',true);
   window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
   window.scrollTo({top: 0, behavior: 'smooth'});
   switch( !isEmpty(store.getters.authUser) ){
     case true:
-      if( routeName == "Login"){
-        next({name:"Overview"});
-      } else {
-        const { getters: { authUser:{ role: { name: roleName, state: roleState } } } } = store;
-        if( roleState >= state ){
-          next();
-        } else {
-          next({name:"Forbidden"})
-        }
-      }   
+      // if( routeName == "Login"){
+      // } else {
+      //   const { getters: { authUser:{ role: { name: roleName, state: roleState } } } } = store;
+      //   if( roleState >= state ){
+      //     next();
+      //   } else {
+      //     next({name:"Forbidden"})
+      //   }
+      // }  
+      checkRole(to,next);
     break;
     case false:
       // store.commit('auth',{});
@@ -130,11 +261,61 @@ router.beforeEach( (to, from, next) => {
     break;
   }
 
+  if( landing ){
+    useHead(theme);
+    [
+      '/assets/js/jquery-3.3.1.min.js',
+      '/assets/js/jquery-ui.min.js',
+    ].forEach( async(url) => {
+      await loadScript(url);
+    })    
+  }
+
 });
 
 router.afterEach((to, from,failure) => {
   store.commit('loader',false);
+  if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
+    window.document.getElementById("mySidenav").classList.remove('open-side')
+  }
 })
+
+const checkRole = (to:any,next: any) => {
+  const { role: { state: roleState } } = store.getters.authUser, { name: route, meta: { state } } = to;
+  switch(route){
+    case 'Login':
+    case 'Signup':
+
+    break;
+    case 'AdminLogin':
+      next({name:"Overview"});
+    break;
+    default:
+      if( roleState >= state ){
+        next();
+      } else {
+        next({name:"Forbidden"})
+      }
+  }
+  // if( routeName == "Login"){
+  //   checkRole(to,next);
+  // } else {
+  //   const { getters: { authUser:{ role: { name: roleName, state: roleState } } } } = store;
+  //   if( roleState >= state ){
+  //     next();
+  //   } else {
+  //     next({name:"Forbidden"})
+  //   }
+  // }    
+  switch(state){
+    case 1:
+    case 2:
+      next({name:"Overview"});
+    break;
+    default: 
+      next({name:"Home"});
+  }
+}
 
 
 export default router

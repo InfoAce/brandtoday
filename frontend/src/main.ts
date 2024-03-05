@@ -20,6 +20,10 @@ import "vue-toastification/dist/index.css";
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import { createHead } from '@unhead/vue'
+
+import LoadScript from "vue-plugin-load-script";
+
 const app = createApp(App)
 
 app.use(CoreuiVue)
@@ -32,6 +36,8 @@ app.use(router)
 app.use(api,{
     store: appStore
 });
+app.use(createHead())
 app.use(VueSweetalert2);
+app.use(LoadScript);
 
 app.mount('#app')

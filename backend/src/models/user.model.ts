@@ -14,7 +14,7 @@ export default class UserModel {
   }
 
   async findOne(id: string): Promise<UserEntity | null> {
-    return await this.usersRepository.findOneBy({ id });
+    return await this.usersRepository.findOneByOrFail({ id });
   }
 
   async findOneBy(data: object): Promise<UserEntity> {
