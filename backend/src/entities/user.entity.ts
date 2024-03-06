@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, AfterLoad } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, AfterLoad, OneToMany } from 'typeorm';
 import { CompanyEntity, RoleEntity } from './index';
 import { Seed, SeederContext, SeedRelation } from 'nestjs-class-seeder';
 import { Faker } from "@faker-js/faker";
 import * as bcrypt from 'bcrypt';
 import { omit } from 'lodash';
+import { FavouriteEntity } from './favourite.entity';
 
 export enum Gender {
   MALE         = "male",
@@ -67,6 +68,13 @@ export class UserEntity {
   })
   gender: string;
 
+  @OneToMany(() => FavouriteEntity, (favourites) => favourites.user, { lazy: true })
+  @JoinColumn({
+    name:                 "id",
+    referencedColumnName: "user_id"
+  })
+  favourites: FavouriteEntity[];
+
   @Column({
     nullable: true
   })
@@ -96,6 +104,7 @@ export class UserEntity {
   @Column()
   role_id: string;
 
+  
   @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
   @Column()
   token: string;

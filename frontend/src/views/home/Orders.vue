@@ -23,7 +23,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/1.jpg"
+                                            <img src="/assets/images/pro3/1.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>
@@ -50,7 +50,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/2.jpg"
+                                            <img src="/assets/images/pro3/2.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>
@@ -77,7 +77,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/27.jpg"
+                                            <img src="/assets/images/pro3/27.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>
@@ -104,7 +104,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/28.jpg"
+                                            <img src="/assets/images/pro3/28.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>
@@ -131,7 +131,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/33.jpg"
+                                            <img src="/assets/images/pro3/33.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>
@@ -158,7 +158,7 @@
                                 <tr>
                                     <td>
                                         <a href="javascript:void(0)">
-                                            <img src="../assets/images/pro3/34.jpg"
+                                            <img src="/assets/images/pro3/34.jpg"
                                                 class="blur-up lazyloaded" alt="">
                                         </a>
                                     </td>

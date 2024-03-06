@@ -4,7 +4,7 @@
     <header>
         <div class="mobile-fix-option"></div>
         <div class="top-header">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="header-contact">
@@ -16,13 +16,20 @@
                     </div>
                     <div class="col-lg-6 text-end">
                         <ul class="header-dropdown">
-                            <li class="mobile-wishlist"><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                            <li class="mobile-wishlist">
+                                <a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a>
                             </li>
-                            <li class="onhover-dropdown mobile-account"> <i class="fa fa-user" aria-hidden="true"></i>
-                                My Account
-                                <ul class="onhover-show-div">
-                                    <li><router-link to="/home/login">Login</router-link></li>
-                                    <li><router-link to="/home/signup">Signup</router-link></li>
+                            <li class="onhover-dropdown mobile-account">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <span v-if="$isEmpty(authUser)">My Account</span>
+                                <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
+                                <ul class="onhover-show-div" v-show="$isEmpty(authUser)">
+                                    <li><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
+                                    <li><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
+                                </ul>
+                                <ul class="onhover-show-div" v-show="!$isEmpty(authUser)">
+                                    <li><a href="#" @click.prevent="$router.push({name:'AccountProfile'})">Profile</a></li>
+                                    <li><a href="#" @click.prevent="logout">Logout</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -49,14 +56,14 @@
                                         </div>
                                         <ul id="sub-menu" class="sm pixelstrap sm-vertical">
                                             <li v-for="(item,index) in categories" :key="index"> 
-                                                <router-link :to="`/home/products/${btoa(item.categoryPath)}`">{{ item.categoryName }}</router-link>
+                                                <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item.categoryPath) }})">{{ item.categoryName }}</a>
                                                 <ul>
                                                     <li v-for="(item_child,child_key) in item.children" :key="child_key">
-                                                        <router-link :to="`/home/products/${btoa(item_child.categoryPath)}`">{{ item_child.categoryName }}</router-link>
+                                                        <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item_child.categoryPath) }})">{{ item_child.categoryName }}</a>
                                                         <template v-if="!$isEmpty(item_child.children)">
                                                             <ul v-show="!$isEmpty(item_child.children)">
                                                                 <li v-for="(item_child_child,child_child_key) in item_child.children" :key="child_child_key">
-                                                                    <router-link :to="`/home/products/${btoa(item_child_child.categoryPath)}`">{{ item_child_child.categoryName }}</router-link>
+                                                                    <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item_child_child.categoryPath) }})">{{ item_child_child.categoryName }}</a>
                                                                 </li>
                                                             </ul>
                                                         </template>
@@ -181,10 +188,16 @@
 <script>
 import CartPopup from './CartPopup.vue';
 import { cloneDeep, debounce, isEmpty } from 'lodash';
+import { mapGetters } from 'vuex';
 
 export default {
     components:{
         CartPopup,
+    },
+    computed:{
+        ...mapGetters([
+            'authUser'
+        ])
     },
     created(){
         this.fetchMenus();

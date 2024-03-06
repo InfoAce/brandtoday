@@ -6,7 +6,7 @@ export default {
         
         // State variables
         const { getters: { authToken, env:{ VITE_API_BASE_URL } } } = options.store;
-
+        console.log(authToken);
         // Init axios
         const api = axios.create({
             baseURL: VITE_API_BASE_URL,

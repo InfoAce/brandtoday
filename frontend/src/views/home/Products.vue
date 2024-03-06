@@ -36,7 +36,7 @@
                                             <div class="col-12">
                                                 <div class="product-filter-content">
                                                     <div class="search-count">
-                                                        <h5>Showing Products 1-24 of 10 Result</h5>
+                                                        <h5>Showing Products 1-{{ products.total }}</h5>
                                                     </div>
                                                     <div class="collection-view">
                                                         <ul>
@@ -46,13 +46,13 @@
                                                     </div>
                                                     <div class="collection-grid-view">
                                                         <ul>
-                                                            <li><img src="../assets/images/icon/2.png" alt=""
+                                                            <li><img src="/assets/images/icon/2.png" alt=""
                                                                     class="product-2-layout-view"></li>
-                                                            <li><img src="../assets/images/icon/3.png" alt=""
+                                                            <li><img src="/assets/images/icon/3.png" alt=""
                                                                     class="product-3-layout-view"></li>
-                                                            <li><img src="../assets/images/icon/4.png" alt=""
+                                                            <li><img src="/assets/images/icon/4.png" alt=""
                                                                     class="product-4-layout-view"></li>
-                                                            <li><img src="../assets/images/icon/6.png" alt=""
+                                                            <li><img src="/assets/images/icon/6.png" alt=""
                                                                     class="product-6-layout-view"></li>
                                                         </ul>
                                                     </div>
@@ -76,44 +76,47 @@
                                     </div>
                                     <div class="product-wrapper-grid">
                                         <div class="row margin-res">
-                                            <div class="col-xl-3 col-6 col-grid-box">
+                                            <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products.data" :key="index">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/35.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/36.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
+                                                        <div v-if="!$isEmpty(product.images)">
+                                                            <div class="front">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
+                                                                </a>
+                                                            </div>
+                                                            <div class="back" v-if="product.images.length > 1">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                                    <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
+                                                                </a>
+                                                            </div>
                                                         </div>
                                                         <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
+                                                            <button data-bs-toggle="modal"
+                                                                data-bs-target="#addtocart" title="Add to cart"><i
                                                                     class="ti-shopping-cart"></i></button> <a
                                                                 href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
+                                                                    class="ti-heart" aria-hidden="true"></i></a> <a
+                                                                href="#" data-bs-toggle="modal"
+                                                                data-bs-target="#quick-view" title="Quick View"><i
+                                                                    class="ti-search" aria-hidden="true"></i></a> <a
+                                                                href="compare.html" title="Compare"><i
+                                                                    class="ti-reload" aria-hidden="true"></i></a>
                                                         </div>
                                                     </div>
                                                     <div class="product-detail">
                                                         <div>
-                                                            <div class="rating"><i class="fa fa-star"></i> <i
-                                                                    class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-                                                                    class="fa fa-star"></i> <i class="fa fa-star"></i></div>
-                                                            <a href="product-page(no-sidebar).html">
-                                                                <h6>Candy red solid tshirt</h6>
+                                                            <div class="rating">
+                                                                <i class="fa fa-star"></i> 
+                                                                <i class="fa fa-star"></i> 
+                                                                <i class="fa fa-star"></i> 
+                                                                <i class="fa fa-star"></i> 
+                                                                <i class="fa fa-star"></i>
+                                                            </div>
+                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                                <h6>{{ product.productName }}</h6>
                                                             </a>
-                                                            <p>Lorem Ipsum is simply dummy text of the printing and
-                                                                typesetting industry. Lorem Ipsum has been the
-                                                                industry's standard dummy text ever since the 1500s,
-                                                                when an unknown printer took a galley
-                                                                of type and scrambled it to make a type specimen
-                                                                book</p>
+                                                            <p v-html="product.description"></p>
                                                             <h4>$45.00</h4>
                                                             <ul class="color-variant">
                                                                 <li class="bg-light0"></li>
@@ -121,524 +124,6 @@
                                                                 <li class="bg-light2"></li>
                                                             </ul>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/27.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/28.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Purple polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$40.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/1.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/2.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Sleevless white top</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/33.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/34.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>multi color polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/27.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/28.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Purple polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$40.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/35.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/36.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Candy red solid tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen
-                                                            book</p>
-                                                        <h4>$45.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/27.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/28.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Purple polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$40.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/1.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/2.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Sleevless white top</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/27.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/28.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Purple polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$40.00</h4>
-
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/1.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/2.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Sleevless white top</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/33.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/34.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>multi color polo tshirt</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-6 col-grid-box">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div class="front">
-                                                            <a href="#"><img src="../assets/images/pro3/1.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="back">
-                                                            <a href="#"><img src="../assets/images/pro3/2.jpg"
-                                                                    class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                                        </div>
-                                                        <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart"
-                                                                title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                                                data-bs-toggle="modal" data-bs-target="#quick-view"
-                                                                title="Quick View"><i class="ti-search"
-                                                                    aria-hidden="true"></i></a> <a href="compare.html"
-                                                                title="Compare"><i class="ti-reload"
-                                                                    aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-detail">
-                                                        <div class="rating"><i class="fa fa-star"></i> <i
-                                                                class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                                        </div>
-                                                        <a href="product-page(no-sidebar).html">
-                                                            <h6>Sleevless white top</h6>
-                                                        </a>
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the
-                                                            industry's standard dummy text ever since the 1500s,
-                                                            when an unknown printer took a galley
-                                                            of type and scrambled it to make a type specimen book
-                                                        </p>
-                                                        <h4>$65.00</h4>
-                                                        <ul class="color-variant">
-                                                            <li class="bg-light0"></li>
-                                                            <li class="bg-light1"></li>
-                                                            <li class="bg-light2"></li>
-                                                        </ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -669,7 +154,7 @@
                                                 </div>
                                                 <div class="col-xl-6 col-md-6 col-sm-12">
                                                     <div class="product-search-count-bottom">
-                                                        <h5>Showing Products 1-24 of 10 Result</h5>
+                                                        <h5>Showing Products 1-{{ products.total }}</h5>
                                                     </div>
                                                 </div>
                                             </div>
@@ -686,7 +171,62 @@
     </div>
 </template>
 <script>
+import { cloneDeep, isEmpty, has } from 'lodash';
 export default {
-    
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.fetchProducts(),
+            next();
+        });
+    },
+    beforeRouteUpdate(to, from, next){
+        next(vm => {
+            vm.fetchProducts(),
+            next();
+        });
+    },
+    created(){
+        this.$isEmpty = isEmpty;
+    },
+    data(){
+        return{
+            products: Array()
+        }
+    },
+    methods:{
+        fetchProducts(){
+            let {  $route: { params } } = this, url = `/products`;
+
+            this.$store.commit('loader',true);
+
+            if( !isEmpty(params) && has(params,'category') ){
+                url = `${url}?category=${params.category}`;
+            }
+
+            this.$api.get(url)
+                .then( ({ data:{ products }}) => {
+                    this.products = cloneDeep(products);
+                })
+                .catch( ({ response }) => {
+                    this.$store.commit('loader',false);
+                    if( !isEmpty(response.data) && response.data.statusCode == 400 ){
+                        response.data.message.forEach( (value) => {
+                            toast.info(value);
+                        });
+                    }
+                })
+                .finally( () => {
+                    this.$store.commit('loader',false);
+                });            
+        }    
+    },
+    watch:{
+        "$route.params":{
+            handler(){
+                this.fetchProducts();
+            },
+            deep: true
+        }
+    }
 }
 </script>

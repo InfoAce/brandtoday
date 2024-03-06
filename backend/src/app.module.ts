@@ -2,15 +2,15 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, ApiProductsController, AuthController, CategoryController, CompanyController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
+import { AccountController, ApiProductsController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService } from './services';
-import { CompanyModule, MailModule, UserModule, RoleModule } from './modules';
-import { CompanyEntity, RoleEntity, UserEntity } from './entities';
+import { CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
+import { CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -59,6 +59,7 @@ import { SessionSerialize } from './utils';
         password:    configService.get<string>('DB_PASSWORD'),
         entities:    [
           CompanyEntity,
+          FavouriteEntity,
           RoleEntity,
           UserEntity
         ],
@@ -82,6 +83,7 @@ import { SessionSerialize } from './utils';
     }),
     MailModule,   
     CompanyModule,
+    FavouriteModule,
     MailModule,
     RoleModule,
     UserModule 
@@ -92,6 +94,7 @@ import { SessionSerialize } from './utils';
     AuthController,
     CategoryController, 
     CompanyController, 
+    FavouriteController,
     HeaderController, 
     HomeController, 
     LoginController,

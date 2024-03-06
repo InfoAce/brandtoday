@@ -22,6 +22,7 @@ const router = createRouter({
           meta: {
             title: 'Home',
             auth: false,
+            state:  0,
             landing: true
           },
           component: () => import('@/views/home/Index.vue')
@@ -32,6 +33,7 @@ const router = createRouter({
           meta: {
             title: 'Not Found',
             auth: false,
+            state:  0,
             landing: true
           },
           component: () => import('@/views/home/Error404.vue')
@@ -41,7 +43,8 @@ const router = createRouter({
           name: "Login",
           meta: {
             title: 'Login',
-            auth: false,
+            auth:   false,
+            state:  0,
             landing: true
           },
           component: () => import('@/views/home/Login.vue')
@@ -55,9 +58,21 @@ const router = createRouter({
               meta: {
                 title: 'Products',
                 auth: false,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Products.vue')
+            },
+            {
+              path: 'view/:product',
+              name: "Product",
+              meta: {
+                title: 'Product',
+                auth:   false,
+                state:  0,
+                landing: true
+              },
+              component: () => import('@/views/home/Product.vue')
             },
           ]
         },   
@@ -67,6 +82,7 @@ const router = createRouter({
           meta: {
             title: 'Signup',
             auth: false,
+            state:  0,
             landing: true
           },
           component: () => import('@/views/home/Signup.vue')
@@ -80,6 +96,7 @@ const router = createRouter({
               meta: {
                 title: 'Email Verification',
                 auth: false,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Verify.vue')
@@ -95,7 +112,8 @@ const router = createRouter({
               name: "AccountProfile",
               meta: {
                 title: 'Account Profile',
-                auth: false,
+                auth: true,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Account.vue')
@@ -105,7 +123,8 @@ const router = createRouter({
               name: "AccountOrders",
               meta: {
                 title: 'Client Orders',
-                auth: false,
+                auth: true,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Orders.vue')
@@ -115,7 +134,8 @@ const router = createRouter({
               name: "AccountFavourites",
               meta: {
                 title: 'Favourites',
-                auth: false,
+                auth: true,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Favourites.vue')
@@ -125,7 +145,8 @@ const router = createRouter({
               name: "AccountCards",
               meta: {
                 title: 'Cards',
-                auth: false,
+                auth: true,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Cards.vue')
@@ -135,7 +156,8 @@ const router = createRouter({
               name: "AccountSecurity",
               meta: {
                 title: 'Client Security',
-                auth: false,
+                auth: true,
+                state:  0,
                 landing: true
               },
               component: () => import('@/views/home/Security.vue')
@@ -285,12 +307,14 @@ const checkRole = (to:any,next: any) => {
   switch(route){
     case 'Login':
     case 'Signup':
-
+      next({name:"Home"});
     break;
     case 'AdminLogin':
       next({name:"Overview"});
     break;
     default:
+      console.log(roleState);
+      console.log(state);
       if( roleState >= state ){
         next();
       } else {
@@ -307,14 +331,14 @@ const checkRole = (to:any,next: any) => {
   //     next({name:"Forbidden"})
   //   }
   // }    
-  switch(state){
-    case 1:
-    case 2:
-      next({name:"Overview"});
-    break;
-    default: 
-      next({name:"Home"});
-  }
+  // switch(state){
+  //   case 1:
+  //   case 2:
+  //     next({name:"Overview"});
+  //   break;
+  //   default: 
+  //     next({name:"Home"});
+  // }
 }
 
 

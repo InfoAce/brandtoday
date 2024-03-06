@@ -1,12 +1,13 @@
 <template>
 	<div>
+		<LandingLoader />
 		<LandingHeader />
 		<router-view></router-view>
 		<LandingFooter />
 	</div>
 </template>
 <script lang="ts">
-import { LandingFooter, LandingHeader } from '../../components';
+import { LandingFooter, LandingHeader, LandingLoader } from '../../components';
 import { loadScript } from "vue-plugin-load-script";
 export default {
 	created() {
@@ -28,7 +29,8 @@ export default {
 	},
 	components:{
 		LandingFooter,
-		LandingHeader
+		LandingHeader,
+		LandingLoader
 	},
 }
 </script>
