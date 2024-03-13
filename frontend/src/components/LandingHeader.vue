@@ -8,10 +8,10 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="header-contact">
-                            <ul>
+                            <!-- <ul>
                                 <li>Welcome href Our store Multikart</li>
                                 <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: 123 - 456 - 7890</li>
-                            </ul>
+                            </ul> -->
                         </div>
                     </div>
                     <div class="col-lg-6 text-end">

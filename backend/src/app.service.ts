@@ -24,26 +24,36 @@ export class AppService {
 
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async updateAmrodData(){
 
-    // try {
+    try {
 
-    //   // Fetch amrod product categories
-    //   let categories = await this.amrodService.getCategories();     
+      // Fetch amrod product categories
+      let categories = await this.amrodService.getCategories();     
 
-    //   // Fetch amrod products
-    //   let products = await this.amrodService.getProducts();           
+      // Fetch amrod products
+      let products = await this.amrodService.getProducts();    
+      
+      // Fetch amrod prices
+      let prices = await this.amrodService.getPrices();   
+      
+      // Fetch amrod prices
+      let stock = await this.amrodService.getStock();   
 
-    //   await this.cacheManager.store.set('amrod_categories',categories);
+      await this.cacheManager.store.set('amrod_categories',categories);
 
-    //   await this.cacheManager.store.set('amrod_products',products);
+      await this.cacheManager.store.set('amrod_products',products);
+
+      await this.cacheManager.store.set('amrod_prices',prices);
     
-    // } catch (err) {
+      await this.cacheManager.store.set('amrod_stock',stock);
 
-    //   console.log(err);
+    } catch (err) {
+
+      console.log(err);
     
-    // }
+    }
 
   }
 

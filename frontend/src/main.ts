@@ -22,7 +22,25 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 import { createHead } from '@unhead/vue'
 
-import LoadScript from "vue-plugin-load-script";
+const scripts = [
+	'/assets/js/jquery-3.3.1.min.js',
+	'/assets/js/jquery-ui.min.js',
+	'/assets/js/bootstrap.bundle.min.js',
+	'/assets/js/bootstrap-notify.min.js',	
+].map( 
+	async (url) => new Promise( 
+		resolve => setTimeout( async() => resolve(addScript(url)),0)
+	) 
+)
+
+const addScript = (url) => {
+    let script  = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src  = url;
+    document.body.appendChild(script);
+}
+
+Promise.all(scripts);
 
 const app = createApp(App)
 
@@ -38,6 +56,5 @@ app.use(api,{
 });
 app.use(createHead())
 app.use(VueSweetalert2);
-app.use(LoadScript);
 
 app.mount('#app')

@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { isEmpty, isNull } from 'lodash';
 import { sep } from 'path';
 
-@Controller('api/system')
+@Controller('system')
 export class SystemController {
 
     private readonly file_path = `${process.cwd()}${sep}configurations.json`;

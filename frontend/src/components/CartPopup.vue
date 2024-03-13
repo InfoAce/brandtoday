@@ -42,6 +42,11 @@
 
 <script>
 export default {
+    computed:{
+        cart(){
+            return this.$store.getters.cart;
+        },
+    },
     name: "CartPopup"
 }
 </script>

@@ -6,14 +6,14 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>collection</h2>
+                            <h2>Products</h2>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index.html">home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">collection</li>
+                                <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Products</li>
                             </ol>
                         </nav>
                     </div>
@@ -81,27 +81,26 @@
                                                     <div class="img-wrapper">
                                                         <div v-if="!$isEmpty(product.images)">
                                                             <div class="front">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
                                                                     <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
                                                                 </a>
                                                             </div>
                                                             <div class="back" v-if="product.images.length > 1">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
                                                                     <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                                                 </a>
                                                             </div>
                                                         </div>
                                                         <div class="cart-info cart-wrap">
-                                                            <button data-bs-toggle="modal"
-                                                                data-bs-target="#addtocart" title="Add to cart"><i
-                                                                    class="ti-shopping-cart"></i></button> <a
-                                                                href="javascript:void(0)" title="Add to Wishlist"><i
-                                                                    class="ti-heart" aria-hidden="true"></i></a> <a
-                                                                href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#quick-view" title="Quick View"><i
-                                                                    class="ti-search" aria-hidden="true"></i></a> <a
-                                                                href="compare.html" title="Compare"><i
-                                                                    class="ti-reload" aria-hidden="true"></i></a>
+                                                            <button data-bs-toggle="modal" data-bs-target="#addtocart" title="Add to cart">
+                                                                <i class="ti-shopping-cart"></i>
+                                                            </button> 
+                                                            <a href="javascript:void(0)" title="Add to Wishlist">
+                                                                <i class="ti-heart" aria-hidden="true"></i>
+                                                            </a> 
+                                                            <a href="#" data-bs-toggle="modal" :data-bs-target="`#${product.fullCode}`" title="Quick View">
+                                                                <i class="ti-search" aria-hidden="true"></i>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                     <div class="product-detail">
@@ -113,19 +112,18 @@
                                                                 <i class="fa fa-star"></i> 
                                                                 <i class="fa fa-star"></i>
                                                             </div>
-                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', param: { product: product.fullCode }})">
+                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
                                                                 <h6>{{ product.productName }}</h6>
                                                             </a>
                                                             <p v-html="product.description"></p>
-                                                            <h4>$45.00</h4>
-                                                            <ul class="color-variant">
-                                                                <li class="bg-light0"></li>
-                                                                <li class="bg-light1"></li>
-                                                                <li class="bg-light2"></li>
+                                                            <h4>KSH {{ product.price }}</h4>
+                                                            <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
+                                                                <li v-for="(colour,index) in product.colourImages" :key="index" :style="`background-color: ${ $convertToHex(colour.name) }; border: 1px solid #ededed;`"></li>
                                                             </ul>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <QuickView :data="product" />
                                             </div>
                                         </div>
                                     </div>
@@ -172,6 +170,8 @@
 </template>
 <script>
 import { cloneDeep, isEmpty, has } from 'lodash';
+import { QuickView } from '../../components';
+import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -185,8 +185,14 @@ export default {
             next();
         });
     },
+    components:{
+        QuickView
+    },
     created(){
         this.$isEmpty = isEmpty;
+        this.$convertToHex = (colour) => {
+            return convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
+        }
     },
     data(){
         return{
@@ -199,10 +205,10 @@ export default {
 
             this.$store.commit('loader',true);
 
-            if( !isEmpty(params) && has(params,'category') ){
+            if( !isEmpty(params) && has(params,'category') && !isEmpty(params.category) ){
                 url = `${url}?category=${params.category}`;
             }
-
+            
             this.$api.get(url)
                 .then( ({ data:{ products }}) => {
                     this.products = cloneDeep(products);
@@ -218,7 +224,10 @@ export default {
                 .finally( () => {
                     this.$store.commit('loader',false);
                 });            
-        }    
+        },
+        toBase64(string){
+            return btoa(string);
+        } 
     },
     watch:{
         "$route.params":{

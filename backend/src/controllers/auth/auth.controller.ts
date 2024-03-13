@@ -14,7 +14,7 @@ import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { EntityNotFoundError } from 'typeorm';
 import { NotFoundError } from 'rxjs';
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
 
     constructor(

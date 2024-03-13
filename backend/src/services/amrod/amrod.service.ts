@@ -111,6 +111,46 @@ export class AmrodService {
 
     }
 
+    async getStock(){
+
+        const auth = await this.cacheManager.store.get('amrod_auth');
+
+        const { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
+                .get(`${this.config.endpoints.stocks.all}`)
+                .pipe(
+                    catchError((error: any) => {
+                        console.log(error);
+                        // const { response: { status, data: { message }} } = error;
+                        throw new HttpException(error.message,error.status);
+                    })
+                )
+        );
+        
+        return data;
+
+    }
+
+    async getPrices(){
+
+        const auth = await this.cacheManager.store.get('amrod_auth');
+
+        const { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
+                .get(`${this.config.endpoints.prices.all}`)
+                .pipe(
+                    catchError((error: any) => {
+                        console.log(error);
+                        // const { response: { status, data: { message }} } = error;
+                        throw new HttpException(error.message,error.status);
+                    })
+                )
+        );
+        
+        return data;
+
+    }
+
     async getCategories(){
 
         const auth = await this.cacheManager.store.get('amrod_auth');

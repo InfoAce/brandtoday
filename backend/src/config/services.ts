@@ -25,11 +25,16 @@ export default registerAs('services',() => {
                 },
                 login: 'VendorLogin',
                 prices:{
-                    all: 'Prices'
+                    all: 'Prices',
+                    updated: 'Prices/GetUpdated'
                 },
                 products: {
                     with_branding:    'Products/GetProductsAndBranding',
                     without_branding: 'Products',
+                },
+                stocks:{
+                    all: 'Stock',
+                    updated: 'Stock/GetUpdated'
                 }
             },
             credentials:{

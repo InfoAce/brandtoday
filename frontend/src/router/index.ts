@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory, RouterView  } from 'vue-router'
 import { isEmpty } from 'lodash';
 import store from '../stores';
-import { useHead } from '@unhead/vue';
-import { theme } from '../config';
-import { loadScript } from "vue-plugin-load-script";
 
 const router = createRouter({
   history: createWebHistory(import.meta.BASE_URL),
@@ -23,7 +20,7 @@ const router = createRouter({
             title: 'Home',
             auth: false,
             state:  0,
-            landing: true
+
           },
           component: () => import('@/views/home/Index.vue')
         },
@@ -34,7 +31,7 @@ const router = createRouter({
             title: 'Not Found',
             auth: false,
             state:  0,
-            landing: true
+
           },
           component: () => import('@/views/home/Error404.vue')
         }, 
@@ -45,7 +42,7 @@ const router = createRouter({
             title: 'Login',
             auth:   false,
             state:  0,
-            landing: true
+
           },
           component: () => import('@/views/home/Login.vue')
         },     
@@ -59,7 +56,7 @@ const router = createRouter({
                 title: 'Products',
                 auth: false,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Products.vue')
             },
@@ -70,7 +67,7 @@ const router = createRouter({
                 title: 'Product',
                 auth:   false,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Product.vue')
             },
@@ -83,7 +80,7 @@ const router = createRouter({
             title: 'Signup',
             auth: false,
             state:  0,
-            landing: true
+
           },
           component: () => import('@/views/home/Signup.vue')
         },  
@@ -97,7 +94,7 @@ const router = createRouter({
                 title: 'Email Verification',
                 auth: false,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Verify.vue')
             }
@@ -114,7 +111,7 @@ const router = createRouter({
                 title: 'Account Profile',
                 auth: true,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Account.vue')
             },
@@ -125,7 +122,7 @@ const router = createRouter({
                 title: 'Client Orders',
                 auth: true,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Orders.vue')
             },
@@ -136,7 +133,7 @@ const router = createRouter({
                 title: 'Favourites',
                 auth: true,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Favourites.vue')
             },
@@ -147,7 +144,7 @@ const router = createRouter({
                 title: 'Cards',
                 auth: true,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Cards.vue')
             },
@@ -158,7 +155,7 @@ const router = createRouter({
                 title: 'Client Security',
                 auth: true,
                 state:  0,
-                landing: true
+    
               },
               component: () => import('@/views/home/Security.vue')
             }
@@ -282,17 +279,6 @@ router.beforeEach( (to, from, next) => {
       next();
     break;
   }
-
-  if( landing ){
-    useHead(theme);
-    [
-      '/assets/js/jquery-3.3.1.min.js',
-      '/assets/js/jquery-ui.min.js',
-    ].forEach( async(url) => {
-      await loadScript(url);
-    })    
-  }
-
 });
 
 router.afterEach((to, from,failure) => {

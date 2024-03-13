@@ -6,7 +6,7 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 import { CompanyModel } from 'src/models';
 
-@Controller('api/company')
+@Controller('company')
 export class CompanyController {
 
     constructor(
