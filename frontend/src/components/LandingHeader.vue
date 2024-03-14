@@ -86,30 +86,13 @@
                                     <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
                                     <ul id="main-menu" class="sm pixelstrap sm-horizontal">
                                         <li>
-                                            <div class="mobile-back text-end">Back<i class="fa fa-angle-right ps-2"
-                                                    aria-hidden="true"></i></div>
+                                            <div class="mobile-back text-end">
+                                                Back
+                                                <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                                            </div>
                                         </li>
-                                        <li><router-link to="/home">Home</router-link></li>
                                         <li>
-                                            <a href="#">shop</a>
-                                            <ul>
-                                                <li><a href="category-page(vegetables).html">tab style<span
-                                                            class="new-tag">new</span></a></li>
-                                                <li><a href="category-page(top-filter).html">top filter</a></li>
-                                                <li><a href="category-page(modern).html">modern</a></li>
-                                                <li><a href="category-page.html">left sidebar</a></li>
-                                                <li><a href="category-page(right).html">right sidebar</a></li>
-                                                <li><a href="category-page(no-sidebar).html">no sidebar</a></li>
-                                                <li><a href="category-page(sidebar-popup).html">sidebar popup</a>
-                                                </li>
-                                                <li><a href="category-page(metro).html">metro</a></li>
-                                                <li><a href="category-page(full-width).html">full width</a></li>
-                                                <li><a href="category-page(infinite-scroll).html">infinite
-                                                        scroll</a></li>
-                                                <li><a href=category-page(3-grid).html>three grid</a></li>
-                                                <li><a href="category-page(6-grid).html">six grid</a></li>
-                                                <li><a href="category-page(list-view).html">list view</a></li>
-                                            </ul>
+                                            <router-link to="/home">Home</router-link>
                                         </li>
                                         <li>
                                             <router-link to="/home/products">Products</router-link>
@@ -121,9 +104,10 @@
                                 <div class="icon-nav">
                                     <ul>
                                         <li class="onhover-div mobile-search">
-                                            <div><img src="/assets/images/icon/search.png" onclick="openSearch()"
-                                                    class="img-fluid blur-up lazyload" alt=""> <i class="ti-search"
-                                                    onclick="openSearch()"></i></div>
+                                            <div>
+                                                <img src="/assets/images/icon/search.png" onclick="openSearch()" class="img-fluid blur-up lazyload" alt=""> 
+                                                <i class="ti-search" onclick="openSearch()"></i>
+                                            </div>
                                             <div id="search-overlay" class="search-overlay">
                                                 <div> <span class="closebtn" onclick="closeSearch()"
                                                         title="Close Overlay">×</span>
@@ -168,10 +152,10 @@
                                         </li> -->
                                         <li class="onhover-div mobile-cart">
                                             <div>
-                                                <img src="/assets/images/icon/cart.png"class="img-fluid blur-up lazyload" alt=""> 
+                                                <img src="/assets/images/icon/cart.png" class="img-fluid blur-up lazyload" alt=""> 
                                                 <i class="ti-shopping-cart"></i>
                                             </div>
-                                            <span class="cart_qty_cls">1</span>
+                                            <span class="cart_qty_cls">{{ cart.length }}</span>
                                             <CartPopup />
                                         </li>
                                     </ul>
@@ -196,7 +180,8 @@ export default {
     },
     computed:{
         ...mapGetters([
-            'authUser'
+            'authUser',
+            'cart'
         ])
     },
     created(){

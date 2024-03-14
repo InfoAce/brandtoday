@@ -4,15 +4,6 @@ import { cloneDeep, isNull } from 'lodash';
 
 const { VITE_APP_NAME }       = import.meta.env;
 const app_session_auth:  any  = localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`);
-const app_shopping_cart: any  = localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`);
-
-window.dispatchEvent(
-  new CustomEvent(`${VITE_APP_NAME.replaceAll(' ','')}-shopping-cart-changed`, {
-    detail: {
-      storage: localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`)
-    }
-  })
-)
 
 // Create a new store instance.
 export default createStore({
@@ -35,7 +26,7 @@ export default createStore({
   getters:{
     authToken:         (state) => state.auth.token,
     authUser:          (state) => state.auth.user,
-    cart:              (state) => !isNull(app_shopping_cart) ? JSON.parse(app_shopping_cart) : state.cart,
+    cart:              (state) => state.cart,
     env:               (state) => state.env,
     loader:            (state) => state.loader,
     sidebarMenus:      (state) => state.sideBar.menus,
@@ -47,7 +38,6 @@ export default createStore({
       localStorage.setItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`, btoa(JSON.stringify(value)));
     },
     cart(state,value) {
-      localStorage.setItem(`${VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`, JSON.stringify(value) );
       state.cart = cloneDeep(value);
     },
     loader(state,value) {

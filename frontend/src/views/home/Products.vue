@@ -58,9 +58,10 @@
                                                     </div>
                                                     <div class="product-page-per-view">
                                                         <select>
-                                                            <option value="High to low">24 Products Par Page</option>
-                                                            <option value="Low to High">50 Products Par Page</option>
-                                                            <option value="Low to High">100 Products Par Page</option>
+                                                            <option value="12">12 Products Per Page</option>
+                                                            <option value="24">24 Products Per Page</option>
+                                                            <option value="48">48 Products Per Page</option>
+                                                            <option value="60">60 Products Per Page</option>
                                                         </select>
                                                     </div>
                                                     <div class="product-page-filter">
@@ -133,20 +134,27 @@
                                                 <div class="col-xl-6 col-md-6 col-sm-12">
                                                     <nav aria-label="Page navigation">
                                                         <ul class="pagination">
-                                                            <li class="page-item"><a class="page-link" href="#"
-                                                                    aria-label="Previous"><span aria-hidden="true"><i
-                                                                            class="fa fa-chevron-left"
-                                                                            aria-hidden="true"></i></span> <span
-                                                                        class="sr-only">Previous</span></a></li>
-                                                            <li class="page-item active"><a class="page-link" href="#">1</a>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#" aria-label="Previous">
+                                                                    <span aria-hidden="true">
+                                                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                                                    </span> 
+                                                                    <span class="sr-only">Previous</span>
+                                                                </a>
                                                             </li>
-                                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                            <li class="page-item"><a class="page-link" href="#"
-                                                                    aria-label="Next"><span aria-hidden="true"><i
-                                                                            class="fa fa-chevron-right"
-                                                                            aria-hidden="true"></i></span> <span
-                                                                        class="sr-only">Next</span></a></li>
+                                                            <template>
+                                                                <li class="page-item active">
+                                                                    <a class="page-link" href="#">1</a>
+                                                                </li>
+                                                            </template>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#" aria-label="Next">
+                                                                    <span aria-hidden="true">
+                                                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                                    </span> 
+                                                                    <span class="sr-only">Next</span>
+                                                                </a>
+                                                            </li>
                                                         </ul>
                                                     </nav>
                                                 </div>

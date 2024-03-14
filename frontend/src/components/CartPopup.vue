@@ -1,51 +1,52 @@
 <template>
     <ul class="show-div shopping-cart">
-        <li>
+        <li v-for="(item,index) in cart" :key="index">
             <div class="media">
-                <a href="#"><img alt="" class="me-3"
-                        src="/assets/images/fashion/product/1.jpg"></a>
+                <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                    <img :aria-atomic="item.name" class="me-3" :src="item.image">
+                </a>
                 <div class="media-body">
-                    <a href="#">
-                        <h4>item name</h4>
+                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                        <p>{{ item.name }}</p>
                     </a>
-                    <h4><span>1 x $ 299.00</span></h4>
+                    <h4>
+                        <span>{{ item.quantity }} x KSH {{ item.price }}</span>
+                    </h4>
                 </div>
             </div>
-            <div class="close-circle"><a href="#"><i class="fa fa-times"
-                        aria-hidden="true"></i></a></div>
-        </li>
-        <li>
-            <div class="media">
-                <a href="#"><img alt="" class="me-3"
-                        src="/assets/images/fashion/product/2.jpg"></a>
-                <div class="media-body">
-                    <a href="#">
-                        <h4>item name</h4>
-                    </a>
-                    <h4><span>1 x $ 299.00</span></h4>
-                </div>
+            <div class="close-circle">
+                <a href="#" @click.prevent="cart.splice(index,1)"><i class="fa fa-times" aria-hidden="true"></i></a>
             </div>
-            <div class="close-circle"><a href="#"><i class="fa fa-times"
-                        aria-hidden="true"></i></a></div>
         </li>
         <li>
             <div class="total">
-                <h5>subtotal : <span>$299.00</span></h5>
+                <h5>Subtotal : <span>KSH: {{ total }}</span></h5>
             </div>
         </li>
         <li>
-            <div class="buttons"><a href="cart.html" class="view-cart">view
-                    cart</a> <a href="#" class="checkout">checkout</a></div>
+            <div class="buttons">
+                <a href="#" @click.prevent="$router.push({name:'Cart'})" class="view-cart">view cart</a> 
+                <a href="#" @click.prevent="$router.push({name:'Checkout'})" class="checkout">checkout</a>
+            </div>
         </li>
     </ul>
 </template>
 
 <script>
+import { sum } from 'lodash';
 export default {
     computed:{
-        cart(){
-            return this.$store.getters.cart;
+        cart:{
+            get(){
+                return this.$store.getters.cart;
+            },
+            set(value){
+                this.$store.commit('cart',value);
+            }
         },
+        total(){
+            return sum(this.cart.map( val => val.price * val.quantity ));
+        }
     },
     name: "CartPopup"
 }

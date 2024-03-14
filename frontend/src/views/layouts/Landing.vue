@@ -8,12 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from '@unhead/vue';
 import { LandingFooter, LandingHeader, LandingLoader } from '../../components';
-import { loadScript } from "vue-plugin-load-script";
+import { useStore } from 'vuex'
+import { watch } from 'vue';
+import { isEmpty } from 'lodash';
+
+const store   = useStore();
 
 const scripts = [
-	'/assets/js/jquery.exitintent.js',	
 	'/assets/js/exit.js',
 	'/assets/js/slick.js',
 	'/assets/js/fly-cart.js',
@@ -26,14 +28,30 @@ const scripts = [
 	) 
 )
 
-const addScript = (url) => {
+const addScript = (url:string) => {
     let script  = document.createElement('script');
     script.type = 'text/javascript';
     script.src  = url;
     document.body.appendChild(script);
 }
 
+const app_shopping_cart: any  = localStorage.getItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`);
+
+if( !isEmpty(app_shopping_cart) ){
+	store.commit('cart',JSON.parse(app_shopping_cart));
+}
+
 Promise.all(scripts);
+
+watch( 
+	() => store.getters.cart,
+	(value) => {
+		localStorage.setItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`, JSON.stringify(value) );
+	},
+	{
+		deep: true
+	}
+)
 
 </script>
 

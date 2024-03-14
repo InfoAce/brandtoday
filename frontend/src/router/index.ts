@@ -45,7 +45,35 @@ const router = createRouter({
 
           },
           component: () => import('@/views/home/Login.vue')
-        },     
+        }, 
+        {
+          path: 'shopping',
+          children: [
+            {
+              path: 'cart',
+              name: "Cart",
+              meta: {
+                title: 'Cart',
+                auth:   false,
+                state:  0,
+    
+              },
+              component: () => import('@/views/home/Cart.vue')
+            },  
+            {
+              path: 'checkout',
+              name: "Checkout",
+              meta: {
+                title: 'Checkout',
+                auth:   true,
+                state:  0,
+    
+              },
+              component: () => import('@/views/home/Checkout.vue')
+            },                
+          ],
+          component: RouterView
+        },         
         {
           path: 'products',
           children: [

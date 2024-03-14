@@ -37,11 +37,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12 p-0">
-                                    <div class="slider-nav">
-                                        <div v-for="(image,index) in product.images" :key="index">
-                                            <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload">
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -55,19 +51,27 @@
                                 </div>
                                 <h3 class="price-detail">KSH {{ product.price }}</h3>
                                 <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
-                                    <li 
-                                        v-for="(colour,index) in product.colourImages" 
-                                        :key="index" 
-                                        :style="`background-color: ${  $convertToHex(colour.name) };`"       
-                                        @click="($event) => selectColour(colour,$event)"                    
-                                    ></li>
+                                    <template v-for="(colour,index) in product.colourImages">
+                                        <li   
+                                            v-if="colour.name == cartItem.colour"                                       
+                                            :key="`active_${index}`" 
+                                            class="active"
+                                            :style="`background-color: ${ $convertToHex(colour.name) }`"                       
+                                            @click="($event) => selectColour(colour,$event)"                        
+                                        ></li>
+                                        <li   
+                                            v-else                                  
+                                            :key="`inactive_${index}`" 
+                                            :style="`background-color: ${ $convertToHex(colour.name) }`"                       
+                                            @click="($event) => selectColour(colour,$event)"                        
+                                        ></li>
+                                    </template>
                                 </ul>
-								<p class="text-danger col col-12 mt-0" v-if="$has(errors,'colour')">{{errors.colour}}</p>
-                                <!-- <ul class="color-variant">
-                                    <li class="bg-light0 active"></li>
-                                    <li class="bg-light1"></li>
-                                    <li class="bg-light2"></li>
-                                </ul> -->
+								<h6> 
+                                    Selected colour: 
+                                    <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
+                                    <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
+                                </h6>	
                                 <div id="selectSize" class="addeffect-section product-description border-product">
                                     <!-- <h6 class="product-title size-text">select size <span><a href="" data-bs-toggle="modal"
                                                 data-bs-target="#sizemodal">size
@@ -108,28 +112,38 @@
                                     </template>                               
                                     <h6 class="product-title">quantity</h6>
                                     <div class="qty-box">
-                                        <div class="input-group"><span class="input-group-prepend"><button type="button"
-                                                    class="btn quantity-left-minus" data-type="minus" data-field=""><i
-                                                        class="ti-angle-left"></i></button> </span>
-                                            <input type="text" name="quantity" class="form-control input-number" value="1">
-                                            <span class="input-group-prepend"><button type="button"
-                                                    class="btn quantity-right-plus" data-type="plus" data-field=""><i
-                                                        class="ti-angle-right"></i></button></span>
+                                        <div class="input-group">
+                                            <span class="input-group-prepend">
+                                                <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
+                                                    <i class="ti-angle-left"></i>
+                                                </button> 
+                                            </span>
+                                            <input type="text" :name="`quantity_${product.fullCode}`" class="form-control input-number" :value="form.quantity"> 
+                                            <span class="input-group-prepend">
+                                                <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
+                                                    <i class="ti-angle-right"></i>
+                                                </button>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="product-buttons">
-                                    <a href="javascript:void(0)" id="cartEffect" class="btn btn-solid hover-solid btn-animation">
-                                        <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i> add to cart
-                                    </a> 
+                                    <button id="cartEffect" class="btn btn-solid hover-solid btn-animation" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
+                                        <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
+                                        <span v-show="!$isEmpty(cartItem) == false">add to cart</span>
+                                        <span v-show="!$isEmpty(cartItem) == true">already in cart</span> 
+                                    </button> 
                                     <a href="#" class="btn btn-solid">
                                         <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                         wishlist
                                     </a>
                                 </div>
                                 <div class="border-product">
-                                    <h6 class="product-title">100% secure payment</h6>
-                                    <img src="/assets/images/payment.png" class="img-fluid mt-1" alt="">
+                                    <div class="slider-nav">
+                                        <div v-for="(image,index) in product.images" :key="index">
+                                            <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -503,33 +517,13 @@
 </template>
 
 <script>
-import { cloneDeep, each, groupBy, isEmpty, isNull, has } from 'lodash';
+import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, has } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
     beforeMount(){
-        if( this.isVariant ){
-            this.form.size        = String();        
-            this.schemaShape.size = yup.string().required("*Size is required.");  
-            this.selections.size  = {};      
-        }
-        this.form.colour        = String();
-        this.schemaShape.colour = yup.string().required("Colour is required *");       
-        this.selections.colour  = {};      
-        this.formSchema   = yup.object().shape(this.schemaShape); 
-        this.validateForm = (field) => {
-            this.formSchema.validateAt(field, this.form)
-                .then((value,key) => {
-                    delete this.errors[field];
-                })
-                .catch((err) => {
-                    this.errors[err.path] = err.message;
-                })
-                .finally(() => {
-                    this.isDisabled = !isEmpty(this.errors);
-                })
-        }                 
-    },    
+        this.initView();               
+    }, 
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.fetchProduct(),
@@ -537,6 +531,17 @@ export default {
         });
     },
     computed:{
+        cart:{
+            get(){
+                return this.$store.getters.cart;
+            },
+            set(value){
+                this.$store.commit('cart',value);
+            }
+        },
+        cartItem(){
+            return this.cart.find( val => val.code == this.product.fullCode ) ?? {};
+        },
         groupedVariants(){
             return groupBy(this.product.variants,'codeSizeName');
         },
@@ -548,9 +553,7 @@ export default {
         this.$isEmpty      = isEmpty;
         this.$isNull       = isNull;
         this.$has          = has;
-        this.$convertToHex = (colour) => {
-            return convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
-        }
+        this.$convertToHex = (colour) =>  convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
     },
     data(){
         return{
@@ -563,12 +566,69 @@ export default {
         }
     },
     methods:{
+        addToCart(){
+            let { product, selections } = this, data = cloneDeep(this.form);
+            if( has(selections,'colour') ){
+                data.image = selections.colour.images[0].urls[0].url;
+                data.price = product.price;
+                data.name  = product.productName;
+            }
+            this.cart.push(cloneDeep(data));
+        },
+        close(){
+            this.initView();
+        },
+        initView(){
+            $(`input[name="quantity_${this.product.fullCode}"]`).val(1);
+            if( this.isVariant ){
+                this.form.size        = String();        
+                this.schemaShape.size = yup.string().required("*Size is required.");  
+                this.selections.size  = {};      
+            }
+            this.form.colour          = String();
+            this.form.code            = String();
+            this.form.quantity        = 1;
+            this.schemaShape.code     = yup.string().required("*Product code is required.");       
+            this.schemaShape.colour   = yup.string().required("*Colour is required.");       
+            this.schemaShape.quantity = yup.number().required("*Quantity is required.");       
+            this.schemaShape.price    = yup.number().required("*Price is required.");       
+            this.selections.colour    = {};      
+            this.formSchema           = yup.object().shape(this.schemaShape); 
+            this.validateForm = (field) => {
+                this.formSchema.validateAt(field, this.form)
+                    .then((value,key) => {
+                        delete this.errors[field];
+                    })
+                    .catch((err) => {
+                        this.errors[err.path] = err.message;
+                    })
+                    .finally(() => {
+                        this.isDisabled = !isEmpty(this.errors);
+                    })
+            }  
+        },        
+        descreaseQuantity(){
+            let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
+            if( quantity != 1 ){
+                const total  = quantity -= 1;   
+                $(`input[name="quantity_${this.product.fullCode}"]`).val(total);
+                this.form.quantity = total;
+            }
+        },
+        increaseQuantity(){
+            let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
+            const total  = quantity += 1;
+            $(`input[name="quantity_${this.product.fullCode}"]`).val(total);          
+            this.form.quantity = total;
+        },
         fetchProduct(){
             this.$store.commit('loader',true);
             const { $route: { params: { product } } } = this;
             this.$api.put(`/products/${product}`)
                 .then( ({ data:{ product }}) => {
-                    this.product = cloneDeep(product);
+                    this.form.code  = product.fullCode;
+                    this.form.price = product.price;
+                    this.product    = cloneDeep(product);
                 })
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);
@@ -577,6 +637,13 @@ export default {
                     this.$store.commit('loader',false);
                     this.initScripts();
                 });            
+        },
+        selectColour(colour,event){
+            let variant = window.document.querySelector('.color-variant li.active');
+            if( !isNull(variant) ){ variant.classList.remove('active'); }
+            event.target.classList.add('active');
+            this.selections.colour = colour;      
+            this.form.colour       = colour.name;  
         },
         initScripts(){
 
@@ -675,12 +742,18 @@ export default {
                 focusOnSelect: true
             });                
         },
-        selectColour(colour,event){
-            let variant = window.document.querySelector('.color-variant li.active');
-            if( !isNull(variant) ){ variant.classList.remove('active'); }
-            event.target.classList.add('active');
-            this.selections.colour = colour;
-        }, 
+    },
+    mounted(){
+        this.$nextTick( 
+            debounce(
+                () => {
+                    if( !isEmpty(this.cartItem) ){
+                        this.form = cloneDeep(this.cartItem);
+                    }
+                },
+                500
+            )
+        );
     },
     watch:{
         form:{

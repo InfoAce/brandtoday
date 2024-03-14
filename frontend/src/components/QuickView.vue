@@ -98,8 +98,13 @@ export default {
         this.initView();               
     },
     computed:{
-        cart(){
-            return this.$store.getters.cart;
+        cart:{
+            get(){
+                return this.$store.getters.cart;
+            },
+            set(value){
+                this.$store.commit('cart',value);
+            }
         },
         product(){
             return this.data;
@@ -132,9 +137,13 @@ export default {
     },
     methods:{
         addToCart(){
-            let data = cloneDeep(this.cart);
-            data.push(this.form);
-            this.$store.commit('cart',data);
+            let { product, selections } = this, data = cloneDeep(this.form);
+            if( has(selections,'colour') ){
+                data.image = selections.colour.images[0].urls[0].url;
+                data.price = product.price;
+                data.name  = product.productName;
+            }
+            this.cart.push(cloneDeep(data));
         },
         close(){
             this.initView();
