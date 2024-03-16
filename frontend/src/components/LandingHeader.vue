@@ -93,10 +93,7 @@
                                         </li>
                                         <li>
                                             <router-link to="/home">Home</router-link>
-                                        </li>
-                                        <li>
-                                            <router-link to="/home/products">Products</router-link>
-                                        </li>                                
+                                        </li>                                       
                                     </ul>
                                 </nav>
                             </div>

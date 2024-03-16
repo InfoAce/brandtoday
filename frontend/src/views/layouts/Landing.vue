@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="theme-color-1">
 		<LandingLoader />
 		<LandingHeader />
 		<router-view></router-view>
@@ -21,6 +21,7 @@ const scripts = [
 	'/assets/js/fly-cart.js',
 	'/assets/js/menu.js',
 	'/assets/js/lazysizes.min.js',
+	'/assets/js/addtocart.js',
 	'/assets/js/script.js'	
 ].map( 
 	async (url) => new Promise( 
@@ -71,9 +72,27 @@ watch(
 	top: 8px !important;
 }
 
-/* .product-right .color-variant li.active {
-	border: 2px solid #000;
-} */
+.product-right .color-variant li.inactive {
+    position: relative;
+}
+
+.product-right .color-variant li.inactive {
+	pointer-events: none;
+}
+
+.product-right .color-variant li.inactive:after {
+	content: '\d7';
+	filter: drop-shadow(0px 3px 3px rgba(1, 1, 0, 1));
+    right: 2px;
+	top: 3px !important;
+    height: 15px;
+    width: 15px;
+    background-size: 70%;
+    background-repeat: no-repeat;
+    position: absolute;
+    opacity: 1;
+	color: #fff;
+}
 
 .product-right .color-variant li {
 	border: 2px solid #ababab;

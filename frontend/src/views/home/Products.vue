@@ -36,7 +36,8 @@
                                             <div class="col-12">
                                                 <div class="product-filter-content">
                                                     <div class="search-count">
-                                                        <h5>Showing Products 1-{{ products.total }}</h5>
+                                                        <h5 v-show="!$isEmpty(products)">Showing Products 1-{{ products.total }}</h5>
+                                                        <h5 v-show="$isEmpty(products)">Showing Products 0</h5>
                                                     </div>
                                                     <div class="collection-view">
                                                         <ul>
@@ -76,7 +77,10 @@
                                         </div>
                                     </div>
                                     <div class="product-wrapper-grid">
-                                        <div class="row margin-res">
+                                        <div class="row margin-res" v-show="$isEmpty(products.data)">
+                                            
+                                        </div>
+                                        <div class="row margin-res" v-show="!$isEmpty(products.data)">
                                             <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products.data" :key="index">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
@@ -106,13 +110,6 @@
                                                     </div>
                                                     <div class="product-detail">
                                                         <div>
-                                                            <div class="rating">
-                                                                <i class="fa fa-star"></i> 
-                                                                <i class="fa fa-star"></i> 
-                                                                <i class="fa fa-star"></i> 
-                                                                <i class="fa fa-star"></i> 
-                                                                <i class="fa fa-star"></i>
-                                                            </div>
                                                             <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
                                                                 <h6>{{ product.productName }}</h6>
                                                             </a>
@@ -124,47 +121,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <QuickView :data="product" />
+                                                <!-- <QuickView :data="product" /> -->
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="product-pagination">
-                                        <div class="theme-paggination-block">
-                                            <div class="row">
-                                                <div class="col-xl-6 col-md-6 col-sm-12">
-                                                    <nav aria-label="Page navigation">
-                                                        <ul class="pagination">
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="#" aria-label="Previous">
-                                                                    <span aria-hidden="true">
-                                                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                                                                    </span> 
-                                                                    <span class="sr-only">Previous</span>
-                                                                </a>
-                                                            </li>
-                                                            <template>
-                                                                <li class="page-item active">
-                                                                    <a class="page-link" href="#">1</a>
-                                                                </li>
-                                                            </template>
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="#" aria-label="Next">
-                                                                    <span aria-hidden="true">
-                                                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
-                                                                    </span> 
-                                                                    <span class="sr-only">Next</span>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
-                                                <div class="col-xl-6 col-md-6 col-sm-12">
-                                                    <div class="product-search-count-bottom">
-                                                        <h5>Showing Products 1-{{ products.total }}</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="load-more-sec">
+                                        <a href="#" @click.prevent="loadMore($event)">load more</a>
                                     </div>
                                 </div>
                             </div>
@@ -177,13 +139,13 @@
     </div>
 </template>
 <script>
-import { cloneDeep, isEmpty, has } from 'lodash';
+import { cloneDeep, isEmpty, isNull, has, times } from 'lodash';
 import { QuickView } from '../../components';
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
-            vm.fetchProducts(),
+            vm.fetchData(),
             next();
         });
     },
@@ -198,6 +160,7 @@ export default {
     },
     created(){
         this.$isEmpty = isEmpty;
+        this.$times   = times;
         this.$convertToHex = (colour) => {
             return convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
         }
@@ -208,18 +171,30 @@ export default {
         }
     },
     methods:{
-        fetchProducts(){
-            let {  $route: { params } } = this, url = `/products`;
+        fetchData(){
+            this.products = cloneDeep({});
+            this.fetchProducts();
+        },
+        fetchProducts(data = { page: 1, perPage: 10 }){
+            let {  $route: { params } } = this, url = `/products`, { page, perPage } = data;
 
             this.$store.commit('loader',true);
 
             if( !isEmpty(params) && has(params,'category') && !isEmpty(params.category) ){
                 url = `${url}?category=${params.category}`;
             }
+
+            url += `&page=${page}&perPage=${perPage}`;
             
             this.$api.get(url)
                 .then( ({ data:{ products }}) => {
-                    this.products = cloneDeep(products);
+                    if( !isEmpty(this.products) ){
+                        this.products.data = cloneDeep(this.products.data.concat(products.data));
+                        this.products.currentPage = products.currentPage;
+                    }
+                    if( isEmpty(this.products) ){
+                        this.products = cloneDeep(products);            
+                    }
                 })
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);
@@ -233,14 +208,27 @@ export default {
                     this.$store.commit('loader',false);
                 });            
         },
-        toBase64(string){
-            return btoa(string);
-        } 
+        loadMore(event){
+
+            let { products: { currentPage, perPage, totalPages } } = this, 
+            page                          = currentPage < totalPages ? 
+                                                currentPage + 1 : 
+                                                    null;
+
+            if( !isNull(page) ){
+                this.fetchProducts({ page, perPage });
+            }
+
+            if( isNull(page) ){
+                $(event.target).text('No more products.');
+            }
+
+        }
     },
     watch:{
         "$route.params":{
             handler(){
-                this.fetchProducts();
+                this.fetchData();
             },
             deep: true
         }

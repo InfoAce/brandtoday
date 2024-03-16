@@ -44,88 +44,76 @@
                         <div class="col-lg-6 rtl-text">
                             <div class="product-right">
                                 <h2>{{ product.productName }}</h2>
-                                <div class="rating-section">
-                                    <div class="rating"><i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-                                            class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                    </div>
-                                </div>
                                 <h3 class="price-detail">KSH {{ product.price }}</h3>
-                                <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
-                                    <template v-for="(colour,index) in product.colourImages">
-                                        <li   
-                                            v-if="colour.name == cartItem.colour"                                       
-                                            :key="`active_${index}`" 
-                                            class="active"
-                                            :style="`background-color: ${ $convertToHex(colour.name) }`"                       
-                                            @click="($event) => selectColour(colour,$event)"                        
-                                        ></li>
-                                        <li   
-                                            v-else                                  
-                                            :key="`inactive_${index}`" 
-                                            :style="`background-color: ${ $convertToHex(colour.name) }`"                       
-                                            @click="($event) => selectColour(colour,$event)"                        
-                                        ></li>
-                                    </template>
-                                </ul>
-								<h6> 
-                                    Selected colour: 
-                                    <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
-                                    <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
-                                </h6>	
+                                <div class="border-product">
+                                    <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
+                                        <template v-for="(colour,index) in product.colourImages">
+                                            <li   
+                                                v-if="colour.name == cartItem.colour"                                       
+                                                :key="`active_${index}`" 
+                                                class="active"
+                                                :ref="colour.code"                     
+                                                :style="`background-color: ${ $convertToHex(colour.name) }`"                       
+                                                @click="($event) => selectColour(colour,$event)"                        
+                                            ></li>
+                                            <li   
+                                                v-if="colour.name != cartItem.colour"                                
+                                                :key="`inactive_${index}`" 
+                                                :style="`background-color: ${ $convertToHex(colour.name) }`" 
+                                                :ref="colour.code"                   
+                                                @click="($event) => selectColour(colour,$event)"                        
+                                            ></li>
+                                        </template>
+                                    </ul>
+                                    <h6> 
+                                        Selected colour: 
+                                        <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
+                                        <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
+                                    </h6>	
+                                </div>
                                 <div id="selectSize" class="addeffect-section product-description border-product">
-                                    <!-- <h6 class="product-title size-text">select size <span><a href="" data-bs-toggle="modal"
-                                                data-bs-target="#sizemodal">size
-                                                chart</a></span></h6>
-                                    <div class="modal fade" id="sizemodal" tabindex="-1" role="dialog"
-                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Sheer
-                                                        Straight Kurta</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <template v-if="isVariant && !$isEmpty(groupedVariants)">
+                                        <div class="row pb-2">
+                                            <div class="col-12">
+                                                <h6>
+                                                    Selected size: 
+                                                    <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
+                                                    <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
+                                                </h6>
+                                            </div>                                            
+                                            <div class="col-md-6 py-2" v-for="(variant,sizeName) of groupedVariants" :key="sizeName">
+                                                <div class="quantity-box">
+                                                    <div class="input-group">
+                                                        <span class="input-group-prepend">
+                                                            <button class="btn" @click="selectSize(variant,sizeName,$event)" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)">{{ sizeName }}</button>
+                                                        </span>
+                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour) || $has(sizeKeys,sizeName)" v-model="form.sizes[sizeKeys[sizeName]].quantity"> 
+                                                    </div>
                                                 </div>
-                                                <div class="modal-body"><img src="/assets/images/size-chart.jpg" alt=""
-                                                        class="img-fluid blur-up lazyload"></div>
+                                                <div class="text-center">
+                                                    <h6 v-if="!$isEmpty(selections.colour)" class="mb-0">Stock Available: {{ stock[sizeName] }}</h6>
+                                                </div>                                
                                             </div>
                                         </div>
-                                    </div> -->
-                                    <!-- <h6 class="error-message">please select size</h6> -->
-                                    <!-- <div class="size-box">
-                                        <ul>
-                                            <li><a href="javascript:void(0)">s</a></li>
-                                            <li><a href="javascript:void(0)">m</a></li>
-                                            <li><a href="javascript:void(0)">l</a></li>
-                                            <li><a href="javascript:void(0)">xl</a></li>
-                                        </ul>
-                                    </div> -->
-                                    <template v-if="isVariant && !$isEmpty(groupedVariants)">
-                                        <div class="size-box">
-                                            <ul>
-                                                <li v-for="(variant,sizeName) of groupedVariants" :key="sizeName" class="my-2 p-2">
-                                                    <a href="#" @click.prevent="console.log(sizeName)">{{ sizeName }}</a>
-                                                </li>
-                                            </ul>
-                                            <p class="text-danger col col-12 mt-0" v-if="$has(errors,'size')">{{errors.size}}</p>								
-                                        </div>    
-                                    </template>                               
-                                    <h6 class="product-title">quantity</h6>
-                                    <div class="qty-box">
-                                        <div class="input-group">
-                                            <span class="input-group-prepend">
-                                                <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
-                                                    <i class="ti-angle-left"></i>
-                                                </button> 
-                                            </span>
-                                            <input type="text" :name="`quantity_${product.fullCode}`" class="form-control input-number" :value="form.quantity"> 
-                                            <span class="input-group-prepend">
-                                                <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
-                                                    <i class="ti-angle-right"></i>
-                                                </button>
-                                            </span>
+                                    </template>
+                                    <template v-if="!isVariant">
+                                        <h6 class="product-title">quantity</h6>
+                                        <div class="qty-box">
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
+                                                        <i class="ti-angle-left"></i>
+                                                    </button> 
+                                                </span>
+                                                <input type="text" :name="`quantity_${product.fullCode}`" class="form-control input-number" :value="form.quantity"> 
+                                                <span class="input-group-prepend">
+                                                    <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
+                                                        <i class="ti-angle-right"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 </div>
                                 <div class="product-buttons">
                                     <button id="cartEffect" class="btn btn-solid hover-solid btn-animation" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
@@ -517,13 +505,10 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, has } from 'lodash';
+import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, keys, has, set, min } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
-    beforeMount(){
-        this.initView();               
-    }, 
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.fetchProduct(),
@@ -554,15 +539,31 @@ export default {
         this.$isNull       = isNull;
         this.$has          = has;
         this.$convertToHex = (colour) =>  convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
+
+        // Promisory validation for the form schema
+        this.validateForm = (field) => {
+            this.formSchema.validateAt(field, this.form)
+                .then((value,key) => {
+                    delete this.errors[field];
+                })
+                .catch((err) => {
+                    this.errors[err.path] = err.message;
+                })
+                .finally(() => {
+                    this.isDisabled = !isEmpty(this.errors);
+                })
+        }         
     },
     data(){
         return{
-            errors:      {},
-            form:        {},
-            isDisabled:  false,
-            product:     {},
-            schemaShape: {},
-            selections:  {},
+            errors:      Object(),
+            form:        Object(),
+            isDisabled:  Boolean(),
+            product:     Object(),
+            stock:       Object(),
+            schemaShape: Object(),
+            sizeKeys:    Object(),
+            selections:  Object()
         }
     },
     methods:{
@@ -578,34 +579,48 @@ export default {
         close(){
             this.initView();
         },
-        initView(){
-            $(`input[name="quantity_${this.product.fullCode}"]`).val(1);
-            if( this.isVariant ){
-                this.form.size        = String();        
-                this.schemaShape.size = yup.string().required("*Size is required.");  
-                this.selections.size  = {};      
+        initView(product){
+            let isVariant = !isEmpty(product) ? !isEmpty(product.variants.filter( val => !isNull(val.codeSizeName) )) : false;
+            
+            this.product  = cloneDeep(product);
+
+            $(`input[name="quantity_${product.fullCode}"]`).val(1);
+
+            set(this.form,'code',String());
+            set(this.form,'price',String());
+            set(this.form,'colour',String());
+
+            switch( isVariant ){   
+                case true: 
+                    // Check if product has variants and add validation of sizes
+                    this.schemaShape.sizes = yup.array().of(
+                        yup.object({
+                            name:     yup.string().required("*Size name is required."),
+                            quantity: yup.number().min(1).required("*Size quantity is required."),
+                        })
+                    ).min(1)
+                     .required("*Size is required");  
+                    set(this.selections,'size',Object());
+                    set(this.form,'sizes',Array());
+                break;
+                case false:
+                    // Check if product has variants and add validation of quantity if empty
+                    this.schemaShape.quantity = yup.number().required("*Quantity is required.");       
+                    set(this.form,'quantity',Number(1));
+                break;
             }
-            this.form.colour          = String();
-            this.form.code            = String();
-            this.form.quantity        = 1;
-            this.schemaShape.code     = yup.string().required("*Product code is required.");       
-            this.schemaShape.colour   = yup.string().required("*Colour is required.");       
-            this.schemaShape.quantity = yup.number().required("*Quantity is required.");       
-            this.schemaShape.price    = yup.number().required("*Price is required.");       
-            this.selections.colour    = {};      
-            this.formSchema           = yup.object().shape(this.schemaShape); 
-            this.validateForm = (field) => {
-                this.formSchema.validateAt(field, this.form)
-                    .then((value,key) => {
-                        delete this.errors[field];
-                    })
-                    .catch((err) => {
-                        this.errors[err.path] = err.message;
-                    })
-                    .finally(() => {
-                        this.isDisabled = !isEmpty(this.errors);
-                    })
-            }  
+            
+            this.schemaShape.code     = yup.string().required("*Product code is required."); // validate product code   
+            this.schemaShape.colour   = yup.string().required("*Colour is required."); // validate product colour
+            this.schemaShape.price    = yup.number().required("*Price is required."); // validate product price
+
+            set(this.selections,'colour',Object()); // Initialize colour selection
+            
+            this.formSchema           = yup.object().shape(this.schemaShape);  // Initialize validation
+            this.form.code            = product.fullCode;
+            this.form.price           = product.price;
+
+            this.fetchColourStock(product); // Fetch colour stock           
         },        
         descreaseQuantity(){
             let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
@@ -621,14 +636,27 @@ export default {
             $(`input[name="quantity_${this.product.fullCode}"]`).val(total);          
             this.form.quantity = total;
         },
+        // Fetch colour stock
+        // Requires product 
+        fetchColourStock(product){
+            // Promise call for all colour images
+            Promise.all( product.colourImages.map( colour => this.fetchStock(`${this.product.fullCode}-${colour.code}`)) )
+                   .then( (colours) => {
+                        colours.forEach( ({ data:{ stock }}) => {
+                            this.stock[stock.colourCode] = stock.stock;
+                            if( stock.stock == 0 ){
+                                this.$refs[stock.colourCode][0].classList.add('inactive');
+                            }
+                        });
+                   });
+        },
         fetchProduct(){
-            this.$store.commit('loader',true);
-            const { $route: { params: { product } } } = this;
+            this.$store.commit('loader',true); // Set loader
+            const { $route: { params: { product } } } = this; // Destructor route params
+            // Fetch product details
             this.$api.put(`/products/${product}`)
                 .then( ({ data:{ product }}) => {
-                    this.form.code  = product.fullCode;
-                    this.form.price = product.price;
-                    this.product    = cloneDeep(product);
+                    this.initView(product);
                 })
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);
@@ -638,12 +666,38 @@ export default {
                     this.initScripts();
                 });            
         },
+        fetchStock(code){
+            return this.$api.put(`/products/stock/${code}`); // Fetch stock from an item full code
+        },
         selectColour(colour,event){
             let variant = window.document.querySelector('.color-variant li.active');
             if( !isNull(variant) ){ variant.classList.remove('active'); }
             event.target.classList.add('active');
             this.selections.colour = colour;      
             this.form.colour       = colour.name;  
+        },
+        selectSize(variants, size, event){
+            // Check if colour has been selected
+            if( has(this.errors,'colour') ){
+                this.$toast.warning('Select colour.');
+            }
+
+            if( !has(this.errors,'colour') ){
+                let { selections: { colour } } = this;
+                let selectedVariant            = variants.find( variant => variant.codeColour == colour.code );
+                
+                if( isEmpty( this.form.sizes.find( size => size.name == selectedVariant.codeSize) ) ){
+                    this.form.sizes.push({
+                        name:     selectedVariant.codeSize,
+                        quantity: Number(1)
+                    })
+                    this.sizeKeys
+                    $(event.target).parent().addClass('active');
+                } else {
+                    this.form.sizes = this.form.sizes.filter( size => size.name != selectedVariant.codeSize );
+                    $(event.target).parent().removeClass('active');
+                }
+            }
         },
         initScripts(){
 
@@ -749,9 +803,27 @@ export default {
                 () => {
                     if( !isEmpty(this.cartItem) ){
                         this.form = cloneDeep(this.cartItem);
-                    }
+                    }    
+                    
+                    this.$watch(
+                        () => this.selections.colour,
+                        (value) => {
+                            Promise.all(
+                                keys(this.groupedVariants).map( variant => this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) )
+                            ).then( (variants) => {
+                                variants.forEach( ({ data }) => {
+                                    if( has(data,'stock') ){
+                                        set(this.stock,data.stock.fullCode.replace(`${this.product.fullCode}-${value.code}-`,''),data.stock.stock);
+                                    }
+                                });
+                            });
+                        },
+                        {
+                            deep: true,
+                        }
+                    );                    
                 },
-                500
+                200
             )
         );
     },
@@ -768,3 +840,34 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.quantity-box .input-group span {
+    background: #fff !important;
+    border: 1px solid #ced4da !important;
+    width: 60px;
+    background-color: transparent;
+    border: 0;
+    color: #777;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    color: #222
+}
+.quantity-box .input-group span button {
+    width: 100% !important;
+}
+.quantity-box .input-group span.active {
+    background: #222 !important;
+}
+.quantity-box .input-group span.active button {
+    color: #fff !important;
+}
+.quantity-box .input-group span.active .form-control {
+    color:  #222 !important;
+}
+</style>

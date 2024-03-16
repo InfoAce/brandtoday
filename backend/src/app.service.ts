@@ -13,7 +13,7 @@ export class AppService {
   ){}
 
   // Check for amrod api credntials
-  @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async amrodCredentials(){
     
     try {

@@ -1,7 +1,12 @@
 <template>
     <ul class="show-div shopping-cart">
         <li v-for="(item,index) in cart" :key="index">
-            <div class="media">
+            <div class="close-circle">
+                <a href="#" @click.prevent="cart.splice(index,1)">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="media py-2">
                 <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
                     <img :aria-atomic="item.name" class="me-3" :src="item.image">
                 </a>
@@ -10,12 +15,9 @@
                         <p>{{ item.name }}</p>
                     </a>
                     <h4>
-                        <span>{{ item.quantity }} x KSH {{ item.price }}</span>
+                        <span>{{ item.quantity }} x KSH {{ item.price.toFixed(0) }}</span>
                     </h4>
                 </div>
-            </div>
-            <div class="close-circle">
-                <a href="#" @click.prevent="cart.splice(index,1)"><i class="fa fa-times" aria-hidden="true"></i></a>
             </div>
         </li>
         <li>
@@ -45,7 +47,7 @@ export default {
             }
         },
         total(){
-            return sum(this.cart.map( val => val.price * val.quantity ));
+            return sum(this.cart.map( val => val.price * val.quantity )).toFixed(0);
         }
     },
     name: "CartPopup"

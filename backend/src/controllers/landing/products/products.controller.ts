@@ -61,10 +61,24 @@ export class ProductsController {
         let cached_prices: any   = await this.cacheManager.store.get('amrod_prices');
         let product: any         = cached_products.find( product => product.fullCode == code );
         let data_price           = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
-        console.log(data_price);
+
         if( data_price != undefined ){ product.price = data_price.price; }
   
         res.status(HttpStatus.OK).json({ product });
+
+      } catch(err){
+
+      }
+    }
+
+    @Put('stock/:code')
+    async fetchSize(@Param('code') code: any, @Req() req: Request,  @Res() res: Response) {
+      try {
+        
+        let cached_stocks: any = await this.cacheManager.store.get('amrod_stock');
+        let stock: any         = cached_stocks.find( val => val.fullCode == code );
+
+        res.status(HttpStatus.OK).json({ stock });
 
       } catch(err){
 

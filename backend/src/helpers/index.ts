@@ -13,8 +13,8 @@ export const paginate =  function (collection,data: any = { page: 1, perPage: 10
   }
 
   let { page, perPage } = data;
-  let offset            = (page - 1) * perPage;
-  let paginatedItems    = collection.slice(offset, offset + perPage);
+  let offset            = (page - 1) * parseInt(perPage);
+  let paginatedItems    = collection.slice(offset, offset + parseInt(perPage));
 
   return {
     currentPage: parseInt(page),
