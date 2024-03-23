@@ -16,13 +16,13 @@ import { isEmpty } from 'lodash';
 const store   = useStore();
 
 const scripts = [
-	'/assets/js/exit.js',
-	'/assets/js/slick.js',
-	'/assets/js/fly-cart.js',
-	'/assets/js/menu.js',
-	'/assets/js/lazysizes.min.js',
-	'/assets/js/addtocart.js',
-	'/assets/js/script.js'	
+	'/assets/home/js/exit.js',
+	'/assets/global/js/slick.js',
+	'/assets/home/js/fly-cart.js',
+	'/assets/home/js/menu.js',
+	'/assets/home/js/lazysizes.min.js',
+	'/assets/home/js/addtocart.js',
+	'/assets/home/js/script.js'	
 ].map( 
 	async (url) => new Promise( 
 		resolve => setTimeout( async() => resolve(addScript(url)),100)
@@ -57,12 +57,12 @@ watch(
 </script>
 
 <style>
-@import '~/assets/css/vendors/font-awesome.css';
-@import '~/assets/css/vendors/slick.css';
-@import '~/assets/css/vendors/slick-theme.css';
-@import '~/assets/css/vendors/animate.css';
-@import '~/assets/css/vendors/themify-icons.css';
-@import '~/assets/css/style.css';
+@import '~/assets/home/css/vendors/font-awesome.css';
+@import '~/assets/home/css/vendors/slick.css';
+@import '~/assets/home/css/vendors/slick-theme.css';
+@import '~/assets/home/css/vendors/animate.css';
+@import '~/assets/home/css/vendors/themify-icons.css';
+@import '~/assets/home/css/style.css';
 
 .product-right .color-variant li.active:after {
     background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><path fill='white' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/></svg>");

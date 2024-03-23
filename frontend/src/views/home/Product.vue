@@ -87,7 +87,8 @@
                                                         <span class="input-group-prepend">
                                                             <button class="btn" @click="selectSize(variant,sizeName,$event)" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)">{{ sizeName }}</button>
                                                         </span>
-                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour) || $has(sizeKeys,sizeName)" v-model="form.sizes[sizeKeys[sizeName]].quantity"> 
+                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)" v-if="!$has(sizeKeys,sizeName)" value="0"> 
+                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)" v-if="$has(sizeKeys,sizeName)" v-model="form.sizes[sizeKeys[sizeName]].quantity" value="0"> 
                                                     </div>
                                                 </div>
                                                 <div class="text-center">
@@ -505,7 +506,7 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, keys, has, set, min } from 'lodash';
+import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, keys, has, omit, set, min } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
@@ -568,13 +569,16 @@ export default {
     },
     methods:{
         addToCart(){
-            let { product, selections } = this, data = cloneDeep(this.form);
+            let { isVariant, product, selections } = this, data = cloneDeep(this.form);
             if( has(selections,'colour') ){
                 data.image = selections.colour.images[0].urls[0].url;
                 data.price = product.price;
                 data.name  = product.productName;
             }
             this.cart.push(cloneDeep(data));
+        },
+        addQuantity(event){
+            this.form.sizes[this.sizeKeys[sizeName]].quantity = event.target.value;
         },
         close(){
             this.initView();
@@ -691,11 +695,12 @@ export default {
                         name:     selectedVariant.codeSize,
                         quantity: Number(1)
                     })
-                    this.sizeKeys
                     $(event.target).parent().addClass('active');
+                    this.sizeKeys[size] = (this.form.sizes.length - 1);
                 } else {
                     this.form.sizes = this.form.sizes.filter( size => size.name != selectedVariant.codeSize );
                     $(event.target).parent().removeClass('active');
+                    this.sizeKeys = omit(this.sizeKeys,[size]);
                 }
             }
         },

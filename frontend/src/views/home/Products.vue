@@ -140,7 +140,6 @@
 </template>
 <script>
 import { cloneDeep, isEmpty, isNull, has, times } from 'lodash';
-import { QuickView } from '../../components';
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 export default {
     beforeRouteEnter(to, from, next) {
@@ -154,9 +153,6 @@ export default {
             vm.fetchProducts(),
             next();
         });
-    },
-    components:{
-        QuickView
     },
     created(){
         this.$isEmpty = isEmpty;

@@ -1,59 +1,61 @@
 export default [
-    {
-      component: 'CNavItem',
-      name: 'Overview',
-      to: '/dashboard',
-      icon: 'cil-chart-pie',
-    },
-    {
-      component: 'CNavTitle',
-      name: 'Data Management',
-    },
-    {
-      component: 'CNavItem',
-      name: 'Client',
-      to: '/dashboard/clients',
-      icon: 'cil-group',
-    },  
-    {
-      component: 'CNavItem',
-      name: 'Products',
-      to: '/dashboard/products',
-      icon: 'cil-group',
-    },  
-    {
-      component: 'CNavItem',
-      name: 'Orders',
-      to: '/dashboard/orders',
-      icon: 'cil-group',
-    }, 
-    {
-      component: 'CNavItem',
-      name: 'Staff',
-      to: '/dashboard/staff',
-      icon: 'cil-group',
-    },       
-    {
-      component: 'CNavTitle',
-      name: 'Settings',
-    },
-    {
-      component: 'CNavItem',
-      name: 'Company',
-      to: '/dashboard/company',
-      icon: 'cil-building',
-    },
-    {
-      component: 'CNavItem',
-      name: 'System',
-      to: '/dashboard/system',
-      icon: 'cil-speedometer',
-    },
-    {
-      component: 'CNavItem',
-      name: 'Profile',
-      to: '/dashboard/profile',
-      icon: 'cil-user',
-    },    
-  ]
+  {
+    icon: "home",
+    name: "Overview",
+    to:   "Overview"
+  },
+  {
+    name: "Data Management",
+    icon: "home",
+    children: [
+      {
+        icon: "fa fa-speedometer",
+        name: "Clients",
+        to:   "Clients"
+      },
+      {
+        icon: "fa fa-speedometer",
+        name: "Staff",
+        to:   "Staff"
+      },
+      {
+        icon: "fa fa-speedometer",
+        name: "Orders",
+        to:   "Orders"
+      },
+    ]
+  },
+  {
+    icon: "home",
+    name: "Website",
+    children: [
+      {
+        icon: "fa fa-speedometer",
+        name: "Home",
+        to:   "WebsiteHome"
+      },
+    ]
+  },
+  {
+    icon: "settings",
+    name: "Settings",
+    children: [
+      {
+        icon: "fa fa-speedometer",
+        name: "Profile",
+        to:   "Profile"
+      },
+      {
+        icon: "fa fa-speedometer",
+        name: "Company",
+        to:   "Company"
+      },
+      {
+        icon: "fa fa-speedometer",
+        name: "System",
+        to:   "System"
+      }
+    ]
+  }
+]
   

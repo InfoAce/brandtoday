@@ -1,34 +1,40 @@
 <template>
-  <div>
     <template v-if="!$isEmpty(authUser)">
-      <Sidebar />
-      <div class="wrapper d-flex flex-column min-vh-100 bg-light">
-        <HeaderNav />
-        <div class="body flex-grow-1">
-          <CContainer fluid class="min-vh-100">
-            <CRow class="h-100 py-2">
-              <router-view />
-            </CRow>
-          </CContainer>
+      <div class="page-wrapper">
+        <DashboardHeader />
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper">
+          <DashboardSidebar />
+          <div class="page-body">
+            <router-view />
+          </div>
         </div>
       </div>
     </template>
     <template v-else>
       <router-view />
     </template>
-  </div>  
 </template>
-<script setup>
-  import { isEmpty } from 'lodash';
-  import { useStore } from 'vuex'
-  import HeaderNav from '@/components/HeaderNav.vue';
-  import Sidebar from '@/components/Sidebar.vue';
-  import { computed } from 'vue';
+<script setup lang="ts">
+import { DashboardHeader, DashboardSidebar } from '../../components';
+import { useStore } from 'vuex'
+import { computed } from 'vue';
+import { isEmpty } from 'lodash';
 
-  const $isEmpty = isEmpty;
-  const store    = useStore();
+const $isEmpty = isEmpty;
+const store   = useStore();
 
-  const authUser = computed( () => {
-    return store.getters.authUser;
-  });
+const authUser = computed( () => store.getters.authUser );
+
+// const scripts = [
+//   // '/assets/dashboard/js/sidebar-menu.js',
+//   '/assets/dashboard/js/lazysizes.min.js',
+//   '/assets/dashboard/js/admin-customizer.js',
+//   '/assets/dashboard/js/default.js',
+//   '/assets/dashboard/js/admin-script.js'	
+// ].map( 
+//   async (url) => new Promise( 
+//     resolve => setTimeout( async() => resolve(addScript(url)),100)
+//   ) 
+// );
 </script>

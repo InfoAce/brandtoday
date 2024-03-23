@@ -1,92 +1,96 @@
 <template>
-    <CCol :md="12" :xs="12">
-      <CRow>
-        <CCol :md="12" :xs="12" class="d-flex justify-content-between align-items-center">
-          <div>
-            <h3>List of staff members</h3>
-            <p>This is a list of registered staff members.</p>
-          </div>
-          <div>
-            <CButton color="primary"> Add Staff </CButton>
-          </div>
-        </CCol>
-        <CCol :md="12" :xs="12" class="d-flex justify-content-between">
-        
-        </CCol>
-        <template v-for="(client,key) in clients">
-          <CCol :md="3" :xs="12">
-              <CCard>
-                <CCardImage orientation="top" src="https://images.pexels.com/photos/920382/pexels-photo-920382.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" />
-                <CCardBody>
-                  <CCardTitle>{{ client.first_name }} {{ client.last_name }}</CCardTitle>
-                  <CBadge color="success">active</CBadge>
-                </CCardBody>
-                <CListGroup flush>
-                  <CListGroupItem>Email:     {{ client.email }}</CListGroupItem>
-                  <CListGroupItem>Phone:     {{ client.phone_number }}</CListGroupItem>
-                  <CListGroupItem>Joined On: {{ client.joined_at }}</CListGroupItem>
-                </CListGroup>
-                <CCardBody>
-                  <CDropdown color="secondary" togglerText="Dropdown button">
-                    <CDropdownToggle component="a" color="primary">More</CDropdownToggle>
-                    <CDropdownMenu>
-                      <CDropdownItem href="#">Edit</CDropdownItem>
-                      <CDropdownItem href="#">Deactive</CDropdownItem>
-                      <CDropdownItem href="#">Remove</CDropdownItem>
-                    </CDropdownMenu>  
-                  </CDropdown>
-                </CCardBody>
-              </CCard>
-          </CCol>
-        </template>
-        <CCol :md="12" :xs="12" class="d-flex justify-content-center py-4">
-          <CPagination aria-label="Page navigation example">
-            <CPaginationItem href="#">Previous</CPaginationItem>
-            <CPaginationItem href="#">1</CPaginationItem>
-            <CPaginationItem href="#">2</CPaginationItem>
-            <CPaginationItem href="#">3</CPaginationItem>
-            <CPaginationItem href="#">Next</CPaginationItem>
-          </CPagination>
-        </CCol>
-      </CRow>
-    </CCol>
+  <div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="page-header-left">
+                        <h3>
+                          Staff
+                          <small>List of registered staff members.</small>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <ol class="breadcrumb pull-right">
+                        <li class="breadcrumb-item">
+                            <a href="#" @click.prevent="router.push({ name: 'Overview' })">
+                                <i data-feather="home"></i>
+                                Overview                        
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">Data management</li>
+                        <li class="breadcrumb-item active">Staff</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <form class="form-inline search-form search-box">
+                            <div class="form-group">
+                                <input class="form-control-plaintext" type="search" placeholder="Search..">
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive table-desi">
+                            <table class="table trans-table all-package">
+                                <thead>
+                                    <tr>
+                                        <th>Order Id</th>
+                                        <th>Transaction Id</th>
+                                        <th>Date</th>
+                                        <th>Payment Method</th>
+                                        <th>Delivery Status</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>142</td>
+
+                                        <td>#212145214510</td>
+
+                                        <td>Jul 20, 2021</td>
+
+                                        <td>Paypal</td>
+
+                                        <td>Pending</td>
+
+                                        <td>$175/-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+  </div>
 </template>
 
-<script>
-  export default {
-    data: () => {
-      return {
-        clients:[
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          },
-          {
-            first_name: "Bryant",
-            last_name: "Rotich",
-            email: "bryantkrotich@gmail.com",
-            phone_number: "+254712182872",
-            joined_at: "1st Jan 2024"
-          }
-        ]
-      }
-    },
-  }
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
+
+onMounted( () => {
+  // $('#staff-list').DataTable();
+});
+
+onUnmounted( () => {
+  $('#staff-list').DataTable().destroy()
+});
+ 
 </script>

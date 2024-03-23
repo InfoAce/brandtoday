@@ -1,127 +1,118 @@
 <template>
-    <CCol lg="6" md="8" xs="12">
-        <CCard style="min-height: 100vh">
-            <CCardBody>
-                <CRow>
-                    <CCol md="12" xs="12">
-                        <h5 class="mb-0">User Profile</h5><hr class="mb-2 mt-2">
-                    </CCol>
-                    <CCol md="8" xs="12">
-                        <CForm @submit.prevent="updateUser" autocomplete="off">
-                            <CRow>
-                                <CCol :md="12" :xs="12">
-                                    <h6 class="mb-2">Profile Image</h6>
-                                </CCol>
-                                <CCol :md="12" :xs="12">  
-                                    <vue-dropzone
-                                        v-if="edit.image"
-                                        ref="dropzoneLogo" 
-                                        @vdropzone-success="imageUpdate"
-                                        id="dropzoneLogo" 
-                                        :options="dropzoneOptions"
-                                    />
-                                    <template v-else>
-                                        <CImage v-if="!$isEmpty(user.image)" align="center" thumbnail class="col-12" :src="`${backendUri}${user.image}`" fluid />
-                                        <CIcon v-else name="cil-image"></CIcon>
-                                    </template>
-                                </CCol>
-                                <CCol :md="12" :xs="12" class="text-center mt-2">  
-                                    <CButton color="light" size="sm" @click="edit.image = true"> <CIcon name="cil-pencil"></CIcon> Edit Logo </CButton> 
-                                </CCol>
-                            </CRow>
-                            <CCol :md="12" :xs="12">
-                                <h6 class="my-4">User details</h6>                           
-                            </CCol>
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-user" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="First Name"
-                                    v-model="user.first_name"		
-                                    autocomplete="off"		
-                                    :disabled="$store.getters.loader"	
-                                />
+<div>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>User Profile</h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb pull-right">
+                    <li class="breadcrumb-item">
+                        <a href="#" @click.prevent="router.push({ name: 'Overview' })">
+                            <i data-feather="home"></i>
+                            Overview                        
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->    
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-5 col-lg-5 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-details text-center">
+                        <vue-dropzone
+                            v-if="edit.image"
+                            ref="dropzoneLogo" 
+                            @vdropzone-success="imageUpdate"
+                            id="dropzoneLogo" 
+                            :options="dropzoneOptions"
+                        />        
+                        <template v-else>
+                            <img v-if="!$isEmpty(user.image)" :src="`${backendUri}${user.image}`" :alt="`${user.first_name} ${user.last_name}`" class="img-fluid blur-up lazyloaded">
+                            <img v-else src="/assets/dashboard/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded">
+                        </template>
+                        <h5 class="f-w-600 mb-0">{{ user.first_name }} {{  user.last_name }}</h5>
+                        <span>{{ user.email }}</span>
+                        <div class="col-12">
+                            <button class="btn btn-primary btn-sm" @click="edit.image = true">Edit Image</button>
+                        </div>
+                    </div>
+                    <hr>      
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="first_name"> First Name</label>
+                                <input class="form-control" id="first_name" type="text" v-model="user.first_name">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'first_name')">{{errors.first_name}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-user" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Last Name"
-                                    v-model="user.last_name"		
-                                    autocomplete="off"			
-                                    :disabled="$store.getters.loader"	
-                                />
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input class="form-control" id="last_name" type="text" v-model="user.last_name">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'last_name')">{{errors.last_name}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cilEnvelope" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    disabled
-                                    placeholder="Email"
-                                    v-model="user.email"		
-                                    autocomplete="off"			
-                                />
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input class="form-control" id="email" disabled type="text" v-model="user.email">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cilPhone" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Phone Number"
-                                    v-model="user.phone_number"		
-                                    autocomplete="off"		
-                                    :disabled="$store.getters.loader"	
-                                />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.phone_number}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cilAddressbook" />
-                                </CInputGroupText>
-                                <CFormSelect 
-                                    aria-label="Gender" 
-                                    v-model="user.gender" 
-                                    :disabled="$store.getters.loader"	                            
-                                >
-                                    <option>Open to select gender</option>
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="email">Gender</label>
+                                <select class="form-control" v-model="user.gender">
+                                    <option value="">*Select Gender</option>
                                     <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="">Prefer Not To Say</option>
-                                </CFormSelect>
+                                    <option value="femaile">Female</option>
+                                </select>
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'gender')">{{errors.gender}}</p>								
-                            </CInputGroup>                             
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-address-book" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Address"
-                                    v-model="user.address"		
-                                    autocomplete="off"			
-                                    :disabled="$store.getters.loader"	
-                                />
+                            </div>                            
+                        </div>                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="phone_number">Phone Number</label>
+                                <input class="form-control" id="phone_number" type="text" v-model="user.phone_number">
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.phone_number}}</p>								
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input class="form-control" id="address" type="text" v-model="user.address">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.address}}</p>								
-                            </CInputGroup>   
-                            <CCol :md="12" :xs="12" class="d-flex justify-content-end">  
-                                <CButton color="success" class="text-light" :disabled="isDisabled" type="submit">
-                                    <CSpinner v-if="isDisabled && $store.getters.loader" component="span" size="sm" variant="grow" aria-hidden="true"/>
-                                    Save Changes 
-                                </CButton> 
-                            </CCol>                                                   
-                        </CForm>
-                    </CCol>
-                </CRow>
-            </CCardBody>
-        </CCard>
-    </CCol>
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
+                                <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
+                                Save Changes
+                            </button>
+                        </div>                         
+                    </div>            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->   
+</div> 
 </template>
-<script>
+<script lang="ts">
 import { inject, reactive, ref, watch } from 'vue';
 import { each, debounce, isEmpty, keys, has, pick } from 'lodash';
 import { useRouter } from 'vue-router';
@@ -132,7 +123,6 @@ export default {
     beforeCreate(){
         this.checkUser = debounce( (user) => {
             const items = pick(user,['first_name','last_name','phone_number','address','gender','email']),self = this;
-            console.log(items);
             each(
                 items,
                 (value,key) => {
@@ -155,7 +145,7 @@ export default {
             return this.$store.getters.authToken;
         }, 
         backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api','');
+            return this.env.VITE_API_BASE_URL.replace('api/v1','');
         },
         env() {
             return this.$store.getters.env;
@@ -173,6 +163,9 @@ export default {
                 headers:        {}             
             },  
             errors: {},
+            loading: {
+                updating: false
+            },
             user: {
                 address:      String(),
                 first_name:   String(),
@@ -228,8 +221,8 @@ export default {
                 });
         },
         updateUser(){
-            this.$store.commit('loader',true);
-            this.isDisabled = true;
+            this.loading.updating = true;        
+            this.isDisabled       = true;
             this.$api
                 .post('/auth/user',pick(this.user,['first_name','last_name','phone_number','address','gender','email']) )
                 .then( ({ data:{ user } }) => {
@@ -238,7 +231,7 @@ export default {
                 .catch( ({ response }) => {
                 })
                 .finally( () => {
-                    this.$store.commit('loader',false);
+                    this.loading.updating = false;
                 });
         },
         // Validate the user

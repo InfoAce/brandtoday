@@ -7,6 +7,11 @@ const app_session_auth:  any  = localStorage.getItem(`${VITE_APP_NAME.replaceAll
 
 // Create a new store instance.
 export default createStore({
+  actions:{
+    logout({ commit }){
+      commit('auth',{});
+    }
+  },
   state: () => {
     return {
       auth: {
@@ -17,9 +22,8 @@ export default createStore({
       get env(){ return import.meta.env },
       loader: false,
       sideBar:{
-        menus:      menuLinks,
+        menus:     menuLinks,
         visible:   true,
-        unfoldable: false
       }
     }
   },

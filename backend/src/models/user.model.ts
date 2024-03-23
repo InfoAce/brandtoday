@@ -2,6 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
+import { has } from 'lodash';
+import { QueryBuilder } from 'typeorm';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
+
 @Injectable()
 export default class UserModel {
   constructor(
@@ -13,14 +21,22 @@ export default class UserModel {
     return await this.usersRepository.find();
   }
 
-  async findOne(id: string): Promise<UserEntity | null> {
-    return await this.usersRepository.findOneByOrFail({ id });
+  async findOne(data: object): Promise<UserEntity | null> {
+    return await this.usersRepository.findOneOrFail(data);
   }
 
   async findOneBy(data: object): Promise<UserEntity> {
-    return await this.usersRepository.findOneOrFail({ where: data });
+    return await this.usersRepository.findOneByOrFail(data);
   }
-  
+
+  queryBuilder(): QueryBuilder<UserEntity> {
+    return this.usersRepository.createQueryBuilder("user");
+  }
+
+  async paginate(options: IPaginationOptions,data:any = {}): Promise<Pagination<UserEntity>> {
+    return paginate<UserEntity>(this.usersRepository, options, data);
+  }
+
   async save(data: any): Promise<any>{
     return await this.usersRepository.save(data);
   }

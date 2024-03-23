@@ -21,7 +21,7 @@ export class AuthService {
     async signIn(user:any): Promise<any>{
         return {        
             token_type: `Bearer`,
-            token:      await this.jwtService.signAsync(user)
+            token:      await this.jwtService.signAsync(user,{expiresIn: "1d"})
         };
     }
 

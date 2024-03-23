@@ -28,76 +28,143 @@
         <section class="cart-section section-b-space">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-12 table-responsive-xs">
+                    <div class="col-sm-12 table-responsive-md">
                         <table class="table cart-table">
                             <thead>
                                 <tr class="table-head">
-                                    <th scope="col">image</th>
-                                    <th scope="col">product name</th>
-                                    <th scope="col">price</th>
-                                    <th scope="col">quantity</th>
-                                    <th scope="col">action</th>
-                                    <th scope="col">total</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Product name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(item,index) in items" :key="index">
-                                    <td>
-                                        <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})"><img :src="item.image" alt=""></a>
-                                    </td>
-                                    <td>
-                                        <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">{{ item.name }}</a>
-                                        <div class="mobile-cart-content row">
-                                            <div class="col">
-                                                <div class="qty-box">
-                                                    <div class="input-group">
-                                                        <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
+                                <template v-for="(item,index) in items" :key="`item_${index}`">
+                                    <tr >
+                                        <td>
+                                            {{ index + 1 }}
+                                        </td>
+                                        <td>
+                                            <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                                                <img :src="item.image" :alt="item.name" class="img-thumbnail">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})"><strong>{{ item.name }}</strong></a>
+                                            <div class="mobile-cart-content row">
+                                                <div class="col">
+                                                    <div class="qty-box">
+                                                        <div class="input-group">
+                                                            <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <div class="col">
+                                                    <h2 class="td-color">KSH {{ item.price }}</h2>
+                                                </div>
+                                                <div class="col">
+                                                    <h2 class="td-color">
+                                                        <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                                    </h2>
+                                                </div>
                                             </div>
-                                            <div class="col">
-                                                <h2 class="td-color">KSH {{ item.price }}</h2>
+                                        </td>
+                                        <td>
+                                            <h2>KSH {{ item.price }}</h2>
+                                        </td>
+                                        <td>
+                                            <div class="qty-box" v-if="$has(item,'sizes')">
+                                                <div class="input-group">
+                                                    <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" disabled :value="$sum(item.sizes.map( (size: any) => size.quantity))">
+                                                </div>
                                             </div>
-                                            <div class="col">
-                                                <h2 class="td-color">
-                                                    <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
-                                                </h2>
+                                            <div class="qty-box" v-if="!$has(item,'sizes')">
+                                                <div class="input-group">
+                                                    <input type="number" :name="`quantity_${item?.code}`" min="1" class="form-control input-number" v-model="item.quantity">
+                                                </div>
                                             </div>
-                                        </div>
+                                        </td>
+                                        <td>
+                                            <h2 class="td-color" v-if="$has(item,'sizes')">KSH {{ ($sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(0) }}</h2>
+                                            <h2 class="td-color" v-if="!$has(item,'sizes')">KSH {{ (item.quantity * item.price).toFixed(0) }}</h2>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="$has(item,'sizes')">
+                                        <td colspan="7">
+                                            <table class="table cart-table">
+                                                <tbody>
+                                                    <tr v-for="(size,key) in item.sizes" :key="key">
+                                                        <td>
+                                                           
+                                                        </td>
+                                                        <td>
+                                                            <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                                                                <img :src="item.image" :alt="item.name" class="img-thumbnail">
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})"><strong>{{ item.name }} - {{ size.name }}</strong></a>
+                                                            <div class="mobile-cart-content row">
+                                                                <div class="col">
+                                                                    <div class="qty-box">
+                                                                        <div class="input-group">
+                                                                            <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h2 class="td-color">KSH {{ item.price }}</h2>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h2 class="td-color">
+                                                                        <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                                                    </h2>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h2>KSH {{ item.price }}</h2>
+                                                        </td>
+                                                        <td>
+                                                            <div class="qty-box">
+                                                                <div class="input-group">
+                                                                    <input type="number" :name="`quantity_${item?.code}_${size.name}`" min="1" class="form-control input-number" v-model="size.quantity">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h2 class="td-color">KSH {{ (item.price * size.quantity).toFixed(0) }}</h2>
+                                                        </td>
+                                                        <td>
+                                                            <a href="#" class="icon" @click.prevent=" item.sizes.splice(key,1)"><i class="ti-close"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr>
+                                    <td colspan="4"></td>
+                                    <td> 
+                                        <h2 class="td-color">total price: </h2>
                                     </td>
-                                    <td>
-                                        <h2>KSH {{ item.price }}</h2>
-                                    </td>
-                                    <td>
-                                        <div class="qty-box">
-                                            <div class="input-group">
-                                                <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a></td>
-                                    <td>
-                                        <h2 class="td-color">KSH {{ item.quantity * item.price }}</h2>
+                                    <td colspan="2">
+                                        <h2 class="td-color">KSH {{ total.toFixed(0) }}</h2>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="table-responsive-md">
-                            <table class="table cart-table ">
-                                <tfoot>
-                                    <tr>
-                                        <td>total price: KSH</td>
-                                        <td>
-                                            <h2>{{ total }}</h2>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
                     </div>
                 </div>
                 <div class="row cart-buttons">
-                    <div class="col-6"><a href="#" class="btn btn-solid" @click.prevent="$router.push({ name: 'Products' })">continue shopping</a></div>
+                    <div class="col-6"><a href="#" class="btn btn-solid" @click.prevent="$router.push({ name: 'Home' })">continue shopping</a></div>
                     <div class="col-6"><a href="#" class="btn btn-solid" @click.prevent="$router.push({ name: 'Checkout' })">check out</a></div>
                 </div>
             </div>
@@ -107,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { sum } from 'lodash';
+import { has, sum } from 'lodash';
 export default {
     computed:{
         items:{
@@ -119,9 +186,30 @@ export default {
             }
         },
         total(): number{
-            return sum(this?.items.map( (val:any) => val.price * val.quantity ));
+            return sum(this?.items.map( (val:any) => { 
+                return has(val,'sizes') ? (val.price * sum(val.sizes.map( (size: any) => size.quantity))) : (val.price * val.quantity)
+            }));
         }
+    },
+    created(){
+        this.$has = has;
+        this.$sum = sum;
     },
     name: "CartPage"
 }
 </script>
+<style scoped>
+.cart-section tbody tr td, .wishlist-section tbody tr td {
+    text-align: left;
+    min-width: 0px;
+}
+.cart-section .cart-table thead th, .wishlist-section .cart-table thead th{
+    text-align: left;
+    font-weight: 0;
+    padding: 0;
+    text-transform:none;
+}
+.qty-box .input-group {
+    justify-content: start;
+}
+</style>

@@ -20,7 +20,7 @@ const router = createRouter({
             title: 'Home',
             auth: false,
             state:  0,
-
+            admin: false
           },
           component: () => import('@/views/home/Index.vue')
         },
@@ -31,7 +31,7 @@ const router = createRouter({
             title: 'Not Found',
             auth: false,
             state:  0,
-
+            admin: false
           },
           component: () => import('@/views/home/Error404.vue')
         }, 
@@ -42,7 +42,7 @@ const router = createRouter({
             title: 'Login',
             auth:   false,
             state:  0,
-
+            admin: false
           },
           component: () => import('@/views/home/Login.vue')
         }, 
@@ -56,7 +56,7 @@ const router = createRouter({
                 title: 'Cart',
                 auth:   false,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Cart.vue')
             },  
@@ -67,7 +67,7 @@ const router = createRouter({
                 title: 'Checkout',
                 auth:   true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Checkout.vue')
             },                
@@ -84,7 +84,7 @@ const router = createRouter({
                 title: 'Products',
                 auth: false,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Products.vue')
             },
@@ -95,7 +95,7 @@ const router = createRouter({
                 title: 'Product',
                 auth:   false,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Product.vue')
             },
@@ -108,7 +108,7 @@ const router = createRouter({
             title: 'Signup',
             auth: false,
             state:  0,
-
+            admin: false
           },
           component: () => import('@/views/home/Signup.vue')
         },  
@@ -122,7 +122,7 @@ const router = createRouter({
                 title: 'Email Verification',
                 auth: false,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Verify.vue')
             }
@@ -139,7 +139,7 @@ const router = createRouter({
                 title: 'Account Profile',
                 auth: true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Account.vue')
             },
@@ -150,7 +150,7 @@ const router = createRouter({
                 title: 'Client Orders',
                 auth: true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Orders.vue')
             },
@@ -161,7 +161,7 @@ const router = createRouter({
                 title: 'Favourites',
                 auth: true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Favourites.vue')
             },
@@ -172,7 +172,7 @@ const router = createRouter({
                 title: 'Cards',
                 auth: true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Cards.vue')
             },
@@ -183,7 +183,7 @@ const router = createRouter({
                 title: 'Client Security',
                 auth: true,
                 state:  0,
-    
+                admin: false
               },
               component: () => import('@/views/home/Security.vue')
             }
@@ -194,6 +194,10 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
+      beforeEnter(to,from,next){
+        console.log('here');
+        addTheme(); next();
+      },
       children:[
         {
           path: 'login',
@@ -202,6 +206,7 @@ const router = createRouter({
             title: 'Login',
             state: 1,
             auth:  false,
+            admin: true
           },
           component: () => import('@/views/dashboard/Login.vue')
         },
@@ -211,7 +216,8 @@ const router = createRouter({
           meta: {
             title:     'Overview',
             auth:  true,
-            state: 1
+            state: 1,
+            admin: true
           },
           component: () => import('@/views/dashboard/Overview.vue')
         },      
@@ -221,7 +227,8 @@ const router = createRouter({
           meta: {
             title: 'Clients',
             auth:  true,
-            state: 1
+            state: 1,
+            admin: true
           },
           component: () => import('@/views/dashboard/Clients.vue')
         },
@@ -231,7 +238,8 @@ const router = createRouter({
           meta: {
             title: 'Orders',
             auth:  true,
-            state: 1
+            state: 1,
+            admin: true
           },
           component: () => import('@/views/dashboard/Orders.vue')
         },
@@ -241,7 +249,8 @@ const router = createRouter({
           meta: {
             title: 'Staff Members',
             auth:  true,
-            state: 2
+            state: 2,
+            admin: true
           },
           component: () => import('@/views/dashboard/Staff.vue')
         },
@@ -251,7 +260,8 @@ const router = createRouter({
           meta: {
             title: 'Company',
             auth:  true,
-            state: 2
+            state: 2,
+            admin: true
           },
           component: () => import('@/views/dashboard/Company.vue')
         },        
@@ -261,7 +271,8 @@ const router = createRouter({
           meta: {
             title: 'Profile',
             auth:  true,
-            state: 1
+            state: 1,
+            admin: true
           },
           component: () => import('@/views/dashboard/Profile.vue')
         },       
@@ -271,7 +282,8 @@ const router = createRouter({
           meta: {
             title: 'System',
             auth:  true,
-            state: 3
+            state: 3,
+            admin: true
           },
           component: () => import('@/views/dashboard/System.vue')
         }                                      
@@ -282,31 +294,29 @@ const router = createRouter({
 });
 
 router.beforeEach( (to, from, next) => {
-  const { name: routeName, meta: { auth, state, landing } } = to;
+  const { name: routeName, meta: { auth, state, landing, admin } } = to;
   store.commit('loader',true);
   window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
   window.scrollTo({top: 0, behavior: 'smooth'});
+
   switch( !isEmpty(store.getters.authUser) ){
     case true:
-      // if( routeName == "Login"){
-      // } else {
-      //   const { getters: { authUser:{ role: { name: roleName, state: roleState } } } } = store;
-      //   if( roleState >= state ){
-      //     next();
-      //   } else {
-      //     next({name:"Forbidden"})
-      //   }
-      // }  
       checkRole(to,next);
     break;
     case false:
-      // store.commit('auth',{});
-      if( auth && to.name != "Login" ){
+
+      if( admin && auth ){
+        router.push({ name: "AdminLogin" });
+      }
+
+      if( !admin && auth && to.name != "Login" ){
         router.push({ name: "Login" });
       }
+      
       next();
     break;
   }
+
 });
 
 router.afterEach((to, from,failure) => {
@@ -317,7 +327,15 @@ router.afterEach((to, from,failure) => {
 })
 
 const checkRole = (to:any,next: any) => {
-  const { role: { state: roleState } } = store.getters.authUser, { name: route, meta: { state } } = to;
+  const { 
+    authToken,
+    authUser: { role: { state: roleState } } 
+  } = store.getters, 
+  { 
+    name: route, 
+    meta: { state } 
+  } = to;
+  console.log(authToken);
   switch(route){
     case 'Login':
     case 'Signup':
@@ -327,8 +345,6 @@ const checkRole = (to:any,next: any) => {
       next({name:"Overview"});
     break;
     default:
-      console.log(roleState);
-      console.log(state);
       if( roleState >= state ){
         next();
       } else {
@@ -355,5 +371,46 @@ const checkRole = (to:any,next: any) => {
   // }
 }
 
+const addTheme = () => {
+
+  const scripts = [
+    '/assets/dashboard/js/sidebar-menu.js',
+    '/assets/dashboard/js/lazysizes.min.js',
+    '/assets/dashboard/js/admin-customizer.js',
+    '/assets/dashboard/js/default.js',
+    '/assets/dashboard/js/jquery.dataTables.min.js',
+    '/assets/dashboard/js/admin-script.js'	
+  ].map( 
+    async (url) => new Promise( 
+      resolve => setTimeout( async() => resolve(addScript(url)),150)
+    ) 
+  );
+
+  [
+    '/assets/dashboard/css/vendors/font-awesome.css',
+    '/assets/dashboard/css/vendors/themify-icons.css',
+    '/assets/dashboard/css/vendors/slick.css',
+    '/assets/dashboard/css/vendors/slick-theme.css',
+    '/assets/dashboard/css/vendors/flag-icon.css',
+    '/assets/dashboard/css/vendors/prism.css',
+    '/assets/dashboard/css/vendors/bootstrap.css',
+    '/assets/dashboard/css/style.css',
+  ].forEach( (url) => {
+    let link   = document.createElement('link');
+    link.rel   = 'stylesheet';
+    link.href  = url;
+    document.head.appendChild(link);
+  });
+
+  const addScript = (url:string) => {
+    let script    = document.createElement('script');
+    script.type   = 'text/javascript';
+    script.src    = url;
+    document.body.appendChild(script);
+  }
+
+  Promise.all(scripts);
+
+}
 
 export default router

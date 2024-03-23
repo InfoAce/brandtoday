@@ -1,114 +1,113 @@
 <template>
-    <CCol lg="6" md="8" xs="12">
-        <CCard style="min-height: 100vh">
-            <CCardBody>
-                <CRow>
-                    <CCol md="12" xs="12">
-                        <h5>Company Details</h5>
-                    </CCol>
-                    <CCol md="8" xs="12">
-                        <CForm autocomplete="off" @submit.prevent="updateCompany">
-                            <CRow>
-                                <CCol :md="12" :xs="12">
-                                    <h6 class="mb-2">Company Logo</h6>
-                                </CCol>
-                                <CCol :md="12" :xs="12">  
-                                    <vue-dropzone
-                                        v-if="edit.logo"
-                                        ref="dropzoneLogo" 
-                                        @vdropzone-success="imageUpdate"
-                                        id="dropzoneLogo" 
-                                        :options="dropzoneLogoOptions"
-                                    />
-                                    <template v-else>
-                                        <CImage v-if="!$isEmpty(company.logo)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.logo}`" fluid/>
-                                        <CIcon v-else name="cil-image"></CIcon>
-                                    </template>
-                                </CCol>
-                                <CCol :md="12" :xs="12" class="text-center my-2">  
-                                    <CButton color="light" size="sm" @click="edit.logo = true"> <CIcon name="cil-pencil"></CIcon> Edit Logo </CButton> 
-                                </CCol>
-                                <CCol :md="12" :xs="12">
-                                    <h6 class="mb-2">Company Icon</h6>
-                                </CCol>
-                                <CCol :md="12" :xs="12">
-                                    <vue-dropzone
-                                        v-if="edit.icon"
-                                        @vdropzone-success="imageUpdate"
-                                        ref="dropzoneIcon" 
-                                        id="dropzoneIcon" 
-                                        :options="dropzoneIconOptions"
-                                    />  
-                                    <template v-else>
-                                        <CImage v-if="!$isEmpty(company.icon)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.icon}`" fluid />
-                                        <CIcon v-else name="cil-image"></CIcon>
-                                    </template>                                            
-                                </CCol>
-                                <CCol :md="12" :xs="12" class="text-center my-2">  
-                                    <CButton color="light" size="sm" @click="edit.icon = true"> <CIcon name="cil-pencil"></CIcon> Edit Icon </CButton> 
-                                </CCol>
-                            </CRow> 
-                            <CCol :md="12" :xs="12">
-                                <h6 class="my-4">Company details</h6>                           
-                            </CCol>                        
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-user" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Name"
-                                    v-model="company.name"		
-                                    autocomplete="off"			
-                                />
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'name')">{{errors.name}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-envelope" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    disabled
-                                    placeholder="Email"
-                                    v-model="company.email"		
-                                    autocomplete="off"			
-                                />
+<div>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>
+                        Company Profile
+                        <small>Multikart Admin panel</small>                
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb pull-right">
+                    <li class="breadcrumb-item">
+                        <a href="#" @click.prevent="router.push({ name: 'Overview' })">
+                            <i data-feather="home"></i>
+                            Overview                        
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">Settings</li>
+                    <li class="breadcrumb-item active">Company</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->    
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-5 col-lg-5 col-md-6">
+            <div class="card">
+                <div class="card-body">     
+                    <div class="row">0
+                        00\
+                        <div class="col-12">
+                            <label for="company_logo">Company Logo</label>
+                            <vue-dropzone
+                                v-if="edit.logo"
+                                ref="dropzoneLogo" 
+                                @vdropzone-success="imageUpdate"
+                                id="dropzoneLogo" 
+                                :options="dropzoneLogoOptions"
+                            />
+                            <template v-else>
+                                <CImage v-if="!$isEmpty(company.logo)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.logo}`" fluid/>
+                                <CIcon v-else name="cil-image"></CIcon>
+                            </template>
+                        </div>
+                        <div class="col-12">
+                            <label for="company_logo">Company Icon</label>
+                            <vue-dropzone
+                                v-if="edit.icon"
+                                @vdropzone-success="imageUpdate"
+                                ref="dropzoneIcon" 
+                                id="dropzoneIcon" 
+                                :options="dropzoneIconOptions"
+                            />  
+                            <template v-else>
+                                <CImage v-if="!$isEmpty(company.icon)" align="center" class="col-12" thumbnail :src="`${backendUri}${company.icon}`" fluid />
+                                <CIcon v-else name="cil-image"></CIcon>
+                            </template>       
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="first_name"> First Name</label>
+                                <input class="form-control" id="first_name" type="text" required="">
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'first_name')">{{errors.first_name}}</p>								
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input class="form-control" id="last_name" type="text" required="">
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'last_name')">{{errors.last_name}}</p>								
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input class="form-control" id="mail" type="text" required="">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'email')">{{errors.email}}</p>								
-                            </CInputGroup> 
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-phone" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Phone Number"
-                                    type="number"
-                                    v-model="company.phone_number"		
-                                    autocomplete="off"			
-                                />
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="phone_number">Phone Number</label>
+                                <input class="form-control" id="phone_number" type="text" required="">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'phone_number')">{{errors.phone_number}}</p>								
-                            </CInputGroup>                             
-                            <CInputGroup class="mb-3">
-                                <CInputGroupText>
-                                    <CIcon icon="cil-address-book" />
-                                </CInputGroupText>
-                                <CFormInput
-                                    placeholder="Address"
-                                    v-model="company.address"		
-                                    autocomplete="off"			
-                                />
+                            </div>                            
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input class="form-control" id="address" type="text" required="">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.address}}</p>								
-                            </CInputGroup>   
-                            <CCol :md="12" :xs="12" class="d-flex justify-content-end">  
-                                <CButton color="success" class="text-light" :disabled="isDisabled" type="submit">
-                                    <CSpinner v-if="isDisabled && $store.getters.loader" component="span" size="sm" variant="grow" aria-hidden="true"/>
-                                    Save Changes 
-                                </CButton> 
-                            </CCol>                                                   
-                        </CForm>
-                    </CCol>
-                </CRow>
-            </CCardBody>
-        </CCard>
-    </CCol>
+                            </div>                            
+                        </div>
+                        
+                    </div>            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->   
+</div>     
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';

@@ -3,6 +3,7 @@ export { CategoryController as CategoryController } from './landing/category/cat
 export { CompanyController as CompanyController } from './company/company.controller'
 export { HeaderController as HeaderController } from './header/header.controller'
 export { SystemController as SystemController } from './system/system.controller'
+export { UserController as UserController } from './user/user.controller'
 
 // Landing pages
 export { AccountController as AccountController } from './landing/account/account.controller'

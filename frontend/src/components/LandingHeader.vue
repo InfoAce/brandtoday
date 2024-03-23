@@ -56,10 +56,10 @@
                                         </div>
                                         <ul id="sub-menu" class="sm pixelstrap sm-vertical">
                                             <li v-for="(item,index) in categories" :key="index"> 
-                                                <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item.categoryPath) }})">{{ item.categoryName }}</a>
+                                                <a href="#" >{{ item.categoryName }}</a>
                                                 <ul>
                                                     <li v-for="(item_child,child_key) in item.children" :key="child_key">
-                                                        <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item_child.categoryPath) }})">{{ item_child.categoryName }}</a>
+                                                        <a href="#">{{ item_child.categoryName }}</a>
                                                         <template v-if="!$isEmpty(item_child.children)">
                                                             <ul v-show="!$isEmpty(item_child.children)">
                                                                 <li v-for="(item_child_child,child_child_key) in item_child.children" :key="child_child_key">
@@ -102,7 +102,7 @@
                                     <ul>
                                         <li class="onhover-div mobile-search">
                                             <div>
-                                                <img src="/assets/images/icon/search.png" onclick="openSearch()" class="img-fluid blur-up lazyload" alt=""> 
+                                                <img src="/assets/home/images/icon/search.png" onclick="openSearch()" class="img-fluid blur-up lazyload" alt=""> 
                                                 <i class="ti-search" onclick="openSearch()"></i>
                                             </div>
                                             <div id="search-overlay" class="search-overlay">
@@ -129,7 +129,7 @@
                                             </div>
                                         </li>
                                         <!-- <li class="onhover-div mobile-setting">
-                                            <div><img src="/assets/images/icon/setting.png"
+                                            <div><img src="/assets/home/images/icon/setting.png"
                                                     class="img-fluid blur-up lazyload" alt=""> <i
                                                     class="ti-settings"></i></div>
                                             <div class="show-div setting">
@@ -147,13 +147,12 @@
                                                 </ul>
                                             </div>
                                         </li> -->
-                                        <li class="onhover-div mobile-cart">
-                                            <div>
-                                                <img src="/assets/images/icon/cart.png" class="img-fluid blur-up lazyload" alt=""> 
+                                        <li class="mobile-cart">
+                                            <a href="#" @click.prevent="$router.push({ name: 'Cart'})">
+                                                <img src="/assets/home/images/icon/cart.png" class="img-fluid blur-up lazyload" alt=""> 
                                                 <i class="ti-shopping-cart"></i>
-                                            </div>
+                                            </a>
                                             <span class="cart_qty_cls">{{ cart.length }}</span>
-                                            <CartPopup />
                                         </li>
                                     </ul>
                                 </div>
@@ -205,6 +204,19 @@ export default {
     methods:{
         btoa(data){
             return window.btoa(data);
+        },
+        logout(){
+            this.$swal.fire({
+				icon: 'question',
+				title: 'Logout',
+				text: 'Are you sure you want to logout ?',
+                showCancelButton: true
+			}).then((result) => {
+				if( result.isConfirmed ){
+                    this.$store.dispatch('logout');
+                    this.$router.push({ name: "Login" });
+                }
+			});	
         },
         fetchMenus(){
             this.$api

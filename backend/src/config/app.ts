@@ -5,5 +5,6 @@ export default registerAs('app',() => ({
     jwt: {
         expiry: process.env.JWT_SESSION_EXPIRES,
         key: process.env.JWT_SESSION_KEY,
-    }
+    },
+    ...process.env
 }));

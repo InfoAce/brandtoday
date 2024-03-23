@@ -42,6 +42,17 @@ export default registerAs('services',() => {
                 password,
                 username
             }
+        },
+        pesapal: {
+            endpoints: {
+                auth:    "/Auth/RequestToken", // get authorization token4
+                base_uri: "", // set base url for api requests. Determined by the app environment
+                getipns: "/URLSetup/GetIpnList", // list all Instant Payment Notification
+                ipn:     "/URLSetup/RegisterIPN", // create an Instant Payment Notification
+                live:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
+                orderRequest: "/Transactions/SubmitOrderRequest", // create an order request for a client
+                sandbox: "https://cybqa.pesapal.com/pesapalv3/api" // live phase endpoint
+            }
         }
     };
 
