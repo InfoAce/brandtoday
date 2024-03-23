@@ -26,4 +26,20 @@ export class MailService {
       },
     });
   }
+  async sendStaffConfirmation(user: UserEntity) {
+    const url = `${this.configService.get('APP_URL')}/dashboard/verify/${user.token}`;
+
+    return await this.mailerService.sendMail({
+      to: user.email,
+      // from: '"Support Team" <support@example.com>', // override default from
+      subject: `Welcome to  ${this.configService.get<string>('APP_NAME') } Confirm your Email`,
+      template: 'welcome', // `.hbs` extension is appended automatically
+      context: { // ✏️ filling curly brackets with content
+        app:  this.configService.get<string>('APP_NAME'),
+        name: `${user.first_name} ${user.last_name}`,
+        url,
+        contact: this.configService.get<string>('MAIL_FROM')
+      },
+    });
+  }
 }

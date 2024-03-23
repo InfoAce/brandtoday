@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
 import { has } from 'lodash';
-import { QueryBuilder } from 'typeorm';
+import { QueryBuilder, QueryFailedError } from 'typeorm';
 import {
   paginate,
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+
+class UserModelException extends ExceptionsHandler {}
 
 @Injectable()
 export default class UserModel {
@@ -38,7 +41,10 @@ export default class UserModel {
   }
 
   async save(data: any): Promise<any>{
-    return await this.usersRepository.save(data);
+    try {
+      return await this.usersRepository.save(data);
+    } catch(err){
+      throw new UserModelException(err);    }
   }
 
   async updateOne(find:any, data: any): Promise<any>{

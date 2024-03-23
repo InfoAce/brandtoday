@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { ConfigDatabase, ConfigServices } from './config';
+import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService } from './services';
 import { CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
 import { CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from './entities';
@@ -26,7 +26,7 @@ import { SessionSerialize } from './utils';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development','.env.production', '.env'],
-      load:[ ConfigDatabase, ConfigServices],
+      load:[ ConfigApp, ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
     CacheModule.registerAsync(RedisOptions),
@@ -34,16 +34,7 @@ import { SessionSerialize } from './utils';
       timeout: 5000,
       maxRedirects: 5,
     }),
-    ScheduleModule.forRoot(),
-    SessionModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService): Promise<NestSessionOptions> => {
-        return {
-          session: { secret: configService.get<string>('SESSION_KEY') },
-        };
-      },
-    }),    
+    ScheduleModule.forRoot(),   
     ServeStaticModule.forRoot({
       rootPath: resolve('./public'),
       exclude: ['/api/(.*)']

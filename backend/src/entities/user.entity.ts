@@ -86,7 +86,7 @@ export class UserEntity {
       return bcrypt.hash('password', 10);
     }
   )
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @Column({
@@ -107,7 +107,7 @@ export class UserEntity {
 
   
   @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
-  @Column({ select: false })
+  @Column({ select: true })
   token: string;
 
   @CreateDateColumn()

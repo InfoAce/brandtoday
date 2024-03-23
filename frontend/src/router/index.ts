@@ -195,7 +195,6 @@ const router = createRouter({
     {
       path: '/dashboard',
       beforeEnter(to,from,next){
-        console.log('here');
         addTheme(); next();
       },
       children:[
@@ -203,7 +202,7 @@ const router = createRouter({
           path: 'login',
           name: "AdminLogin",
           meta: {
-            title: 'Login',
+            title: 'Dashboard Login',
             state: 1,
             auth:  false,
             admin: true
@@ -286,7 +285,39 @@ const router = createRouter({
             admin: true
           },
           component: () => import('@/views/dashboard/System.vue')
-        }                                      
+        },
+        {
+          path: 'verify',
+          children:[
+            {
+              path: '',
+              redirect: '/dashboard/verify/error'
+            },
+            {
+              path: ':token',
+              name: 'VerifyAccount',
+              meta: {
+                title: 'Verify Account',
+                auth:  false,
+                state: 0,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/VerifyAccount.vue')
+            },
+            {
+              path: 'error',
+              name: "VerifyError404",
+              meta: {
+                title: 'Not Found',
+                auth:  false,
+                state: 0,
+                admin: false
+              },
+              component: () => import('@/views/dashboard/VerifyError.vue')
+            },
+          ],
+          component: RouterView
+        }                                    
       ],
       component: () => import('@/views/layouts/Dashboard.vue')
     }

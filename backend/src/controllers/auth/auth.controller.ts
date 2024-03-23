@@ -100,6 +100,23 @@ export class AuthController {
         }
     }
 
+    @Put('user/:token')
+    async fetchToken(@Param('token') token: string, @Res() res: Response){
+        try{
+            let user = await this.userModel.findOneBy({ token });
+            
+            return res.status(HttpStatus.OK).json({ user });
+
+        } catch(err) {
+
+            if( err.constructor.name == "EntityNotFoundError"){
+                throw new NotFoundException();
+            }
+
+            throw new InternalServerErrorException(); 
+        }
+    }
+
     @UseGuards(AuthGuard)
     @Get('user')
     getProfile(@Req() req: Request,  @Res() res: Response) {
