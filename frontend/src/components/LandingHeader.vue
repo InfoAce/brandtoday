@@ -21,13 +21,13 @@
                             </li>
                             <li class="onhover-dropdown mobile-account">
                                 <i class="fa fa-user" aria-hidden="true"></i>
-                                <span v-if="$isEmpty(authUser)">My Account</span>
+                                <span v-if="isEmpty(authUser)">My Account</span>
                                 <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
-                                <ul class="onhover-show-div" v-show="$isEmpty(authUser)">
+                                <ul class="onhover-show-div" v-show="isEmpty(authUser)">
                                     <li><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
                                     <li><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
                                 </ul>
-                                <ul class="onhover-show-div" v-show="!$isEmpty(authUser)">
+                                <ul class="onhover-show-div" v-show="!isEmpty(authUser)">
                                     <li><a href="#" @click.prevent="$router.push({name:'AccountProfile'})">Profile</a></li>
                                     <li><a href="#" @click.prevent="logout">Logout</a></li>
                                 </ul>
@@ -55,13 +55,13 @@
                                                     aria-hidden="true"></i> Back</div>
                                         </div>
                                         <ul id="sub-menu" class="sm pixelstrap sm-vertical">
-                                            <li v-for="(item,index) in categories" :key="index"> 
+                                            <li v-for="(item,index) in data.categories" :key="index"> 
                                                 <a href="#" >{{ item.categoryName }}</a>
                                                 <ul>
                                                     <li v-for="(item_child,child_key) in item.children" :key="child_key">
                                                         <a href="#">{{ item_child.categoryName }}</a>
-                                                        <template v-if="!$isEmpty(item_child.children)">
-                                                            <ul v-show="!$isEmpty(item_child.children)">
+                                                        <template v-if="!isEmpty(item_child.children)">
+                                                            <ul v-show="!isEmpty(item_child.children)">
                                                                 <li v-for="(item_child_child,child_child_key) in item_child.children" :key="child_child_key">
                                                                     <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item_child_child.categoryPath) }})">{{ item_child_child.categoryName }}</a>
                                                                 </li>
@@ -165,10 +165,72 @@
     </header>
     <!-- header end -->
 </template>
-<script>
-import CartPopup from './CartPopup.vue';
+<script setup>
 import { cloneDeep, debounce, isEmpty } from 'lodash';
+import { useStore } from 'vuex';
+import { onBeforeMount, onMounted, inject, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+
+const $api     = inject('$api');
+const $store   = useStore();
+const $router  = useRouter(); 
+const data     = reactive({categories: Array() });
+const authUser = $store.getters.authUser;
+const cart     = $store.getters.cart;
+
+const fetchMenus = () => {
+    $api.get('header')
+        .then( ({ data: { categories } }) => {
+            data.categories = cloneDeep(categories);
+        })
+        .catch( () => {
+
+        })
+        .finally( () => {
+
+        })
+}
+
+const btoa = (data) => {
+    return window.btoa(data);
+};
+
+const initMenus = debounce( () => {
+    $(function () {
+        $('#main-menu').smartmenus({
+            subMenusSubOffsetX: 1,
+            subMenusSubOffsetY: -8
+        });
+        $('#sub-menu').smartmenus({
+            subMenusSubOffsetX: 1,
+            subMenusSubOffsetY: -10
+        });
+    });
+},500);
+const logout = () =>{
+    $swal.fire({
+        icon: 'question',
+        title: 'Logout',
+        text: 'Are you sure you want to logout ?',
+        showCancelButton: true
+    }).then((result) => {
+        if( result.isConfirmed ){
+            $store.dispatch('logout');
+            $router.push({ name: "Login" });
+        }
+    });	
+}
+
+onBeforeMount( () => fetchMenus() );
+
+onMounted( () => initMenus() );
+</script>
+<!-- <script>
+import CartPopup from './CartPopup.vue';
+import { cloneDeep, debounce, isEmpty,  } from 'lodash';
 import { mapGetters } from 'vuex';
+import { useRoute } from 'vue-router';
+
 
 export default {
     components:{
@@ -235,4 +297,4 @@ export default {
     },
     name: "LandingHeader",
 }
-</script>
+</script> -->

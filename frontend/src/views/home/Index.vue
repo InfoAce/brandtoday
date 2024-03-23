@@ -6,7 +6,7 @@
         <div class="slide-1 home-slider">
             <div>
                 <div class="home  text-center">
-                    <img src="/assets/images/home-banner/1.jpg" alt="" class="bg-img blur-up lazyload">
+                    <img src="/assets/home/images/home-banner/1.jpg" alt="" class="bg-img blur-up lazyload">
                     <div class="container">
                         <div class="row">
                             <div class="col">
@@ -24,7 +24,7 @@
             </div>
             <div>
                 <div class="home text-center">
-                    <img src="/assets/images/home-banner/2.jpg" alt="" class="bg-img blur-up lazyload">
+                    <img src="/assets/home/images/home-banner/2.jpg" alt="" class="bg-img blur-up lazyload">
                     <div class="container">
                         <div class="row">
                             <div class="col">
@@ -53,7 +53,7 @@
                     <a href="#">
                         <div class="collection-banner p-right text-center">
                             <div class="img-part">
-                                <img src="/assets/images/sub-banner1.jpg" class="img-fluid blur-up lazyload bg-img"
+                                <img src="/assets/home/images/sub-banner1.jpg" class="img-fluid blur-up lazyload bg-img"
                                     alt="">
                             </div>
                             <div class="contain-banner">
@@ -69,7 +69,7 @@
                     <a href="#">
                         <div class="collection-banner p-right text-center">
                             <div class="img-part">
-                                <img src="/assets/images/sub-banner2.jpg" class="img-fluid blur-up lazyload bg-img"
+                                <img src="/assets/home/images/sub-banner2.jpg" class="img-fluid blur-up lazyload bg-img"
                                     alt="">
                             </div>
                             <div class="contain-banner">
@@ -114,11 +114,11 @@
                         <div class="product-box">
                             <div class="img-wrapper">
                                 <div class="front">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/27.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/27.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="back">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/28.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/28.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="cart-info cart-wrap">
@@ -157,11 +157,11 @@
                                         sale</span></div>
                                 <div class="front">
                                     <a href="product-page(no-sidebar).html">
-                                        <img src="/assets/images/pro3/1.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/pro3/1.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt=""></a>
                                 </div>
                                 <div class="back">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/2.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/2.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="cart-info cart-wrap">
@@ -194,11 +194,11 @@
                                 <div class="lable-block"><span class="lable3">new</span> <span class="lable4">on
                                         sale</span></div>
                                 <div class="front">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/33.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/33.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="back">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/34.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/34.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="cart-info cart-wrap">
@@ -229,11 +229,11 @@
                         <div class="product-box">
                             <div class="img-wrapper">
                                 <div class="front">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/35.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/35.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="back">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/36.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/36.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="cart-info cart-wrap">
@@ -266,11 +266,11 @@
                                 <div class="lable-block"><span class="lable3">new</span> <span class="lable4">on
                                         sale</span></div>
                                 <div class="front">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/33.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/33.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="back">
-                                    <a href="product-page(no-sidebar).html"><img src="/assets/images/pro3/34.jpg"
+                                    <a href="product-page(no-sidebar).html"><img src="/assets/home/images/pro3/34.jpg"
                                             class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                 </div>
                                 <div class="cart-info cart-wrap">
@@ -309,7 +309,7 @@
     <!-- Parallax banner -->
     <section class="p-0">
         <div class="full-banner parallax text-center p-left">
-            <img src="/assets/images/parallax/1.jpg" alt="" class="bg-img blur-up lazyload">
+            <img src="/assets/home/images/parallax/1.jpg" alt="" class="bg-img blur-up lazyload">
             <div class="container">
                 <div class="row">
                     <div class="col">
@@ -348,12 +348,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -389,12 +389,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -428,12 +428,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -469,12 +469,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -510,12 +510,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -549,12 +549,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -590,12 +590,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -629,12 +629,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -674,12 +674,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -713,12 +713,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -754,12 +754,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -793,12 +793,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -832,12 +832,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -873,12 +873,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -912,12 +912,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -953,12 +953,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -998,12 +998,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1037,12 +1037,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1076,12 +1076,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/33.jpg"
+                                                        src="/assets/home/images/pro3/33.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/34.jpg"
+                                                        src="/assets/home/images/pro3/34.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1117,12 +1117,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1158,12 +1158,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1197,12 +1197,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/35.jpg"
+                                                        src="/assets/home/images/pro3/35.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/36.jpg"
+                                                        src="/assets/home/images/pro3/36.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1238,12 +1238,12 @@
                                                     class="lable4">on sale</span></div>
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/1.jpg"
+                                                        src="/assets/home/images/pro3/1.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/2.jpg"
+                                                        src="/assets/home/images/pro3/2.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1277,12 +1277,12 @@
                                         <div class="img-wrapper">
                                             <div class="front">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/27.jpg"
+                                                        src="/assets/home/images/pro3/27.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="back">
                                                 <a href="product-page(no-sidebar).html"><img
-                                                        src="/assets/images/pro3/28.jpg"
+                                                        src="/assets/home/images/pro3/28.jpg"
                                                         class="img-fluid blur-up lazyload bg-img" alt=""></a>
                                             </div>
                                             <div class="cart-info cart-wrap">
@@ -1424,7 +1424,7 @@
                             <a href="#">
                                 <div class="classic-effect">
                                     <div>
-                                        <img src="/assets/images/blog/1.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/blog/1.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt="">
                                     </div>
                                     <span></span>
@@ -1443,7 +1443,7 @@
                             <a href="#">
                                 <div class="classic-effect">
                                     <div>
-                                        <img src="/assets/images/blog/2.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/blog/2.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt="">
                                     </div>
                                     <span></span>
@@ -1462,7 +1462,7 @@
                             <a href="#">
                                 <div class="classic-effect">
                                     <div>
-                                        <img src="/assets/images/blog/3.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/blog/3.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt="">
                                     </div>
                                     <span></span>
@@ -1481,7 +1481,7 @@
                             <a href="#">
                                 <div class="classic-effect">
                                     <div>
-                                        <img src="/assets/images/blog/4.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/blog/4.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt="">
                                     </div>
                                     <span></span>
@@ -1500,7 +1500,7 @@
                             <a href="#">
                                 <div class="classic-effect">
                                     <div>
-                                        <img src="/assets/images/blog/5.jpg" class="img-fluid blur-up lazyload bg-img"
+                                        <img src="/assets/home/images/blog/5.jpg" class="img-fluid blur-up lazyload bg-img"
                                             alt="">
                                     </div>
                                     <span></span>
@@ -1532,7 +1532,7 @@
                     <div class="slide-7 no-arrow slick-instagram">
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/2.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/2.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1540,7 +1540,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/3.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/3.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1548,7 +1548,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/4.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/4.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1556,7 +1556,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/9.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/9.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1564,7 +1564,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/6.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/6.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1572,7 +1572,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/7.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/7.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1580,7 +1580,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/8.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/8.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1588,7 +1588,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/9.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/9.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1596,7 +1596,7 @@
                         </div>
                         <div>
                             <a href="#">
-                                <div class="instagram-box"> <img src="/assets/images/slider/2.jpg" class="bg-img"
+                                <div class="instagram-box"> <img src="/assets/home/images/slider/2.jpg" class="bg-img"
                                         alt="img">
                                     <div class="overlay"><i class="fa fa-instagram"></i></div>
                                 </div>
@@ -1618,42 +1618,42 @@
                     <div class="slide-6 no-arrow">
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/1.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/1.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/2.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/2.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/3.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/3.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/4.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/4.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/5.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/5.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/6.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/6.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/7.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/7.png" alt=""></a>
                             </div>
                         </div>
                         <div>
                             <div class="logo-block">
-                                <a href="#"><img src="/assets/images/logos/8.png" alt=""></a>
+                                <a href="#"><img src="/assets/home/images/logos/8.png" alt=""></a>
                             </div>
                         </div>
                     </div>

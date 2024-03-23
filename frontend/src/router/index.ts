@@ -11,6 +11,9 @@ const router = createRouter({
     },
     {
       path: '/home',
+      beforeEnter(to,from,next){
+        addHomeTheme(); next();
+      },
       component: () => import('@/views/layouts/Landing.vue'),
       children: [
         {
@@ -195,7 +198,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       beforeEnter(to,from,next){
-        addTheme(); next();
+        addDashbordTheme(); next();
       },
       children:[
         {
@@ -402,7 +405,7 @@ const checkRole = (to:any,next: any) => {
   // }
 }
 
-const addTheme = () => {
+const addDashbordTheme = () => {
 
   const scripts = [
     '/assets/dashboard/js/sidebar-menu.js',
@@ -413,19 +416,52 @@ const addTheme = () => {
     '/assets/dashboard/js/admin-script.js'	
   ].map( 
     async (url) => new Promise( 
+      resolve => setTimeout( async() => resolve(addScript(url)),0)
+    ) 
+  );
+
+  [
+    '/assets/dashboard/css/vendors/themify-icons.css',
+    '/assets/dashboard/css/vendors/flag-icon.css',
+    '/assets/dashboard/css/vendors/prism.css',
+    '/assets/dashboard/css/vendors/bootstrap.css',
+    '/assets/dashboard/css/style.css',
+  ].forEach( (url) => {
+    let link   = document.createElement('link');
+    link.rel   = 'stylesheet';
+    link.href  = url;
+    document.head.appendChild(link);
+  });
+
+  const addScript = (url:string) => {
+    let script    = document.createElement('script');
+    script.type   = 'text/javascript';
+    script.src    = url;
+    document.body.appendChild(script);
+  }
+
+  Promise.all(scripts);
+
+}
+
+const addHomeTheme = () => {
+
+  const scripts = [
+    '/assets/home/js/jquery.exitintent.js',
+    '/assets/home/js/fly-cart.js',
+    '/assets/home/js/menu.js',
+    '/assets/home/js/lazysizes.min.js',
+    '/assets/home/js/addtocart.js',
+    '/assets/home/js/script.js'	
+  ].map( 
+    async (url) => new Promise( 
       resolve => setTimeout( async() => resolve(addScript(url)),150)
     ) 
   );
 
   [
-    '/assets/dashboard/css/vendors/font-awesome.css',
-    '/assets/dashboard/css/vendors/themify-icons.css',
-    '/assets/dashboard/css/vendors/slick.css',
-    '/assets/dashboard/css/vendors/slick-theme.css',
-    '/assets/dashboard/css/vendors/flag-icon.css',
-    '/assets/dashboard/css/vendors/prism.css',
-    '/assets/dashboard/css/vendors/bootstrap.css',
-    '/assets/dashboard/css/style.css',
+    '/assets/home/css/vendors/themify-icons.css',
+    '/assets/home/css/style.css',
   ].forEach( (url) => {
     let link   = document.createElement('link');
     link.rel   = 'stylesheet';
