@@ -30,6 +30,14 @@
                         <form>
                             <div class="row">
                                 <div class="col-lg-6 col-sm-12 col-xs-12">
+                                    <div class="checkout-details">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                                            <label class="form-check-label ml-2" for="defaultCheck1">
+                                                Default checkbox
+                                            </label>
+                                        </div>
+                                    </div>
                                     <div class="checkout-title">
                                         <h3>Billing Details</h3>
                                     </div>
@@ -88,12 +96,18 @@
                                                 <div>Product <span>Total</span></div>
                                             </div>
                                             <ul class="qty">
-                                                <li>Pink Slim Shirt × 1 <span>$25.10</span></li>
-                                                <li>SLim Fit Jeans × 1 <span>$555.00</span></li>
+                                                <template  v-for="(item,index) in cart">
+                                                    <template v-if="has(item,'sizes')">
+                                                        <li v-for="(size,key) in item.sizes" :key="`${index}_${key}`">{{ item.name }} - {{ size.name }} × {{ size.quantity }} <span>KSH {{ (size.quantity * item.price).toFixed(0) }}</span></li>
+                                                    </template>
+                                                    <template v-else>
+                                                        <li :key="index">{{ item.name }} × {{ item.quantity }} <span>KSH {{ (item.quantity * item.price).toFixed(0) }}</span></li>
+                                                    </template>
+                                                </template>
                                             </ul>
                                             <ul class="sub-total">
-                                                <li>Subtotal <span class="count">$380.10</span></li>
-                                                <li>Shipping
+                                                <li>Subtotal <span class="count">KSH {{ total.toFixed(0) }}</span></li>
+                                                <!-- <li>Shipping
                                                     <div class="shipping">
                                                         <div class="shopping-option">
                                                             <input type="checkbox" name="free-shipping" id="free-shipping">
@@ -104,47 +118,11 @@
                                                             <label for="local-pickup">Local Pickup</label>
                                                         </div>
                                                     </div>
-                                                </li>
+                                                </li> -->
                                             </ul>
                                             <ul class="total">
-                                                <li>Total <span class="count">$620.00</span></li>
+                                                <li>Total <span class="count">KSH {{ total.toFixed(0) }}</span></li>
                                             </ul>
-                                        </div>
-                                        <div class="payment-box">
-                                            <div class="upper-box">
-                                                <div class="payment-options">
-                                                    <ul>
-                                                        <li>
-                                                            <div class="radio-option">
-                                                                <input type="radio" name="payment-group" id="payment-1"
-                                                                    checked="checked">
-                                                                <label for="payment-1">Check Payments<span
-                                                                        class="small-text">Please send a check to Store
-                                                                        Name, Store Street, Store Town, Store State /
-                                                                        County, Store Postcode.</span></label>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="radio-option">
-                                                                <input type="radio" name="payment-group" id="payment-2">
-                                                                <label for="payment-2">Cash On Delivery<span
-                                                                        class="small-text">Please send a check to Store
-                                                                        Name, Store Street, Store Town, Store State /
-                                                                        County, Store Postcode.</span></label>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div class="radio-option paypal">
-                                                                <input type="radio" name="payment-group" id="payment-3">
-                                                                <label for="payment-3">PayPal<span class="image"><img
-                                                                            src="../assets/images/paypal.png"
-                                                                            alt=""></span></label>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="text-end"><a href="#" class="btn-solid btn">Place Order</a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -157,3 +135,19 @@
         <!-- section end -->        
     </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { isEmpty, has, sum } from 'lodash';
+
+const $store = useStore();
+
+const cart   = computed( () => $store.getters.cart );
+const total  = computed( () => { 
+    return sum(cart.value.map( (val:any) => { 
+        return has(val,'sizes') ? (val.price * sum(val.sizes.map( (size: any) => size.quantity))) : (val.price * val.quantity)
+    }));
+});
+
+</script>
