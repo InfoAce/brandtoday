@@ -9,6 +9,9 @@ import {
     Pagination,
     IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+
+class FavouriteModelException extends ExceptionsHandler {}
 
 @Injectable()
 export default class FavouriteModel {
@@ -17,12 +20,16 @@ export default class FavouriteModel {
     private favouriteRepository: FavouriteRepository,
   ) {}
   
-  async find(data:any): Promise<FavouriteEntity>{
-    return await this.favouriteRepository.findOneOrFail(data);
+  async find(data:any): Promise<FavouriteEntity[]>{
+    return await this.favouriteRepository.find(data);
   }
 
-  async first(): Promise<FavouriteEntity>{
-    return first(await this.favouriteRepository.find());
+  async findOne(data:any): Promise<FavouriteEntity>{
+    try{
+      return await this.favouriteRepository.findOneOrFail(data);
+    } catch(err) {
+      throw new FavouriteModelException(err);   
+    }
   }
 
   async paginate(options: IPaginationOptions): Promise<Pagination<FavouriteEntity>> {
@@ -34,7 +41,11 @@ export default class FavouriteModel {
   }
 
   async save(data: any): Promise<any>{
-    return await this.favouriteRepository.save(data);
+    try {
+      return await this.favouriteRepository.save(data);
+    } catch(err){
+      throw new FavouriteModelException(err);   
+    }
   }
 
   async remove(id: string): Promise<DeleteResult> {
