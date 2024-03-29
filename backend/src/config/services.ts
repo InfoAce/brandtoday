@@ -19,6 +19,10 @@ export default registerAs('services',() => {
             version: 'v1',
             endpoints: {
                 auth_uri,
+                brands:{
+                    all: '/Brands/',
+                    updated: '/Brands/GetUpdated'  
+                },
                 vendor_uri,
                 categories: {
                     all: 'Categories'

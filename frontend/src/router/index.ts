@@ -68,9 +68,9 @@ const router = createRouter({
               name: "Checkout",
               meta: {
                 title: 'Checkout',
-                auth:   true,
+                auth:   false,
                 state:  0,
-                admin: false
+                admin:  false
               },
               component: () => import('@/views/home/Checkout.vue')
             },                
@@ -156,6 +156,17 @@ const router = createRouter({
                 admin: false
               },
               component: () => import('@/views/home/Orders.vue')
+            },
+            {
+              path: 'addresses',
+              name: "AddressBook",
+              meta: {
+                title: 'Address Book',
+                auth:   true,
+                state:  0,
+                admin:  false
+              },
+              component: () => import('@/views/home/AddressBook.vue')
             },
             {
               path: 'favourites',
@@ -330,12 +341,12 @@ const router = createRouter({
 router.beforeEach( (to, from, next) => {
   const { name: routeName, meta: { auth, state, landing, admin } } = to;
   store.commit('loader',true);
-  window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
-  window.scrollTo({top: 0, behavior: 'smooth'});
 
   switch( !isEmpty(store.getters.authUser) ){
     case true:
+      
       checkRole(to,next);
+      
     break;
     case false:
 
@@ -348,16 +359,19 @@ router.beforeEach( (to, from, next) => {
       }
       
       next();
+
     break;
   }
 
 });
 
-router.afterEach((to, from,failure) => {
+router.afterEach((to, from, failure) => {
   store.commit('loader',false);
   if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
     window.document.getElementById("mySidenav").classList.remove('open-side')
   }
+  window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+  window.scrollTo({top: 0, behavior: 'smooth'});
 })
 
 const checkRole = (to:any,next: any) => {
@@ -452,7 +466,6 @@ const addHomeTheme = () => {
     '/assets/home/js/menu.js',
     '/assets/home/js/lazysizes.min.js',
     '/assets/home/js/addtocart.js',
-    '/assets/home/js/script.js'	
   ].map( 
     async (url) => new Promise( 
       resolve => setTimeout( async() => resolve(addScript(url)),150)

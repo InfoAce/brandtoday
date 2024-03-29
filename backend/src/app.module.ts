@@ -8,18 +8,15 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
-import { AmrodService, AuthService, MailService } from './services';
+import { AmrodService, AuthService, MailService, RedisService } from './services';
 import { CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
 import { CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
-import { RedisOptions } from './services/redis';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
 import { resolve } from 'path';
-import { NestSessionOptions, SessionModule } from 'nestjs-session';
-import { RouterModule } from '@nestjs/core';
 import { SessionSerialize } from './utils';
 
 @Module({
@@ -29,7 +26,7 @@ import { SessionSerialize } from './utils';
       load:[ ConfigApp, ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
-    CacheModule.registerAsync(RedisOptions),
+    CacheModule.registerAsync(RedisService),
     HttpModule.register({
       timeout: 5000,
       maxRedirects: 5,

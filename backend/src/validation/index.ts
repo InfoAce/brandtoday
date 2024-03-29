@@ -6,3 +6,4 @@ export { CreatePromptValidation as CreatePromptValidation } from './create.promp
 export { RegisterValidation as RegisterValidation } from './register.validation';
 export { StaffValidation as StaffValidation } from './staff.validation';
 export { UpdateAppValidation as UpdateAppValidation } from './update.app.validation';
+export { WishlistValidation as WishlistValidation } from './wishlist.validation';

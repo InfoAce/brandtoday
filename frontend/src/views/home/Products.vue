@@ -47,13 +47,13 @@
                                                     </div>
                                                     <div class="collection-grid-view">
                                                         <ul>
-                                                            <li><img src="/assets/images/icon/2.png" alt=""
+                                                            <li><img src="/assets/home/images/icon/2.png" alt=""
                                                                     class="product-2-layout-view"></li>
-                                                            <li><img src="/assets/images/icon/3.png" alt=""
+                                                            <li><img src="/assets/home/images/icon/3.png" alt=""
                                                                     class="product-3-layout-view"></li>
-                                                            <li><img src="/assets/images/icon/4.png" alt=""
+                                                            <li><img src="/assets/home/images/icon/4.png" alt=""
                                                                     class="product-4-layout-view"></li>
-                                                            <li><img src="/assets/images/icon/6.png" alt=""
+                                                            <li><img src="/assets/home/images/icon/6.png" alt=""
                                                                     class="product-6-layout-view"></li>
                                                         </ul>
                                                     </div>
@@ -173,7 +173,7 @@ export default {
         },
         fetchProducts(data = { page: 1, perPage: 10 }){
             let {  $route: { params } } = this, url = `/products`, { page, perPage } = data;
-
+            console.log( atob(params.category) );
             this.$store.commit('loader',true);
 
             if( !isEmpty(params) && has(params,'category') && !isEmpty(params.category) ){
@@ -223,7 +223,7 @@ export default {
     },
     watch:{
         "$route.params":{
-            handler(){
+            handler(value){
                 this.fetchData();
             },
             deep: true

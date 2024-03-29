@@ -30,7 +30,7 @@ export class AppService {
     try {
 
       // Fetch amrod product categories
-      let categories = await this.amrodService.getCategories();     
+      let categories = await this.amrodService.getCategories();  
 
       // Fetch amrod products
       let products = await this.amrodService.getProducts();    
@@ -41,6 +41,9 @@ export class AppService {
       // Fetch amrod prices
       let stock = await this.amrodService.getStock();   
 
+      // Fetch amrod brands
+      let brands = await this.amrodService.getBrands();         
+
       await this.cacheManager.store.set('amrod_categories',categories);
 
       await this.cacheManager.store.set('amrod_products',products);
@@ -49,6 +52,8 @@ export class AppService {
     
       await this.cacheManager.store.set('amrod_stock',stock);
 
+      await this.cacheManager.store.set('amrod_brands',brands);
+      
     } catch (err) {
 
       console.log(err);

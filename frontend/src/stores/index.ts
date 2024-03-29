@@ -10,6 +10,7 @@ export default createStore({
   actions:{
     logout({ commit }){
       commit('auth',{});
+      window.location.reload();
     }
   },
   state: () => {

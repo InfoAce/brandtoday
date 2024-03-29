@@ -42,19 +42,19 @@
                             <ul class="nav nav-tabs" id="top-tab" role="tablist">
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountProfile'})" :class="$route.name == 'AccountProfile' ? 'nav-link active' : 'nav-link'">Profile</a>            
-                                </li>                    
-
+                                </li>               
+                                <li class="nav-item">
+                                    <a @click.prevent="$router.push({name:'AddressBook'})" :class="$route.name == 'AddressBook' ? 'nav-link active' : 'nav-link'">Address Book</a> 
+                                </li>       
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountOrders'})" :class="$route.name == 'AccountOrders' ? 'nav-link active' : 'nav-link'">My Orders</a> 
                                 </li>                    
-
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountFavourites'})" :class="$route.name == 'AccountFavourites' ? 'nav-link active' : 'nav-link'">Favourites</a> 
-                                </li>                    
+                                </li>                       
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountCards'})" :class="$route.name == 'AccountCards' ? 'nav-link active' : 'nav-link'">Saved Cards</a>      
                                 </li>                    
-
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountSecurity'})" :class="$route.name == 'AccountSecurity' ? 'nav-link active' : 'nav-link'">Security</a> 
                                 </li>

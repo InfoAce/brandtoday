@@ -9,9 +9,10 @@ export class FavouriteEntity {
   id: string;
 
   @Column({
-    nullable: false
+    nullable: false,
+    type: 'json'
   })
-  product_path: string;
+  content: string;
 
   @ManyToOne(() => UserEntity, (entity) => entity.favourites )
   @JoinColumn({

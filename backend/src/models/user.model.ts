@@ -44,7 +44,8 @@ export default class UserModel {
     try {
       return await this.usersRepository.save(data);
     } catch(err){
-      throw new UserModelException(err);    }
+      throw new UserModelException(err);   
+    }
   }
 
   async updateOne(find:any, data: any): Promise<any>{

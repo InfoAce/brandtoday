@@ -17,7 +17,7 @@
                     <div class="col-lg-6 text-end">
                         <ul class="header-dropdown">
                             <li class="mobile-wishlist">
-                                <a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart" aria-hidden="true"></i></a>
                             </li>
                             <li class="onhover-dropdown mobile-account">
                                 <i class="fa fa-user" aria-hidden="true"></i>
@@ -56,16 +56,19 @@
                                         </div>
                                         <ul id="sub-menu" class="sm pixelstrap sm-vertical">
                                             <li v-for="(item,index) in data.categories" :key="index"> 
-                                                <a href="#" >{{ item.categoryName }}</a>
+                                                <a href="javascript::void(0)" >{{ item.categoryName }}</a>
                                                 <ul>
                                                     <li v-for="(item_child,child_key) in item.children" :key="child_key">
-                                                        <a href="#">{{ item_child.categoryName }}</a>
                                                         <template v-if="!isEmpty(item_child.children)">
+                                                            <a href="#">{{ item_child.categoryName }}</a>
                                                             <ul v-show="!isEmpty(item_child.children)">
                                                                 <li v-for="(item_child_child,child_child_key) in item_child.children" :key="child_child_key">
-                                                                    <a href="#" @click.prevent="$router.push({ name: 'Products',params: { category: btoa(item_child_child.categoryPath) }})">{{ item_child_child.categoryName }}</a>
+                                                                    <router-link :to="navigateTo(item_child_child)">{{ item_child_child.categoryName }}</router-link>
                                                                 </li>
                                                             </ul>
+                                                        </template>
+                                                        <template v-else>
+                                                            <router-link :to="navigateTo(item_child)">{{ item_child.categoryName }}</router-link>
                                                         </template>
                                                     </li>
                                                 </ul>
@@ -172,6 +175,7 @@ import { onBeforeMount, onMounted, inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 const $api     = inject('$api');
+const $swal    = inject('$swal');
 const $store   = useStore();
 const $router  = useRouter(); 
 const data     = reactive({categories: Array() });
@@ -207,6 +211,7 @@ const initMenus = debounce( () => {
         });
     });
 },500);
+
 const logout = () =>{
     $swal.fire({
         icon: 'question',
@@ -221,80 +226,10 @@ const logout = () =>{
     });	
 }
 
-onBeforeMount( () => fetchMenus() );
-
-onMounted( () => initMenus() );
-</script>
-<!-- <script>
-import CartPopup from './CartPopup.vue';
-import { cloneDeep, debounce, isEmpty,  } from 'lodash';
-import { mapGetters } from 'vuex';
-import { useRoute } from 'vue-router';
-
-
-export default {
-    components:{
-        CartPopup,
-    },
-    computed:{
-        ...mapGetters([
-            'authUser',
-            'cart'
-        ])
-    },
-    created(){
-        this.fetchMenus();
-        this.$isEmpty = isEmpty;
-        this.initMenus = debounce( () => {
-            $(function () {
-                $('#main-menu').smartmenus({
-                    subMenusSubOffsetX: 1,
-                    subMenusSubOffsetY: -8
-                });
-                $('#sub-menu').smartmenus({
-                    subMenusSubOffsetX: 1,
-                    subMenusSubOffsetY: -8
-                });
-            });
-        },500)
-    },
-    data() {
-        return {
-            categories: []
-        }
-    },
-    methods:{
-        btoa(data){
-            return window.btoa(data);
-        },
-        logout(){
-            this.$swal.fire({
-				icon: 'question',
-				title: 'Logout',
-				text: 'Are you sure you want to logout ?',
-                showCancelButton: true
-			}).then((result) => {
-				if( result.isConfirmed ){
-                    this.$store.dispatch('logout');
-                    this.$router.push({ name: "Login" });
-                }
-			});	
-        },
-        fetchMenus(){
-            this.$api
-                .get('header')
-                .then( ({ data: { categories } }) => {
-                    this.categories = cloneDeep(categories);
-                    // this.initMenus();
-                })
-                .catch( () => {
-
-                })
-                .finally( () => {
-
-                })
-        }
-    },
-    name: "LandingHeader",
+const navigateTo = (item_child_child) => {
+    return { name: 'Products',params: { category: btoa(item_child_child.categoryPath) } }
 }
-</script> -->
+
+onBeforeMount( () => fetchMenus() );
+onMounted(     () => initMenus() );
+</script>

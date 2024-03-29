@@ -1,15 +1,18 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/guards';
 import { Request, Response } from 'express';
-import { CompanyModel, FavouriteModel, UserModel } from 'src/models';
-import { get } from 'lodash';
-import { EntityNotFoundError } from 'typeorm';
+import { FavouriteModel } from 'src/models';
+import { get, set } from 'lodash';
+import { WishlistValidation } from 'src/validation';
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { paginate } from "src/helpers";
 
-@Controller('api/favourites')
+@Controller('favourites')
 export class FavouriteController {
 
     constructor(
-        private readonly favouriteModel: FavouriteModel
+        private readonly favouriteModel: FavouriteModel,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
     @UseGuards(AuthGuard)
@@ -22,8 +25,12 @@ export class FavouriteController {
     ) {
         try {
 
-            let user       = get(req,'user');
-            let favourites = await this.favouriteModel.find({ user_id: user.id });
+            let user: any       = get(req,'user');
+            let products: any   = await this.cacheManager.get('amrod_products');
+            let favourites: any = paginate(
+                (await user.favourites).map( val => ({ product: products.find( product => product.fullCode == val.content.code ), ...val }) ),
+                { page: page, perPage: limit }
+            );
 
             return res.status(HttpStatus.OK).json({ favourites });
 
@@ -33,8 +40,27 @@ export class FavouriteController {
                 throw new NotFoundException();
             }
             
-            console.log(err);
             throw new InternalServerErrorException();
         }
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('')
+    async store(
+        @Body() body: WishlistValidation,
+        @Req()  req: Request,  
+        @Res()  res: Response
+    ){
+
+        try {
+            let user      = get(req,'user');
+            let favourite = await this.favouriteModel.save(set(body,'user_id',user.id));
+
+            return res.status(HttpStatus.OK).json({ favourite });
+        
+        } catch (err) {
+
+        }
+
     }
 }

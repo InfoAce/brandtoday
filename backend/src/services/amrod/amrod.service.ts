@@ -85,9 +85,8 @@ export class AmrodService {
                     })
                 )
         );
-
-
-        this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry)
+        
+        this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry);
 
     }
         
@@ -152,12 +151,31 @@ export class AmrodService {
     }
 
     async getCategories(){
-
         const auth = await this.cacheManager.store.get('amrod_auth');
 
         const { data } = await firstValueFrom(
             this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
                 .get(`${this.config.endpoints.categories.all}`)
+                .pipe(
+                    catchError((error: any) => {
+                        console.log(error);
+                        // const { response: { status, data: { message }} } = error;
+                        throw new HttpException(error.message,error.status);
+                    })
+                )
+        );
+        
+        return data;
+
+    }
+
+    async getBrands(){
+
+        const auth = await this.cacheManager.store.get('amrod_auth');
+
+        const { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
+                .get(`${this.config.endpoints.brands.all}`)
                 .pipe(
                     catchError((error: any) => {
                         console.log(error);

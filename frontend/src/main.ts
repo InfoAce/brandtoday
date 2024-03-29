@@ -13,6 +13,8 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 import toast from './toast';
 
+window.document.querySelector('title').innerHTML = `${import.meta.env.VITE_APP_NAME}`;
+
 const app = createApp(App)
 
 app.use(toast);

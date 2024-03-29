@@ -579,29 +579,29 @@
         ]
     });
 
-    $('.product-4').slick({
-        infinite: true,
-        speed: 300,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        responsive: [{
-                breakpoint: 1200,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2
-                }
-            }
-        ]
-    });
+    // $('.product-4').slick({
+    //     infinite: true,
+    //     speed: 300,
+    //     slidesToShow: 4,
+    //     slidesToScroll: 4,
+    //     autoplay: true,
+    //     autoplaySpeed: 3000,
+    //     responsive: [{
+    //             breakpoint: 1200,
+    //             settings: {
+    //                 slidesToShow: 3,
+    //                 slidesToScroll: 3
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 991,
+    //             settings: {
+    //                 slidesToShow: 2,
+    //                 slidesToScroll: 2
+    //             }
+    //         }
+    //     ]
+    // });
 
     $('.product-4_2').slick({
         infinite: true,
@@ -1323,23 +1323,23 @@
         ]
     });
 
-    $('.product-slick').slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: true,
-        fade: true,
-        asNavFor: '.slider-nav'
-    });
+    // $('.product-slick').slick({
+    //     slidesToShow: 1,
+    //     slidesToScroll: 1,
+    //     arrows: true,
+    //     fade: true,
+    //     asNavFor: '.slider-nav'
+    // });
 
-    $('.slider-nav').slick({
-        vertical: false,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        asNavFor: '.product-slick',
-        arrows: false,
-        dots: false,
-        focusOnSelect: true
-    });
+    // $('.slider-nav').slick({
+    //     vertical: false,
+    //     slidesToShow: 3,
+    //     slidesToScroll: 1,
+    //     asNavFor: '.product-slick',
+    //     arrows: false,
+    //     dots: false,
+    //     focusOnSelect: true
+    // });
 
     $('.product-right-slick').slick({
         slidesToShow: 1,

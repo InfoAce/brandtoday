@@ -21,6 +21,23 @@ if( !isEmpty(app_shopping_cart) ){
 	store.commit('cart',JSON.parse(app_shopping_cart));
 }
 
+const scripts = [
+	'/assets/home/js/script.js'	
+].map( 
+	async (url) => new Promise( 
+		resolve => setTimeout( async() => resolve(addScript(url)),0)
+	) 
+);
+
+const addScript = (url:string) => {
+	let script    = document.createElement('script');
+	script.type   = 'text/javascript';
+	script.src    = url;
+	document.body.appendChild(script);
+}
+
+Promise.all(scripts);
+
 watch( 
 	() => store.getters.cart,
 	(value) => {

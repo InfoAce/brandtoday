@@ -1,21 +1,27 @@
-import { Body, Controller, Get, HttpStatus, Inject, Injectable, Param, Post, Put, Render, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../../guards';
+import { Body, Controller, Get, HttpStatus, Inject, Injectable, Param, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { isEmpty, has } from 'lodash';
+import { isEmpty, has, get } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { FavouriteModel } from 'src/models';
 
 @Controller('products')
 export class ProductsController {
 
     constructor(
       private amrodService: AmrodService,
+      private favouriteModel: FavouriteModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
     @Get('')
-    async index(@Req() req: Request,  @Res() res: Response) {
+    async index(
+      @Query('category') queryCategory: string,
+      @Req() req: Request,  
+      @Res() res: Response
+    ) {
       try {  
         let cached_products: any = await this.cacheManager.store.get('amrod_products');
         let cached_prices: any   = await this.cacheManager.store.get('amrod_prices');
@@ -25,8 +31,8 @@ export class ProductsController {
           cached_products = await this.cacheManager.store.set('amrod_products',products);
         }
 
-        if( !isEmpty(req.query) && has(req.query,'category') ){
-          cached_products = cached_products.filter( product => product.categories.find( category => btoa(category.path) == req.query.category ) );
+        if( !isEmpty(queryCategory) ){
+          cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(queryCategory))) );
         }
         
         switch(!isEmpty(req.query) && has(req.query,'page')){
@@ -53,21 +59,32 @@ export class ProductsController {
       }
     }  
 
+    @UseGuards(OptionalGuard)
     @Put(':code')
-    async show(@Param('code') code: any, @Req() req: Request,  @Res() res: Response) {
+    async show(
+      @Param('code') code: any,
+      @Req() req: Request,  
+      @Res() res: Response
+    ) {
       try {
-        
+
+        let user: any            = get(req,'user');
         let cached_products: any = await this.cacheManager.store.get('amrod_products');
         let cached_prices: any   = await this.cacheManager.store.get('amrod_prices');
         let product: any         = cached_products.find( product => product.fullCode == code );
         let data_price           = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
+        let favourite: any       = {};
+
+        if( user ){
+          favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
+        }
 
         if( data_price != undefined ){ product.price = data_price.price; }
   
-        res.status(HttpStatus.OK).json({ product });
+        res.status(HttpStatus.OK).json({ product, favourite });
 
       } catch(err){
-
+        console.log(err);
       }
     }
 
