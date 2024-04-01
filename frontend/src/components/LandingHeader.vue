@@ -79,7 +79,7 @@
                             </div>                            
                             <div class="brand-logo">
                                 <a href="/">
-                                    <img src="./images/icon/logo.png" class="img-fluid blur-up lazyload" alt="">
+                                    <img src="/assets/home/images/icon/logo.png" class="img-fluid blur-up lazyload" alt="">
                                 </a>
                             </div>
                         </div>
