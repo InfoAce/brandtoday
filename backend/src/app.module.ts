@@ -62,7 +62,7 @@ import { SessionSerialize } from './utils';
     JwtModule.registerAsync({
       imports:    [ConfigModule],
       useFactory: async( configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_KEY'),
+        secret: configService.get<string>('JWT_SESSION_KEY'),
         signOptions: { 
           expiresIn: configService.get<string>('JWT_EXPIRES') 
         },
