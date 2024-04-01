@@ -102,7 +102,7 @@ import { inject, reactive, ref, watch } from 'vue';
 import { each, isEmpty, has } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-import { useToast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 import { useStore } from 'vuex';
 import { VueTelInput } from 'vue3-tel-input'
 import 'vue3-tel-input/dist/vue3-tel-input.css'
@@ -110,8 +110,7 @@ import 'vue3-tel-input/dist/vue3-tel-input.css'
 const store  = useStore();
 const router = useRouter();
 const $api   = inject('$api');
-const toast  = useToast();
-const swal = inject('$swal');
+const swal   = inject('$swal');
 
 const data   = reactive({
 	errors: {},
