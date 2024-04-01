@@ -13,9 +13,9 @@
                             <div class="select-box active col-xl-4 col-md-6">
                                 <div class="address-box">
                                     <div class="bank-logo">
-                                        <img src="../assets/images/bank-logo.png"
+                                        <img src="../assets/home/images/bank-logo.png"
                                             class="bank-logo">
-                                        <img src="../assets/images/visa.png"
+                                        <img src="../assets/home/images/visa.png"
                                             class="network-logo">
                                     </div>
                                     <div class="card-number">
@@ -43,9 +43,9 @@
                             <div class="select-box col-xl-4 col-md-6">
                                 <div class="address-box">
                                     <div class="bank-logo">
-                                        <img src="../assets/images/bank-logo1.png"
+                                        <img src="../assets/home/images/bank-logo1.png"
                                             class="bank-logo">
-                                        <img src="../assets/images/visa.png"
+                                        <img src="../assets/home/images/visa.png"
                                             class="network-logo">
                                     </div>
                                     <div class="card-number">
