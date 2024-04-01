@@ -57,14 +57,13 @@ import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
 import { debounce, each, isEmpty, has } from 'lodash';
 import { useRouter, useRoute } from 'vue-router';
 import * as yup from "yup";
-import { useToast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 import { useStore } from 'vuex';
 
 const store  = useStore();
 const route  = useRoute();
 const router = useRouter();
 const $api   = inject('$api');
-const toast  = useToast();
 const swal   = inject('$swal');
 
 const data   = reactive({
