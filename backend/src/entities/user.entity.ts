@@ -69,7 +69,6 @@ export class UserEntity {
   })
   gender: string;
 
-  @SeedRelation(() => FavouriteEntity)
   @OneToMany(() => FavouriteEntity, (favourites) => favourites.user, { lazy: true })
   @JoinColumn({
     name:                 "id",
