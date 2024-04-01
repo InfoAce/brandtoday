@@ -69,6 +69,7 @@ export class UserEntity {
   })
   gender: string;
 
+  @SeedRelation(() => FavouriteEntity)
   @OneToMany(() => FavouriteEntity, (favourites) => favourites.user, { lazy: true })
   @JoinColumn({
     name:                 "id",
@@ -105,7 +106,6 @@ export class UserEntity {
   @Column()
   role_id: string;
 
-  
   @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
   @Column({ select: true })
   token: string;
