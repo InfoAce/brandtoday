@@ -5,7 +5,6 @@ const os           = require("os");
 
 async function init(){
     setEnvValue("APP_KEY",randomstring.generate(50));
-    setEnvValue("SESSION_KEY",randomstring.generate(32));
     setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
 }
 
