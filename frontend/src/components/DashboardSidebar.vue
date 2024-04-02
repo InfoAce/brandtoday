@@ -63,7 +63,7 @@ const $has    = has;
 
 // Computed 
 const authUser   = computed( () => $store.getters.authUser );
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','storage') );
 
 onMounted(
 	debounce(() => {

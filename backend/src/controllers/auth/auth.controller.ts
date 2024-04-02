@@ -143,7 +143,7 @@ export class AuthController {
             'file',
             {
                 storage: diskStorage({
-                    destination: './public/images',
+                    destination: 'storage/images',
                     filename: (req, file, cb) => {
                         let uniqueSuffix = Date.now();
                         let ext          = file.originalname.split('.');

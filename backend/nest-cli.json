@@ -5,7 +5,12 @@
   "compilerOptions": {
     "assets": [
       "templates/**/*",
-      { "include": "**/*.hbs", "watchAssets": true }
+      { "include": "**/*.hbs", "watchAssets": true },
+      {
+        "include": "/storage",
+        "outDir": "dist/storage",
+        "watchAssets": true
+      }
     ],
     "watchAssets": true
   }

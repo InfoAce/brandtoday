@@ -149,7 +149,7 @@ export default {
             }
         },  
         backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api/v1','');
+            return this.env.VITE_API_BASE_URL.replace('api/v1','storage');
         },
         env() {
             return this.$store.getters.env;
