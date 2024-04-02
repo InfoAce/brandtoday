@@ -149,7 +149,7 @@ export default {
             }
         },  
         backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api/v1','storage');
+            return this.env.VITE_API_BASE_URL.replace('api/v1','');
         },
         env() {
             return this.$store.getters.env;
@@ -226,7 +226,7 @@ export default {
                     this.dropzoneIconOptions.url     = `${VITE_API_BASE_URL}/company/${company.id}/upload/icon`;
                     this.dropzoneIconOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};              
                     
-                    this.company
+                    this.authUser.company            = cloneDeep(company);
                 })
                 .catch( ({ response }) => {
                 })

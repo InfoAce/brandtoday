@@ -142,6 +142,14 @@ export default {
         authToken(){
             return this.$store.getters.authToken;
         }, 
+        authUser:{
+            get() {
+                return this.$store.getters.authUser;
+            },
+            set(val){
+                this.$store.commit('authUser',val);
+            }
+        },  
         backendUri(){
             return this.env.VITE_API_BASE_URL.replace('api/v1','');
         },
@@ -210,6 +218,8 @@ export default {
                     this.user                    = user;
                     this.dropzoneOptions.url     = `${VITE_API_BASE_URL}/auth/upload/image`;
                     this.dropzoneOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};
+                    this.authUser.image          = user.image;
+                    this.authUser.company        = user.company;
                 })
                 .catch( ({ response }) => {
                 })

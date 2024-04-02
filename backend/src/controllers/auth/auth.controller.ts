@@ -146,7 +146,7 @@ export class AuthController {
                     destination: './public/images',
                     filename: (req, file, cb) => {
                         let uniqueSuffix = Date.now();
-                        let ext          = file.originalname.split('.');
+                        let ext          = file.mimetype.split('/');
                         cb(null, `${uniqueSuffix}.${ext[1]}`);
                     },
                 }),

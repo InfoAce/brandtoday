@@ -5,11 +5,11 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-7 p-0">
-                        <div class="card tab2-card card-login bg-primary">
+                        <div class="card tab2-card card-login">
                             <div class="card-body">
 								<div class="col-12 text-center my-4">
-									<h2 class="text-white">Login</h2>
-									<p>Enter valid credentials.</p>
+									<h2>Login</h2>
+									<p class="text-danger">Enter valid credentials.</p>
 								</div>
 								<form class="form-horizontal auth-form" @submit.prevent="login" autocomplete="off">
 									<div class="form-group">
@@ -22,11 +22,14 @@
 									</div>
 									<div class="form-terms my-4">
 										<div class="form-check mesm-2">
-											<a href="javascript:void(0)" class="text-white forgot-pass">Forgot Password!</a>
+											<a href="javascript:void(0)" class="forgot-pass">Forgot Password!</a>
 										</div>
 									</div>
 									<div class="form-button">
-										<button class="btn btn-dark" :disabled="data.isDisabled || store.getters.loader" type="submit">Login</button>
+										<button class="btn btn-dark" :disabled="data.isDisabled || data.loading.login" type="submit">
+											<i class="fa fa-spinner fa-spin" v-if="data.loading.login"></i>
+											Login
+										</button>
 									</div>									
 								</form>
                             </div>
@@ -57,6 +60,9 @@ const data   = reactive({
 		email:            String(),
 		password:         String(),
 	},
+	loading: {
+		login: Boolean()
+	},
 	isDisabled: true
 });
 
@@ -82,17 +88,11 @@ const validateForm = (field) => {
 }
 
 const login = () => {
-	store.commit('loader',true);
+	data.loading.login = Boolean(true);
 	$api.post('/auth/login',data.form)
 		.then( ({ data:{ user, token }}) => {
 			store.commit('auth',{user, token});
-			swal.fire({
-				icon: 'success',
-				title: 'Alright!',
-				text: 'Login successfull.'
-			}).then((result) => {
-				router.push({name: "Overview"});
-			});	
+			window.location.reload();	
 		})
 		.catch( ({ response }) => {
 			store.commit('loader',false);
@@ -124,7 +124,7 @@ const login = () => {
 			}
 		})
 		.finally( () => {
-			store.commit('loader',false);
+			data.loading.login = Boolean();
 		});
 }
 

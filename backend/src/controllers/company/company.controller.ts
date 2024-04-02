@@ -28,8 +28,8 @@ export class CompanyController {
                 storage: diskStorage({
                     destination: './public/images',
                     filename: (req, file, cb) => {
-                        const uniqueSuffix = Date.now();
-                        const ext          = file.originalname.split('.');
+                        let uniqueSuffix = Date.now();
+                        let ext          = file.mimetype.split('/');
                         cb(null, `${uniqueSuffix}.${ext[1]}`);
                     },
                 }),
@@ -50,8 +50,8 @@ export class CompanyController {
                 storage: diskStorage({
                     destination: './public/images',
                     filename: (req, file, cb) => {
-                        const uniqueSuffix = Date.now();
-                        const ext          = file.originalname.split('.');
+                        let uniqueSuffix = Date.now();
+                        let ext          = file.mimetype.split('/');
                         cb(null, `${uniqueSuffix}.${ext[1]}`);
                       },
                 }),

@@ -81,8 +81,7 @@ const logout = () => {
         showCancelButton: true
     }).then((result: any) => {
         if( result.isConfirmed ){
-            $store.dispatch('logout');
-            $router.push({ name: "AdminLogin" });
+            $store.dispatch('logout');            
         }
     });	
 }

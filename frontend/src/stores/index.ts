@@ -42,6 +42,11 @@ export default createStore({
     auth(state,value) {
       localStorage.setItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`, btoa(JSON.stringify(value)));
     },
+    authUser(state,value){
+      const auth = state.auth;
+      auth.user  = value;
+      localStorage.setItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`, btoa(JSON.stringify(auth)));
+    },
     cart(state,value) {
       state.cart = cloneDeep(value);
     },

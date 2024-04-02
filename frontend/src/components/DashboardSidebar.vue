@@ -3,9 +3,9 @@
 <div class="page-sidebar">
 	<div class="main-header-left d-none d-lg-block">
 		<div class="logo-wrapper">
-			<a href="index.html">
+			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
 				<img v-if="isNull(authUser.company.logo)" class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" :alt="`${authUser.company.name}`">
-				<img v-else class="d-none d-lg-block blur-up lazyloaded" width="200" :src="`${backendUri}${authUser.company.logo}`"  :alt="`${authUser.company.name}`">
+				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${authUser.company.logo}`"  :alt="`${authUser.company.name}`">
 			</a>
 		</div>
 	</div>
