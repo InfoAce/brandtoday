@@ -45,7 +45,7 @@ export class AuthController {
 
                 if( isMatch ){
                     let token = await this.authService.signIn({user,password});
-                    return res.status(HttpStatus.OK).json({user: pick(user,['first_name','last_name','email','role','company']),token});
+                    return res.status(HttpStatus.OK).json({user: pick(user,['first_name','last_name','email','role','company','image']),token});
                 }
                 
                 return res.status(HttpStatus.UNAUTHORIZED).json({});
