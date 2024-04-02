@@ -5,8 +5,8 @@
         <div class="main-header-left d-lg-none w-auto">
             <div class="logo-wrapper">
                 <a href="index.html">
-                    <img class="blur-up lazyloaded d-block d-lg-none"
-                        src="/assets/dashboard/images/dashboard/multikart-logo-black.png" alt="">
+                    <img v-if="isNull(authUser.image)" class="blur-up lazyloaded d-block d-lg-none" src="/assets/dashboard/images/dashboard/multikart-logo-black.png" alt="">
+                    <img v-else class="blur-up lazyloaded d-block d-lg-none" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                 </a>
             </div>
         </div>
@@ -28,8 +28,8 @@
                 </li>
                 <li class="onhover-dropdown">
                     <div class="media align-items-center">
-                        <img class="align-self-center pull-right img-50 blur-up lazyloaded"
-                            src="/assets/dashboard/images/dashboard/user3.jpg" alt="header-user">
+                        <img v-if="isNull(authUser.image)" class="align-self-center pull-right img-50 blur-up lazyloaded" src="/assets/dashboard/images/dashboard/user3.jpg" :alt="`${authUser.first_name} ${authUser.last_name}`">
+                        <img v-else class="align-self-center pull-right img-50 blur-up lazyloaded" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                         <div class="dotted-animation">
                             <span class="animate-circle"></span>
                             <span class="main-circle"></span>
@@ -59,24 +59,30 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
+import { isNull } from 'lodash';
+import { computed, inject } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const store  = useStore();
-const swal   = inject('$swal');
+const $router = useRouter();
+const $store  = useStore();
+const $swal   = inject('$swal');
 
+// Computed 
+const authUser = computed( () => $store.getters.authUser );
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+
+// Methods
 const logout = () => {
-    swal?.fire({
+    $swal?.fire({
         icon: 'question',
         title: 'Logout',
         text: 'Are you sure you want to logout ?',
         showCancelButton: true
     }).then((result: any) => {
         if( result.isConfirmed ){
-            store.dispatch('logout');
-            router.push({ name: "AdminLogin" });
+            $store.dispatch('logout');
+            $router.push({ name: "AdminLogin" });
         }
     });	
 }

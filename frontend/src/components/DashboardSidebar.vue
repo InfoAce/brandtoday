@@ -4,18 +4,19 @@
 	<div class="main-header-left d-none d-lg-block">
 		<div class="logo-wrapper">
 			<a href="index.html">
-				<img class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" alt="">
+				<img v-if="isNull(authUser.company.logo)" class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" :alt="`${authUser.company.name}`">
+				<img v-else class="d-none d-lg-block blur-up lazyloaded" width="200" :src="`${backendUri}${authUser.company.logo}`"  :alt="`${authUser.company.name}`">
 			</a>
 		</div>
 	</div>
 	<div class="sidebar custom-scrollbar">
-		<a href="javascript:void(0)" class="sidebar-back d-lg-none d-block"><i class="fa fa-times"
-				aria-hidden="true"></i></a>
+		<a href="javascript:void(0)" class="sidebar-back d-lg-none d-block"><i class="fa fa-times" aria-hidden="true"></i></a>
 		<div class="sidebar-user">
-			<img class="img-60" src="/assets/dashboard/images/dashboard/user3.jpg" alt="#">
+			<img v-if="isNull(authUser.company.logo)" class="img-60" src="/assets/dashboard/images/dashboard/user3.jpg" alt="#">
+			<img v-else class="img-60" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`" >
 			<div>
-				<h6 class="f-14">JOHN</h6>
-				<p>general manager.</p>
+				<h6 class="f-14">{{ authUser.first_name }} {{ authUser.last_name }}</h6>
+				<p>{{ authUser.role.name }}</p>
 			</div>
 		</div>
 		<ul class="sidebar-menu">
@@ -29,14 +30,14 @@
 						</a>
 					</template>
 					<template v-if="!$has(menu,'children')">
-						<a class="sidebar-header" href="#" @click.prevent="router.push({ name: menu.to })">
+						<a class="sidebar-header" href="#" @click.prevent="$router.push({ name: menu.to })">
 							<i :data-feather="menu.icon"></i>
 							<span>{{ menu.name }}</span>
 						</a>
 					</template>
 					<ul class="sidebar-submenu menu-open" v-if="$has(menu,'children')">
 						<li v-for="(child,child_index) in menu.children" :key="child_index">
-							<a href="#" @click.prevent="router.push({ name: child.to })">
+							<a href="#" @click.prevent="$router.push({ name: child.to })">
 								<i :class="child.icon"></i>
 								<span>{{ child.name }}</span>
 							</a>
@@ -51,14 +52,18 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, onBeforeMount } from 'vue';
-import { debounce, has } from 'lodash';
+import { debounce, has, isNull } from 'lodash';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const store  = useStore();
-const menus  = computed( () => store.getters.sidebarMenus );
-const $has   = has;
+const $router = useRouter();
+const $store  = useStore();
+const menus   = computed( () => $store.getters.sidebarMenus );
+const $has    = has;
+
+// Computed 
+const authUser   = computed( () => $store.getters.authUser );
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
 
 onMounted(
 	debounce(() => {
@@ -73,7 +78,7 @@ onBeforeMount( () =>{
 	'/assets/dashboard/js/sidebar-menu.js'
   ].map( 
     async (url) => new Promise( 
-      resolve => setTimeout( async() => resolve(addScript(url)),10)
+      resolve => setTimeout( async() => resolve(addScript(url)),0)
     ) 
   );
   

@@ -31,26 +31,24 @@
         <div class="col-xl-5 col-lg-5 col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <div class="profile-details text-center">
-                        <vue-dropzone
-                            v-if="edit.image"
-                            ref="dropzoneLogo" 
-                            @vdropzone-success="imageUpdate"
-                            id="dropzoneLogo" 
-                            :options="dropzoneOptions"
-                        />        
-                        <template v-else>
-                            <img v-if="!$isEmpty(user.image)" :src="`${backendUri}${user.image}`" :alt="`${user.first_name} ${user.last_name}`" class="img-fluid blur-up lazyloaded">
-                            <img v-else src="/assets/dashboard/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded">
-                        </template>
-                        <h5 class="f-w-600 mb-0">{{ user.first_name }} {{  user.last_name }}</h5>
-                        <span>{{ user.email }}</span>
-                        <div class="col-12">
-                            <button class="btn btn-primary btn-sm" @click="edit.image = true">Edit Image</button>
-                        </div>
-                    </div>
-                    <hr>      
                     <div class="row">
+                        <div class="col-12 mb-2">
+                            <label>Profile Photo</label>
+                            <vue-dropzone
+                                v-if="edit.image"
+                                ref="dropzoneLogo" 
+                                @vdropzone-success="imageUpdate"
+                                id="dropzoneLogo" 
+                                :options="dropzoneOptions"
+                            />        
+                            <template v-else>
+                                <img v-if="!$isEmpty(user.image)" :src="`${backendUri}${user.image}`" :alt="`${user.first_name} ${user.last_name}`" class="img-fluid blur-up lazyloaded col-12">
+                                <img v-else src="/assets/dashboard/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded col-12">
+                            </template>
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary btn-sm my-2" @click="edit.image = true">Edit Image</button>
+                            </div>
+                        </div>
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="first_name"> First Name</label>
