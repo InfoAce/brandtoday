@@ -143,7 +143,7 @@ export default {
             return this.$store.getters.authToken;
         }, 
         backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api/v1','storage');
+            return this.env.VITE_API_BASE_URL.replace('api/v1','');
         },
         env() {
             return this.$store.getters.env;

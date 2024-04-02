@@ -70,7 +70,7 @@ const $swal   = inject('$swal');
 
 // Computed 
 const authUser = computed( () => $store.getters.authUser );
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','storage') );
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
 
 // Methods
 const logout = () => {
