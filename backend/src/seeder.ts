@@ -1,7 +1,7 @@
 import { seeder, createClassSeeders  } from "nestjs-class-seeder";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from "./entities";
+import { AddressBookEntity, CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from "./entities";
 import { ConfigDatabase } from "./config";
 
 seeder({
@@ -23,6 +23,7 @@ seeder({
                 username:    configService.get<string>('DB_USERNAME'),
                 password:    configService.get<string>('DB_PASSWORD'),
                 entities:    [
+                    AddressBookEntity,
                     CompanyEntity,
                     RoleEntity,
                     FavouriteEntity,

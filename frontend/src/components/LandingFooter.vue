@@ -2,7 +2,7 @@
     <div>
         <!-- footer -->
         <footer class="footer-light">
-            <div class="light-layout">
+            <!-- <div class="light-layout">
                 <div class="container">
                     <section class="small-section border-section border-top-0">
                         <div class="row">
@@ -29,7 +29,7 @@
                         </div>
                     </section>
                 </div>
-            </div>
+            </div> -->
             <section class="section-b-space light-layout">
                 <div class="container">
                     <div class="row footer-theme partition-f">
@@ -38,32 +38,22 @@
                                 <h4>about</h4>
                             </div>
                             <div class="footer-contant">
-                                <div class="footer-logo"><img src="/assets/home/images/icon/logo.png" alt=""></div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                                    ut labore et dolore magna aliqua. Ut enim ad minim veniam,</p>
-                                <div class="footer-social">
-                                    <ul>
-                                        <li><a href="#"><i class="fa fa-facebook-f"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-rss" aria-hidden="true"></i></a></li>
-                                    </ul>
+                                <div class="footer-logo" v-show="!isEmpty(home.company)">
+                                    <img v-if="isNull(home.company.image)" src="/assets/home/images/icon/logo.png" :alt="home.company.name">
+                                    <img v-else :src="`${backendUri}${home.company.logo}`" width="200" :alt="home.company.name">
                                 </div>
                             </div>
                         </div>
-                        <div class="col offset-xl-1">
+                        <div class="col">
                             <div class="sub-title">
                                 <div class="footer-title">
-                                    <h4>my account</h4>
+                                    <h4>Shop by categories</h4>
                                 </div>
                                 <div class="footer-contant">
                                     <ul>
-                                        <li><a href="#">mens</a></li>
-                                        <li><a href="#">womens</a></li>
-                                        <li><a href="#">clothing</a></li>
-                                        <li><a href="#">accessories</a></li>
-                                        <li><a href="#">featured</a></li>
+                                        <li v-for="(category,index) in home.categories" :key="index">
+                                            <router-link :to="navigateTo(category)">{{ category.categoryName }}</router-link>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -71,15 +61,13 @@
                         <div class="col">
                             <div class="sub-title">
                                 <div class="footer-title">
-                                    <h4>why we choose</h4>
+                                    <h4>Shop</h4>
                                 </div>
                                 <div class="footer-contant">
                                     <ul>
-                                        <li><a href="#">shipping & return</a></li>
-                                        <li><a href="#">secure shopping</a></li>
-                                        <li><a href="#">gallary</a></li>
-                                        <li><a href="#">affiliates</a></li>
-                                        <li><a href="#">contacts</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'AccountProfile'})">My Account</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'AccountFavourites'})">My Wishlist</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'Brands'})">Our Brands</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -91,12 +79,9 @@
                                 </div>
                                 <div class="footer-contant">
                                     <ul class="contact-list">
-                                        <li><i class="fa fa-map-marker"></i>Multikart Demo Store, Demo store India
-                                            345-659</li>
-                                        <li><i class="fa fa-phone"></i>Call Us: 123-456-7898</li>
-                                        <li><i class="fa fa-envelope"></i>Email Us: <a href="#">Support@Multikart.com</a>
-                                        </li>
-                                        <li><i class="fa fa-fax"></i>Fax: 123456</li>
+                                        <li><i class="fa fa-map-marker"></i>{{ home.company.address }}</li>
+                                        <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
+                                        <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -109,11 +94,10 @@
                     <div class="row">
                         <div class="col-xl-6 col-md-6 col-sm-12">
                             <div class="footer-end">
-                                <p><i class="fa fa-copyright" aria-hidden="true"></i> 2023-24 themeforest powered by
-                                    pixelstrap</p>
+                                <p><i class="fa fa-copyright" aria-hidden="true"></i> {{ moment().format('Y') }} {{ $store.getters.env.VITE_APP_NAME }}</p>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12">
+                        <!-- <div class="col-xl-6 col-md-6 col-sm-12">
                             <div class="payment-card-bottom">
                                 <ul>
                                     <li>
@@ -133,7 +117,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -164,12 +148,12 @@
 
 
         <!-- cookie bar start -->
-        <div class="cookie-bar">
+        <!-- <div class="cookie-bar">
             <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you accept
                 our cookie policy.</p>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">accept</a>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">decline</a>
-        </div>
+        </div> -->
         <!-- cookie bar end -->
 
 
@@ -254,8 +238,21 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "LandingFooter"
+<script setup>
+import { isEmpty, isNull } from 'lodash';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+import moment from 'moment';
+
+// Magic functions 
+const $store = useStore();
+
+// Computed
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const home       = computed( () => $store.getters.home);
+
+// Methods
+const navigateTo = (category) => {
+    return { name: 'Products',params: { category: btoa(category.categoryPath.toLowerCase()) } }
 }
 </script>

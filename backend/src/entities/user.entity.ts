@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn, AfterLoad, OneToMany } from 'typeorm';
-import { CompanyEntity, RoleEntity } from './index';
+import { AddressBookEntity, CompanyEntity, RoleEntity } from './index';
 import { Seed, SeederContext, SeedRelation } from 'nestjs-class-seeder';
 import { Faker } from "@faker-js/faker";
 import * as bcrypt from 'bcrypt';
@@ -18,10 +18,12 @@ export class UserEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
   
-  @Column({
-    nullable: true
+  @OneToMany(() => AddressBookEntity, (favourites) => favourites.user, { lazy: true })
+  @JoinColumn({
+    name:                 "id",
+    referencedColumnName: "user_id"
   })
-  address: string
+  address_book: AddressBookEntity[];
 
   @SeedRelation(() => CompanyEntity)
   @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true })

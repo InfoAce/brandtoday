@@ -6,6 +6,7 @@ export { SystemController as SystemController } from './system/system.controller
 export { UserController as UserController } from './user/user.controller'
 
 // Landing pages
+export { AddressBookController as AddressBookController } from './landing/address/address.book.controller'
 export { AccountController as AccountController } from './landing/account/account.controller'
 export { FavouriteController as FavouriteController } from './landing/favourite/favourite.controller'
 export { HomeController as HomeController } from './landing/home/home.controller'

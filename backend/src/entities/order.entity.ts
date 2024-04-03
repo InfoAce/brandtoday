@@ -1,6 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
-import { RoleEntity, UserEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
+import { AddressBookEntity, RoleEntity, UserEntity } from './index';
 import { Seed } from 'nestjs-class-seeder';
+
+export enum Status {
+  PAID         = "paid",
+  PENDING      = "pending",
+  IN_TRANSIT   = "in_transit",
+  DELIVERED    = "delivered",
+  CANCELLED    = "cencelled",
+}
 
 @Entity("orders")
 export class OrderEntity {
@@ -9,55 +17,45 @@ export class OrderEntity {
   id: string;
 
   @Column({
+    nullable: false,
+    type: 'json'
+  })
+  items: string;
+
+  @Column({
+    type:     "enum",
+    enum:     Status,
+    default:  Status.PENDING,
     nullable: true
   })
-  address: string;
+  status: string;
 
-  @Seed('Test Company')
   @Column()
-  name: string;
+  transaction_id: string
 
-  @Seed('info@company.com')
-  @Column({
-    unique: true
-  })
-  email: string
-
-  @Column({
-    nullable: true
-  })
-  logo: string;
-
-  @Column({
-    nullable: true
-  })
-  icon: string;
-
-  @Column({
-    nullable: true
-  })
-  phone_number: string;
-
-  @Seed('ke')
-  @Column({
-    nullable: true,
-    default: '254'
-  })
-  country_code: string
-
-  @OneToMany(() => RoleEntity, (roles) => roles.company)
+  @ManyToOne(() => UserEntity, (entity) => entity.favourites )
   @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "company_id"
+    name:                 "user_id",
+    referencedColumnName: "id",
   })
-  roles: RoleEntity[];
-
-  @OneToMany(() => UserEntity, (users) => users.company)
+  user: UserEntity;
+  
+  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders )
   @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "company_id"
+    name:                 "address_id",
+    referencedColumnName: "id",
   })
-  users: UserEntity[];
+  address: AddressBookEntity;
+
+  @Column({
+    nullable: false
+  })
+  user_id: string;
+
+  @Column({
+    nullable: false
+  })
+  address_id: string;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

@@ -21,6 +21,10 @@ export default createStore({
       },
       cart: Array(),
       get env(){ return import.meta.env },
+      home:{
+        categories: Array(),
+        company:    Object()
+      },
       loader: false,
       sideBar:{
         menus:     menuLinks,
@@ -33,6 +37,7 @@ export default createStore({
     authUser:          (state) => state.auth.user,
     cart:              (state) => state.cart,
     env:               (state) => state.env,
+    home:              (state) => state.home,
     loader:            (state) => state.loader,
     sidebarMenus:      (state) => state.sideBar.menus,
     sidebarUnfoldable: (state) => state.sideBar.unfoldable,
@@ -49,6 +54,10 @@ export default createStore({
     },
     cart(state,value) {
       state.cart = cloneDeep(value);
+    },
+    home(state,value) {
+      console.log(value);
+      state.home = value
     },
     loader(state,value) {
       state.loader = value

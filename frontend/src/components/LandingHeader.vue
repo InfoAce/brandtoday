@@ -8,10 +8,10 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="header-contact">
-                            <!-- <ul>
-                                <li>Welcome href Our store Multikart</li>
-                                <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: 123 - 456 - 7890</li>
-                            </ul> -->
+                            <ul>
+                                <li>{{ $store.getters.env.VITE_APP_NAME }}</li>
+                                <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="col-lg-6 text-end">
@@ -55,7 +55,7 @@
                                                     aria-hidden="true"></i> Back</div>
                                         </div>
                                         <ul id="sub-menu" class="sm pixelstrap sm-vertical">
-                                            <li v-for="(item,index) in data.categories" :key="index"> 
+                                            <li v-for="(item,index) in home.categories" :key="index"> 
                                                 <a href="javascript::void(0)" >{{ item.categoryName }}</a>
                                                 <ul>
                                                     <li v-for="(item_child,child_key) in item.children" :key="child_key">
@@ -78,8 +78,9 @@
                                 </div>
                             </div>                            
                             <div class="brand-logo">
-                                <a href="/">
-                                    <img src="/assets/home/images/icon/logo.png" class="img-fluid blur-up lazyload" alt="">
+                                <a href="#" @click.prevent="$router.push({ name: 'Home' })">
+                                    <img v-if="isNull(home.company.logo)" src="/assets/home/images/icon/logo.png" class="img-fluid blur-up lazyload w-100" alt="">
+                                    <img v-else :src="`${backendUri}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" :alt="home.company.name">
                                 </a>
                             </div>
                         </div>
@@ -169,9 +170,9 @@
     <!-- header end -->
 </template>
 <script setup>
-import { cloneDeep, debounce, isEmpty } from 'lodash';
+import { cloneDeep, debounce, isEmpty, isNull } from 'lodash';
 import { useStore } from 'vuex';
-import { onBeforeMount, onMounted, inject, reactive } from 'vue';
+import { computed, onBeforeMount, onMounted, inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 const $api     = inject('$api');
@@ -179,13 +180,18 @@ const $swal    = inject('$swal');
 const $store   = useStore();
 const $router  = useRouter(); 
 const data     = reactive({categories: Array() });
-const authUser = $store.getters.authUser;
-const cart     = $store.getters.cart;
+
+//Computed
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const authUser   = computed( () => $store.getters.authUser);
+const cart       = computed( () => $store.getters.cart);
+const home       = computed({ get: () => $store.getters.home, set(val) { $store.commit('home',val); } });
 
 const fetchMenus = () => {
     $api.get('header')
-        .then( ({ data: { categories } }) => {
-            data.categories = cloneDeep(categories);
+        .then( ({ data: { categories, company } }) => {
+            home.value.categories = cloneDeep(categories);
+            home.value.company    = cloneDeep(company);
         })
         .catch( () => {
 

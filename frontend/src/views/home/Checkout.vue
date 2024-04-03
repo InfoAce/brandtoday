@@ -30,62 +30,73 @@
                         <form>
                             <div class="row">
                                 <div class="col-lg-6 col-sm-12 col-xs-12">
-                                    <div class="checkout-details">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                            <label class="form-check-label ml-2" for="defaultCheck1">
-                                                Default checkbox
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="checkout-title">
+                                                <h3>Billing Details</h3>
+                                            </div>                                            
                                         </div>
-                                    </div>
-                                    <div class="checkout-title">
-                                        <h3>Billing Details</h3>
-                                    </div>
-                                    <div class="row check-out">
-                                        <div class="form-group col-md-6 col-sm-6 col-xs-12">
-                                            <div class="field-label">First Name</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
+                                        <div class="col-12" v-show="isEmpty(authUser)">
+                                            <div class="row check-out">
+                                                <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="field-label">First Name</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="field-label">Last Name</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="field-label">Phone</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="field-label">Email Address</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-label">Country</div>
+                                                    <select>
+                                                        <option>India</option>
+                                                        <option>South Africa</option>
+                                                        <option>United State</option>
+                                                        <option>Australia</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-label">Address</div>
+                                                    <input type="text" name="field-name" value="" placeholder="Street address">
+                                                </div>
+                                                <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="field-label">Town/City</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-12 col-sm-6 col-xs-12">
+                                                    <div class="field-label">State / County</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>
+                                                <div class="form-group col-md-12 col-sm-6 col-xs-12">
+                                                    <div class="field-label">Postal Code</div>
+                                                    <input type="text" name="field-name" value="" placeholder="">
+                                                </div>                                               
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-6 col-sm-6 col-xs-12">
-                                            <div class="field-label">Last Name</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-md-6 col-sm-6 col-xs-12">
-                                            <div class="field-label">Phone</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-md-6 col-sm-6 col-xs-12">
-                                            <div class="field-label">Email Address</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
-                                            <div class="field-label">Country</div>
-                                            <select>
-                                                <option>India</option>
-                                                <option>South Africa</option>
-                                                <option>United State</option>
-                                                <option>Australia</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
-                                            <div class="field-label">Address</div>
-                                            <input type="text" name="field-name" value="" placeholder="Street address">
-                                        </div>
-                                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
-                                            <div class="field-label">Town/City</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-md-12 col-sm-6 col-xs-12">
-                                            <div class="field-label">State / County</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-md-12 col-sm-6 col-xs-12">
-                                            <div class="field-label">Postal Code</div>
-                                            <input type="text" name="field-name" value="" placeholder="">
-                                        </div>
-                                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <input type="checkbox" name="shipping-option" id="account-option"> &ensp;
-                                            <label for="account-option">Create An Account?</label>
+                                        <div class="col-12" v-show="!isEmpty(authUser)">
+                                            <div class="checkout-details">
+                                                <div class="form-check" v-for="(address, index) in $data.addresses" :key="index">
+                                                    <input class="form-check-input" type="radio"  name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">
+                                                    <label class="form-check-label mr-4" for="defaultCheck1">
+                                                        <strong>
+                                                            {{ address.address_line_1 }} <br>
+                                                            {{ address.address_line_2 }}
+                                                            {{ address.postal_code }}<br>
+                                                            {{ address.country }},
+                                                            {{ address.county_state }},
+                                                            {{ address.city_town }}
+                                                        </strong>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -124,6 +135,11 @@
                                                 <li>Total <span class="count">KSH {{ total.toFixed(0) }}</span></li>
                                             </ul>
                                         </div>
+                                        <div class="payment-box">
+                                            <div class="text-center">
+                                                <button class="btn-solid btn" @click="placeOrder">Place Order</button>
+                                            </div>
+                                        </div>                                        
                                     </div>
                                 </div>
                             </div>
@@ -137,17 +153,90 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+
+import { computed, inject, onBeforeMount, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { isEmpty, has, sum } from 'lodash';
+import * as yup from "yup";
+import { cloneDeep, isEmpty, has, sum } from 'lodash';
 
+// Data variables
+const $api   = inject('$api');
 const $store = useStore();
+const $data  = reactive({
+    addresses: Array(),
+    errors:    Object(),
+    form: {
+        address: String(),
+        items:   Array()
+    },
+    loader:    {
+        addresses: Boolean(),
+        order:     Boolean(),
+    }
+});
 
-const cart   = computed( () => $store.getters.cart );
-const total  = computed( () => { 
+// Computed
+const authUser = computed( () => $store.getters.authUser );
+const cart     = computed( () => $store.getters.cart );
+const total    = computed( () => { 
     return sum(cart.value.map( (val:any) => { 
         return has(val,'sizes') ? (val.price * sum(val.sizes.map( (size: any) => size.quantity))) : (val.price * val.quantity)
     }));
+});
+const formSchema = yup.object().shape({
+	address: yup.string().required("*Address is required"),                      
+	items:   yup.array().min(1).required("*Cart Items is required"),                      
+});
+
+
+// Methods
+const selectAddress = (value: string) => {
+    $data.form.address = value;
+}
+
+const validateForm = (field) => {
+  formSchema.validateAt(field, data.form)
+            .then((value,key) => {
+                delete data.errors[field];
+            })
+            .catch((err) => {
+                data.errors[err.path] = err.message;
+            })
+            .finally( () => {
+                data.isDisabled = !isEmpty(data.errors);
+            })
+}
+
+const placeOrder = () => {
+    $data.loader.order = Boolean(true);
+    $api.post('/order')
+        .then( ({ data: {  }}) => {
+
+        })
+        .catch( () => {
+            $data.loader.order = Boolean();
+        })
+        .finally( () => {
+            $data.loader.order = Boolean();
+        });
+}
+
+
+onBeforeMount( () => {
+    $data.form.items = cloneDeep(cart.value);
+    if( !isEmpty(authUser) ){
+        $data.loader.addresses = Boolean(true);
+        $api.get('/addresses')
+            .then( ({ data: { addresses }}) => {
+                $data.addresses = cloneDeep(addresses);
+            })
+            .catch( () => {
+                $data.loader.addresses = Boolean();
+            })
+            .finally( () => {
+                $data.loader.addresses = Boolean();
+            });
+    }
 });
 
 </script>

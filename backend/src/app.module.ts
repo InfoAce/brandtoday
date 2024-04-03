@@ -2,15 +2,15 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController, UserController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController, UserController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, RedisService } from './services';
-import { CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
-import { CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from './entities';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
+import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -46,8 +46,10 @@ import { SessionSerialize } from './utils';
         username:    configService.get<string>('DB_USERNAME'),
         password:    configService.get<string>('DB_PASSWORD'),
         entities:    [
+          AddressBookEntity,
           CompanyEntity,
           FavouriteEntity,
+          OrderEntity,
           RoleEntity,
           UserEntity
         ],
@@ -69,7 +71,8 @@ import { SessionSerialize } from './utils';
       }),
       inject: [ConfigService]
     }),
-    MailModule,   
+    MailModule, 
+    AddressBookModule,
     CompanyModule,
     FavouriteModule,
     MailModule,
@@ -78,6 +81,7 @@ import { SessionSerialize } from './utils';
   ],
   controllers: [
     AccountController,
+    AddressBookController,
     AuthController,
     CategoryController, 
     CompanyController, 

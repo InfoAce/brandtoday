@@ -50,6 +50,17 @@ const router = createRouter({
           component: () => import('@/views/home/Login.vue')
         }, 
         {
+          path: 'brands',
+          name: "Brands",
+          meta: {
+            title: 'Our Brands',
+            auth:  false,
+            state: 0,
+            admin: false
+          },
+          component: () => import('@/views/home/Brands.vue')
+        },  
+        {
           path: 'shopping',
           children: [
             {
@@ -383,7 +394,6 @@ const checkRole = (to:any,next: any) => {
     name: route, 
     meta: { state } 
   } = to;
-  console.log(authToken);
   switch(route){
     case 'Login':
     case 'Signup':
@@ -399,24 +409,6 @@ const checkRole = (to:any,next: any) => {
         next({name:"Forbidden"})
       }
   }
-  // if( routeName == "Login"){
-  //   checkRole(to,next);
-  // } else {
-  //   const { getters: { authUser:{ role: { name: roleName, state: roleState } } } } = store;
-  //   if( roleState >= state ){
-  //     next();
-  //   } else {
-  //     next({name:"Forbidden"})
-  //   }
-  // }    
-  // switch(state){
-  //   case 1:
-  //   case 2:
-  //     next({name:"Overview"});
-  //   break;
-  //   default: 
-  //     next({name:"Home"});
-  // }
 }
 
 const addDashbordTheme = () => {
