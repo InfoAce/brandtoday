@@ -61,6 +61,34 @@ const router = createRouter({
           component: () => import('@/views/home/Brands.vue')
         },  
         {
+          path: 'category',
+          children: [
+            {
+              path: ':category',
+              name: "Category",
+              meta: {
+                title: 'Product Category',
+                auth:  false,
+                state: 0,
+                admin: false
+              },
+              component: () => import('@/views/home/Category.vue')
+            },
+            {
+              path: ':pathMatch(.*)*',
+              name: "Error404",
+              meta: {
+                title: 'Not Found',
+                auth: false,
+                state:  0,
+                admin: false
+              },
+              component: () => import('@/views/home/Error404.vue')
+            }, 
+          ],
+          component: RouterView
+        },          
+        {
           path: 'shopping',
           children: [
             {

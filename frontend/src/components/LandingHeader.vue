@@ -14,12 +14,45 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-6 text-end">
-                        <ul class="header-dropdown">
-                            <li class="mobile-wishlist">
+                    <div class="col-lg-6 text-end d-flex justify-content-end">
+                        <ul class="header-dropdown d-flex align-items-center justify-content-end">
+                            <li class="mobile-wishlist p-2">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart" aria-hidden="true"></i></a>
                             </li>
-                            <li class="onhover-dropdown mobile-account">
+                            <li class="onhover-div mobile-search p-2">
+                                <div>
+                                    <i class="ti-search" onclick="openSearch()"></i>
+                                </div>
+                                <div id="search-overlay" class="search-overlay">
+                                    <div> 
+                                        <span class="closebtn" onclick="closeSearch()" title="Close Overlay">×</span>
+                                        <div class="overlay-content">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-xl-12">
+                                                        <form>
+                                                            <div class="form-group">
+                                                                <input type="text" class="form-control"
+                                                                    id="exampleInputPassword1"
+                                                                    placeholder="Search a Product">
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary"><i
+                                                                    class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="mobile-cart p-2">
+                                <a href="#" @click.prevent="$router.push({ name: 'Cart'})">
+                                    <i class="ti-shopping-cart"></i>
+                                    <span class="cart_qty_cls">{{ cart.length }}</span>
+                                </a>
+                            </li>
+                            <li class="onhover-dropdown mobile-account p-2">
                                 <i class="fa fa-user" aria-hidden="true"></i>
                                 <span v-if="isEmpty(authUser)">My Account</span>
                                 <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
@@ -37,11 +70,11 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="main-menu">
-                        <div class="menu-left">
+                <div class="col-12">
+                    <div class="main-menu justify-content-center py-4">
+                        <!-- <div class="menu-left">
                             <div class="navbar">
                                 <a href="javascript:void(0)" onclick="openNav()">
                                     <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i>
@@ -83,7 +116,7 @@
                                     <img v-else :src="`${backendUri}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" :alt="home.company.name">
                                 </a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="menu-right pull-center">
                             <div>
                                 <nav id="main-nav">
@@ -95,14 +128,18 @@
                                                 <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
                                             </div>
                                         </li>
-                                        <li>
-                                            <router-link to="/home">Home</router-link>
-                                        </li>                                       
+                                        <template v-if="!isEmpty(home.categories)" >
+                                            <li v-for="(item,index) in home.categories" :key="index" class="px-2">
+                                                <router-link :to="navigateTo(item)" class="p-0">
+                                                    {{ item.categoryName  }}
+                                                </router-link>
+                                            </li> 
+                                        </template>                                                                              
                                     </ul>
                                 </nav>
                             </div>
                             <div>
-                                <div class="icon-nav">
+                                <!-- <div class="icon-nav">
                                     <ul>
                                         <li class="onhover-div mobile-search">
                                             <div>
@@ -132,34 +169,15 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <!-- <li class="onhover-div mobile-setting">
-                                            <div><img src="/assets/home/images/icon/setting.png"
-                                                    class="img-fluid blur-up lazyload" alt=""> <i
-                                                    class="ti-settings"></i></div>
-                                            <div class="show-div setting">
-                                                <h6>language</h6>
-                                                <ul>
-                                                    <li><a href="#">english</a></li>
-                                                    <li><a href="#">french</a></li>
-                                                </ul>
-                                                <h6>currency</h6>
-                                                <ul class="list-inline">
-                                                    <li><a href="#">euro</a></li>
-                                                    <li><a href="#">rupees</a></li>
-                                                    <li><a href="#">pound</a></li>
-                                                    <li><a href="#">doller</a></li>
-                                                </ul>
-                                            </div>
-                                        </li> -->
                                         <li class="mobile-cart">
-                                            <a href="#" @click.prevent="$router.push({ name: 'Cart'})">
+                                            <a href="#" @click.prevent="$router.push({ name: 'Cart'})" class="px-2 py-0">
                                                 <img src="/assets/home/images/icon/cart.png" class="img-fluid blur-up lazyload" alt=""> 
                                                 <i class="ti-shopping-cart"></i>
                                             </a>
                                             <span class="cart_qty_cls">{{ cart.length }}</span>
                                         </li>
                                     </ul>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -232,10 +250,20 @@ const logout = () =>{
     });	
 }
 
-const navigateTo = (item_child_child) => {
-    return { name: 'Products',params: { category: btoa(item_child_child.categoryPath) } }
+const navigateTo = (item) => {
+    return { name: 'Category',params: { category: btoa(item.categoryPath.toLowerCase()) } }
 }
 
 onBeforeMount( () => fetchMenus() );
 onMounted(     () => initMenus() );
 </script>
+
+<style scoped>
+
+.pixelstrap a,
+.pixelstrap a:hover,
+.pixelstrap a:active {
+    font-weight: normal;
+    font-size:   medium;
+}
+</style>
