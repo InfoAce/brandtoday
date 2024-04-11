@@ -459,8 +459,9 @@ export default {
                             name:     yup.string().required("*Size name is required."),
                             quantity: yup.number().min(1).required("*Size quantity is required."),
                         })
-                    ).min(1)
-                     .required("*Size is required");  
+                    )
+                    .min(1)
+                    .required("*Size is required");  
                     set(this.selections,'size',Object());
                     set(this.form,'sizes',Array());
                 break;

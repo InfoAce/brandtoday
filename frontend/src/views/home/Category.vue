@@ -34,10 +34,10 @@
                                     <div class="product-wrapper-grid">
                                         <div class="row margin-res" v-show="!isEmpty($data.sub_categories)">
                                             <div class="col-xl-3 col-6 col-grid-box mb-4" v-for="(sub_category,index) in $data.sub_categories" :key="index">
-                                                <a href="#" @click.prevent="$router.push({ name: 'Products', params: { category: sub_category.fullCode }})">
+                                                <a href="#" @click.prevent="viewProducts(sub_category)">
                                                     <div class="card">
                                                         <div class="card-body p-0" >
-                                                            <img v-if="!isEmpty(sub_category.image)" class="img-fluid blur-up lazyload bg-img w-100" :src="sub_category.image" alt="">
+                                                            <img v-if="!isEmpty(sub_category.image)" :src="sub_category.image" :alt="sub_category.categoryName" />
                                                             <h1 v-else class="w-100"><i class="fa fa-image"></i></h1>
                                                         </div>
                                                         <div class="card-footer bg-white">
@@ -76,15 +76,16 @@
 
 <script setup lang="ts">
 import { cloneDeep, isEmpty } from 'lodash';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 
 // Magic variables
-const $api   = inject('$api');
-const $route = useRoute();
-const $store = useStore();
-const $data  = reactive({
+const $api    = inject('$api');
+const $route  = useRoute();
+const $router = useRouter();
+const $store  = useStore();
+const $data   = reactive({
     sub_categories: Array()
 });
 
@@ -103,6 +104,9 @@ const fetch = () => {
             $store.commit('loader',false);
         })
 }
+const viewProducts = (sub_category) => {
+    $router.push({ name: 'Products', params: { category: btoa(sub_category.categoryPath.toLowerCase()) }})
+}
 
 // Initialize component
 onBeforeMount( () => fetch());
@@ -118,3 +122,14 @@ watch(
     }
 )
 </script>
+
+<style>
+    .card-body img {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+        position: relative;
+        top: 0;
+        transition: 0.5s ease-in-out;
+    }
+</style>

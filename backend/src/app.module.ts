@@ -2,14 +2,14 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, ProductsController, SignupController, SystemController, UserController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, OrderController, ProductsController, SignupController, SystemController, UserController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, RedisService } from './services';
-import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule } from './modules';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule } from './modules';
 import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
@@ -76,6 +76,7 @@ import { SessionSerialize } from './utils';
     CompanyModule,
     FavouriteModule,
     MailModule,
+    OrderModule,
     RoleModule,
     UserModule 
   ],
@@ -90,6 +91,7 @@ import { SessionSerialize } from './utils';
     HomeController, 
     LoginController,
     ProductsController,
+    OrderController,
     SignupController,
     SystemController,
     UserController

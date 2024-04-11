@@ -28,6 +28,45 @@
             <div class="collection-wrapper">
                 <div class="container">
                     <div class="row">
+                        <div class="col-sm-3 collection-filter">
+                            <!-- side-bar colleps block stat -->
+                            <div class="collection-filter-block">
+                                <!-- sub categories filter start -->
+                                <div class="collection-collapse-block open">
+                                    <h3 class="collapse-block-title">Sub Categories</h3>
+                                    <div class="collection-collapse-block-content" id="sub_categories">
+                                        <div class="collection-brand-filter">
+                                            <div class="form-check collection-filter-checkbox align-items-center">
+                                                <input type="radio" class="form-check-input" value="all" name="sub_category" @change="selectSubCategory($event.target.value)" checked id="all" style="width: 1.5em; height: 1.5em;" >
+                                                <label class="form-check-label mb-0" for="all">All</label>
+                                            </div>
+                                        </div>
+                                        <template v-if="!$isEmpty(sub_categories)">
+                                            <div class="collection-brand-filter" v-for="(category,index) in sub_categories" :key="index">
+                                                <div class="form-check collection-filter-checkbox align-items-center justify-content-between">
+                                                    <div>
+                                                        <input type="radio" class="form-check-input" :value="category.categoryName" @change="selectSubCategory($event.target.value,category)" name="sub_category" :id="category.categoryName" style="width: 1.5em; height: 1.5em;" >
+                                                        <label class="form-check-label mb-0" :for="category.categoryName">{{ category.categoryName }}</label>
+                                                    </div>
+                                                    <a class="text-end" v-if="!$isEmpty(category.children)" href="#" @click="showCollapsed($event,category)"><i class="fa fa-chevron-down"></i></a>
+                                                </div>
+                                                <div class="collapse" :id="category.categoryCode.toLowerCase()" :aria-labelledby="category.categoryCode.toLowerCase()" data-parent="#sub_categories" v-show="sub_category == toBase64(category.categoryName.toLowerCase())">
+                                                    <ul class="list-group">
+                                                        <li v-for="(child,child_index) in category.children" :key="child_index" class="list-group-item">
+                                                            <div class="form-check collection-filter-checkbox align-items-center mt-0">
+                                                                <input type="radio" class="form-check-input" :value="child.categoryName" @change="selectSubChildCategory($event.target.value)" name="sub_child_category" :id="child.categoryName">
+                                                                <label class="form-check-label mb-0" :for="child.categoryName">{{ child.categoryName }}</label>
+                                                            </div>                                                            
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- silde-bar colleps block end here -->
+                        </div>                        
                         <div class="collection-content col">
                             <div class="page-main-content">
                                 <div class="collection-product-wrapper">
@@ -145,12 +184,14 @@ export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
             vm.fetchData(),
+            vm.fetchSubCategories(),
             next();
         });
     },
     beforeRouteUpdate(to, from, next){
         next(vm => {
             vm.fetchProducts(),
+            vm.fetchSubCategories(),
             next();
         });
     },
@@ -163,7 +204,10 @@ export default {
     },
     data(){
         return{
-            products: Array()
+            products:           Array(),
+            sub_categories:     Array(),
+            sub_category:       String(),
+            sub_child_category: String()
         }
     },
     methods:{
@@ -171,27 +215,47 @@ export default {
             this.products = cloneDeep({});
             this.fetchProducts();
         },
-        fetchProducts(data = { page: 1, perPage: 10 }){
-            let {  $route: { params } } = this, url = `/products`, { page, perPage } = data;
-            console.log( atob(params.category) );
+        fetchProducts(data = { page: 1, perPage: 10, sub_category: String(), overwrite: false }){
+
+            let {  $route: { params } } = this, url = `/products`, { page, perPage, sub_category, sub_child_category, overwrite } = data;
+
             this.$store.commit('loader',true);
 
             if( !isEmpty(params) && has(params,'category') && !isEmpty(params.category) ){
                 url = `${url}?category=${params.category}`;
             }
 
+            if( !isEmpty(sub_category) ){
+                url += `&sub_category=${sub_category}`;
+            }
+            
+            if( !isEmpty(sub_child_category) ){
+                url += `&sub_child_category=${sub_child_category}`;
+            }
+
             url += `&page=${page}&perPage=${perPage}`;
             
-            this.$api.get(url)
+            this.$api
+                .get(url)
                 .then( ({ data:{ products }}) => {
+             
                     if( !isEmpty(this.products) ){
-                        this.products.data = cloneDeep(this.products.data.concat(products.data));
+                        if( overwrite ){
+                            this.products = cloneDeep(products);
+                        }
+
+                        if( !overwrite ){
+                            this.products.data = cloneDeep(this.products.data.concat(products.data));
+                        }
+
                         this.products.currentPage = products.currentPage;
                     }
+
                     if( isEmpty(this.products) ){
                         this.products = cloneDeep(products);            
                     }
-                })
+
+                }) 
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);
                     if( !isEmpty(response.data) && response.data.statusCode == 400 ){
@@ -203,30 +267,76 @@ export default {
                 .finally( () => {
                     this.$store.commit('loader',false);
                 });            
+
         },
+        fetchSubCategories(){
+            const { $route: { params } } = this;
+            this.$api
+                .put(`/categories/view/${params.category}`)
+                .then( ({ data:{ sub_categories }}) => {
+                    this.sub_categories = cloneDeep(sub_categories);
+                })
+                .catch( ({ response }) => {
+                    if( !isEmpty(response.data) && response.data.statusCode == 400 ){
+                        response.data.message.forEach( (value) => {
+                            toast.info(value);
+                        });
+                    }
+                })
+                .finally( () => {
+
+                });
+        },
+        toBase64(string){
+            return window.btoa(string);
+        },  
         loadMore(event){
 
-            let { products: { currentPage, perPage, totalPages } } = this, 
+            let { products: { currentPage, perPage, totalPages }, sub_category } = this, 
             page                          = currentPage < totalPages ? 
                                                 currentPage + 1 : 
                                                     null;
 
             if( !isNull(page) ){
-                this.fetchProducts({ page, perPage });
+                this.fetchProducts({ page, perPage, sub_category });
             }
 
             if( isNull(page) ){
                 $(event.target).text('No more products.');
             }
 
+        },
+        selectSubCategory(value,category){
+            this.sub_category = btoa(value.toLowerCase());
+            if( !isEmpty(category.children) ){
+                $(`#${category.categoryCode.toLowerCase()}`).collapse('show');
+            }
+        },
+        selectSubChildCategory(value) {
+            this.sub_child_category = btoa(value.toLowerCase());
+        },
+        showCollapsed(event,category){
+            event.preventDefault();
+            $(`#${category.categoryCode.toLowerCase()}`).collapse('show')
         }
     },
     watch:{
         "$route.params":{
-            handler(value){
+            handler(){
+                this.fetchSubCategories();
                 this.fetchData();
             },
             deep: true
+        },
+        sub_category(sub_category){
+            if( !isEmpty(this.sub_child_category) ){
+                this.sub_child_category = String();
+            }
+            this.fetchProducts({ page: 1, perPage: 10, sub_category, overwrite: true });
+        },
+        sub_child_category(sub_child_category){
+            const { sub_category } = this;
+            this.fetchProducts({ page: 1, perPage: 10, sub_category, sub_child_category, overwrite: true });
         }
     }
 }

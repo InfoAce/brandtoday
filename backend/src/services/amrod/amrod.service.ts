@@ -38,6 +38,7 @@ export class AmrodService {
                 this.httpService.axiosRef.defaults.headers.common['Authorization'] = `${auth.type} ${auth.token}`;
             }
         }
+        
         return this.httpService;
     }
     

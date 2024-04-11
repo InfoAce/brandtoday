@@ -3,4 +3,5 @@ export { AddressBookRepository as AddressBookRepository } from './address.book.r
 export { CompanyRepository as CompanyRepository } from './company.repository';
 export { FavouriteRepository as FavouriteRepository } from './favourite.repository';
 export { RoleRepository as RoleRepository } from './role.repository';
+export { OrderRepository as OrderRepository } from './order.repository';
 export { UserRepository as UserRepository } from './user.repository';

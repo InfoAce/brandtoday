@@ -11,7 +11,7 @@ export class MailService {
   ) {}
 
   async sendUserConfirmation(user: UserEntity) {
-    const url = `${this.configService.get('APP_URL')}/verify/email/${user.token}`;
+    const url = `${this.configService.get('APP_URL')}/home/verify/email/${user.token}`;
 
     await this.mailerService.sendMail({
       to: user.email,

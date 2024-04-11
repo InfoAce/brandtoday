@@ -46,7 +46,6 @@ export class CategoryController {
         let cached_products:   any = await this.cacheManager.store.get('amrod_products');
         let sub_categories:    any = cached_category != undefined ? 
                                       get(cached_category,'children')
-                                        .map( child => omit(child,['children']) )
                                         .map( child => {
 
                                           let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryPath.toLowerCase()) )) ),'categories');

@@ -12,4 +12,5 @@ export { FavouriteController as FavouriteController } from './landing/favourite/
 export { HomeController as HomeController } from './landing/home/home.controller'
 export { LoginController as LoginController } from './landing/login/login.controller'
 export { ProductsController as ProductsController } from './landing/products/products.controller'
+export { OrderController as OrderController } from './landing/order/order.controller'
 export { SignupController as SignupController } from './landing/signup/signup.controller'

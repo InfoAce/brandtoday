@@ -63,4 +63,36 @@ export class PesapalService {
         return data;
 
     }
+
+    async order(){
+
+        const { 
+            credentials: {
+                account_number: CustomerCode,
+                password:       Password,
+                username:       UserName
+            }
+        }  = this.config;
+
+        const { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.auth_uri })
+                .post(
+                    this.config.endpoints.orderRequest,
+                    {
+                        CustomerCode,
+                        Password,
+                        UserName
+                    }
+                )
+                .pipe(
+                    catchError((error: any) => {
+                        const { response: { status, data: { message }} } = error;
+                        throw new HttpException(message,status);
+                    })
+                )
+        );
+
+        return data;
+
+    }    
 }

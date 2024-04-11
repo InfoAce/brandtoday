@@ -251,7 +251,7 @@ const logout = () =>{
 }
 
 const navigateTo = (item) => {
-    return { name: 'Category',params: { category: btoa(item.categoryPath.toLowerCase()) } }
+    return { name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } }
 }
 
 onBeforeMount( () => fetchMenus() );

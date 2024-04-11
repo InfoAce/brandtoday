@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Inject, Injectable, Param, Post, Put
 import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { isEmpty, has, get } from 'lodash';
+import { isEmpty, first, has, get, omit, shuffle } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { FavouriteModel } from 'src/models';
@@ -19,12 +19,15 @@ export class ProductsController {
     @Get('')
     async index(
       @Query('category') queryCategory: string,
+      @Query('sub_category') querySubCategory: string,
+      @Query('sub_child_category') querySubChildCategory: string,
       @Req() req: Request,  
       @Res() res: Response
     ) {
       try {  
         let cached_products: any = await this.cacheManager.store.get('amrod_products');
-        let cached_prices: any   = await this.cacheManager.store.get('amrod_prices');
+        let cached_prices:   any = await this.cacheManager.store.get('amrod_prices');
+        let category:        any = Object();
 
         if( isEmpty(cached_products) ){
           let products    = await this.amrodService.getProducts();
@@ -32,7 +35,18 @@ export class ProductsController {
         }
 
         if( !isEmpty(queryCategory) ){
+          let categories: any  = await this.cacheManager.store.get('amrod_categories');
+
+          category        = categories.find( category => category.categoryPath == atob(queryCategory) );
           cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(queryCategory))) );
+        }
+
+        if( !isEmpty(querySubCategory) ){
+          cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(querySubCategory))) );
+        }
+
+        if( !isEmpty(querySubChildCategory) ){
+          cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(querySubChildCategory))) );
         }
         
         switch(!isEmpty(req.query) && has(req.query,'page')){
@@ -47,12 +61,11 @@ export class ProductsController {
         cached_products.data = cached_products.data.map( product => {
           let data_price = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
           if( data_price != undefined ){ product.price = data_price.price; }
-          // if( data_price == undefined ){ console.log(product.simpleCode) };
           return product;
         }); 
         
 
-        res.status(HttpStatus.OK).json({ products: cached_products });
+        res.status(HttpStatus.OK).json({ products: cached_products, category });
          
       } catch(err){
         console.log(err);

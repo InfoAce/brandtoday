@@ -29,13 +29,13 @@
                     <div class="checkout-form">
                         <form>
                             <div class="row">
+                                <div class="col-12">
+                                    <div class="checkout-title">
+                                        <h3>Billing Details</h3>
+                                    </div>                                            
+                                </div>
                                 <div class="col-lg-6 col-sm-12 col-xs-12">
                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="checkout-title">
-                                                <h3>Billing Details</h3>
-                                            </div>                                            
-                                        </div>
                                         <div class="col-12" v-show="isEmpty(authUser)">
                                             <div class="row check-out">
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
@@ -82,26 +82,43 @@
                                             </div>
                                         </div>
                                         <div class="col-12" v-show="!isEmpty(authUser)">
-                                            <div class="checkout-details">
-                                                <div class="form-check" v-for="(address, index) in $data.addresses" :key="index">
-                                                    <input class="form-check-input" type="radio"  name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">
-                                                    <label class="form-check-label mr-4" for="defaultCheck1">
-                                                        <strong>
-                                                            {{ address.address_line_1 }} <br>
-                                                            {{ address.address_line_2 }}
-                                                            {{ address.postal_code }}<br>
-                                                            {{ address.country }},
-                                                            {{ address.county_state }},
-                                                            {{ address.city_town }}
-                                                        </strong>
-                                                    </label>
-                                                </div>
+                                            <div class="checkout-details" >
+								                <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'address')">{{$data.errors.address}}</p>								
+                                                <template v-if="!isEmpty($data.addresses)">
+                                                    <div class="col-12 mb-2" v-for="(address, index) in $data.addresses" :key="index">
+                                                        <div class="card">
+                                                            <div class="card-body d-flex align-items-center justify-content-between">
+                                                                <div class="address-box">
+                                                                    <input class="form-check-input" style="width: 2em; height: 2em;" type="radio" name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">                                                    
+                                                                    <label class="form-check-label px-2">
+                                                                        <strong>
+                                                                            {{ address.address_line_1 }} <br>
+                                                                            {{ address.address_line_2 }}
+                                                                            {{ address.postal_code }}<br>
+                                                                            {{ address.country }},
+                                                                            {{ address.county_state }},
+                                                                            {{ address.city_town }}
+                                                                        </strong>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="btn btn-solid btn-sm">{{ address.category }}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <template v-else>
+                                                    <h4 class="text-warning text-center">
+                                                        <i class="fa fa-info-circle"></i>
+                                                        No addresses found.
+                                                    </h4>
+                                                </template>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-sm-12 col-xs-12">
                                     <div class="checkout-details">
+								        <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'items')">{{$data.errors.items}}</p>								
                                         <div class="order-box">
                                             <div class="title-box">
                                                 <div>Product <span>Total</span></div>
@@ -137,7 +154,10 @@
                                         </div>
                                         <div class="payment-box">
                                             <div class="text-center">
-                                                <button class="btn-solid btn" @click="placeOrder">Place Order</button>
+                                                <button class="btn-solid btn" type="button" @click="placeOrder()" :disabled="$data.isDisabled || $data.loader.order">
+                                                    <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
+                                                    Place Order
+                                                </button>
                                             </div>
                                         </div>                                        
                                     </div>
@@ -154,10 +174,10 @@
 
 <script setup lang="ts">
 
-import { computed, inject, onBeforeMount, reactive } from 'vue';
+import { computed, inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import * as yup from "yup";
-import { cloneDeep, isEmpty, has, sum } from 'lodash';
+import { cloneDeep, each, isEmpty, has, sum } from 'lodash';
 
 // Data variables
 const $api   = inject('$api');
@@ -166,13 +186,14 @@ const $data  = reactive({
     addresses: Array(),
     errors:    Object(),
     form: {
-        address: String(),
-        items:   Array()
+        address_id: String(),
+        items:      Array()
     },
     loader:    {
         addresses: Boolean(),
         order:     Boolean(),
-    }
+    },
+    isDisabled: Boolean(true)
 });
 
 // Computed
@@ -184,32 +205,32 @@ const total    = computed( () => {
     }));
 });
 const formSchema = yup.object().shape({
-	address: yup.string().required("*Address is required"),                      
+	address_id: yup.string().required("*Address is required"),                      
 	items:   yup.array().min(1).required("*Cart Items is required"),                      
 });
 
 
 // Methods
 const selectAddress = (value: string) => {
-    $data.form.address = value;
+    $data.form.address_id = value;
 }
 
 const validateForm = (field) => {
-  formSchema.validateAt(field, data.form)
+  formSchema.validateAt(field, $data.form)
             .then((value,key) => {
-                delete data.errors[field];
+                delete $data.errors[field];
             })
             .catch((err) => {
-                data.errors[err.path] = err.message;
+                $data.errors[err.path] = err.message;
             })
             .finally( () => {
-                data.isDisabled = !isEmpty(data.errors);
+                $data.isDisabled = !isEmpty($data.errors);
             })
 }
 
 const placeOrder = () => {
     $data.loader.order = Boolean(true);
-    $api.post('/order')
+    $api.post('/orders',$data.form)
         .then( ({ data: {  }}) => {
 
         })
@@ -238,5 +259,17 @@ onBeforeMount( () => {
             });
     }
 });
+
+watch(
+	() => $data.form, 
+	(form) => {
+		each(form,(value,key) => {
+			validateForm(key);
+		});
+	},
+	{ 
+		deep: true,
+	}
+);
 
 </script>

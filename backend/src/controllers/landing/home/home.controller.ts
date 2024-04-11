@@ -29,7 +29,6 @@ export class HomeController {
 
           let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');
           let image: any      = get(first(shuffle(categories)),'image');
-
           return { ...omit(category,['children']), image };
         
         });
