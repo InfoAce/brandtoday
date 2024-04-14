@@ -25,7 +25,7 @@ export class PesapalService {
                 this.httpService.axiosRef.defaults.baseURL = data.base_uri;
             }
             if( has(data,'auth') ){
-                const { auth } = data;
+                let { auth } = data;
                 this.httpService.axiosRef.defaults.headers.common['Authorization'] = `${auth.type} ${auth.token}`;
             }
         }
@@ -33,8 +33,7 @@ export class PesapalService {
     }
 
     async auth(){
-        const url  = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
-        const { 
+        let { 
             credentials: {
                 account_number: CustomerCode,
                 password:       Password,
@@ -42,10 +41,10 @@ export class PesapalService {
             }
         }  = this.config;
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.auth_uri })
+        let { data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.live })
                 .post(
-                    url,
+                    this.config.endpoints.auth,
                     {
                         CustomerCode,
                         Password,
@@ -54,7 +53,7 @@ export class PesapalService {
                 )
                 .pipe(
                     catchError((error: any) => {
-                        const { response: { status, data: { message }} } = error;
+                        let { response: { status, data: { message }} } = error;
                         throw new HttpException(message,status);
                     })
                 )
@@ -64,35 +63,77 @@ export class PesapalService {
 
     }
 
-    async order(){
+    async order(
+        data: any = {
+            id:              String(),
+            currency:        String(),
+            amount:          Number(),
+            description:     String(),
+            callback_url:    String(),
+            notification_id: String(),
+            billing_address: Object()
+        },
+        auth: string
+    ){
 
-        const { 
-            credentials: {
-                account_number: CustomerCode,
-                password:       Password,
-                username:       UserName
-            }
-        }  = this.config;
+        let { 
+            id,
+            currency,
+            amount,
+            description,
+            callback_url,
+            notification_id,
+            billing_address
+        }  = data;
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.auth_uri })
+        let { data: response_data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.live, auth: { type: 'Bearer', token: auth } })
                 .post(
                     this.config.endpoints.orderRequest,
                     {
-                        CustomerCode,
-                        Password,
-                        UserName
+                        id,
+                        currency,
+                        amount,
+                        description,
+                        callback_url,
+                        notification_id,
+                        billing_address
                     }
                 )
                 .pipe(
                     catchError((error: any) => {
-                        const { response: { status, data: { message }} } = error;
+                        let { response: { status, data: { message }} } = error;
                         throw new HttpException(message,status);
                     })
                 )
         );
 
-        return data;
+        return response_data;
+
+    }    
+
+    async registerIPN(
+        data: any = { url: String(), ipn_notification_type: String() },
+        auth: string
+    ){
+
+        let { url, ipn_notification_type }  = data;
+
+        let { data: response_data } = await firstValueFrom(
+            this.request({ base_uri: this.config.endpoints.live,  auth: { type: 'Bearer', token: auth } })
+                .post(
+                    this.config.endpoints.registeripn,
+                    { url, ipn_notification_type }
+                )
+                .pipe(
+                    catchError((error: any) => {
+                        let { response: { status, data: { message }} } = error;
+                        throw new HttpException(message,status);
+                    })
+                )
+        );
+
+        return response_data;
 
     }    
 }

@@ -8,9 +8,9 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
-import { AmrodService, AuthService, MailService, RedisService } from './services';
+import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule } from './modules';
-import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, UserEntity } from './entities';
+import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -51,6 +51,7 @@ import { SessionSerialize } from './utils';
           FavouriteEntity,
           OrderEntity,
           RoleEntity,
+          TransactionEntity,
           UserEntity
         ],
         synchronize: true,
@@ -106,6 +107,7 @@ import { SessionSerialize } from './utils';
     },
     JwtStrategy,
     LocalStrategy,
+    PesapalService,
     SessionSerialize
   ],
 })

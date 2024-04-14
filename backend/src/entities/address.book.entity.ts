@@ -29,7 +29,7 @@ export class AddressBookEntity {
   @Column()
   category: string;
 
-  @ManyToOne(() => UserEntity, (entity) => entity.favourites )
+  @ManyToOne(() => UserEntity, (entity) => entity.favourites, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "user_id",
     referencedColumnName: "id",

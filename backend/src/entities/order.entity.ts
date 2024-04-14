@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
-import { AddressBookEntity, RoleEntity, UserEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { AddressBookEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
 import { Seed } from 'nestjs-class-seeder';
 
 export enum Status {
@@ -16,6 +16,18 @@ export class OrderEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders )
+  @JoinColumn({
+    name:                 "address_id",
+    referencedColumnName: "id",
+  })
+  address: AddressBookEntity;
+
+  @Column({
+    nullable: false
+  })
+  address_id: string;
+
   @Column({
     nullable: false,
     type: 'json'
@@ -30,8 +42,12 @@ export class OrderEntity {
   })
   status: string;
 
-  @Column()
-  transaction_id: string
+  @OneToOne(() => TransactionEntity, (entity) => entity.order )
+  @JoinColumn({
+    name:                 "id",
+    referencedColumnName: "order_id",
+  })
+  transaction: TransactionEntity;
 
   @ManyToOne(() => UserEntity, (entity) => entity.favourites )
   @JoinColumn({
@@ -39,23 +55,11 @@ export class OrderEntity {
     referencedColumnName: "id",
   })
   user: UserEntity;
-  
-  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders )
-  @JoinColumn({
-    name:                 "address_id",
-    referencedColumnName: "id",
-  })
-  address: AddressBookEntity;
 
   @Column({
     nullable: false
   })
   user_id: string;
-
-  @Column({
-    nullable: false
-  })
-  address_id: string;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

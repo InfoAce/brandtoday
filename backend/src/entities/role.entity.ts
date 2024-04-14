@@ -9,7 +9,7 @@ export class RoleEntity {
   id: string;
 
   @SeedRelation(() => CompanyEntity)
-  @ManyToOne(() => CompanyEntity, (company) => company.roles)
+  @ManyToOne(() => CompanyEntity, (company) => company.roles, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "company_id",
     referencedColumnName: "id",

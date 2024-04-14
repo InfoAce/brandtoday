@@ -26,7 +26,7 @@ export class UserEntity {
   address_book: AddressBookEntity[];
 
   @SeedRelation(() => CompanyEntity)
-  @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true })
+  @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "company_id",
     referencedColumnName: "id",
@@ -50,12 +50,19 @@ export class UserEntity {
   })
   email: string
 
-  @Seed('ke')
+  @Seed('254')
   @Column({
     nullable: true,
     default: '254'
   })
   country_code: string
+
+  @Seed('KES')
+  @Column({
+    nullable: true,
+    default: 'KES'
+  })
+  currency: string
 
   @Seed(new Date())
   @Column({
@@ -97,7 +104,7 @@ export class UserEntity {
   phone_number: string;
   
   @SeedRelation(() => RoleEntity, (ctx, entities) => entities[ctx.currentIndex])
-  @ManyToOne(() => RoleEntity, (role) => role.users,{ eager: true })
+  @ManyToOne(() => RoleEntity, (role) => role.users,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE'})
   @JoinColumn({
     name:                 "role_id",
     referencedColumnName: "id",
