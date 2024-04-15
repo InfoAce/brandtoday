@@ -117,7 +117,7 @@ export class AmrodService {
 
         const { data } = await firstValueFrom(
             this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.stocks.all}`)
+                .get(`${this.config.endpoints.stocks.updated}`)
                 .pipe(
                     catchError((error: any) => {
                         console.log(error);
