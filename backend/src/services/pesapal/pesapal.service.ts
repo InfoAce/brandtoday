@@ -3,6 +3,7 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { set, has, isEmpty } from 'lodash';
 import { catchError, firstValueFrom } from "rxjs";
+import { PesapalServiceException } from "src/exceptions/pesapal.exception";
 
 @Injectable()
 export class PesapalService {
@@ -20,10 +21,8 @@ export class PesapalService {
     // Interceptor with authentication
     request(data: any = {}){
         this.httpService.axiosRef.defaults.headers.common['Content-Type'] = "application/json";
+        this.httpService.axiosRef.defaults.baseURL = this.config.endpoints.live;
         if( !isEmpty(data) ){
-            if( has(data,'base_uri') ){
-                this.httpService.axiosRef.defaults.baseURL = data.base_uri;
-            }
             if( has(data,'auth') ){
                 let { auth } = data;
                 this.httpService.axiosRef.defaults.headers.common['Authorization'] = `${auth.type} ${auth.token}`;
@@ -34,27 +33,25 @@ export class PesapalService {
 
     async auth(){
         let { 
-            credentials: {
-                account_number: CustomerCode,
-                password:       Password,
-                username:       UserName
+            configuration:{
+                consumer_key,
+                consumer_secret
             }
         }  = this.config;
 
         let { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.live })
+            this.request()
                 .post(
                     this.config.endpoints.auth,
                     {
-                        CustomerCode,
-                        Password,
-                        UserName
+                        consumer_key,
+                        consumer_secret
                     }
                 )
                 .pipe(
                     catchError((error: any) => {
                         let { response: { status, data: { message }} } = error;
-                        throw new HttpException(message,status);
+                        throw new PesapalServiceException(message,status);
                     })
                 )
         );
@@ -87,7 +84,7 @@ export class PesapalService {
         }  = data;
 
         let { data: response_data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.live, auth: { type: 'Bearer', token: auth } })
+            this.request({ auth: { type: 'Bearer', token: auth } })
                 .post(
                     this.config.endpoints.orderRequest,
                     {
@@ -103,7 +100,7 @@ export class PesapalService {
                 .pipe(
                     catchError((error: any) => {
                         let { response: { status, data: { message }} } = error;
-                        throw new HttpException(message,status);
+                        throw new PesapalServiceException(message,status);
                     })
                 )
         );
@@ -120,7 +117,7 @@ export class PesapalService {
         let { url, ipn_notification_type }  = data;
 
         let { data: response_data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.live,  auth: { type: 'Bearer', token: auth } })
+            this.request({ auth: { type: 'Bearer', token: auth } })
                 .post(
                     this.config.endpoints.registeripn,
                     { url, ipn_notification_type }
@@ -128,12 +125,32 @@ export class PesapalService {
                 .pipe(
                     catchError((error: any) => {
                         let { response: { status, data: { message }} } = error;
-                        throw new HttpException(message,status);
+                        throw new PesapalServiceException(message,status);
                     })
                 )
         );
 
         return response_data;
 
-    }    
+    } 
+    
+    async transactionStatus(
+        order_id: string,
+        auth: string
+    ){
+
+        let { data: response_data } = await firstValueFrom(
+            this.request({ auth: { type: 'Bearer', token: auth } })
+                .get(`${this.config.endpoints.status}?orderTrackingId=${order_id}`)
+                .pipe(
+                    catchError((error: any) => {
+                        let { response: { status, data: { message }} } = error;
+                        throw new PesapalServiceException(message,status);
+                    })
+                )
+        );
+
+        return response_data;
+
+    } 
 }

@@ -1,8 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CompanyEntity, OrderEntity, UserEntity } from './index';
-import { Seed, SeederContext, SeedEnum, SeedRelation} from 'nestjs-class-seeder';
-import { Faker } from "@faker-js/faker";
-import { get, keys } from 'lodash';
 
 @Entity("transactions")
 export class TransactionEntity {
@@ -11,6 +8,12 @@ export class TransactionEntity {
 
   @Column({
     nullable: false,
+    type: 'float'
+  })
+  amount: number;
+
+  @Column({
+    nullable: true,
   })
   confirmation_code: string;
   
@@ -19,7 +22,7 @@ export class TransactionEntity {
   })
   payment_method: string;
 
-  @OneToOne(() => OrderEntity, (order) => order.transaction,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+  @OneToOne(() => OrderEntity, { onDelete: 'CASCADE', onUpdate: 'CASCADE'})
   @JoinColumn({
     name:                 "order_id",
     referencedColumnName: "id",
@@ -27,19 +30,24 @@ export class TransactionEntity {
   order: OrderEntity;
 
   @Column({
-    unique: false
+    unique: true
   })
   order_id: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   status: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   status_code: number;
+  
+  @Column({
+    nullable: false,
+  })
+  tracking_id: string
 
   @CreateDateColumn()
   created_at: Date; // Creation date

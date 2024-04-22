@@ -1,4 +1,5 @@
 export { AuthGuard as AuthGuard } from './auth.guard';
+export { ClientGuard as ClientGuard } from './client.guard';
 export { LoggedInGuard as LoggedInGuard } from './logged-in.guard';
 export { LocalAuthGuard as LocalAuthGuard } from './local-auth.guard';
 export { LocalStrategy as LocalStrategy } from './local.strategy';

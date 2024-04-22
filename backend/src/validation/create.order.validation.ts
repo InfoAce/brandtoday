@@ -75,11 +75,11 @@ export class CreateOrderValidation {
     @ValidateIf( item => item.type == 'new' )
     @IsNotEmpty()
     @IsString()
-    state_county: string
+    county_state: string
 
     @ValidateIf( item => item.type == 'new' )
     @IsNotEmpty()
     @IsString()
-    town_city: string
+    city_town: string
     
 }

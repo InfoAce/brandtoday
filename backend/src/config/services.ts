@@ -11,6 +11,10 @@ export default registerAs('services',() => {
             password,
             username,
             vendor_uri,
+        },
+        pesapal:{
+            consumer_key,
+            consumer_secret
         }
     } = json.readJSON(`${process.cwd()}${sep}configurations.json`);
 
@@ -61,6 +65,10 @@ export default registerAs('services',() => {
                 live:         "https://pay.pesapal.com/v3/api", // testing phase endpoint
                 orderRequest: "/Transactions/SubmitOrderRequest", // create an order request for a client
                 sandbox:      "https://cybqa.pesapal.com/pesapalv3/api" // live phase endpoint
+            },
+            configuration:{
+                consumer_key,
+                consumer_secret
             }
         }
     };

@@ -120,13 +120,13 @@
                                                 </div>                                       
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
                                                     <div class="field-label">State / County</div>
-                                                    <input type="text" name="field-name"  v-model="$data.signup_form.state_county" placeholder="State / County">
-                                                    <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'state_county')">{{$data.errors.state_county}}</p>	
+                                                    <input type="text" name="field-name"  v-model="$data.signup_form.county_state" placeholder="State / County">
+                                                    <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'county_state')">{{$data.errors.county_state}}</p>	
                                                 </div>  
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
                                                     <div class="field-label">Town / City</div>
-                                                    <input type="text" name="field-name" v-model="$data.signup_form.town_city" placeholder="Town / City">
-                                                    <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'town_city')">{{$data.errors.town_city}}</p>	
+                                                    <input type="text" name="field-name" v-model="$data.signup_form.city_town" placeholder="Town / City">
+                                                    <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'city_town')">{{$data.errors.city_town}}</p>	
                                                 </div>                                                                                               
                                             </div>
                                         </div>
@@ -204,6 +204,7 @@
                                         <div class="payment-box">
                                             <div class="text-center">
                                                 <button class="btn-solid btn" type="button" @click="recaptcha()" :disabled="$data.isDisabled || $data.loader.order">
+                                                {{  $data.loader.order }}
                                                     <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                     Place Order
                                                 </button>
@@ -217,7 +218,7 @@
                 </div>
             </div>
         </section>
-        <!-- section end -->        
+        <!-- section end -->   
     </div>
 </template>
 <style src="@vueform/multiselect/themes/default.css"></style>
@@ -231,12 +232,15 @@ import { VueTelInput } from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css'
 import { countries } from 'countries-list';
 import Multiselect from '@vueform/multiselect'
-import { useReCaptcha } from 'vue-recaptcha-v3'
+import { useReCaptcha } from 'vue-recaptcha-v3';
+import { useRouter } from 'vue-router';
 
 // Data variables
-const $api   = inject('$api');
-const $store = useStore();
-const $data  = reactive({
+const $api    = inject('$api');
+const $toast  = inject('$toast');
+const $store  = useStore();
+const $router = useRouter();
+const $data   = reactive({
     addresses: Array(),
     errors:    Object(),
     form: {
@@ -255,8 +259,8 @@ const $data  = reactive({
 		password:         String(),
 		phone_number:     String(),
         postal_code:      String(),
-        state_county:     String(),
-        town_city:        String(),
+        county_state:     String(),
+        city_town:        String(),
         items:            Array()
 	},
     loader:    {
@@ -264,6 +268,7 @@ const $data  = reactive({
         order:     Boolean(),
     },
     isDisabled:       Boolean(true),
+    order: {}
 });
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
@@ -306,9 +311,9 @@ const signupFormSchema = yup.object().shape({
 						 .required("*Postal Code is required"),
     country:          yup.string()
 						 .required("*Country is required"),
-    state_county:     yup.string()
+    county_state:     yup.string()
 						 .required("*State / County is required"),
-    town_city:        yup.string()
+    city_town:        yup.string()
 						 .required("*Town / City is required"),                                                                                                                                                      
     phone_number:     yup.string()
 						 .required("*Phone number is required"),                         
@@ -346,15 +351,75 @@ const validateForm = (field) => {
             })
 }
 
-const placeOrder = () => {
-    $data.loader.order = Boolean(true);
-    const data = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
-    $api.post('/orders',data)
-        .then( ({ data: {  }}) => {
+const checkTransactionStatus = (statusInterval,order_id:string) => {
+    $api.get(`/orders/${order_id}/status`)
+        .then( ({ data: { transaction }}) => {
+            if( transaction.status_code === 1){
+                clearInterval(statusInterval);
+                document.querySelector('#payment_box').style.visibility = 'hidden';
+                $toast.success('Payment successful. We will redirect you to login page.')
+                $toast.info('Please check your email for order details.')
 
+                setTimeout( () => {
+                    $router.push({ name: "Login"});
+                },500);
+            }
         })
         .catch( () => {
             $data.loader.order = Boolean();
+        })
+        .finally( () => {
+            $data.loader.order = Boolean();
+        });
+}
+
+const  openPesapal = () => {
+
+    const { redirect_url, order_id} = $data.order;
+    const iframe                    = document.createElement('iframe');
+    const statusInterval            = setInterval( () => {
+        checkTransactionStatus(statusInterval,order_id);
+    },5000);  
+
+    iframe.setAttribute('src',redirect_url);
+    iframe.setAttribute('height',window.screen.height);
+    iframe.setAttribute('width',window.screen.width);
+    iframe.setAttribute('sandbox','allow-forms allow-scripts');
+
+    document.querySelector('#payment_box .body').append(iframe);
+    document.querySelector('#payment_box').style.visibility = 'visible';
+
+    document.querySelector('#transaction_cancel')
+            .addEventListener(
+                'click',
+                () => { 
+                    /* later */
+                    clearInterval(statusInterval);
+                    document.querySelector('#payment_box').style.visibility = 'hidden';
+                }
+            );
+            
+}
+
+const placeOrder = () => {
+    $data.loader.order = Boolean(true);
+    const data         = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
+    $api.post('/orders',data)
+        .then( ({ data: { order }}) => {
+            $store.commit('cart',[]);
+            return $api.put(`/orders/${order.id}/transaction`);
+        })
+        .then(({ data }) => {
+            $data.order = data;
+            openPesapal();          
+        })
+        .catch( ({ response: { data} }) => {
+            $data.loader.order = Boolean();
+            if( data.statusCode == 400 ){
+                data.message.forEach( (value:string) => {
+                    $toast.error(value);
+                })
+            }
         })
         .finally( () => {
             $data.loader.order = Boolean();
@@ -399,7 +464,6 @@ onBeforeMount( () => {
 });
 
 onMounted( () => {
-
     if( !isEmpty(authUser.value) ){
         $data.form.items = cloneDeep(cart.value);
         watch(

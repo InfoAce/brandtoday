@@ -16,7 +16,7 @@ export class OrderEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders )
+  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "address_id",
     referencedColumnName: "id",
@@ -32,7 +32,7 @@ export class OrderEntity {
     nullable: false,
     type: 'json'
   })
-  items: string;
+  items: any;
 
   @Column({
     type:     "enum",
@@ -42,14 +42,10 @@ export class OrderEntity {
   })
   status: string;
 
-  @OneToOne(() => TransactionEntity, (entity) => entity.order )
-  @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "order_id",
-  })
-  transaction: TransactionEntity;
+  @OneToOne(() => TransactionEntity,transaction => transaction.order,{ lazy: true })
+  transaction: TransactionEntity
 
-  @ManyToOne(() => UserEntity, (entity) => entity.favourites )
+  @ManyToOne(() => UserEntity, (entity) => entity.favourites, { lazy: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "user_id",
     referencedColumnName: "id",

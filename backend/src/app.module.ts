@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
-import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule } from './modules';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule } from './modules';
 import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserSubscriber } from './subscribers';
@@ -79,6 +79,7 @@ import { SessionSerialize } from './utils';
     MailModule,
     OrderModule,
     RoleModule,
+    TransactionModule,
     UserModule 
   ],
   controllers: [

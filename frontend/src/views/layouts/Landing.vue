@@ -41,7 +41,13 @@ Promise.all(scripts);
 watch( 
 	() => store.getters.cart,
 	(value) => {
-		localStorage.setItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`, JSON.stringify(value) );
+		if( isEmpty(value) ){
+			localStorage.removeItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`);
+		}
+
+		if( !isEmpty(value) ){
+			localStorage.setItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`, JSON.stringify(value) );
+		}
 	},
 	{
 		deep: true

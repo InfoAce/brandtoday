@@ -234,10 +234,50 @@
             <div>
                 <i class="fa fa-angle-double-up"></i>
             </div>
-        </div>        
+        </div>  
+        <div id="payment_box">
+            <div class="header">
+                <button id="transaction_cancel"> <i class="fa fa-times fa-lg text-danger" alt="Cancel"></i> </button>
+            </div>
+            <div class="body"></div>
+        </div>      
     </div>
 </template>
-
+<style scoped>
+#payment_box {
+    position: fixed;
+    background-color: #fff;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 9998;
+    display: block;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    visibility: hidden;
+    padding: 2em;
+}
+#payment_box .header {
+    padding-bottom: 2em;
+    display: flex;
+    justify-content:end;
+}
+#payment_box .body {
+    border: 3px solid #ededed;
+}
+#payment_box .header button {
+    border: 1px solid #ededed;
+    border-radius: 100%;    
+    height: 4.5em;
+    width: 4.5em;
+    background-color: #fff;
+}
+#payment_box .header button:hover {
+    border: 2px solid #cdcdcd;
+    background-color: #ededed;
+}
+</style>
 <script setup>
 import { isEmpty, isNull } from 'lodash';
 import { computed } from 'vue';

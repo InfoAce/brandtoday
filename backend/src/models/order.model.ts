@@ -25,7 +25,7 @@ export default class OrderModel {
 
   async findOne(data:any): Promise<OrderEntity>{
     try{
-      return await this.orderRepository.findOneOrFail(data);
+      return await this.orderRepository.findOneOrFail({ where: data });
     } catch(err) {
       throw new OrderModelException(err);   
     }

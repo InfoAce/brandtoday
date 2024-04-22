@@ -56,7 +56,6 @@ export default createStore({
       state.cart = cloneDeep(value);
     },
     home(state,value) {
-      console.log(value);
       state.home = value
     },
     loader(state,value) {
