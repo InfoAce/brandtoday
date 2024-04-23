@@ -114,7 +114,7 @@ const data     = reactive({clients: Object()});
 
 const fetch = (params = { page: 1, limit: 10}) => {
 	store.commit('loader',true);
-    let { page, limit } = params,url = `/users?type=client&page=${page}&limit=${limit}`;
+    let { page, limit } = params,url = `/dashboard/users?type=client&page=${page}&limit=${limit}`;
 	$api.get(url)
 		.then( ({ data:{ users } }) => {
             set(data,'clients',cloneDeep(users));

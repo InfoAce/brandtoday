@@ -1,25 +1,25 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { AuthGuard } from '../../guards';
+import { AdminGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
 import { CompanyModel } from 'src/models';
 
-@Controller('company')
+@Controller('dashboard/company')
 export class CompanyController {
 
     constructor(
         private readonly companyModel: CompanyModel
     ){}
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Get('')
     getProfile(@Req() req: Request,  @Res() res: Response) {
         res.status(HttpStatus.OK).json(req['user']);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post(':companyId/upload/logo')
     @UseInterceptors(
         FileInterceptor(
@@ -41,7 +41,7 @@ export class CompanyController {
         return res.status(HttpStatus.OK).json({});
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post(':companyId/upload/icon')
     @UseInterceptors(
         FileInterceptor(
@@ -63,7 +63,7 @@ export class CompanyController {
         return res.status(HttpStatus.OK).json({file});
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post('logout')
     async logout(@Req() req: Request,  @Res() res: Response) {
         res.status(HttpStatus.OK).json(req);

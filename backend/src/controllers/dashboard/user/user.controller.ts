@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { QueryFailedError } from "typeorm";
 
 @Injectable()
-@Controller('users')
+@Controller('dashboard/users')
 export class UserController {
 
     constructor(

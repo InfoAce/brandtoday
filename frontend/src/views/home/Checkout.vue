@@ -396,6 +396,7 @@ const  openPesapal = () => {
                     /* later */
                     clearInterval(statusInterval);
                     document.querySelector('#payment_box').style.visibility = 'hidden';
+                    document.querySelector('#payment_box .body iframe').remove();
                 }
             );
             

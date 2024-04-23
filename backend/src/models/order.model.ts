@@ -31,8 +31,8 @@ export default class OrderModel {
     }
   }
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<OrderEntity>> {
-    return paginate<OrderEntity>(this.orderRepository, options);
+  async paginate(options: IPaginationOptions, data: any = {}): Promise<Pagination<OrderEntity>> {
+    return paginate<OrderEntity>(this.orderRepository, options, data);
   }
 
 

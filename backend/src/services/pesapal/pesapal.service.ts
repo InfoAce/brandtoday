@@ -26,6 +26,7 @@ export class PesapalService {
             if( has(data,'auth') ){
                 let { auth } = data;
                 this.httpService.axiosRef.defaults.headers.common['Authorization'] = `${auth.type} ${auth.token}`;
+                this.httpService.axiosRef.defaults.timeout = 50000;
             }
         }
         return this.httpService;

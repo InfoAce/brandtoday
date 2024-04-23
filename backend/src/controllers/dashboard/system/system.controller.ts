@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../guards';
+import { AdminGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AuthService, MailService } from 'src/services';
 import { RegisterValidation } from 'src/validation';
@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { isEmpty, isNull } from 'lodash';
 import { sep } from 'path';
 
-@Controller('system')
+@Controller('dashboard/system')
 export class SystemController {
 
     private readonly file_path = `${process.cwd()}${sep}configurations.json`;
@@ -20,7 +20,7 @@ export class SystemController {
 
     ){}
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Get('')
     getConfigurations(@Req() req: Request,  @Res() res: Response) {
         try{
@@ -32,7 +32,7 @@ export class SystemController {
     }
 
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post('configurations')
     updateConfigurations(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
         try{
@@ -44,7 +44,7 @@ export class SystemController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post('logout')
     async logout(@Req() req: Request,  @Res() res: Response) {
         res.status(HttpStatus.OK).json(req);

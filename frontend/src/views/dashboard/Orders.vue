@@ -38,7 +38,6 @@
                                   <input class="form-control-plaintext" type="search" placeholder="Search..">
                               </div>
                           </form>  
-                          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addstaff" >Add User</button>
                       </div>
                       <div class="card-body">                    
                           <div class="table-responsive table-desi">
@@ -46,33 +45,25 @@
                                   <thead>
                                       <tr>
                                           <th>#</th>
-                                          <th>Avatar</th>
-                                          <th>Name</th>
-                                          <th>Email</th>
-                                          <th>Phone Number</th>
-                                          <th>Active</th>
-                                          <th>Joined On</th>
+                                          <th>Order #</th>
+                                          <th>User</th>
+                                          <th>Items</th>
+                                          <th>Amount</th>
+                                          <th>Status</th>
+                                          <th>Created At</th>
                                           <th></th>
                                       </tr>
                                   </thead>
                                   <tbody>
-                                    <template v-if="!$isEmpty(data.clients.items)">
-                                        <tr v-for="(client,index) in data.clients.items" :key="index">
+                                    <template v-if="!$isEmpty(data.orders)">
+                                        <tr v-for="(order,index) in $data.orders.items" :key="index">
                                           <td>{{ index + 1 }}</td>
-                                          <td>
-                                            <img v-if="!$isNull(client.image)" :src="`${backendUri}${client.image}`" :alt="`${client.first_name} ${client.last_name}`"/>
-                                            <h2 v-else><i class="fa fa-user-circle"></i></h2>
-                                          </td>
-                                          <td>{{ client.first_name }} {{ client.last_name }}</td>
-                                          <td>{{ client.email }}</td>
-                                          <td>{{ client.phone_number }}</td>
-                                          <td v-if="!$isEmpty(client.email_verified_at)" class="td-check">
-                                              <i data-feather="check-circle"></i>
-                                          </td>
-                                          <td v-if="$isEmpty(client.email_verified_at)" class="td-cross">
-                                              <i data-feather="x-circle"></i>
-                                          </td>
-                                          <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
+                                          <td> # {{ order.num_id }}</td>
+                                          <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                                          <td>{{ order.items.length }}</td>
+                                          <td>{{ order.total }}</td>
+                                          <td></td>
+                                          <td>{{ $moment(order.created_at).format('Do MMMM, Y')}}</td>                                        
                                       </tr>
                                     </template>
                                     <template v-else>
@@ -159,7 +150,7 @@ const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
 const data     = reactive({
-    clients: Object(),
+    orders: Object(),
     errors:  Object(),
     form:{ 
         first_name: String(), 
@@ -197,7 +188,7 @@ const validateForm = (field) => {
 
 const fetch = (params = { page: 1, limit: 10}) => {
     store.commit('loader',true);
-    let { page, limit } = params,url = `/users?type=staff&page=${page}&limit=${limit}`;
+    let { page, limit } = params,url = `/dashboard/orders?page=${page}&limit=${limit}`;
     $api.get(url)
         .then( ({ data:{ users } }) => {
             set(data,'clients',cloneDeep(users));
@@ -208,26 +199,6 @@ const fetch = (params = { page: 1, limit: 10}) => {
         .finally( () => {
             store.commit('loader',false);
         });
-}
-
-const addUser = () => {
-    data.loader.register = true;
-    $api.post(`users`,data.form)
-        .then( () => {
-            toast.info('Staff member has been successfully added. Registration email has been sent.');
-            resetForm();
-        fetch();
-        })
-        .catch( ({ response }) => {
-            data.loader.register = false;
-        })
-        .finally( () => {
-            data.loader.register = false;
-        });
-}
-
-const fetchPaginate = () => {
-
 }
 
 const resetForm = () => {

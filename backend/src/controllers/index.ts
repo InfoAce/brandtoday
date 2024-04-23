@@ -1,9 +1,9 @@
 export { AuthController as AuthController } from './auth/auth.controller'
 export { CategoryController as CategoryController } from './landing/category/category.controller'
-export { CompanyController as CompanyController } from './company/company.controller'
-export { HeaderController as HeaderController } from './header/header.controller'
-export { SystemController as SystemController } from './system/system.controller'
-export { UserController as UserController } from './user/user.controller'
+export { CompanyController as CompanyController } from './dashboard/company/company.controller'
+export { HeaderController as HeaderController } from './landing/header/header.controller'
+export { SystemController as SystemController } from './dashboard/system/system.controller'
+export { UserController as UserController } from './dashboard/user/user.controller'
 
 // Landing pages
 export { AddressBookController as AddressBookController } from './landing/address/address.book.controller'
@@ -12,5 +12,6 @@ export { FavouriteController as FavouriteController } from './landing/favourite/
 export { HomeController as HomeController } from './landing/home/home.controller'
 export { LoginController as LoginController } from './landing/login/login.controller'
 export { ProductsController as ProductsController } from './landing/products/products.controller'
+export { DashboardOrderController as DashboardOrderController } from './dashboard/orders/order.controller'
 export { OrderController as OrderController } from './landing/orders/order.controller'
 export { SignupController as SignupController } from './landing/signup/signup.controller'

@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, FavouriteController, HeaderController, HomeController, LoginController, OrderController, ProductsController, SignupController, SystemController, UserController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardOrderController, FavouriteController, HeaderController, HomeController, LoginController, OrderController, ProductsController, SignupController, SystemController, UserController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -88,6 +88,7 @@ import { SessionSerialize } from './utils';
     AuthController,
     CategoryController, 
     CompanyController, 
+    DashboardOrderController,
     FavouriteController,
     HeaderController, 
     HomeController, 

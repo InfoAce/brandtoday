@@ -29,6 +29,7 @@ export class AmrodService {
     // Interceptor with authentication
     request(data: any = {}){
         this.httpService.axiosRef.defaults.headers.common['Content-Type'] = "application/json";
+        this.httpService.axiosRef.defaults.timeout = 50000;
         if( !isEmpty(data) ){
             if( has(data,'base_uri') ){
                 this.httpService.axiosRef.defaults.baseURL = data.base_uri;
@@ -41,22 +42,7 @@ export class AmrodService {
         
         return this.httpService;
     }
-    
-    async fetchProducts(){
-      
-        // const {  
-        //     data: { value: authCompany } 
-        // } = await firstValueFrom(
-        //                         this.request({})
-        //                             .get(url)
-        //                             .pipe(
-        //                                 catchError((error: any) => {
-        //                                     const { response: { status, data: { message }} } = error;
-        //                                     throw new HttpException(message,status);
-        //                                 })
-        //                             )
-        //                     );
-    }
+
 
     async login(){
 

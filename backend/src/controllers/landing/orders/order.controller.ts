@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { get, pick, set, sum } from 'lodash';
@@ -10,6 +10,7 @@ import { MailService } from 'src/services';
 import { PesapalService } from 'src/services/pesapal/pesapal.service';
 import { stat } from 'fs';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
+import * as moment from 'moment';
 
 @Controller('orders')
 export class OrderController {
@@ -28,11 +29,19 @@ export class OrderController {
 
   @UseGuards(ClientGuard)
   @Get('')
-  async index(@Req() req: Request,  @Res() res: Response) {
+  async index(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Req() req: Request,  
+    @Res() res: Response
+  ) {
 
     try{
-      let order 
-      return res.status(HttpStatus.OK).json({});
+      
+      let user   = get(req,'user'); // get user
+      let orders = await this.orderModel.paginate({page,limit},{ user_id: user.id }); // fetch orders for user
+
+      return res.status(HttpStatus.OK).json({ orders });
 
     } catch (err) {
 
@@ -64,8 +73,8 @@ export class OrderController {
 
         let user    = await this.userModel.save(pick(form,['first_name','last_name','email','phone_number','password','token','company_id','role_id']));
         let address = await this.addressBookModel.save({ ...pick(form,['address_line_1','address_line_2','county_state','city_town','country','postal_code','category']),'user_id': user.id });
-        let order   = await this.orderModel.save({ ...pick(form,['items']), user_id: user.id, address_id: address.id });
-       
+        let order   = await this.orderModel.save({ ...pick(form,['items']), user_id: user.id, address_id: address.id, num_id: moment().unix() });
+        
         await this.mailService.sendUserConfirmation(user);
 
         return res.status(HttpStatus.OK).json({ order });
@@ -75,7 +84,7 @@ export class OrderController {
       if( form.type == "existing"){
 
         let user   = get(req,'user');
-        let order  = await this.orderModel.save({ ...pick(form,['address_id','items']), user_id: user.id });
+        let order  = await this.orderModel.save({ ...pick(form,['address_id','items']), user_id: user.id, num_id: moment().unix()  });
 
         return res.status(HttpStatus.OK).json({ order });
       }

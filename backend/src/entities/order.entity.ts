@@ -5,6 +5,7 @@ import { Seed } from 'nestjs-class-seeder';
 export enum Status {
   PAID         = "paid",
   PENDING      = "pending",
+  CONFIRMED    = "confirmed",
   IN_TRANSIT   = "in_transit",
   DELIVERED    = "delivered",
   CANCELLED    = "cencelled",
@@ -33,6 +34,11 @@ export class OrderEntity {
     type: 'json'
   })
   items: any;
+
+  @Column({
+    nullable: false
+  })
+  num_id: string;
 
   @Column({
     type:     "enum",

@@ -1,3 +1,4 @@
+export { AdminGuard as AdminGuard } from './admin.guard';
 export { AuthGuard as AuthGuard } from './auth.guard';
 export { ClientGuard as ClientGuard } from './client.guard';
 export { LoggedInGuard as LoggedInGuard } from './logged-in.guard';
