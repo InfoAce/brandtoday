@@ -1,25 +1,25 @@
 export default [
   {
-    icon: "home",
+    icon: "bar-chart",
     name: "Overview",
     to:   "Overview"
   },
   {
     name: "Data Management",
-    icon: "home",
+    icon: "box",
     children: [
       {
-        icon: "fa fa-speedometer",
+        icon: "users",
         name: "Clients",
         to:   "Clients"
       },
       {
-        icon: "fa fa-speedometer",
+        icon: "user-plus",
         name: "Staff",
         to:   "Staff"
       },
       {
-        icon: "fa fa-speedometer",
+        icon: "archive",
         name: "Orders",
         to:   "Orders"
       },
@@ -28,30 +28,50 @@ export default [
   {
     icon: "home",
     name: "Website",
-    children: [
-      {
-        icon: "fa fa-speedometer",
-        name: "Home",
-        to:   "WebsiteHome"
-      },
-    ]
+    // children: [
+    //   {
+    //     icon: "home",
+    //     name: "Home",
+    //     to:   "WebsiteHome"
+    //   },
+    //   {
+    //     icon: "home",
+    //     name: "Services",
+    //     to:   "WebsiteHome"
+    //   },
+    //   {
+    //     icon: "home",
+    //     name: "Policies",
+    //     to:   "WebsiteHome"
+    //   },
+    //   {
+    //     icon: "home",
+    //     name: "Contact Us",
+    //     to:   "WebsiteHome"
+    //   },
+    //   {
+    //     icon: "home",
+    //     name: "Services",
+    //     to:   "WebsiteHome"
+    //   },
+    // ]
   },
   {
     icon: "settings",
     name: "Settings",
     children: [
       {
-        icon: "fa fa-speedometer",
+        icon: "user",
         name: "Profile",
         to:   "Profile"
       },
       {
-        icon: "fa fa-speedometer",
+        icon: "chrome",
         name: "Company",
         to:   "Company"
       },
       {
-        icon: "fa fa-speedometer",
+        icon: "lock",
         name: "System",
         to:   "System"
       }

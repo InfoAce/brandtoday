@@ -23,27 +23,25 @@
 			<template v-for="(menu,index) in menus" :key="index">
 				<li>
 					<template v-if="$has(menu,'children')">
-						<a class="sidebar-header" href="#">
-							<i :data-feather="menu.icon"></i>
+						<a class="sidebar-title" href="#">
 							<span>{{ menu.name }}</span>
-							<i class="fa fa-angle-right pull-right"></i>
 						</a>
 					</template>
 					<template v-if="!$has(menu,'children')">
-						<a class="sidebar-header" href="#" @click.prevent="$router.push({ name: menu.to })">
+						<a class="sidebar-header" :data-route-name="menu.to" href="#" @click.prevent="$router.push({ name: menu.to })">
 							<i :data-feather="menu.icon"></i>
 							<span>{{ menu.name }}</span>
 						</a>
 					</template>
-					<ul class="sidebar-submenu menu-open" v-if="$has(menu,'children')">
-						<li v-for="(child,child_index) in menu.children" :key="child_index">
-							<a href="#" @click.prevent="$router.push({ name: child.to })">
-								<i :class="child.icon"></i>
-								<span>{{ child.name }}</span>
-							</a>
-						</li>
-					</ul>
 				</li>
+				<template v-if="$has(menu,'children')">
+					<li class="sidebar-item" v-for="(child,child_index) in menu.children" :key="child_index">						
+						<a class="sidebar-header" href="#" @click.prevent="$router.push({ name: child.to })" :data-route-name="child.to">
+							<i :data-feather="child.icon"></i>
+							<span>{{ child.name }}</span>
+						</a>
+					</li>					
+				</template>
 			</template>
 		</ul>
 	</div>
@@ -51,11 +49,12 @@
 <!-- Page Sidebar Ends-->	
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onBeforeMount } from 'vue';
+import { computed, onMounted, onBeforeMount, watch} from 'vue';
 import { debounce, has, isNull } from 'lodash';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
+const $route  = useRoute();
 const $router = useRouter();
 const $store  = useStore();
 const menus   = computed( () => $store.getters.sidebarMenus );
@@ -68,6 +67,7 @@ const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace(
 onMounted(
 	debounce(() => {
 		window?.feather.replace();
+		$(`a[data-route-name="${$route.name}"]`).addClass('active');
 	},500)
 );
 
@@ -92,4 +92,37 @@ onBeforeMount( () =>{
   Promise.all(scripts);
 
 });
+
+// Watch Routes
+watch( 
+	() => $route.name,
+	(name) => {
+		$('a[class="sidebar-header active"]').removeClass('active');
+		$(`a[data-route-name="${name}"]`).addClass('active');
+	}
+)
 </script>
+<style>
+.sidebar-header.active {
+	margin-bottom: 0px !important;
+}
+.sidebar-item a {
+	padding-left: 30px !important;
+}
+.sidebar-title {
+	background-color: #ff4c3b !important;
+	font-size: 14px !important;
+    letter-spacing: .5px !important;
+    padding-bottom: 12px !important;
+    padding-top: 12px !important;
+    text-transform: capitalize !important;
+    font-weight: 500 !important;
+    color: #fff !important;
+    padding: 15px 18px !important;
+}
+
+.sidebar-title::hover {
+	background-color: #ff4c3b !important;
+	border-radius: 0px !important;
+}
+</style>
