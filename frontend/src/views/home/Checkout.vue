@@ -203,8 +203,7 @@
                                         </div>
                                         <div class="payment-box">
                                             <div class="text-center">
-                                                <button class="btn-solid btn" type="button" @click="recaptcha()" :disabled="$data.isDisabled || $data.loader.order">
-                                                {{  $data.loader.order }}
+                                                <button class="btn-solid btn" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
                                                     <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                     Place Order
                                                 </button>
@@ -357,12 +356,11 @@ const checkTransactionStatus = (statusInterval,order_id:string) => {
             if( transaction.status_code === 1){
                 clearInterval(statusInterval);
                 document.querySelector('#payment_box').style.visibility = 'hidden';
-                $toast.success('Payment successful. We will redirect you to login page.')
-                $toast.info('Please check your email for order details.')
+                $toast.success('Payment successful. Please check your email for order details.')
 
                 setTimeout( () => {
-                    $router.push({ name: "Login"});
-                },500);
+                    $router.push({ name: "OrderSuccess", params:{ order: transaction.order_id }});
+                },1000);
             }
         })
         .catch( () => {
@@ -403,7 +401,7 @@ const  openPesapal = () => {
 }
 
 const placeOrder = () => {
-    $data.loader.order = Boolean(true);
+    $data.loader.order = true;
     const data         = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
     $api.post('/orders',data)
         .then( ({ data: { order }}) => {
@@ -415,15 +413,17 @@ const placeOrder = () => {
             openPesapal();          
         })
         .catch( ({ response: { data} }) => {
-            $data.loader.order = Boolean();
+            $data.loader.order = false;
+
             if( data.statusCode == 400 ){
                 data.message.forEach( (value:string) => {
                     $toast.error(value);
                 })
             }
+            
         })
         .finally( () => {
-            $data.loader.order = Boolean();
+            $data.loader.order = false;
         });
 }
 

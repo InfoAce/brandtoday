@@ -17,7 +17,7 @@ export class OrderEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => AddressBookEntity, (entity) => entity.orders, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "address_id",
     referencedColumnName: "id",
@@ -48,7 +48,7 @@ export class OrderEntity {
   })
   status: string;
 
-  @OneToOne(() => TransactionEntity,transaction => transaction.order,{ lazy: true })
+  @OneToOne(() => TransactionEntity,transaction => transaction.order,{ eager: true })
   transaction: TransactionEntity
 
   @ManyToOne(() => UserEntity, (entity) => entity.favourites, { lazy: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })

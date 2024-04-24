@@ -103,16 +103,33 @@ const router = createRouter({
               component: () => import('@/views/home/Cart.vue')
             },  
             {
-              path: 'checkout',
-              name: "Checkout",
-              meta: {
-                title: 'Checkout',
-                auth:   false,
-                state:  0,
-                admin:  false
-              },
-              component: () => import('@/views/home/Checkout.vue')
-            },                
+              path:'checkout',
+              children: [
+                {
+                  path: '',
+                  name: "Checkout",
+                  meta: {
+                    title: 'Checkout',
+                    auth:   false,
+                    state:  0,
+                    admin:  false
+                  },
+                  component: () => import('@/views/home/Checkout.vue')
+                },
+                {
+                  path: ':order/success',
+                  name: "OrderSuccess",
+                  meta: {
+                    title: 'Order Success',
+                    auth:   false,
+                    state:  0,
+                    admin:  false
+                  },
+                  component: () => import('@/views/home/OrderSuccess.vue')
+                },
+              ],
+              component: RouterView
+            }               
           ],
           component: RouterView
         },         

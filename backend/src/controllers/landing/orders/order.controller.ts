@@ -1,21 +1,22 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { get, pick, set, sum } from 'lodash';
+import { first, get, pick, set, sum } from 'lodash';
 import * as bcrypt from 'bcrypt';
 import { ClientGuard, OptionalGuard } from 'src/guards';
 import { AddressBookModel, CompanyModel, OrderModel, RoleModel, TransactionModel, UserModel } from 'src/models';
 import { CreateOrderValidation } from 'src/validation';
 import { MailService } from 'src/services';
 import { PesapalService } from 'src/services/pesapal/pesapal.service';
-import { stat } from 'fs';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
 import * as moment from 'moment';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Controller('orders')
 export class OrderController {
 
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private addressBookModel: AddressBookModel,
     private companyModel:     CompanyModel,
     private configService:    ConfigService,
@@ -100,6 +101,33 @@ export class OrderController {
 
   } 
 
+  @UseGuards(OptionalGuard)
+  @Put(':order')
+  async show(
+    @Param('order') orderId: string,
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ) {
+
+    try{
+    
+      let order                = await this.orderModel.findOne({id: orderId });
+      let cached_products: any = await this.cacheManager.store.get('amrod_products');
+
+      order.items = order.items.map( item => {
+        let product = cached_products.find( value => value.fullCode == item.code )
+        item.image  = first(first(product.images).urls).url;
+        return item;
+      })
+
+      return res.status(HttpStatus.OK).json({ order });
+
+    } catch (err) {
+
+    }
+
+  }  
+
   @Get(':order/status')
   async status(
     @Param('order') orderId: string,
@@ -124,7 +152,7 @@ export class OrderController {
       )
       
       if( transaction_status.status_code === 1 ){
-        this.orderModel.updateOne(order.id,{ status: 'paid' });
+        this.orderModel.updateOne(order.id,{ status: 'paid' }); // update order status
       }
       
       transaction          = await order.transaction; // get the transaction
