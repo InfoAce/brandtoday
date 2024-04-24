@@ -6,7 +6,7 @@
                 <div class="counter-box">
                     <img src="/assets/home/images/icon/dashboard/sale.png" class="img-fluid">
                     <div>
-                        <h3>{{ summary.orders }}</h3>
+                        <h3>{{ user.order_count }}</h3>
                         <h5>Total Order</h5>
                     </div>
                 </div>
@@ -15,7 +15,7 @@
                 <div class="counter-box">
                     <img src="/assets/home/images/icon/dashboard/homework.png" class="img-fluid">
                     <div>
-                        <h3>{{ summary.pending_orders }}</h3>
+                        <h3>{{ user.pending_order_count }}</h3>
                         <h5>Pending Orders</h5>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                 <div class="counter-box">
                     <img src="/assets/home/images/icon/dashboard/order.png" class="img-fluid">
                     <div>
-                        <h3>{{ summary.favourites }}</h3>
+                        <h3>{{ user.favourite_count }}</h3>
                         <h5>Wishlist</h5>
                     </div>
                 </div>
@@ -68,23 +68,6 @@
                     </form>
                 </div>
             </div>
-            <div class="box mt-3">
-                <div class="box-title">
-                    <h3>Address Book</h3><a href="#">Manage Addresses</a>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h6>Default Billing Address</h6>
-                        <address>You have not set a default billing address.<br><a href="#">Edit
-                                Address</a></address>
-                    </div>
-                    <div class="col-sm-6">
-                        <h6>Default Shipping Address</h6>
-                        <address>You have not set a default shipping address.<br><a
-                                href="#">Edit Address</a></address>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>    
@@ -108,11 +91,6 @@ export default {
     data(){
         return{
             errors: {},
-            summary: {
-                orders:         Number(),
-                pending_orders: Number(),
-                favourites:     Number()
-            },
             user: {},
             isDisabled: true            
         }
@@ -120,7 +98,7 @@ export default {
     methods:{
         fetchUser(){
             this.$store.commit('loader',true);
-            this.$api.get('/auth/user')
+            this.$api.get('/account')
                 .then( ({ data:{ user }}) => {
                     this.user = user;
                     console.log(user);

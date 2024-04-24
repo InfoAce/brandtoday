@@ -219,17 +219,6 @@ const router = createRouter({
               component: () => import('@/views/home/Favourites.vue')
             },
             {
-              path: 'cards',
-              name: "AccountCards",
-              meta: {
-                title: 'Cards',
-                auth: true,
-                state:  0,
-                admin: false
-              },
-              component: () => import('@/views/home/Cards.vue')
-            },
-            {
               path: 'security',
               name: "AccountSecurity",
               meta: {

@@ -11,8 +11,6 @@ import * as path from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
-import { EntityNotFoundError } from 'typeorm';
-import { NotFoundError } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {

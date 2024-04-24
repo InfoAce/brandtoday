@@ -51,10 +51,7 @@
                                 </li>                    
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountFavourites'})" :class="$route.name == 'AccountFavourites' ? 'nav-link active' : 'nav-link'">Favourites</a> 
-                                </li>                       
-                                <li class="nav-item">
-                                    <a @click.prevent="$router.push({name:'AccountCards'})" :class="$route.name == 'AccountCards' ? 'nav-link active' : 'nav-link'">Saved Cards</a>      
-                                </li>                    
+                                </li>                                           
                                 <li class="nav-item">
                                     <a @click.prevent="$router.push({name:'AccountSecurity'})" :class="$route.name == 'AccountSecurity' ? 'nav-link active' : 'nav-link'">Security</a> 
                                 </li>
