@@ -5,6 +5,7 @@ export { AddressValidation as AddressValidation } from './create.address.validat
 export { CreateOrderValidation as CreateOrderValidation } from './create.order.validation';
 export { CreatePromptValidation as CreatePromptValidation } from './create.prompt.validation';
 export { RegisterValidation as RegisterValidation } from './register.validation';
+export { SecurityValidation as SecurityValidation } from './security.validation';
 export { StaffValidation as StaffValidation } from './staff.validation';
 export { UpdateAppValidation as UpdateAppValidation } from './update.app.validation';
 export { WishlistValidation as WishlistValidation } from './wishlist.validation';
