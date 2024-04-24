@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';;
 import { UserModel } from 'src/models';
 import { ConfigService } from '@nestjs/config';
@@ -6,6 +6,7 @@ import { HttpService } from '@nestjs/axios';
 import { isEmpty, has, set } from 'lodash';
 import { catchError, firstValueFrom } from 'rxjs';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { AmrodServiceException } from 'src/exceptions/amrod.exception';
 
 @Injectable()
 export class AmrodService {
@@ -29,7 +30,7 @@ export class AmrodService {
     // Interceptor with authentication
     request(data: any = {}){
         this.httpService.axiosRef.defaults.headers.common['Content-Type'] = "application/json";
-        this.httpService.axiosRef.defaults.timeout = 50000;
+        this.httpService.axiosRef.defaults.timeout = 60000;
         if( !isEmpty(data) ){
             if( has(data,'base_uri') ){
                 this.httpService.axiosRef.defaults.baseURL = data.base_uri;
@@ -68,7 +69,7 @@ export class AmrodService {
                 .pipe(
                     catchError((error: any) => {
                         const { response: { status, data: { message }} } = error;
-                        throw new HttpException(message,status);
+                        throw new AmrodServiceException(message,status);
                     })
                 )
         );
@@ -86,9 +87,8 @@ export class AmrodService {
                 .get(`${this.config.endpoints.products.without_branding}`)
                 .pipe(
                     catchError((error: any) => {
-                        console.log(error);
-                        // const { response: { status, data: { message }} } = error;
-                        throw new HttpException(error.message,error.status);
+                        const { response: { status, data: { message }} } = error;
+                        throw new AmrodServiceException(error.message,error.status);
                     })
                 )
         );
@@ -108,7 +108,7 @@ export class AmrodService {
                     catchError((error: any) => {
                         console.log(error);
                         // const { response: { status, data: { message }} } = error;
-                        throw new HttpException(error.message,error.status);
+                        throw new AmrodServiceException(error.message,error.status);
                     })
                 )
         );
@@ -128,7 +128,7 @@ export class AmrodService {
                     catchError((error: any) => {
                         console.log(error);
                         // const { response: { status, data: { message }} } = error;
-                        throw new HttpException(error.message,error.status);
+                        throw new AmrodServiceException(error.message,error.status);
                     })
                 )
         );
@@ -147,7 +147,7 @@ export class AmrodService {
                     catchError((error: any) => {
                         console.log(error);
                         // const { response: { status, data: { message }} } = error;
-                        throw new HttpException(error.message,error.status);
+                        throw new AmrodServiceException(error.message,error.status);
                     })
                 )
         );
@@ -167,7 +167,7 @@ export class AmrodService {
                     catchError((error: any) => {
                         console.log(error);
                         // const { response: { status, data: { message }} } = error;
-                        throw new HttpException(error.message,error.status);
+                        throw new AmrodServiceException(error.message,error.status);
                     })
                 )
         );
