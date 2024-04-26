@@ -13,6 +13,12 @@ export class CompanyEntity {
   })
   address: string;
 
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  banners: string;
+
   @Seed('Test Company')
   @Column()
   name: string;
@@ -38,12 +44,30 @@ export class CompanyEntity {
   })
   phone_number: string;
 
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  privacy_policy: string;
+
   @Seed('ke')
   @Column({
     nullable: true,
     default: '254'
   })
   country_code: string
+
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  return_refunds: string;
+
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  terms_conditions: string;
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)
   @JoinColumn({

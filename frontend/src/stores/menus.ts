@@ -28,33 +28,7 @@ export default [
   {
     icon: "home",
     name: "Website",
-    // children: [
-    //   {
-    //     icon: "home",
-    //     name: "Home",
-    //     to:   "WebsiteHome"
-    //   },
-    //   {
-    //     icon: "home",
-    //     name: "Services",
-    //     to:   "WebsiteHome"
-    //   },
-    //   {
-    //     icon: "home",
-    //     name: "Policies",
-    //     to:   "WebsiteHome"
-    //   },
-    //   {
-    //     icon: "home",
-    //     name: "Contact Us",
-    //     to:   "WebsiteHome"
-    //   },
-    //   {
-    //     icon: "home",
-    //     name: "Services",
-    //     to:   "WebsiteHome"
-    //   },
-    // ]
+    to:   "Website"
   },
   {
     icon: "settings",

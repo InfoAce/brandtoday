@@ -203,7 +203,7 @@
                                         </div>
                                         <div class="payment-box">
                                             <div class="text-center">
-                                                <button class="btn-solid btn" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
+                                                <button class="btn-solid btn" type="button" @click="recaptcha" :disabled="$data.isDisabled || $store.getters.loader">
                                                     <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                     Place Order
                                                 </button>
@@ -401,7 +401,7 @@ const  openPesapal = () => {
 }
 
 const placeOrder = () => {
-    $data.loader.order = true;
+    $store.commit('loader',false);
     const data         = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
     $api.post('/orders',data)
         .then( ({ data: { order }}) => {
@@ -413,7 +413,7 @@ const placeOrder = () => {
             openPesapal();          
         })
         .catch( ({ response: { data} }) => {
-            $data.loader.order = false;
+            $store.commit('loader',false);
 
             if( data.statusCode == 400 ){
                 data.message.forEach( (value:string) => {
@@ -423,7 +423,7 @@ const placeOrder = () => {
             
         })
         .finally( () => {
-            $data.loader.order = false;
+            $store.commit('loader',false);            
         });
 }
 

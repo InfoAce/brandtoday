@@ -1,7 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserEntity } from 'src/entities';
+import { OrderEntity, UserEntity } from 'src/entities';
+import { sum } from 'lodash';
 
 @Injectable()
 export class MailService {
@@ -11,7 +12,7 @@ export class MailService {
   ) {}
 
   async sendUserConfirmation(user: UserEntity) {
-    const url = `${this.configService.get('APP_URL')}/home/verify/email/${user.token}`;
+    let url = `${this.configService.get('APP_FRONTEND_URL')}/home/verify/email/${user.token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
@@ -27,7 +28,7 @@ export class MailService {
     });
   }
   async sendStaffConfirmation(user: UserEntity) {
-    const url = `${this.configService.get('APP_URL')}/dashboard/verify/${user.token}`;
+    let url = `${this.configService.get('APP_FRONTEND_URL')}/dashboard/verify/${user.token}`;
 
     return await this.mailerService.sendMail({
       to: user.email,
@@ -39,6 +40,40 @@ export class MailService {
         name: `${user.first_name} ${user.last_name}`,
         url,
         contact: this.configService.get<string>('MAIL_FROM')
+      },
+    });
+  }
+
+  async sendOrderInvoice(order: OrderEntity,user: UserEntity) {
+    let total = sum(order.items.map( item => item.price * item.quantity)).toFixed();
+    let url   = this.configService.get<string>('APP_URL');
+    return await this.mailerService.sendMail({
+      to:      user.email,
+      // from:    `Billing Team <billing@brandtoday.co.ke>`, // override default from
+      subject: `Order #${order.num_id} created.`,
+      template: 'invoice', // `.hbs` extension is appended automatically
+      context: { // ✏️ filling curly brackets with content
+        order,
+        url,
+        user,
+        total,
+      },
+    });
+  }
+
+  async sendOrderReceipt(order: OrderEntity,user: UserEntity) {
+    let total = sum(order.items.map( item => item.price * item.quantity)).toFixed();
+    let url   = this.configService.get<string>('APP_URL');
+    return await this.mailerService.sendMail({
+      to:       user.email,
+      from:    `Billing Team <billing@brandtoday.co.ke>`, // override default from
+      subject: `Order #${order.num_id} created.`,
+      template: 'receipt', // `.hbs` extension is appended automatically
+      context: { // ✏️ filling curly brackets with content
+        order,
+        user,
+        url,
+        total,
       },
     });
   }

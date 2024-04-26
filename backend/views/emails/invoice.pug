@@ -1,0 +1,84 @@
+doctype html
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width,initial-scale=1')
+  meta(name='description' content='multikart')
+  meta(name='keywords' content='multikart')
+  meta(name='author' content='multikart')
+  title Multikart - Multi-purpose E-commerce Html Template
+  // Google font
+  link(href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet')
+  link(rel='preconnect' href='https://fonts.gstatic.com')
+  link(href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap' rel='stylesheet')
+  // Icons
+  link(rel='stylesheet' type='text/css' href='assets/css/vendors/font-awesome.css')
+  // Animate icon
+  link(rel='stylesheet' type='text/css' href='assets/css/vendors/animate.css')
+  // Themify icon
+  link(rel='stylesheet' type='text/css' href='assets/css/vendors/themify-icons.css')
+  // Bootstrap css
+  link(rel='stylesheet' type='text/css' href='assets/css/vendors/bootstrap.css')
+  // Theme css
+  link(rel='stylesheet' type='text/css' href='assets/css/style.css')
+// invoice start
+section.theme-invoice-3.section-b-space
+  .container
+    .row
+      .col-xl-9.m-auto
+        .invoice-wrapper
+          .invoice-header
+            ul
+              li
+                img.img-fluid(:src='#{user.company.logo}' alt='logo')
+              li
+                i.fa.fa-map-marker(aria-hidden='true')
+                h4 multikart demo store
+              li
+                i.fa.fa-envelope(aria-hidden='true')
+                h4 #{user.company.email}
+          .invoice-body
+            .top-sec
+              .row
+                .col-lg-8.col-sm-6
+                  .address-detail
+                    h2 receipt
+                    .mt-3
+                      h4.mb-2 {{ user.company.address }}
+                .col-lg-4.col-sm-6.mt-md-0.mt-2
+                  ul.date-detail
+                    li
+                      span issue date :
+                      h4 {{ order.created_at }}
+                    li
+                      span email :
+                      h4 {{ user.email }}
+            .table-responsive-md
+              table.table.table-borderless.mb-0
+                thead
+                  tr
+                    th(scope='col') #
+                    th(scope='col') name
+                    th(scope='col') price
+                    th(scope='col') quantity
+                    th(scope='col') total
+                tbody
+                  each item, index in order.items
+                    tr
+                      th(scope='row') ( index + 1 ) 
+                      td item.name
+                      td KSH item.price
+                      td item.quantity
+                      td item.total
+                tfoot
+                  tr
+                    td(colspan='2')
+                    td.font-bold.text-dark(colspan='2') GRAND TOTAL
+                    td.font-bold.text-theme KSH total
+          .invoice-footer.pt-0
+            .row
+              .col-6
+                a.btn.black-btn.btn-solid.rounded-2(href='#' onclick='window.print();') export as PDF
+              .col-6.text-end
+                a.btn.btn-solid.rounded-2(href='#' onclick='window.print();') print
+// invoice end

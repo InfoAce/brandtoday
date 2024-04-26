@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from './mail.service';
 
-describe('AuthService', () => {
+describe('MailService', () => {
   let service: MailService;
 
   beforeEach(async () => {
@@ -15,4 +15,5 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
 });

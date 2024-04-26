@@ -128,6 +128,43 @@ export class OrderController {
 
   }  
 
+  @Put(':order/send')
+  async send(
+    @Param('order') orderId: string,
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ) {
+
+    try{
+    
+      let order = await this.orderModel.findOne({id: orderId });
+      let user  = await this.userModel.findOne({ where: { id: order.user_id }});
+
+      order.items = order.items.map( (item,key) => {
+        item.total = (item.price * item.quantity).toFixed();
+        item.index = (key + 1);
+        return item;
+      });
+
+
+      await this.mailService.sendOrderInvoice(order, user);
+      // let cached_products: any = await this.cacheManager.store.get('amrod_products');
+
+      // order.items = order.items.map( item => {
+      //   let product = cached_products.find( value => value.fullCode == item.code )
+      //   item.image  = first(first(product.images).urls).url;
+      //   return item;
+      // })
+
+      return res.status(HttpStatus.OK).json({ order });
+
+    } catch (err) {
+      console.log(err);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({});
+    }
+
+  }  
+
   @Get(':order/status')
   async status(
     @Param('order') orderId: string,

@@ -322,6 +322,17 @@ const router = createRouter({
             admin: true
           },
           component: () => import('@/views/dashboard/Company.vue')
+        },
+        {
+          path: 'website',
+          name: "Website",
+          meta: {
+            title: 'Website Setup',
+            auth:  true,
+            state: 2,
+            admin: true
+          },
+          component: () => import('@/views/dashboard/Website.vue')
         },        
         {
           path: 'profile',

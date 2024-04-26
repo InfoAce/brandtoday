@@ -57,15 +57,15 @@ export class AppService {
           .login()
           .then( async () => {
 
-            // Fetch amrod prices
-            let stock = await this.amrodService.getStock();  
+            // // Fetch amrod prices
+            // let stock = await this.amrodService.getStock();  
 
-            // Fetch amrod brands
-            let brands = await this.amrodService.getBrands();  
+            // // Fetch amrod brands
+            // let brands = await this.amrodService.getBrands();  
           
-            await this.cacheManager.store.set('amrod_stock',stock);
+            // await this.cacheManager.store.set('amrod_stock',stock);
 
-            await this.cacheManager.store.set('amrod_brands',brands);
+            // await this.cacheManager.store.set('amrod_brands',brands);
 
           });
 

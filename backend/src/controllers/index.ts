@@ -4,6 +4,7 @@ export { CompanyController as CompanyController } from './dashboard/company/comp
 export { HeaderController as HeaderController } from './landing/header/header.controller'
 export { SystemController as SystemController } from './dashboard/system/system.controller'
 export { UserController as UserController } from './dashboard/user/user.controller'
+export { WebsiteController as WebsiteController } from './dashboard/website/website.controller'
 
 // Landing pages
 export { AddressBookController as AddressBookController } from './landing/address/address.book.controller'

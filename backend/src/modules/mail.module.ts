@@ -4,6 +4,7 @@ import { Global, Module } from '@nestjs/common';
 import { MailService } from 'src/services';
 import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 const path = require('path');
 
@@ -22,7 +23,7 @@ const path = require('path');
           },
           template: {
             dir: `${process.cwd()}${sep}views${sep}emails`,
-            adapter: new HandlebarsAdapter(),
+            adapter: new PugAdapter(),
             options: {
               strict: true,
             },

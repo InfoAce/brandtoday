@@ -37,10 +37,7 @@ export class DashboardOrderController {
 
     try{
 
-      let orders = await this.orderModel.paginate({
-        page,
-        limit
-      });
+      let orders = await this.orderModel.paginate({ page, limit });
 
       return res.status(HttpStatus.OK).json({orders});
 

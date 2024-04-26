@@ -3,7 +3,7 @@ export { ValidationPipeOptions as ValidationPipeOptions } from './init';
 // List of validation
 export { AddressValidation as AddressValidation } from './create.address.validation';
 export { CreateOrderValidation as CreateOrderValidation } from './create.order.validation';
-export { CreatePromptValidation as CreatePromptValidation } from './create.prompt.validation';
+export { CreateBannerValidation as CreateBannerValidation } from './create.banner.validation';
 export { RegisterValidation as RegisterValidation } from './register.validation';
 export { SecurityValidation as SecurityValidation } from './security.validation';
 export { StaffValidation as StaffValidation } from './staff.validation';

@@ -14,7 +14,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api/v1');
-  app.useStaticAssets(resolve('./public'));
+  app.useStaticAssets(resolve('/public'));
 
   await app.listen(APP_PORT);
 

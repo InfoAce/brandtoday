@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';;
 import { UserModel } from 'src/models';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +12,8 @@ import { AmrodServiceException } from 'src/exceptions/amrod.exception';
 export class AmrodService {
 
     private config;
+
+    private readonly logger = new Logger(AmrodService.name);
 
     constructor(
         private configService: ConfigService,
@@ -36,7 +38,7 @@ export class AmrodService {
                 this.httpService.axiosRef.defaults.baseURL = data.base_uri;
             }
             if( has(data,'auth') ){
-                const { auth } = data;
+                let { auth } = data;
                 this.httpService.axiosRef.defaults.headers.common['Authorization'] = `${auth.type} ${auth.token}`;
             }
         }
@@ -47,132 +49,112 @@ export class AmrodService {
 
     async login(){
 
-        const url  = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
-        const { 
-            credentials: {
-                account_number: CustomerCode,
-                password:       Password,
-                username:       UserName
-            }
-        }  = this.config;
+        try {
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.auth_uri })
-                .post(
-                    url,
-                    {
-                        CustomerCode,
-                        Password,
-                        UserName
-                    }
-                )
-                .pipe(
-                    catchError((error: any) => {
-                        const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(message,status);
-                    })
-                )
-        );
-        
-        this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry);
+            let url  = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
+
+            let { 
+                credentials: {
+                    account_number: CustomerCode,
+                    password:       Password,
+                    username:       UserName
+                }
+            }  = this.config;
+    
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.auth_uri }).post( url, { CustomerCode, Password, UserName }) );
+            
+            this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry);
+
+        } catch (error) {
+
+            this.logger.error(`Login: ${error}`);
+            
+        }
 
     }
         
     async getProducts(){
 
-        const auth = await this.cacheManager.store.get('amrod_auth');
+        try {
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.products.without_branding}`)
-                .pipe(
-                    catchError((error: any) => {
-                        const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(error.message,error.status);
-                    })
-                )
-        );
-        
-        return data;
+            let auth     = await this.cacheManager.store.get('amrod_auth');
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.products.without_branding}`) );
+
+            return data;
+
+        } catch (error) {
+
+            this.logger.error(`Products: ${error}`);
+
+        }
 
     }
 
     async getStock(){
 
-        const auth = await this.cacheManager.store.get('amrod_auth');
+        try {
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.stocks.updated}`)
-                .pipe(
-                    catchError((error: any) => {
-                        console.log(error);
-                        // const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(error.message,error.status);
-                    })
-                )
-        );
+            let auth = await this.cacheManager.store.get('amrod_auth');
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.stocks.updated}`) );
+            
+            return data;
+            
+        } catch (error) {
+            
+            this.logger.error(`Stock: ${error}`);
         
-        return data;
+        }
 
     }
 
     async getPrices(){
 
-        const auth = await this.cacheManager.store.get('amrod_auth');
+        try {
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.prices.all}`)
-                .pipe(
-                    catchError((error: any) => {
-                        console.log(error);
-                        // const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(error.message,error.status);
-                    })
-                )
-        );
+            let auth     = await this.cacheManager.store.get('amrod_auth');
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.prices.all}`) );
+            
+            return data;
+            
+        } catch (error) {
+
+            this.logger.error(`Prices: ${error}`);
         
-        return data;
+        }
 
     }
 
     async getCategories(){
-        const auth = await this.cacheManager.store.get('amrod_auth');
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.categories.all}`)
-                .pipe(
-                    catchError((error: any) => {
-                        console.log(error);
-                        // const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(error.message,error.status);
-                    })
-                )
-        );
+        try{
+
+            let auth     = await this.cacheManager.store.get('amrod_auth');
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.categories.all}`) );
+            
+            return data;
+
+        } catch (error) {
+
+            this.logger.error(`Categories: ${error}`);
         
-        return data;
+        }
 
     }
 
     async getBrands(){
 
-        const auth = await this.cacheManager.store.get('amrod_auth');
+        try{
 
-        const { data } = await firstValueFrom(
-            this.request({ base_uri: this.config.endpoints.vendor_uri, auth })
-                .get(`${this.config.endpoints.brands.all}`)
-                .pipe(
-                    catchError((error: any) => {
-                        console.log(error);
-                        // const { response: { status, data: { message }} } = error;
-                        throw new AmrodServiceException(error.message,error.status);
-                    })
-                )
-        );
+            let auth     = await this.cacheManager.store.get('amrod_auth');
+            let { data } = await firstValueFrom(this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.brands.all}`) );
+            
+            return data;
+
+        } catch (error) {
+
+            this.logger.error(`Brands: ${error}`);
         
-        return data;
+        }
 
     }
 
