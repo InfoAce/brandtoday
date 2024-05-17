@@ -4,42 +4,26 @@
     <!-- Home slider -->
     <section class="p-0">
         <div class="slide-1 home-slider">
-            <div>
-                <div class="home  text-center">
-                    <img src="/assets/home/images/home-banner/1.jpg" alt="" class="bg-img blur-up lazyload">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col">
-                                <div class="slider-contain">
-                                    <div>
-                                        <h4>welcome to fashion</h4>
-                                        <h1>men fashion</h1>
-                                        <a href="#" class="btn btn-solid">shop now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
+            <template  v-for="(image,key) in $data.banners" :key="key">
                 <div class="home text-center">
-                    <img src="/assets/home/images/home-banner/2.jpg" alt="" class="bg-img blur-up lazyload">
-                    <div class="container">
+                    <img :src="`${backendUri}${image.path}`" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                    <div class="container-fluid" >
                         <div class="row">
-                            <div class="col">
-                                <div class="slider-contain">
-                                    <div>
-                                        <h4>welcome to fashion</h4>
-                                        <h1>women fashion</h1>
-                                        <a href="#" class="btn btn-solid">shop now</a>
+                            <div class="col-12 px-0" style="background-color: rgba(200,200,200,0.7) !important;">
+                                <div class="slider-contain container">
+                                    <div class="row">
+                                        <div class="col-12 text-left">
+                                            <h4>{{ image.description }}</h4>
+                                            <h1>{{ image.title }}</h1>
+                                            <a href="#" class="btn btn-solid">shop now</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
         </div>
     </section>
     <!-- Home slider end -->
@@ -113,25 +97,31 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, onMounted, reactive } from 'vue';
-import { cloneDeep } from 'lodash';
+import { computed, inject, nextTick, onBeforeMount, onMounted, reactive } from 'vue';
+import { cloneDeep, debounce } from 'lodash';
 import { useStore } from 'vuex';
 
 const $api   = inject('$api');
 const $store = useStore();
-const $data  = reactive({ categories: Array(), brands: Array() });
+const $data  = reactive({ categories: Array(), brands: Array(), banners: Array() });
 
+// Computed variables //
+const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+
+// Methdos //
 const fetch = () => {
     $store.commit('loader',true);
     $api.get('/home')
-        .then( ({ data: { brands, categories }}) => {
+        .then( ({ data: { brands, categories, banners }}) => {
             $data.brands     = cloneDeep(brands);
             $data.categories = cloneDeep(categories);
+            $data.banners    = cloneDeep(banners);       
         })
         .catch( () => {
             $store.commit('loader',false);
         })
         .finally( () => {
+            $store.commit('loader',false);
             $('.product-4, .brand-list, .logo-list').slick({
                 infinite: true,
                 speed: 300,
@@ -154,8 +144,8 @@ const fetch = () => {
                         }
                     }
                 ]
-            });            
-            $store.commit('loader',false);
+            });               
+            $('.slide-1').slick({});
         })
 };
 
@@ -166,53 +156,7 @@ const navigateTo = (item,key) => {
 onBeforeMount( () => fetch() );
 
 onMounted( () => {
-
-    $('.home-slider-center').slick({
-        dots: false,
-        infinite: false,
-        speed: 300,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        autoplay: false,
-        autoplaySpeed: 5000,
-        responsive: [{
-                breakpoint: 1200,
-                settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1,
-                    infinite: true,
-                    centerMode: true,
-                    centerPadding: '40px',
-                    dots: false
-                }
-            },
-            {
-                breakpoint: 460,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    infinite: true,
-                    centerMode: true,
-                    centerPadding: '30px',
-                    dots: false
-                }
-            }
-        ]
-    });
+    // $('.slide-1').slick({});
 
 });
 </script>

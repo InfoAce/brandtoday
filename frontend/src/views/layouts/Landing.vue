@@ -81,7 +81,7 @@ onMounted(
 				});
 			});
 		},
-		0
+		200
 	)
 )
 
@@ -121,5 +121,4 @@ onMounted(
 .product-right .color-variant li {
 	border: 2px solid #ababab;
 }
-
 </style>

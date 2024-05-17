@@ -16,10 +16,10 @@
                     </div>
                     <div class="col-lg-6 text-end d-flex justify-content-end">
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
-                            <li class="mobile-wishlist p-2">
+                            <li class="mobile-wishlist p-3">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart" aria-hidden="true"></i></a>
                             </li>
-                            <li class="onhover-div mobile-search p-2">
+                            <li class="onhover-div mobile-search p-3">
                                 <div>
                                     <i class="ti-search" onclick="openSearch()"></i>
                                 </div>
@@ -46,13 +46,13 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="mobile-cart p-2">
-                                <a href="#" @click.prevent="$router.push({ name: 'Cart'})">
+                            <li class="mobile-cart p-3" style="position: relative;">
+                                <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
                                     <i class="ti-shopping-cart"></i>
-                                    <span class="cart_qty_cls">{{ cart.length }}</span>
+                                    <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span>
                                 </a>
                             </li>
-                            <li class="onhover-dropdown mobile-account p-2">
+                            <li class="onhover-dropdown mobile-account p-3">
                                 <i class="fa fa-user" aria-hidden="true"></i>
                                 <span v-if="isEmpty(authUser)">My Account</span>
                                 <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
