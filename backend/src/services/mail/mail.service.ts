@@ -1,11 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OrderEntity, UserEntity } from 'src/entities';
 import { sum } from 'lodash';
+const { sep } = require('path'); 
 
 @Injectable()
 export class MailService {
+
+  private readonly logger = new Logger(MailService.name);
+
   constructor(
     private mailerService: MailerService,
     private configService: ConfigService
@@ -45,25 +49,41 @@ export class MailService {
   }
 
   async sendOrderInvoice(order: OrderEntity,user: UserEntity) {
-    let total = sum(order.items.map( item => item.price * item.quantity)).toFixed();
-    let url   = this.configService.get<string>('APP_URL');
-    return await this.mailerService.sendMail({
-      to:      user.email,
-      // from:    `Billing Team <billing@brandtoday.co.ke>`, // override default from
-      subject: `Order #${order.num_id} created.`,
-      template: 'invoice', // `.hbs` extension is appended automatically
-      context: { // ✏️ filling curly brackets with content
-        order,
-        url,
-        user,
-        total,
-      },
-    });
+
+    try{
+
+      let total    = sum(order.items.map( item => item.price * item.quantity)).toFixed();
+      let url      = this.configService.get<string>('APP_URL');
+
+      let sendMail = await this.mailerService.sendMail({
+        to:      user.email,
+        // from:    `Billing Team <billing@brandtoday.co.ke>`, // override default from
+        subject: `Order #${order.num_id} created.`,
+        template: 'invoice', // `.hbs` extension is appended automatically
+        context: { // ✏️ filling curly brackets with content
+          order,
+          url,
+          user,
+          total,
+        },
+      });
+
+      return sendMail;
+
+    } catch(error) {
+
+      this.logger.error(error);
+
+      return false;
+      
+    }
+    
   }
 
   async sendOrderReceipt(order: OrderEntity,user: UserEntity) {
     let total = sum(order.items.map( item => item.price * item.quantity)).toFixed();
     let url   = this.configService.get<string>('APP_URL');
+
     return await this.mailerService.sendMail({
       to:       user.email,
       from:    `Billing Team <billing@brandtoday.co.ke>`, // override default from

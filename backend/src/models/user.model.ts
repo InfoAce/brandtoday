@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
@@ -15,21 +15,48 @@ class UserModelException extends ExceptionsHandler {}
 
 @Injectable()
 export default class UserModel {
+
+  private readonly logger = new Logger(UserEntity.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: UserRepository,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
-    return await this.usersRepository.find();
+    try {
+
+      return await this.usersRepository.find();
+
+    } catch(error){
+        
+      this.logger.error(error);
+
+    }
   }
 
   async findOne(data: object): Promise<UserEntity | null> {
-    return await this.usersRepository.findOneOrFail(data);
+    try {
+
+      return await this.usersRepository.findOneOrFail(data);
+
+    } catch(error){
+      
+      this.logger.error(error);
+
+    }
   }
 
   async findOneBy(data: object): Promise<UserEntity> {
-    return await this.usersRepository.findOneByOrFail(data);
+    try {
+
+      return await this.usersRepository.findOneByOrFail(data);
+
+    } catch(error){
+        
+      this.logger.error(error);
+      
+    }
   }
 
   queryBuilder(): QueryBuilder<UserEntity> {
@@ -37,22 +64,51 @@ export default class UserModel {
   }
 
   async paginate(options: IPaginationOptions,data:any = {}): Promise<Pagination<UserEntity>> {
-    return paginate<UserEntity>(this.usersRepository, options, data);
+    try {
+
+      return paginate<UserEntity>(this.usersRepository, options, data);
+
+    } catch(error){
+          
+      this.logger.error(error);
+      
+    }
   }
 
   async save(data: any): Promise<any>{
     try {
+    
       return await this.usersRepository.save(data);
-    } catch(err){
-      throw new UserModelException(err);   
+    
+    } catch(error){
+
+      this.logger.error(error);  
+    
     }
   }
 
   async updateOne(find:any, data: any): Promise<any>{
-    return await this.usersRepository.update(find,data);
+    try {
+
+      return await this.usersRepository.update(find,data);
+   
+    } catch(error){
+
+      this.logger.error(error);   
+    
+    }
   }
 
   async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+
+    try{
+    
+      await this.usersRepository.delete(id);
+
+    } catch(error){
+
+      this.logger.error(error);  
+    
+    }
   }
 }

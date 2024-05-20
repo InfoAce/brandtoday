@@ -16,6 +16,8 @@ const path = require('path');
       useFactory: async (config: ConfigService) => {
         // transport: config.get("MAIL_TRANSPORT"),
         // or
+        console.log(process.cwd().replace('backend',`frontend${sep}public${sep}assets${sep}global`).replace(/\\/g,'/'));
+        console.log(`${process.cwd().replace('src' + sep + 'modules' + sep + 'backend','')}`);
         return {
           transport: `smtps://${config.get('MAIL_USER')}:${config.get('MAIL_PASSWORD')}@${config.get('MAIL_HOST')}`,
           defaults: {
@@ -23,11 +25,17 @@ const path = require('path');
           },
           template: {
             dir: `${process.cwd()}${sep}views${sep}emails`,
-            adapter: new PugAdapter(),
+            adapter: new PugAdapter({
+              inlineCssEnabled: true, 
+              inlineCssOptions:{ 
+                baseUrl: process.cwd().replace('backend',`frontend${sep}public${sep}assets${sep}global${sep}`).replace(/\\/g,'/'),    
+                keepLinkTags: true          
+              } 
+            }),
             options: {
-              strict: true,
+              strict: false,
             },
-          }
+          },
         }
       },
       inject: [ConfigService],

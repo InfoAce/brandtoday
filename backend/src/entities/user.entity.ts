@@ -18,20 +18,20 @@ export class UserEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
   
-  @OneToMany(() => AddressBookEntity, (favourites) => favourites.user, { lazy: true })
+  @OneToMany(() => AddressBookEntity, (favourites) => favourites.user)
   @JoinColumn({
     name:                 "id",
     referencedColumnName: "user_id"
   })
-  address_book: AddressBookEntity[];
+  address_book: Promise<AddressBookEntity[]>;
 
   @SeedRelation(() => CompanyEntity)
-  @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => CompanyEntity, (company) => company.users,{ onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "company_id",
     referencedColumnName: "id",
   })
-  company?: CompanyEntity;
+  company: Promise<CompanyEntity>;
 
   @Column()
   company_id: string;
@@ -95,7 +95,9 @@ export class UserEntity {
       return bcrypt.hash('password', 10);
     }
   )
-  @Column()
+  @Column({
+    select: false
+  })
   password: string;
 
   @Column({
@@ -122,7 +124,9 @@ export class UserEntity {
   role_id: string;
 
   @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
-  @Column({ select: true })
+  @Column({ 
+    select: false 
+  })
   token: string;
 
   @CreateDateColumn()

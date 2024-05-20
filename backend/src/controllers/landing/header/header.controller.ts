@@ -6,7 +6,10 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { isEmpty } from 'lodash';
 import { CompanyModel } from 'src/models';
 
-@Controller('header')
+@Controller({
+  version: '1',
+  path: 'header'
+})
 export class HeaderController {
 
     constructor(

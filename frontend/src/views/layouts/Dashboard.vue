@@ -15,6 +15,11 @@
       <router-view />
     </template>
 </template>
+<style>
+  body{
+    background: #ededed;
+  }
+</style>
 <script setup lang="ts">
 import { DashboardHeader, DashboardSidebar } from '../../components';
 import { useStore } from 'vuex'

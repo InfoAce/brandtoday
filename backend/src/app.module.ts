@@ -12,21 +12,37 @@ import { AmrodService, AuthService, MailService, PesapalService, RedisService } 
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule } from './modules';
 import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { UserSubscriber } from './subscribers';
+import { OrderSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
 import { resolve } from 'path';
 import { SessionSerialize } from './utils';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BullModule } from '@nestjs/bull';
+import { join } from 'path';
+import { AmrodListener } from './listeners';
 
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: 'amrod',
+    }),
     ConfigModule.forRoot({
       envFilePath: ['.env.development','.env.production', '.env'],
       load:[ ConfigApp, ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
-    CacheModule.registerAsync(RedisService),
+    // CacheModule.registerAsync(RedisService),
+    CacheModule.register(),
+    EventEmitterModule.forRoot({
+      // the maximum amount of listeners that can be assigned to an event
+      maxListeners: 1,
+      // show event name in memory leak message when more than maximum amount of listeners is assigned
+      verboseMemoryLeak: true,
+      // disable throwing uncaughtException if an error event is emitted and it has no listeners
+      ignoreErrors: true,
+    }),
     HttpModule.register({
       timeout: 5000,
       maxRedirects: 5,
@@ -55,7 +71,10 @@ import { SessionSerialize } from './utils';
           UserEntity
         ],
         synchronize: true,
-        subscribers: [UserSubscriber]
+        subscribers: [
+          OrderSubscriber,
+          UserSubscriber
+        ]
       }),
       inject:[ConfigService]
     }),
@@ -103,6 +122,7 @@ import { SessionSerialize } from './utils';
   providers: [
     AppService,
     AuthService,
+    AmrodListener,
     AmrodService,
     {
       provide: 'CacheService',

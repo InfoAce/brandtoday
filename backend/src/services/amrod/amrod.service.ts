@@ -47,23 +47,17 @@ export class AmrodService {
     }
 
 
-    async login(){
+    async login(data: any){
 
         try {
 
             let url  = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
 
-            let { 
-                credentials: {
-                    account_number: CustomerCode,
-                    password:       Password,
-                    username:       UserName
-                }
-            }  = this.config;
+            let { account_number: CustomerCode, password: Password, username: UserName }  = data;
     
-            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.auth_uri }).post( url, { CustomerCode, Password, UserName }) );
+            let { data: auth_data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.auth_uri }).post( url, { CustomerCode, Password, UserName }) );
             
-            this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: data.token },data.expiry);
+            this.cacheManager.store.set('amrod_auth',{ type: 'Bearer', token: auth_data.token },auth_data.expiry);
 
         } catch (error) {
 

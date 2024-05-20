@@ -20,24 +20,24 @@ import { UserModel } from 'src/models';
     ) {}
   
     async canActivate(context: ExecutionContext): Promise<boolean> {
-      const request = context.switchToHttp().getRequest();
-      const token   = this.extractTokenFromHeader(request);
+      let request = context.switchToHttp().getRequest();
+      let token   = this.extractTokenFromHeader(request);
 
       if (token == undefined) {
         throw new UnauthorizedException();
       }
 
       try {
-        const { user: { email } } = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
-        const authUser            = await this.userModel.findOneBy({email});
-        const authRole            = await authUser.role;
+        let { id }    = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
+        let authUser  = await this.userModel.findOne({ where:{ id } });
+        let authRole  = await authUser.role;
         
         if( authRole.state === 0 ){
-            set(request,'user',authUser);        
+          set(request,'user',authUser);        
         }
 
         if( authRole.state != 0 ){
-            throw new UnauthorizedException();     
+          throw new UnauthorizedException();     
         }
 
       } catch(err) {

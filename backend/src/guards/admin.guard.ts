@@ -28,8 +28,8 @@ import { UserModel } from 'src/models';
       }
 
       try {
-        let { user: { email } } = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
-        let authUser            = await this.userModel.findOneBy({email});
+        let { id }    = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
+        let authUser            = await this.userModel.findOne({ where:{ id } });
         let authRole            = await authUser.role;
 
         if( authRole.state > 0 ){
@@ -41,6 +41,7 @@ import { UserModel } from 'src/models';
         }
 
       } catch(err) {
+        console.log(err);
         throw new UnauthorizedException();
       }
       return true;

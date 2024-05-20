@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Logger, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { get, pick, set, sum } from 'lodash';
@@ -13,6 +13,8 @@ import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
 
 @Controller('dashboard/orders')
 export class DashboardOrderController {
+
+  private readonly logger = new Logger(DashboardOrderController.name);
 
   constructor(
     private addressBookModel: AddressBookModel,
@@ -41,12 +43,46 @@ export class DashboardOrderController {
 
       return res.status(HttpStatus.OK).json({orders});
 
-    } catch (err) {
+    } catch (error) {
+
+      this.logger.error(error);
       
-      // console.log(err);
+      res.status(error.status).json({orders: {} });
 
     }
 
   }   
+
+
+  /**
+   * Fetch the order
+   * 
+   * @param Order
+   * @returns {Promise<Order>}
+   */
+  @UseGuards(AdminGuard)
+  @Put(':order/view')
+  async show(
+    @Param('order') orderId: string,
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ){
+
+    try {
+
+      let order  = await this.orderModel.findOne({ where: { id: orderId }, relations:[ 'user' ] });
+
+      console.log(order.user);
+
+      return res.status(HttpStatus.OK).json({ order });
+
+    } catch(error) {
+
+      this.logger.error(error);
+      
+      res.status(error.status).json({order: {} });
+    }
+
+  }
 
 }

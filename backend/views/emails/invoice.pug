@@ -12,15 +12,15 @@ head
   link(rel='preconnect' href='https://fonts.gstatic.com')
   link(href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap' rel='stylesheet')
   // Icons
-  link(rel='stylesheet' type='text/css' href='assets/css/vendors/font-awesome.css')
+  link(rel='stylesheet' type='text/css' href='css/font-awesome.css')
   // Animate icon
-  link(rel='stylesheet' type='text/css' href='assets/css/vendors/animate.css')
+  link(rel='stylesheet' type='text/css' href='css/animate.css')
   // Themify icon
-  link(rel='stylesheet' type='text/css' href='assets/css/vendors/themify-icons.css')
+  //- link(rel='stylesheet' type='text/css' href='css/vendors/themify-icons.css')
   // Bootstrap css
-  link(rel='stylesheet' type='text/css' href='assets/css/vendors/bootstrap.css')
+  link(rel='stylesheet' type='text/css' href='css/bootstrap.css')
   // Theme css
-  link(rel='stylesheet' type='text/css' href='assets/css/style.css')
+  link(rel='stylesheet' type='text/css' href='css/style.css')
 // invoice start
 section.theme-invoice-3.section-b-space
   .container
@@ -33,10 +33,10 @@ section.theme-invoice-3.section-b-space
                 img.img-fluid(:src='#{user.company.logo}' alt='logo')
               li
                 i.fa.fa-map-marker(aria-hidden='true')
-                h4 multikart demo store
+                h4 #{dir}
               li
                 i.fa.fa-envelope(aria-hidden='true')
-                h4 #{user.company.email}
+                h4 #{user.company.email} 
           .invoice-body
             .top-sec
               .row
@@ -44,15 +44,15 @@ section.theme-invoice-3.section-b-space
                   .address-detail
                     h2 receipt
                     .mt-3
-                      h4.mb-2 {{ user.company.address }}
+                      h4.mb-2 #{ user.company.address }
                 .col-lg-4.col-sm-6.mt-md-0.mt-2
                   ul.date-detail
                     li
                       span issue date :
-                      h4 {{ order.created_at }}
+                      h4 #{ order.created_at }
                     li
                       span email :
-                      h4 {{ user.email }}
+                      h4 #{ user.email }
             .table-responsive-md
               table.table.table-borderless.mb-0
                 thead
@@ -65,11 +65,11 @@ section.theme-invoice-3.section-b-space
                 tbody
                   each item, index in order.items
                     tr
-                      th(scope='row') ( index + 1 ) 
-                      td item.name
-                      td KSH item.price
-                      td item.quantity
-                      td item.total
+                      th(scope='row') #{index + 1 }
+                      td #{item.name}
+                      td #{item.price}
+                      td #{item.quantity}
+                      td #{item.total}
                 tfoot
                   tr
                     td(colspan='2')

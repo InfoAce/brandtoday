@@ -65,10 +65,8 @@
                                           <td>{{ order.status }}</td>
                                           <td>{{ $moment(order.created_at).format('Do MMMM, Y hh:mm:ss') }}</td>      
                                           <td>
-                                            <a href="javascript:void(0)" class="btn btn-primary p-2 btn-sm">
-                                                <div class="d-flex align-items-center">
-                                                    View                                                    
-                                                </div>
+                                            <a href="#" @click.prevent="viewOrder(order.id, index)" class="btn btn-primary p-2 btn-sm" ref="buttonOrders">
+                                                View
                                             </a>
                                           </td>                                  
                                       </tr>
@@ -92,6 +90,11 @@
                                   :container-class="'className'"
                               />
                           </div>
+                          <EditOrder 
+                            :data="$data.view" 
+                            :show="$data.modals.edit"
+                            @update-modal="updateEditModal" 
+                          />
                       </div>
                   </div>
               </div>
@@ -102,7 +105,7 @@
 </template>
   
 <script setup lang="ts">
-import { inject, reactive, onBeforeMount } from 'vue';
+import { inject, reactive, onBeforeMount, ref } from 'vue';
 import { cloneDeep, isEmpty, isNull, has, sum, times } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
@@ -110,6 +113,7 @@ import { toast  } from "vue3-toastify";
 import { useStore } from 'vuex';
 import moment from 'moment';
 import Paginate from "vuejs-paginate-next";
+import { EditOrder } from './modals'
 
 const $store    = useStore();
 const $router   = useRouter();
@@ -119,7 +123,7 @@ const $moment  = moment;
 const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
-const $data     = reactive({
+const $data    = reactive({
     orders: Object(),
     errors: Object(),
     form:{ 
@@ -130,8 +134,15 @@ const $data     = reactive({
     loader: {
         register: false
     },
-    isDisabled: true
+    isDisabled: true,
+    modals:{
+        edit: Boolean()  
+    },
+    view: Object()
 });
+const buttonOrders = ref([]);
+defineExpose({ buttonOrders })
+
 
 const formSchema = yup.object().shape({
 	first_name:       yup.string()
@@ -143,6 +154,12 @@ const formSchema = yup.object().shape({
 						 .required("*Last name is required"),                       
 });
 
+/**
+ * Form validation
+ * 
+ * @param field 
+ * @returns {void}
+ */
 const validateForm = (field) => {
 	formSchema.validateAt(field, data.form)
         .then((value,key) => {
@@ -156,6 +173,12 @@ const validateForm = (field) => {
         })
 }
 
+/**
+ * Form validation
+ * 
+ * @param field 
+ * @returns {void}
+ */
 const fetch = (params = { page: 1, limit: 10}) => {
     $store.commit('loader',true);
     let { page, limit } = params,url = `/dashboard/orders?page=${page}&limit=${limit}`;
@@ -173,6 +196,44 @@ const fetch = (params = { page: 1, limit: 10}) => {
         .finally( () => {
             $store.commit('loader',false);
         });
+}
+
+/**
+ * Fetch the order and open the modal for editing
+ * 
+ * @param field 
+ * @returns {void}
+ */
+const viewOrder = async (id: string, index: number) => {
+
+    buttonOrders.value[index].innerHTML = '<i class="fa fa-spinner fa-spin fa-sm text-white"></i>';
+
+    try {
+
+        let { data: { order } } = await $api.put(`/dashboard/orders/${id}/view`);
+
+        $data.view        = cloneDeep(order); 
+        $data.modals.edit = true;
+
+        buttonOrders.value[index].innerHTML = 'View';
+
+    
+    } catch(error) {
+
+        buttonOrders.value[index].innerHTML = 'View';
+    
+    }
+}
+
+/**
+ * Update edit modal
+ * 
+ * @param {void}
+ * @returns {void}
+ */
+const updateEditModal = () => { 
+    $data.modals.edit = false;
+    $data.view        = Object();
 }
 
 const fetchPaginate = () => {

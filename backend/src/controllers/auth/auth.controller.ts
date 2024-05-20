@@ -1,8 +1,8 @@
-import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '../../guards';
 import { Request, Response } from 'express';
 import { AuthService, MailService } from 'src/services';
-import { RegisterValidation } from 'src/validation';
+import { LoginValidation, RegisterValidation } from 'src/validation';
 import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +15,8 @@ import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 @Controller('auth')
 export class AuthController {
 
+    private readonly logger = new Logger(AuthController.name);
+
     constructor(
         private authService: AuthService,
         private companyModel: CompanyModel,
@@ -25,32 +27,22 @@ export class AuthController {
     ){}
 
     @Post('login')
-    async login(@Req() req: Request,  @Res() res: Response){
-        let { email, password } = req.body;
+    async login(
+        @Body() body: LoginValidation,
+        @Req()  req:  Request, 
+        @Res()  res:  Response
+    ){
         try{
-            let user = await this.authService.findOneByEmail(email);
 
-            if(isNull(user)) {
-                return res.status(HttpStatus.NOT_FOUND).json({});
-            }
+            let { email, password } = body;
+            let token               = await this.authService.login(email,password);
+            
+            res.status(HttpStatus.OK).json({ ...token });
+            
+        } catch(error){
 
-            if(isNull(user.email_verified_at)) {
-                return res.status(HttpStatus.FORBIDDEN).json({});
-            }
-
-            if( !isEmpty(user) ){
-                let isMatch = await bcrypt.compare(password,user.password);
-
-                if( isMatch ){
-                    let token = await this.authService.signIn({user,password});
-                    return res.status(HttpStatus.OK).json({user: pick(user,['first_name','last_name','email','role','company','image']),token});
-                }
-                
-                return res.status(HttpStatus.UNAUTHORIZED).json({});
-            }
+            res.status(error.status).json({ message: error.message });
         
-        } catch(err){
-            return res.status(HttpStatus.GATEWAY_TIMEOUT);
         }
     }
 
@@ -117,8 +109,19 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('user')
-    getProfile(@Req() req: Request,  @Res() res: Response) {
-        res.status(HttpStatus.OK).json({user: get(req,'user') });
+    async getProfile(@Req() req: Request,  @Res() res: Response) {
+
+        try {
+
+            let user = await this.userModel.findOne({ where: { id: get(req,'user.id') } });
+
+            res.status(HttpStatus.OK).json({ user });
+
+        } catch(error) {
+
+            this.logger.error(error);
+
+        }
     } 
 
     @UseGuards(AuthGuard)
