@@ -2,14 +2,14 @@ import { seeder, createClassSeeders  } from "nestjs-class-seeder";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from "./entities";
-import { ConfigDatabase } from "./config";
+import { ConfigApp, ConfigDatabase } from "./config";
 
 seeder({
   debug: true,
   imports: [
     ConfigModule.forRoot({
         envFilePath: ['.env.development','.env.production', '.env'],
-        load:[ ConfigDatabase ],
+        load:[ ConfigApp ],
         isGlobal: true
     }), 
     TypeOrmModule.forRootAsync({
