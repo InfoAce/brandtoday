@@ -26,7 +26,7 @@ export class UserEntity {
   address_book: Promise<AddressBookEntity[]>;
 
   @SeedRelation(() => CompanyEntity, (ctx, entities) => entities[ctx.currentIndex])
-  @ManyToOne(() => CompanyEntity, (company) => company.users,{ lazy: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => CompanyEntity, (company) => company.users,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "company_id",
     referencedColumnName: "id",
