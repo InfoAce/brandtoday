@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
 import { RoleEntity, UserEntity } from './index';
-import { Seed } from 'nestjs-class-seeder';
+import { Seed, SeedRelation } from 'nestjs-class-seeder';
 
 @Entity("companies")
 export class CompanyEntity {
