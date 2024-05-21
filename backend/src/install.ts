@@ -6,6 +6,7 @@ const os           = require("os");
 async function init(){
     setEnvValue("APP_KEY",randomstring.generate(50));
     setEnvValue("JWT_SESSION_KEY",randomstring.generate(100));
+    console.log('Setup complete');
 }
 
 function setEnvValue(key, value) {
@@ -23,7 +24,9 @@ function setEnvValue(key, value) {
             }           
             return item;
         });
-    } else if( !isEmpty(ENV_VARS) && ENV_VARS.length > 1 ){
+    }  
+    
+    if( !isEmpty(ENV_VARS) && ENV_VARS.length > 1 ){
         NEW_ENV_VARS = ENV_VARS.map((item) => {
             const target = item.match(new RegExp(key));
             if( !isEmpty(target) ){
