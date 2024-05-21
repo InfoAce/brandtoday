@@ -1,7 +1,7 @@
 import { seeder, createClassSeeders  } from "nestjs-class-seeder";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { AddressBookEntity, CompanyEntity, FavouriteEntity, RoleEntity, UserEntity } from "./entities";
+import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from "./entities";
 import { ConfigDatabase } from "./config";
 
 seeder({
@@ -25,8 +25,10 @@ seeder({
                 entities:    [
                     AddressBookEntity,
                     CompanyEntity,
-                    RoleEntity,
                     FavouriteEntity,
+                    OrderEntity,
+                    RoleEntity,
+                    TransactionEntity,
                     UserEntity
                 ],
                 synchronize: true
@@ -54,4 +56,6 @@ seeder({
             {count:1}
         ]
     )
-);
+).then( () => {
+    console.log('Seeding completed successfully.');
+});
