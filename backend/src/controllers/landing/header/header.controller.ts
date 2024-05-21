@@ -22,12 +22,14 @@ export class HeaderController {
     async index(@Req() req: Request,  @Res() res: Response) {
  
       try {
-        let cached_categories = await this.cacheManager.store.get('amrod_categories');
+        let cached_categories = await this.cacheManager.get('amrod_categories');
         let company           = await this.companyModel.first();
+
+        console.log(cached_categories);
 
         if( isEmpty(cached_categories) ){
           let categories = await this.amrodService.getCategories();
-          cached_categories = await this.cacheManager.store.set('amrod_categories',categories);
+          cached_categories = await this.cacheManager.set('amrod_categories',categories);
         }
 
         res.status(HttpStatus.OK).json({ categories: cached_categories, company });

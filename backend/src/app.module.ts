@@ -19,22 +19,18 @@ import { AppService } from './app.service';
 import { resolve } from 'path';
 import { SessionSerialize } from './utils';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { BullModule } from '@nestjs/bull';
-import { join } from 'path';
-import { AmrodListener } from './listeners';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'amrod',
-    }),
     ConfigModule.forRoot({
       envFilePath: ['.env.development','.env.production', '.env'],
       load:[ ConfigApp, ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
     // CacheModule.registerAsync(RedisService),
-    CacheModule.register(),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     EventEmitterModule.forRoot({
       // the maximum amount of listeners that can be assigned to an event
       maxListeners: 1,
@@ -46,7 +42,7 @@ import { AmrodListener } from './listeners';
     HttpModule.register({
       timeout: 5000,
       maxRedirects: 5,
-    }),
+    }),  
     ScheduleModule.forRoot(),   
     ServeStaticModule.forRoot({
       rootPath: resolve('./public'),
@@ -122,7 +118,6 @@ import { AmrodListener } from './listeners';
   providers: [
     AppService,
     AuthService,
-    AmrodListener,
     AmrodService,
     {
       provide: 'CacheService',
