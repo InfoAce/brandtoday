@@ -5,17 +5,36 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { first, isEmpty, get, omit, shuffle } from 'lodash';
 import { CompanyModel } from 'src/models';
+import { sep } from 'path';
 
 @Controller('home')
 export class HomeController {
 
+    private amrod = {
+      brands:     [],
+      categories: [],
+      products:   [],
+    };
+
+    private readonly file_paths = {
+      brands:     `${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,
+      categories: `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
+      products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
+    };
+
     private logger = new Logger(HomeController.name);
+
+    private jsonPlugin      = require('json-reader-writer');
 
     constructor(
         private amrodService: AmrodService,
         private companyModel: CompanyModel,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    ){}
+    ){
+      this.amrod.brands     = this.jsonPlugin.readJSON(this.file_paths.brands) ?? []
+      this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories) ?? []
+      this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products) ?? []
+    }
 
 
     @Get('')
@@ -26,12 +45,9 @@ export class HomeController {
 
       try {
         
-        let cached_brands: any     = await this.cacheManager.store.get('amrod_brands');
-        let cached_categories: any = await this.cacheManager.store.get('amrod_categories');
-        let cached_products: any   = await this.cacheManager.store.get('amrod_products');
-        let categories: any        = shuffle(cached_categories).map( category => {
+        let categories: any        = shuffle(this.amrod.categories).map( category => {
 
-          let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');
+          let categories: any = get(this.amrod.products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');
           let image: any      = get(first(shuffle(categories)),'image');
           return { ...omit(category,['children']), image };
         
@@ -39,7 +55,7 @@ export class HomeController {
 
         let company = await this.companyModel.first();
 
-        return res.status(HttpStatus.OK).json({ brands: cached_brands, categories, banners: company.banners });
+        return res.status(HttpStatus.OK).json({ brands: this.amrod.brands, categories, banners: company.banners });
 
       } catch(err) {
 

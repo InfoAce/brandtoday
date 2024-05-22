@@ -22,7 +22,7 @@ export class AppService {
     this.config = this.configService.get<string>('services.amrod');  
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_11PM)
   async updateProductsPricesBrands(){
 
     try {

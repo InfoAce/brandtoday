@@ -5,6 +5,7 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { isEmpty } from 'lodash';
 import { CompanyModel } from 'src/models';
+import { sep } from 'path';
 
 @Controller({
   version: '1',
@@ -12,27 +13,29 @@ import { CompanyModel } from 'src/models';
 })
 export class HeaderController {
 
+    private amrod_categories   = Array();
+
+    private readonly file_path = `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`;
+
     private readonly logger = new Logger(HeaderController.name);
+
+    private jsonPlugin      = require('json-reader-writer');
 
     constructor(
       private amrodService: AmrodService,
       private companyModel: CompanyModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    ){}
+    ){
+      this.amrod_categories = this.jsonPlugin.readJSON(this.file_path) ?? [];
+    }
 
     @Get('')
     async index(@Req() req: Request,  @Res() res: Response) {
  
       try {
-        let cached_categories = await this.cacheManager.get('amrod_categories');
         let company           = await this.companyModel.first();
 
-        if( isEmpty(cached_categories) ){
-          let categories = await this.amrodService.getCategories();
-          cached_categories = await this.cacheManager.set('amrod_categories',categories);
-        }
-
-        res.status(HttpStatus.OK).json({ categories: cached_categories, company });
+        res.status(HttpStatus.OK).json({ categories: this.amrod_categories, company });
 
       } catch(error){
 
