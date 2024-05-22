@@ -14,10 +14,6 @@ const path = require('path');
     MailerModule.forRootAsync({
       // imports: [ConfigModule], // import module if not enabled globally
       useFactory: async (config: ConfigService) => {
-        // transport: config.get("MAIL_TRANSPORT"),
-        // or
-        console.log(process.cwd().replace('backend',`frontend${sep}public${sep}assets${sep}global`).replace(/\\/g,'/'));
-        console.log(`${process.cwd().replace('src' + sep + 'modules' + sep + 'backend','')}`);
         return {
           transport: `smtps://${config.get('MAIL_USER')}:${config.get('MAIL_PASSWORD')}@${config.get('MAIL_HOST')}`,
           defaults: {
