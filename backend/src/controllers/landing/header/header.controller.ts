@@ -36,6 +36,7 @@ export class HeaderController {
 
       } catch(error){
 
+        console.log(error);
         res.status(error.status).json({ categories: [], company: {} });
 
         this.logger.error(error);
