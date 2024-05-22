@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Inject, Injectable, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Injectable, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -11,6 +11,8 @@ import { CompanyModel } from 'src/models';
   path: 'header'
 })
 export class HeaderController {
+
+    private readonly logger = new Logger(HeaderController.name);
 
     constructor(
       private amrodService: AmrodService,
@@ -25,8 +27,6 @@ export class HeaderController {
         let cached_categories = await this.cacheManager.get('amrod_categories');
         let company           = await this.companyModel.first();
 
-        console.log(cached_categories);
-
         if( isEmpty(cached_categories) ){
           let categories = await this.amrodService.getCategories();
           cached_categories = await this.cacheManager.set('amrod_categories',categories);
@@ -34,7 +34,11 @@ export class HeaderController {
 
         res.status(HttpStatus.OK).json({ categories: cached_categories, company });
 
-      } catch(err){
+      } catch(error){
+
+        res.status(error.status).json({ categories: [], company: {} });
+
+        this.logger.error(error);
 
       }
 
