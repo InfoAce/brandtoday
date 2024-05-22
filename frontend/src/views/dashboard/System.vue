@@ -191,7 +191,7 @@ export default {
     methods:{
         fetchConfigurations(){
             this.$store.commit('loader',true);
-            this.$api.get('/system')
+            this.$api.get('/dashboard/system')
                 .then( ({ data:{ configurations } }) => {
                     this.configurations = cloneDeep(configurations);
                 })
@@ -207,7 +207,7 @@ export default {
             this.isDisabled = true;
             this.$api
                 .post(
-                    '/system/configurations',
+                    '/dashboard/system/configurations',
                     this.configurations 
                 )
                 .then( ({ data:{ company } }) => {

@@ -215,15 +215,15 @@ export default {
         fetchCompany(){
             const { authToken, env: { VITE_API_BASE_URL }, edit } = this;
             this.$store.commit('loader',true);
-            this.$api.get('/auth/company')
+            this.$api.get('/dashboard/company')
                 .then( ({ data:{ company } }) => {
                 
                     this.company = company;
                     
-                    this.dropzoneLogoOptions.url     = `${VITE_API_BASE_URL}/company/${company.id}/upload/logo`;
+                    this.dropzoneLogoOptions.url     = `${VITE_API_BASE_URL}/dashboard/company/${company.id}/upload/logo`;
                     this.dropzoneLogoOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};
 
-                    this.dropzoneIconOptions.url     = `${VITE_API_BASE_URL}/company/${company.id}/upload/icon`;
+                    this.dropzoneIconOptions.url     = `${VITE_API_BASE_URL}/dashboard/company/${company.id}/upload/icon`;
                     this.dropzoneIconOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};              
                     
                     this.authUser.company            = cloneDeep(company);
@@ -242,7 +242,7 @@ export default {
             this.isDisabled = true;
             this.$api
                 .post(
-                    '/auth/company',
+                    '/dashboard/company',
                     pick(this.company,['name','phone_number','address','email']) 
                 )
                 .then( ({ data:{ company } }) => {

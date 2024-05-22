@@ -4,15 +4,15 @@
 	<div class="main-header-left d-none d-lg-block">
 		<div class="logo-wrapper">
 			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
-				<img v-if="isNull(authUser.__company__.logo)" class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" :alt="`${authUser.__company__.name}`">
-				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${authUser.__company__.logo}`"  :alt="`${authUser.__company__.name}`">
+				<img v-if="isNull(authUser.company.logo)" class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" :alt="`${authUser.company.name}`">
+				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${authUser.company.logo}`"  :alt="`${authUser.company.name}`">
 			</a>
 		</div>
 	</div>
 	<div class="sidebar custom-scrollbar">
 		<a href="javascript:void(0)" class="sidebar-back d-lg-none d-block"><i class="fa fa-times" aria-hidden="true"></i></a>
 		<div class="sidebar-user">
-			<img v-if="isNull(authUser.__company__.logo)" class="img-60" src="/assets/dashboard/images/dashboard/user3.jpg" alt="#">
+			<img v-if="isNull(authUser.company.logo)" class="img-60" src="/assets/dashboard/images/dashboard/user3.jpg" alt="#">
 			<img v-else class="img-60" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`" >
 			<div>
 				<h6 class="f-14">{{ authUser.first_name }} {{ authUser.last_name }}</h6>

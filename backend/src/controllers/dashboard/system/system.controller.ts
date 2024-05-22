@@ -16,10 +16,6 @@ export class SystemController {
 
     private jsonPlugin = require('json-reader-writer');
 
-    constructor(
-
-    ){}
-
     @UseGuards(AdminGuard)
     @Get('')
     getConfigurations(@Req() req: Request,  @Res() res: Response) {
@@ -36,7 +32,7 @@ export class SystemController {
     @Post('configurations')
     updateConfigurations(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
         try{
-            const fs = require('fs');
+            let fs = require('fs');
             fs.writeFileSync(this.file_path,JSON.stringify(body));
             return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
         } catch(err) {
