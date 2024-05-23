@@ -1,13 +1,10 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Injectable, Logger, Param, ParseIntPipe, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Injectable, Logger, Param, ParseIntPipe, Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { Request, Response } from "express";
 import { AdminGuard, AuthGuard } from "src/guards";
 import { CompanyModel, RoleModel, UserModel } from "src/models";
-import { get, isNull, has, set } from 'lodash';
-import { CreateBannerValidation, StaffValidation } from "src/validation";
-import { MailService } from "src/services";
+import { cloneDeep, get, isEmpty, isNull, has, set } from 'lodash';
+import { CreateBannerValidation, StaffValidation, UpdateBannerValidation } from "src/validation";
 import { ConfigService } from "@nestjs/config";
-import * as bcrypt from 'bcrypt';
-import { QueryFailedError } from "typeorm";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 
@@ -23,7 +20,7 @@ export class WebsiteController {
     ){}
 
     @UseGuards(AdminGuard)
-    @Get('')
+    @Get('banner')
     async get(
         @Req() req: Request,
         @Res() res: Response,
@@ -45,13 +42,15 @@ export class WebsiteController {
     @Post('banner')
     async store(
         @Body() data: CreateBannerValidation,
-        @Req() req:   Request,
-        @Res() res:   Response,
+        @Req()  req:  Request,
+        @Res()  res:  Response,
     ) {
         try{    
 
             let user    = get(req,'user');
             let banners = Array();
+
+            data.path   = `${this.configService.get('APP_URL')}/${data.path}`
 
             if( !isNull(user.company.banners) ){
                 banners = user.company.banners;
@@ -59,13 +58,13 @@ export class WebsiteController {
             
             banners.push(data);
             
-            await this.companyModel.save({ id: user.company.id, banners: JSON.stringify(banners) });
+            await this.companyModel.save({ id: user.company.id, banners });
 
             return res.status(HttpStatus.OK).json();
 
-        } catch(err) {
+        } catch(error) {
             
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            this.logger.error(error);
         
         }
     }
@@ -96,6 +95,33 @@ export class WebsiteController {
         } catch(err) {
 
             this.logger.error(err);
+
+        }
+    }
+
+    /**
+     * Update company banner images
+     * @param req 
+     * @param res 
+     */
+    @UseGuards(AdminGuard)
+    @Put('banner')
+    async delete(
+        @Body() data: UpdateBannerValidation,
+        @Req()  req:  Request,
+        @Res()  res:  Response,
+    ) { 
+        
+        try {
+
+            let user    = get(req,'user');            
+            let company = await this.companyModel.save({ id: user.company.id, banners: get(data,'banners') });
+
+            return res.status(HttpStatus.OK).json({ company });
+
+        } catch(error) {
+
+            this.logger.error(error);
 
         }
     }

@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, inject, onBeforeMount, onMounted, reactive, watch } from 'vue';
+import { computed, defineEmits, inject, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 import { each, isEmpty, has } from 'lodash';
 import vueDropzone from 'dropzone-vue3'
 import { useStore } from 'vuex';
@@ -79,7 +79,8 @@ const $props = defineProps({
         default: Boolean()
     },
 });
-const $store = useStore();
+const $store         = useStore();
+const dropzoneBanner = ref(null);
 
 
 // Banner Schema
@@ -125,9 +126,10 @@ const validateForm = (field) => {
 }
 
 const resetForm = () => { 
+    dropzoneBanner.value.removeAllFiles();
     $data.form = {
         description: String(),
-        path:  String(),
+        path:        String(),
         title:       String(),
     }
     $emit('update-modal',false);

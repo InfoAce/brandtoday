@@ -6,7 +6,7 @@
         <div class="slide-1 home-slider">
             <template  v-for="(image,key) in $data.banners" :key="key">
                 <div class="home text-center">
-                    <img :src="`${backendUri}${image.path}`" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
                     <div class="container-fluid" >
                         <div class="row">
                             <div class="col-12 px-0" style="background-color: rgba(200,200,200,0.7) !important;">
