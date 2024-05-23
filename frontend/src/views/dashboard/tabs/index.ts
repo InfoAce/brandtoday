@@ -1,0 +1,1 @@
+export { default as HomeTab } from './Home.vue';
