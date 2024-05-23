@@ -8,6 +8,9 @@ configurations.json
 #env
 .env
 
+# Amrod Data
+/public/amrod/*
+
 # Logs
 logs
 *.log

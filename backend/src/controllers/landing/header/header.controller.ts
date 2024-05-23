@@ -25,14 +25,15 @@ export class HeaderController {
       private amrodService: AmrodService,
       private companyModel: CompanyModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    ){
-      this.amrod_categories = this.jsonPlugin.readJSON(this.file_path) ?? [];
+    ){      
+      this.amrod_categories = this.jsonPlugin.readJSON(this.file_path);
     }
 
     @Get('')
     async index(@Req() req: Request,  @Res() res: Response) {
  
       try {
+        
         let company           = await this.companyModel.first();
 
         res.status(HttpStatus.OK).json({ categories: this.amrod_categories, company });

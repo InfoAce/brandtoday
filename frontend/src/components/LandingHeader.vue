@@ -73,50 +73,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="main-menu justify-content-center py-4">
-                        <!-- <div class="menu-left">
-                            <div class="navbar">
-                                <a href="javascript:void(0)" onclick="openNav()">
-                                    <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i>
-                                    </div>
-                                </a>
-                                <div id="mySidenav" class="sidenav">
-                                    <a href="javascript:void(0)" class="sidebar-overlay" onclick="closeNav()"></a>
-                                    <nav>
-                                        <div onclick="closeNav()">
-                                            <div class="sidebar-back text-start"><i class="fa fa-angle-left pe-2"
-                                                    aria-hidden="true"></i> Back</div>
-                                        </div>
-                                        <ul id="sub-menu" class="sm pixelstrap sm-vertical">
-                                            <li v-for="(item,index) in home.categories" :key="index"> 
-                                                <a href="javascript::void(0)" >{{ item.categoryName }}</a>
-                                                <ul>
-                                                    <li v-for="(item_child,child_key) in item.children" :key="child_key">
-                                                        <template v-if="!isEmpty(item_child.children)">
-                                                            <a href="#">{{ item_child.categoryName }}</a>
-                                                            <ul v-show="!isEmpty(item_child.children)">
-                                                                <li v-for="(item_child_child,child_child_key) in item_child.children" :key="child_child_key">
-                                                                    <router-link :to="navigateTo(item_child_child)">{{ item_child_child.categoryName }}</router-link>
-                                                                </li>
-                                                            </ul>
-                                                        </template>
-                                                        <template v-else>
-                                                            <router-link :to="navigateTo(item_child)">{{ item_child.categoryName }}</router-link>
-                                                        </template>
-                                                    </li>
-                                                </ul>
-                                            </li>                                          
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>                            
-                            <div class="brand-logo">
-                                <a href="#" @click.prevent="$router.push({ name: 'Home' })">
-                                    <img v-if="isNull(home.company.logo)" src="/assets/home/images/icon/logo.png" class="img-fluid blur-up lazyload w-100" alt="">
-                                    <img v-else :src="`${backendUri}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" :alt="home.company.name">
-                                </a>
-                            </div>
-                        </div> -->
+                    <div class="main-menu justify-content-center py-4">                
                         <div class="menu-right pull-center">
                             <div>
                                 <nav id="main-nav">
@@ -130,54 +87,13 @@
                                         </li>
                                         <template v-if="!isEmpty(home.categories)" >
                                             <li v-for="(item,index) in home.categories" :key="index" class="px-2">
-                                                <router-link :to="navigateTo(item)" class="p-0">
+                                                <a :href="navigateTo(item).href" class="p-0">
                                                     {{ item.categoryName  }}
-                                                </router-link>
+                                                </a>
                                             </li> 
                                         </template>                                                                              
                                     </ul>
                                 </nav>
-                            </div>
-                            <div>
-                                <!-- <div class="icon-nav">
-                                    <ul>
-                                        <li class="onhover-div mobile-search">
-                                            <div>
-                                                <img src="/assets/home/images/icon/search.png" onclick="openSearch()" class="img-fluid blur-up lazyload" alt=""> 
-                                                <i class="ti-search" onclick="openSearch()"></i>
-                                            </div>
-                                            <div id="search-overlay" class="search-overlay">
-                                                <div> <span class="closebtn" onclick="closeSearch()"
-                                                        title="Close Overlay">×</span>
-                                                    <div class="overlay-content">
-                                                        <div class="container">
-                                                            <div class="row">
-                                                                <div class="col-xl-12">
-                                                                    <form>
-                                                                        <div class="form-group">
-                                                                            <input type="text" class="form-control"
-                                                                                id="exampleInputPassword1"
-                                                                                placeholder="Search a Product">
-                                                                        </div>
-                                                                        <button type="submit" class="btn btn-primary"><i
-                                                                                class="fa fa-search"></i></button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="mobile-cart">
-                                            <a href="#" @click.prevent="$router.push({ name: 'Cart'})" class="px-2 py-0">
-                                                <img src="/assets/home/images/icon/cart.png" class="img-fluid blur-up lazyload" alt=""> 
-                                                <i class="ti-shopping-cart"></i>
-                                            </a>
-                                            <span class="cart_qty_cls">{{ cart.length }}</span>
-                                        </li>
-                                    </ul>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -192,6 +108,7 @@ import { cloneDeep, debounce, isEmpty, isNull } from 'lodash';
 import { useStore } from 'vuex';
 import { computed, onBeforeMount, onMounted, inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import router from '../router';
 
 const $api     = inject('$api');
 const $swal    = inject('$swal');
@@ -251,7 +168,7 @@ const logout = () =>{
 }
 
 const navigateTo = (item) => {
-    return { name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } }
+    return $router.resolve({ name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } });
 }
 
 onBeforeMount( () => fetchMenus() );

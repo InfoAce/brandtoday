@@ -26,6 +26,7 @@ export class AppService {
   async updateProductsPricesBrands(){
 
     try {
+      
       this.logger.log(`Synchronizing amrod categories, products, prices and brands.`);
 
       let { credentials } = this.config, fs = require('fs');
@@ -45,26 +46,14 @@ export class AppService {
           
             // Fetch amrod products
             let products = await this.amrodService.getProducts();    
-
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,
-              JSON.stringify(brands)
-            );
-
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
-              JSON.stringify(categories)
-            );
             
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}prices.json`,
-              JSON.stringify(prices)
-            );
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,JSON.stringify(brands));
+            
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,JSON.stringify(categories));
+            
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}prices.json`,JSON.stringify(prices));
 
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-              JSON.stringify(products)
-            );
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}products.json`,JSON.stringify(products));
 
             this.logger.log(`Done synchronizing amrod categories, products, prices and brands.`);
 
@@ -97,15 +86,9 @@ export class AppService {
             // Fetch amrod brands
             let brands = await this.amrodService.getBrands();  
 
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,
-              JSON.stringify(brands)
-            );
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,JSON.stringify(brands));
 
-            await fs.writeFileSync(
-              `${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,
-              JSON.stringify(stock)
-            );
+            await fs.writeFileSync(`${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,JSON.stringify(stock));
 
             this.logger.log(`Done synchronizing amrod data sets.`);
 
