@@ -15,7 +15,14 @@ const path = require('path');
       // imports: [ConfigModule], // import module if not enabled globally
       useFactory: async (config: ConfigService) => {
         return {
-          transport: `smtps://${config.get('MAIL_USER')}:${config.get('MAIL_PASSWORD')}@${config.get('MAIL_HOST')}`,
+          transport: {              
+              auth: {
+                  user: config.get('MAIL_USER'),
+                  pass: config.get('MAIL_PASSWORD')
+              },
+              port: config.get('MAIL_PORT'),
+              host: config.get('MAIL_HOST')
+          },
           defaults: {
             from: `"No Reply" <${config.get('MAIL_FROM')}>`,
           },
