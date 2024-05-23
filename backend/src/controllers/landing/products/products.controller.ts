@@ -22,7 +22,7 @@ export class ProductsController {
       categories: `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
       products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
       prices:     `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-      stock:      `${process.cwd()}${sep}public${sep}amrod${sep}stocks.json`,
+      stock:      `${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,
     };
 
     private jsonPlugin      = require('json-reader-writer');
@@ -82,7 +82,6 @@ export class ProductsController {
           return product;
         }); 
         
-
         res.status(HttpStatus.OK).json({ products: cached_products, category });
          
       } catch(error){
