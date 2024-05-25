@@ -6,6 +6,7 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { first, isEmpty, get, omit, shuffle } from 'lodash';
 import { CompanyModel } from 'src/models';
 import { sep } from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('home')
 export class HomeController {
@@ -27,9 +28,9 @@ export class HomeController {
     private jsonPlugin      = require('json-reader-writer');
 
     constructor(
-        private amrodService: AmrodService,
-        private companyModel: CompanyModel,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        private amrodService:  AmrodService,
+        private configService: ConfigService,
+        private companyModel:  CompanyModel,
     ){
       this.amrod.brands     = this.jsonPlugin.readJSON(this.file_paths.brands) ?? []
       this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories) ?? []

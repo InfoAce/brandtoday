@@ -21,7 +21,7 @@ export class ProductsController {
     private readonly file_paths = {
       categories: `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
       products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-      prices:     `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
+      prices:     `${process.cwd()}${sep}public${sep}amrod${sep}prices.json`,
       stock:      `${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,
     };
 
@@ -104,9 +104,9 @@ export class ProductsController {
         let cached_products: any = cloneDeep(this.amrod.products);
         let cached_prices: any   = cloneDeep(this.amrod.prices);
         let product: any         = cached_products.find( product => product.fullCode == code );
-        let data_price           = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
+        let data_price           = cached_prices.find(   price => price.fullCode.includes(code) );
         let favourite: any       = {};
-
+        
         if( user ){
           favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
         }

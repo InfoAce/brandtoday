@@ -27,9 +27,13 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       load:[ ConfigApp, ConfigDatabase, ConfigServices],
       isGlobal: true
     }), 
-    // CacheModule.registerAsync(RedisService),
-    CacheModule.register({
-      isGlobal: true,
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        isGlobal: true,
+        ttl:      parseInt(configService.get<string>('app.CACHE_TTL')),
+      }),
+      inject: [ConfigService],
     }),
     EventEmitterModule.forRoot({
       // the maximum amount of listeners that can be assigned to an event
@@ -66,7 +70,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           TransactionEntity,
           UserEntity
         ],
-        synchronize: true,
+        synchronize: false,
         subscribers: [
           OrderSubscriber,
           UserSubscriber
