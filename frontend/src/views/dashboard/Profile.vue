@@ -34,7 +34,28 @@
                     <div class="row">
                         <div class="col-12 mb-2">
                             <label>Profile Photo</label>
-                            <vue-dropzone
+                            <!-- <VuePictureCropper
+                                :boxStyle="cropBorderStyle"
+                                :img="pic"
+                                :options="croppingOption"
+                                @ready="() => console.log('ready')"
+                            /> -->
+                            <!-- <div class="dropzone digits">
+                                <div class="dz-message needsclick">
+                                    <i class="fa fa-cloud-upload"></i>
+                                    <h4 class="mb-0 f-w-600">Drop files here or click to upload.</h4>
+                                </div>
+                            </div> -->
+                            <Vue3Dropzone 
+                                v-model="profileImage" 
+                                width="350" 
+                                height="350" 
+                                :maxFiles="1" 
+                                @change="() => console.log('uploaded')"
+                                :maxFileSize="2"
+                                :accept="['png', 'jpg', 'jpeg']" 
+                            />
+                            <!-- <vue-dropzone
                                 v-if="edit.image"
                                 ref="dropzoneLogo" 
                                 @vdropzone-success="imageUpdate"
@@ -47,7 +68,7 @@
                             </template>
                             <div class="col-12 text-center">
                                 <button class="btn btn-primary btn-sm my-2" @click="edit.image = true">Edit Image</button>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="col-12">
                             <div class="form-group">
@@ -113,9 +134,12 @@
 <script lang="ts">
 import { inject, reactive, ref, watch } from 'vue';
 import { each, debounce, isEmpty, keys, has, pick } from 'lodash';
+import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-import vueDropzone from 'dropzone-vue3'
+// import vueDropzone from 'dropzone-vue3'
+import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
+import '@jaxtheprime/vue3-dropzone/dist/style.css'
 
 export default {
     beforeCreate(){
@@ -136,7 +160,8 @@ export default {
         });
     },
     components:{
-        vueDropzone,
+        VuePictureCropper,
+        Vue3Dropzone,
     },
     computed:{
         authToken(){
@@ -153,12 +178,28 @@ export default {
         backendUri(){
             return this.env.VITE_API_BASE_URL.replace('api/v1','');
         },
+        croppingOption(){
+            return  {
+                viewMode: 1,
+                dragMode: 'crop',
+                aspectRatio: 16 / 9,
+            }
+        },
+        cropBorderStyle(){
+            return {
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#f8f8f8',
+                margin: 'auto',
+            }
+        },
         env() {
             return this.$store.getters.env;
         }
     },
     data(){
         return {
+            profileImage: Object(),
             edit: {
                 image: false,
             },

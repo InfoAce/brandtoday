@@ -58,6 +58,7 @@
                                 <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
                                 <ul class="onhover-show-div" v-show="isEmpty(authUser)">
                                     <li><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
+                                    <li><a href="#" @click.prevent="$router.push({name:'Overview'})">Dashboard</a></li>
                                     <li><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
                                 </ul>
                                 <ul class="onhover-show-div" v-show="!isEmpty(authUser)">
