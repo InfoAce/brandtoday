@@ -70,7 +70,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           TransactionEntity,
           UserEntity
         ],
-        synchronize: false,
+        synchronize: true,
         subscribers: [
           OrderSubscriber,
           UserSubscriber

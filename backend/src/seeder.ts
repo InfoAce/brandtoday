@@ -57,6 +57,4 @@ seeder({
             {count:1}
         ]
     )
-).then( () => {
-    console.log('Seeding completed successfully.');
-});
+)

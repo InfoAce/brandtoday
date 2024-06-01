@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-pane fade active show" id="account" role="tabpanel" aria-labelledby="home-tab">
+    <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
         <!-- Container-fluid starts-->
         <div class="container-fluid">
             <div class="col-12 d-flex justify-content-end">
@@ -45,7 +45,6 @@
         <AddBanner 
             :show="$data.modal.add" 
             @update-modal="updateModal" 
-            @fetch-data="fetch"
         />
         <!-- Container-fluid Ends-->
     </div>    
@@ -53,41 +52,38 @@
 <script lang="ts" setup>
 import { AddBanner } from '../modals';
 import { cloneDeep, isEmpty } from 'lodash';
-import { computed, inject, onBeforeMount, reactive } from 'vue';
+import { computed, inject, defineEmits, defineProps, reactive } from 'vue';
 import { useStore } from 'vuex';
 
 
 // Magin variables
 const $api  = inject('$api');
 const $data = reactive({
-    company: Object(),
     modal: {
         add:  Boolean(),
         edit: Boolean()
     }
 });
+// Define emitters 
+const emit    = defineEmits(['update-company']);
 const $store  = useStore();
 const $swal   = inject('$swal');
-const banners = computed( () => $data.company.banners ?? []);
+const banners = computed( () => $props.company.banners ?? []);
 
-// Computed variables //
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+// Component Props
+const $props  = defineProps({
+    company: {
+        default: () => Object,
+        type:    Object
+    }
+});
 
 // Methods
-const fetch = () => {
-    $store.commit('loader',true);
-    $api.get('/dashboard/website/banner')
-        .then( ({ data: { company } }) => {
-            $data.company = company;
-        })
-        .catch( () => {
-            $store.commit('loader',false);
-        })
-        .finally( () => {
-            $store.commit('loader',false);
-        });
-}
 
+/**
+ * Delete banner prompt
+ * @param item 
+ */
 const deleteBanner = (item) => {
     $swal?.fire({
         icon: 'question',
@@ -101,6 +97,9 @@ const deleteBanner = (item) => {
     });	
 }
 
+/**
+ * Delete banner image
+ */
 const removeBanner = (item) => {
     $store.commit('loader',true);
     $api.put(
@@ -122,5 +121,4 @@ const updateModal = (value:boolean) => {
     $data.modal.add = value;
 }
 
-onBeforeMount( () => fetch())
 </script>

@@ -6,8 +6,6 @@ import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
-const path = require('path');
-
 @Global()
 @Module({
   imports: [

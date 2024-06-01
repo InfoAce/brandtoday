@@ -1,14 +1,14 @@
-import { ForbiddenException, HttpException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable, Logger, NotFoundException, PreconditionFailedException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';;
 import { UserModel } from 'src/models';
 import { ConfigService } from '@nestjs/config';
 import { isEmpty, isNull, omit } from 'lodash';
 import * as bcrypt from 'bcrypt';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
-import { UserEntity } from 'src/entities';
-import { Exception } from 'handlebars';
+import * as moment from 'moment';
 @Injectable()
 export class AuthService {
+
+    private readonly config;
 
     private readonly logger = new Logger(AuthService.name);
 
@@ -16,8 +16,15 @@ export class AuthService {
         private userModel: UserModel,
         private configService: ConfigService,
         private jwtService: JwtService
-    ){}
+    ){
+        this.config = this.configService.get<any>('app');
+    }
 
+    /**
+     * Find user by email address
+     * @param email 
+     * @returns 
+     */
     async findOneByEmail(email: string){
         try {
         
@@ -30,25 +37,41 @@ export class AuthService {
         }
     }
 
+    /**
+     * Sign in user 
+     * @param email 
+     * @returns {Promise<Object>}
+     */
     async signIn(email): Promise<any>{
         try {
 
-            let user = await this.userModel.findOne({ where: { email }, relations:['company'], select:['id','first_name','last_name','email','image','email_verified_at'] });
+            // Check if jwt auth is set up
+            if( isEmpty(this.config['JWT_EXPIRES_IN']) || isEmpty(this.config['JWT_SESSION_KEY']) ){
+                throw new PreconditionFailedException('The application has not been properly configured.');
+            }
+
+            // Check if expiry duration is set
+            if( !this.config['JWT_SESSION_KEY'].includes('s') ){
+                throw new PreconditionFailedException('JWT expiry time has not been set');
+            }
+
+            // Find user model
+            let user = await this.userModel.findOne({ where: { email }, relations:['company'], select:['id','first_name','last_name','email','image','email_verified_at'] }); 
             
-            return {    
-                token:{    
-                    token_type: `Bearer`,
-                    token:      await this.jwtService.signAsync(
-                                    {
-                                        ...omit(user,['__company__'])
-                                    }, { 
-                                        expiresIn: this.configService.get<string>('app.JWT_EXPIRES_IN'), 
-                                        secret:    this.configService.get<string>('app.JWT_SESSION_KEY')  
-                                    }
-                                )
-                },
-                user
-            };
+            // Jwt signing
+            let token = await this.jwtService.signAsync(
+                {
+                    ...omit(user,['__company__'])
+                }, { 
+                    expiresIn: this.configService.get<string>('app.JWT_EXPIRES_IN'), 
+                    secret:    this.configService.get<string>('app.JWT_SESSION_KEY')  
+                }
+            );  
+            
+            // Calculate expiry date time
+            let expires_in = moment().add(parseInt(this.configService.get<string>('app.JWT_EXPIRES_IN')),'seconds').unix();
+
+            return { token:{ expires_in, token_type: `Bearer`, token }, user };
             
         } catch(error) {
 
@@ -89,6 +112,12 @@ export class AuthService {
         }        
     }
 
+    /**
+     * Validate user model 
+     * @param username 
+     * @param password 
+     * @returns 
+     */
     async validateUser(username, password){
         const foundUser = await this.userModel.findOneBy({ email: username });
         if (!foundUser || !(await bcrypt.compare(password, foundUser.password))) {

@@ -8,6 +8,8 @@ export { RegisterValidation as RegisterValidation } from './register.validation'
 export { SecurityValidation as SecurityValidation } from './security.validation';
 export { StaffValidation as StaffValidation } from './staff.validation';
 export { UpdateAppValidation as UpdateAppValidation } from './update.app.validation';
+export { UpdatePrivacyPolicyValidation as UpdatePrivacyPolicyValidation } from './website/update.privacy.validation';
+export { UpdateTermsAndConditionsValidation as UpdateTermsAndConditionsValidation } from './website/update.terms.validation';
 export { WishlistValidation as WishlistValidation } from './wishlist.validation';
 
 // Company Banner
