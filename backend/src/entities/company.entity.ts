@@ -46,7 +46,7 @@ export class CompanyEntity {
 
   @Column({
     nullable: true,
-    type: 'json'
+    type: 'text'
   })
   privacy_policy: string;
 
@@ -59,13 +59,13 @@ export class CompanyEntity {
 
   @Column({
     nullable: true,
-    type: 'json'
+    type: 'text'
   })
   return_refunds: string;
 
   @Column({
     nullable: true,
-    type: 'json'
+    type: 'text'
   })
   terms_conditions: string;
 
