@@ -5,11 +5,11 @@ export default {
     install: (app: any, options: any) => {
         
         // State variables
-        const { getters: { authToken, env:{ VITE_API_BASE_URL } } } = options.store;
+        const { getters: { authToken, env:{ VITE_APP_URL } } } = options.store;
 
         // Init axios
         const api = axios.create({
-            baseURL: VITE_API_BASE_URL,
+            baseURL: `${VITE_APP_URL}/api/v1`,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             },
