@@ -196,7 +196,6 @@ const validateForm = (field) => {
 }
 
 const fetch = (params = { page: 1, limit: 10}) => {
-    store.commit('loader',true);
     let { page, limit } = params,url = `/users?type=staff&page=${page}&limit=${limit}`;
     $api.get(url)
         .then( ({ data:{ users } }) => {

@@ -1,3 +1,4 @@
+export { default as DashboardLoader } from './DashboardLoader.vue';
 export { default as DashboardHeader } from './DashboardHeader.vue';
 export { default as DashboardSidebar } from './DashboardSidebar.vue';
 export { default as LandingHeader } from './LandingHeader.vue';

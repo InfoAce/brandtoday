@@ -5,7 +5,8 @@
         <!-- Page Body Start-->
         <div class="page-body-wrapper">
           <DashboardSidebar />
-          <div class="page-body">
+          <div class="page-body px-0">
+            <DashboardLoader />
             <router-view />
           </div>
         </div>
@@ -19,9 +20,12 @@
   body{
     background: #ededed;
   }
+  .page-body {
+    background: #ededed !important;
+  }
 </style>
 <script setup lang="ts">
-import { DashboardHeader, DashboardSidebar } from '../../components';
+import { DashboardLoader, DashboardHeader, DashboardSidebar } from '../../components';
 import { useStore } from 'vuex'
 import { computed } from 'vue';
 import { isEmpty } from 'lodash';
