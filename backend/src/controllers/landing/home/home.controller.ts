@@ -45,7 +45,7 @@ export class HomeController {
     ) {
 
       try {
-        
+        console.log(this.amrod.categories);
         let categories: any        = shuffle(this.amrod.categories).map( category => {
 
           let categories: any = get(this.amrod.products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');
