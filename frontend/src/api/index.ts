@@ -11,6 +11,7 @@ export default {
         const api = axios.create({
             baseURL: `${VITE_APP_URL}/api/v1`,
             headers: {
+                'Accept':           'application/json',  
                 'X-Requested-With': 'XMLHttpRequest'
             },
         });

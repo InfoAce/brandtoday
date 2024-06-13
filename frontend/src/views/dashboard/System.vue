@@ -113,21 +113,43 @@ import { useRouter } from 'vue-router';
 import * as yup from "yup";
 
 export default {
+    /**
+     * Debounces the checkConfig function.
+     * This function is called before the component is created.
+     * It sets up a debounced version of the checkConfig function,
+     * which validates the Amrod configurations.
+     * The function is debounced with a delay of 500 milliseconds.
+     */
     beforeCreate(){
+        // Set up the debounced version of the checkConfig function
         this.checkConfig = debounce( (amrod) => {
+            // Get a reference to the component instance
             const self = this;
+            // Iterate over each key-value pair in the Amrod object
             each(
                 amrod,
                 (value,key) => {
+                    // Validate the Amrod configurations using the validateConfigurations function
                     self.validateConfigurations(key,amrod);
                 }
             );
         },500);
+
+        /**
+         * Debounces the checkPesapal function.
+         * This function is called before the component is created.
+         * It sets up a debounced version of the checkPesapal function,
+         * which validates the Pesapal configurations.
+         * The function is debounced with a delay of 500 milliseconds.
+         */
         this.checkPesapal = debounce( (pesapal) => {
+            // Get a reference to the component instance
             const self = this;
+            // Iterate over each key-value pair in the Pesapal object
             each(
                 pesapal,
                 (value,key) => {
+                    // Validate the Pesapal configurations using the validatePesapalConfigurations function
                     self.validatePesapalConfigurations(key,pesapal);
                 }
             );
@@ -228,6 +250,8 @@ export default {
                 })
                 .catch((err) => {
                     this.errors[err.path] = err.message;
+                }).finally( () => {
+                    this.isDisabled = !isEmpty(this.errors);
                 });
         },
         // Validate the pesapal configurations
@@ -243,12 +267,6 @@ export default {
         }        
     },
     watch:{
-        errors: {
-            handler(errors){
-                this.isDisabled = !isEmpty(errors);
-            },
-            deep: true
-        },
         "configurations.amrod": {
             handler(amrod){
                 this.checkConfig(amrod)
