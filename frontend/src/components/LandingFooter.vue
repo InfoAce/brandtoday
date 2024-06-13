@@ -288,7 +288,7 @@ import moment from 'moment';
 const $store = useStore();
 
 // Computed
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const backendUri = computed( () => $store.getters.env.VITE_API_URL.replace('api/v1','') );
 const home       = computed( () => $store.getters.home);
 
 // Methods
