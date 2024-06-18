@@ -35,10 +35,17 @@ export class ProductsController {
       @Inject(CACHE_MANAGER) 
       private cacheManager: Cache,
     ){
-      this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories) ?? []
-      this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products) ?? []
-      this.amrod.prices     = this.jsonPlugin.readJSON(this.file_paths.prices) ?? []
-      this.amrod.stock      = this.jsonPlugin.readJSON(this.file_paths.stock) ?? []
+      try {
+        this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
+        this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
+        this.amrod.prices     = this.jsonPlugin.readJSON(this.file_paths.prices);
+        this.amrod.stock      = this.jsonPlugin.readJSON(this.file_paths.stock);
+      } catch(error){
+        this.amrod.categories = [];
+        this.amrod.products   = [];
+        this.amrod.prices     = [];
+        this.amrod.stock      = [];
+      }
     }
 
     @Get('')
