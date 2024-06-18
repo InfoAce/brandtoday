@@ -32,9 +32,15 @@ export class HomeController {
         private configService: ConfigService,
         private companyModel:  CompanyModel,
     ){
-      this.amrod.brands     = this.jsonPlugin.readJSON(this.file_paths.brands) ?? []
-      this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories) ?? []
-      this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products) ?? []
+      try {
+        this.amrod.brands     = this.jsonPlugin.readJSON(this.file_paths.brands);
+        this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
+        this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
+      } catch(error) {
+        this.amrod.brands     = [];
+        this.amrod.categories = [];
+        this.amrod.products   = []; 
+      }
     }
 
 
@@ -45,7 +51,7 @@ export class HomeController {
     ) {
 
       try {
-        console.log(this.amrod.categories);
+
         let categories: any        = shuffle(this.amrod.categories).map( category => {
 
           let categories: any = get(this.amrod.products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');

@@ -27,8 +27,13 @@ export class CategoryController {
       private amrodService: AmrodService,
       @Inject(CACHE_MANAGER) private cacheManager: Cache
     ){
-      this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories) ?? []
-      this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products) ?? []
+      try {
+        this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
+        this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
+      } catch (error) {
+        this.amrod.categories = [];
+        this.amrod.products   = [];
+      }
     }
 
     @Get(':path')
