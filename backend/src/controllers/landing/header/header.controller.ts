@@ -26,7 +26,11 @@ export class HeaderController {
       private companyModel: CompanyModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){      
-      this.amrod_categories = this.jsonPlugin.readJSON(this.file_path);
+      try {
+        this.amrod_categories = this.jsonPlugin.readJSON(this.file_path);
+      } catch(error){
+        this.amrod_categories = [];
+      }
     }
 
     @Get('')
