@@ -27,6 +27,14 @@ export class AuthController {
     ){}
 
     @Post('login')
+    /**
+     * Handle login request
+     *
+     * @param {LoginValidation} body - The request body containing email and password
+     * @param {Request} req - The request object
+     * @param {Response} res - The response object
+     * @return {Promise<void>} - Returns a Promise that resolves when the response is sent
+     */
     async login(
         @Body() body: LoginValidation,
         @Req()  req:  Request, 
@@ -34,37 +42,61 @@ export class AuthController {
     ){
         try{
 
+            // Destructure email and password from request body
             let { email, password } = body;
-            let token               = await this.authService.login(email,password);
-            
+
+            // Authenticate user and retrieve token
+            let token = await this.authService.login(email,password);
+
+            // Send response with token
             res.status(HttpStatus.OK).json({ ...token });
-            
+
         } catch(error){
 
+            // Send error response with status and message
             res.status(error.status).json({ message: error.message });
         
         }
     }
 
     @Post('signup')
-    async signup(@Body() registerUser: RegisterValidation, @Res() res: Response){
+    /**
+     * Handle signup request
+     *
+     * @param {RegisterValidation} registerUser - The request body containing user details
+     * @param {Response} res - The response object
+     * @return {Promise<void>} - Returns a Promise that resolves when the response is sent
+     */
+    async signup(
+        @Body() registerUser: RegisterValidation, 
+        @Res() res: Response
+    ){
         try{
-            let randomstring      = require("randomstring");
+            // Generate random string for token
+            let randomstring = require("randomstring");
+            
+            // Get company and role IDs
             let { id: companyId } = await this.companyModel.first();
             let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
 
+            // Hash password and generate token
             registerUser.password      = await bcrypt.hash(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
             registerUser['token']      = randomstring.generate(100);
             registerUser['company_id'] = companyId;
             registerUser['role_id']    = roleId;
+            
+            // Remove confirm password field
             delete registerUser.confirm_password;
 
+            // Save user and send confirmation email
             let user = await this.userModel.save(registerUser);
             await this.mailService.sendUserConfirmation(user);
 
+            // Send response with user details
             res.status(HttpStatus.OK).json({user});
 
         } catch(err) {
+            // Log and throw error
             console.log(err);
             throw new ExceptionsHandler(err);            
         }   
