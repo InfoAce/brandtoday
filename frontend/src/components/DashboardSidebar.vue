@@ -4,19 +4,19 @@
 	<div class="main-header-left d-none d-lg-block">
 		<div class="logo-wrapper">
 			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
-				<img v-if="isNull(authUser.company.logo)" class="d-none d-lg-block blur-up lazyloaded" src="/assets/dashboard/images/dashboard/multikart-logo.png" :alt="`${authUser.company.name}`">
-				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${authUser.company.logo}`"  :alt="`${authUser.company.name}`">
+				<i data-feather="bar-chart" v-if="isNull($data.company.logo)"></i>
+				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${$data.company.logo}`"  :alt="`${$data.company.name}`">
 			</a>
 		</div>
 	</div>
 	<div class="sidebar custom-scrollbar">
 		<a href="javascript:void(0)" class="sidebar-back d-lg-none d-block"><i class="fa fa-times" aria-hidden="true"></i></a>
 		<div class="sidebar-user">
-			<img v-if="isNull(authUser.company.logo)" class="img-60" src="/assets/dashboard/images/dashboard/user3.jpg" alt="#">
-			<img v-else class="img-60" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`" >
+			<i data-feather="bar-chart" v-if="isNull($data.company.logo)"></i>
+			<img v-else class="img-60" :src="`${backendUri}${auth.user.image}`"  :alt="`${auth.user.first_name} ${auth.user.last_name}`" >
 			<div>
-				<h6 class="f-14">{{ authUser.first_name }} {{ authUser.last_name }}</h6>
-				<p>{{ authUser.role.name }}</p>
+				<h6 class="f-14">{{ auth.user.first_name }} {{ auth.user.last_name }}</h6>
+				<p>{{ auth.user.role.name }}</p>
 			</div>
 		</div>
 		<ul class="sidebar-menu">
@@ -49,8 +49,8 @@
 <!-- Page Sidebar Ends-->	
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onBeforeMount, watch} from 'vue';
-import { debounce, has, isNull } from 'lodash';
+import { computed, onMounted, onBeforeMount, reactive, watch} from 'vue';
+import { debounce, has, get, isNull } from 'lodash';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -59,15 +59,24 @@ const $router = useRouter();
 const $store  = useStore();
 const menus   = computed( () => $store.getters.sidebarMenus );
 const $has    = has;
+const $data   = reactive({
+	company: Object()
+});
 
 // Computed 
-const authUser   = computed( () => $store.getters.authUser );
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const auth       = computed( () => $store.getters.auth );
+const backendUri = computed( () => get($store.getters.env,'VITE_API_URL').replace('api/v1','') );
 
 onMounted(
-	debounce(() => {
+	debounce( async() => {
 		window?.feather.replace();
-		$(`a[data-route-name="${$route.name}"]`).addClass('active');
+		$(`a[data-route-name="${$route.name}"]`).addClass('active');	
+		try {
+            let { data:{ company } } = await $api.get('dashboard/sidebar');
+        } catch(error) {
+            if( has(error,'response') ){
+            }
+        }
 	},500)
 );
 
@@ -82,10 +91,26 @@ onBeforeMount( () =>{
     ) 
   );
   
+  /**
+   * Function to add a script tag to the document.
+   *
+   * This function creates a new script element and appends it to the document body.
+   * The script element's source is set to the provided URL.
+   *
+   * @param {string} url - The URL of the script file.
+   * @return {void} This function does not return anything.
+   */
   const addScript = (url:string) => {
+    // Create a new script element
     let script    = document.createElement('script');
+
+    // Set the type attribute of the script element to 'text/javascript'
     script.type   = 'text/javascript';
+
+    // Set the src attribute of the script element to the provided URL
     script.src    = url;
+
+    // Append the script element to the document body
     document.body.appendChild(script);
   }
 
