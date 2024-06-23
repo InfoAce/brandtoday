@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-body" style="height: 75vh">                    
+                    <div class="card-body" style="height: 100%">                    
                         <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
                             <li class="nav-item">
                                 <a :class="$data.tab == 1 ? `nav-link active show` : `nav-link` " id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" data-original-title="Banners" title="Banners" @click="$data.tab = 1">Banners</a>
@@ -71,17 +71,30 @@ const $api  = inject('$api');
 // Reactive data
 const $data = reactive({ company: Object(), tab: 1, loader: Boolean() });
 
+
 /**
- * Fetch company information
+ * Fetches company information from the server and updates the component's 
+ * reactive data object with the fetched data.
+ *
+ * @return {Promise<void>} A promise that resolves when the data has been fetched 
+ * and the component's reactive data object has been updated.
  */
 const fetch = async () => {
     try {
-        $data.loader             = Boolean(true);
+        // Set the loader to true to indicate that a request is being made
+        $data.loader = Boolean(true);
+
+        // Fetch company information from the server
         let { data:{ company } } = await $api.get('/dashboard/website');
-        $data.company            = cloneDeep(company);
-        $data.loader             = Boolean();
+
+        // Update the component's reactive data object with the fetched data
+        $data.company = cloneDeep(company);
+
+        // Set the loader to false to indicate that the request is complete
+        $data.loader = Boolean();
     } catch(error) {
-        $data.loader             = Boolean();
+        // Set the loader to false to indicate that the request has failed
+        $data.loader = Boolean();
     }
 }
 
@@ -96,7 +109,7 @@ const updateCompany = (data) => {
     }
     // Check if data has privacy policy
     if( has(data,'privacy_policy') ){
-        $data.company.bannprivacy_policyers = data.privacy_policy;        
+        $data.company.privacy_policy = data.privacy_policy;        
     }
     // Check if data has terms and conditions
     if( has(data,'terms_conditions') ){
