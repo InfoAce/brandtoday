@@ -84,14 +84,7 @@ export class AuthService {
             );
 
             // Calculate expiry date time
-            const expires_in = moment()
-                .add(
-                    parseInt(
-                        this.configService.get<string>('app.JWT_EXPIRES_IN')
-                    ),
-                    'seconds'
-                )
-                .unix();
+            const expires_in = parseInt(this.configService.get<string>('app.JWT_EXPIRES_IN'));
 
             return {
                 token: { expires_in, token_type: `Bearer`, token },

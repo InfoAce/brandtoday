@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { isEmpty } from 'lodash';
+import { isEmpty, toPlainObject } from 'lodash';
 
 export default {
     install: (app: any, options: any) => {
-        
         // State variables
-        const { getters: { authToken, env:{ VITE_APP_URL } } } = options.store;
+        const { auth, env:{ VITE_APP_URL } } = toPlainObject(app.config.globalProperties.$store.getters);
 
         // Init axios
         const api = axios.create({
@@ -16,8 +15,9 @@ export default {
             },
         });
 
-        if( !isEmpty(authToken) ){
-            const { token_type, token } = authToken;
+        if( !isEmpty(auth) ){
+            const { token_type, token } = auth.token;
+
             api.interceptors.request.use(
                 (config) => {
                     config.headers.Authorization = `${token_type} ${token}`;

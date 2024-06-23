@@ -15,16 +15,16 @@ import toast from './toast';
 
 window.document.querySelector('title').innerHTML = `${import.meta.env.VITE_APP_NAME}`;
 
-import { VueReCaptcha } from 'vue-recaptcha-v3'
+import { VueReCaptcha } from 'vue-recaptcha-v3';
+import storage from './storage';
 
 const app = createApp(App)
 
 app.use(toast);
 app.use(appStore)
+app.use(storage);
 app.use(router)
-app.use(api,{
-    store: appStore
-});
+app.use(api);
 app.use(VueSweetalert2);
 app.use(VueReCaptcha, { siteKey: '6LfUKLkpAAAAAMFo0iomiilG1QUpAkw8Xph5tz-Y' })
 

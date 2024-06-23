@@ -439,34 +439,47 @@ const router = createRouter({
 });
 
 router.beforeEach( 
-  debounce(
-    (to, from, next) => {
-      const { name: routeName, meta: { auth, state, landing, admin } } = to;
-      store.commit('loader',true);
-      
-      if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
-        window.document.getElementById("mySidenav").classList.remove('open-side')
-      }
-      
-      window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
-          
-      switch( !isEmpty(store.getters.auth) ){
-        case true:    
-          checkRole(to,next);        
-        break;
-        case false:
-          if( admin && auth ){ router.push({ name: "AdminLogin" }); }
-          if( !admin && auth && to.name != "Login" ){ router.push({ name: "Login" }); }
-          next();
-        break;
-      }
-    },2000)
-);
+  (to, from, next) => {
 
-router.afterEach((to, from) => {
+    store.commit('loader',true);
+    
+    const { name: routeName, meta: { auth, state, landing, admin } } = to;
+    
+    if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
+      window.document.getElementById("mySidenav").classList.remove('open-side')
+    }
+    
+    window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+        
+    if( !auth && admin ){
+      if( !isEmpty(store.getters.auth) ) { next({ name: "Overview" }) }
+      if( isEmpty(store.getters.auth) ) {  next() }
+    }
+
+    if( !auth && !admin ){
+      if( !isEmpty(store.getters.auth) ) { next({ name: "Home" }) }
+      if( isEmpty(store.getters.auth) ) {  next() }
+    }
+
+    if( admin && auth && isEmpty(store.getters.auth) ){ 
+      next({ name: "AdminLogin" }); 
+    }
+
+    if( !admin && auth && isEmpty(store.getters.auth) ){ 
+      next({ name: "Login" }); 
+    }
+    
+    if( auth && !isEmpty(store.getters.auth) ) {
+      checkRole(to,next);        
+    }
+
+});
+
+router.afterEach(
+  debounce((to, from) => {
   store.commit('loader',false);
   window.scrollTo({top: 0, behavior: 'smooth'});  
-})
+},1000))
 
 /**
  * Function to check the role of the user and navigate to the appropriate route.
@@ -477,8 +490,6 @@ router.afterEach((to, from) => {
  */
 const checkRole = (to:any,next: any) => {
   const auth = store.getters.auth;
-
-  console.log(store.getters.auth);
   
   // Extract the role state from the authenticated user
   const { role: { state: roleState } }   = get(store.getters.auth,'user');
