@@ -135,21 +135,39 @@ export class WebsiteController {
      */
     @UseGuards(AdminGuard)
     @Put('privacy')
+    /**
+     * Update company privacy policy
+     * @param req 
+     * @param res 
+     */
+    @UseGuards(AdminGuard)
+    @Put('privacy')
     async updatePrivacy(
         @Body() { privacy_policy }: UpdatePrivacyPolicyValidation,
         @Req()  req:  Request,
         @Res()  res:  Response,
     ) { 
-        
+        /**
+         * Update company privacy policy
+         * @param privacy_policy - The new privacy policy of the company
+         * @param req - The request object
+         * @param res - The response object
+         * @returns A Promise that resolves to the updated company object
+         */
         try {
 
-            let user    = get(req,'user');            
+            // Get the authenticated user from the request
+            let user    = get(req,'user');           
+
+            // Update the company's privacy policy and save the changes
             let company = await this.companyModel.save({ id: user.company.id, privacy_policy });
 
+            // Return the updated company object
             return res.status(HttpStatus.OK).json({ company });
 
         } catch(error) {
 
+            // Log any errors that occur
             this.logger.error(error);
 
         }
@@ -162,21 +180,38 @@ export class WebsiteController {
      */
     @UseGuards(AdminGuard)
     @Put('terms')
+    /**
+     * Update company terms and conditions
+     * @param req - The request object
+     * @param res - The response object
+     * @param {UpdateTermsAndConditionsValidation} body - The terms and conditions to update
+     * @returns A Promise that resolves to the updated company object
+     */
+    @UseGuards(AdminGuard)
+    @Put('terms')
     async updateTerms(
         @Body() { terms_conditions }: UpdateTermsAndConditionsValidation,
         @Req()  req:  Request,
         @Res()  res:  Response,
     ) { 
-        
+        /**
+         * Updates the company terms and conditions
+         * @returns A Promise that resolves to the updated company object
+         */
         try {
 
-            let user    = get(req,'user');            
+            // Get the authenticated user from the request
+            let user    = get(req,'user');           
+
+            // Update the company's terms and conditions and save the changes
             let company = await this.companyModel.save({ id: user.company.id, terms_conditions });
 
+            // Return the updated company object
             return res.status(HttpStatus.OK).json({ company });
 
         } catch(error) {
 
+            // Log any errors that occur
             this.logger.error(error);
 
         }

@@ -46,7 +46,7 @@ export class CompanyEntity {
 
   @Column({
     nullable: true,
-    type: 'text'
+    type: 'longtext'
   })
   privacy_policy: string;
 
@@ -65,7 +65,7 @@ export class CompanyEntity {
 
   @Column({
     nullable: true,
-    type: 'text'
+    type: 'longtext'
   })
   terms_conditions: string;
 
