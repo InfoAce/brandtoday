@@ -22,6 +22,15 @@ export class UserController {
 
     @UseGuards(AuthGuard)
     @Get('')
+    /**
+     * Retrieves a paginated list of users based on the provided query parameters.
+     * 
+     * @param res The response object to send the result to.
+     * @param page The page number of the results to retrieve. Defaults to 1.
+     * @param limit The maximum number of results to retrieve per page. Defaults to 10.
+     * @param type The role name of the users to retrieve. Defaults to an empty string.
+     * @returns A JSON response containing the paginated list of users.
+     */
     async show(
         @Res() res: Response,
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -29,9 +38,13 @@ export class UserController {
         @Query('type', new DefaultValuePipe(String())) type: string = String(),
     ) {
         try{
+            // Retrieve paginated list of users based on the provided query parameters
             let users = await this.userModel.paginate({ page, limit},{ where: { role: { name: type } } });
+            
+            // Send the paginated list of users as a JSON response
             return res.status(HttpStatus.OK).json({users});
         } catch(err) {
+            // If an error occurs, send a 500 Internal Server Error response
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
