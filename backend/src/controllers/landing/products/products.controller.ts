@@ -29,18 +29,30 @@ export class ProductsController {
 
     private logger          = new Logger(ProductsController.name);
 
+    /**
+     * Class constructor
+     * @param amrodService - The instance of AmrodService
+     * @param favouriteModel - The instance of FavouriteModel
+     * @param cacheManager - The instance of CacheManager
+     */
     constructor(
       private amrodService:   AmrodService,
       private favouriteModel: FavouriteModel,
       @Inject(CACHE_MANAGER) 
       private cacheManager: Cache,
     ){
+      // Try to read JSON files and assign them to the 'amrod' object
       try {
+        // Read categories JSON file
         this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
+        // Read products JSON file
         this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
+        // Read prices JSON file
         this.amrod.prices     = this.jsonPlugin.readJSON(this.file_paths.prices);
+        // Read stock JSON file
         this.amrod.stock      = this.jsonPlugin.readJSON(this.file_paths.stock);
       } catch(error){
+        // If any error occurred during reading JSON files, clear 'amrod' object
         this.amrod.categories = [];
         this.amrod.products   = [];
         this.amrod.prices     = [];
