@@ -1,20 +1,21 @@
 <template>
-    <template v-if="!$isEmpty(authUser)">
+  <div>
+    <template v-if="!$isEmpty(auth)">
       <div class="page-wrapper">
         <DashboardHeader />
         <!-- Page Body Start-->
         <div class="page-body-wrapper">
           <DashboardSidebar />
           <div class="page-body px-0">
-            <DashboardLoader />
             <router-view />
           </div>
         </div>
       </div>
     </template>
-    <template v-else>
+    <template v-if="$isEmpty(auth)">
       <router-view />
     </template>
+  </div>
 </template>
 <style>
   body{
@@ -33,7 +34,7 @@ import { isEmpty } from 'lodash';
 const $isEmpty = isEmpty;
 const store   = useStore();
 
-const authUser = computed( () => store.getters.authUser );
+const auth = computed( () => store.getters.auth );
 
 // const scripts = [
 //   // '/assets/dashboard/js/sidebar-menu.js',

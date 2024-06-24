@@ -33,7 +33,7 @@
             <section class="section-b-space light-layout">
                 <div class="container">
                     <div class="row footer-theme partition-f">
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col px-0">
                             <div class="footer-title footer-mobile-title">
                                 <h4>about</h4>
                             </div>
@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col px-0">
                             <div class="sub-title">
                                 <div class="footer-title">
                                     <h4>Shop by categories</h4>
@@ -58,7 +58,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col px-0">
+                            <div class="sub-title">
+                                <div class="footer-title">
+                                    <h4>Company</h4>
+                                </div>
+                                <div class="footer-contant">
+                                    <ul>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'AboutUs'})">Get To Know Us</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'PrivacyPolicy'})">Privacy Policy</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'ReturnRefunds'})">Return & Refunds</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'TermsAndConditions'})">Terms & Conditions</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col px-0">
                             <div class="sub-title">
                                 <div class="footer-title">
                                     <h4>Shop</h4>
@@ -72,14 +87,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col px-0">
                             <div class="sub-title">
                                 <div class="footer-title">
                                     <h4>store information</h4>
                                 </div>
                                 <div class="footer-contant">
                                     <ul class="contact-list">
-                                        <li><i class="fa fa-map-marker"></i>{{ home.company.address }}</li>
+                                        <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
                                         <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
                                         <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
                                     </ul>
