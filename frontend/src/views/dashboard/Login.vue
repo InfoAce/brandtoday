@@ -43,11 +43,12 @@
 
 <script setup>
 import { inject, reactive, ref, watch, onMounted, onBeforeMount } from 'vue';
-import { debounce, each, isEmpty, has } from 'lodash';
+import { debounce, each, get, isEmpty, has } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
 import { toast  } from "vue3-toastify";
 import { useStore } from 'vuex';
+import localStorage from 'reactive-localstorage';
 
 const store  = useStore();
 const router = useRouter();
@@ -88,39 +89,42 @@ const validateForm = (field) => {
 }
 
 const login = () => {
-	data.loading.login = Boolean(true);
+	
+	data.loading.login      = Boolean(true);
 	$api.post('/auth/login',data.form)
 		.then( ({ data:{ user, token }}) => {
-			store.commit('auth',{user, token});
-			window.location.reload();	
+			localStorage.setItem(`${get(store.getters.env,'VITE_APP_NAME').replaceAll(' ','')}_AUTH`,JSON.stringify({user, token}));
+			router.push({ name: 'Overview' });
 		})
-		.catch( ({ response }) => {
+		.catch( (error) => {
 			store.commit('loader',false);
-			if( !isEmpty(response.data) && response.data.statusCode == 400 ){
-				response.data.message.forEach( (value) => {
-					toast.info(value);
-				});
-			}
-			if( response.status == 404 ){
-				swal.fire({
-					icon: 'error',
-					title: 'Oops!',
-					text: 'Sorry we could not your account. Register a new account.'
-				});
-			}
-			if( response.status == 401 ){
-				swal.fire({
-					icon: 'error',
-					title: 'Oops!',
-					text: 'Your email or password is incorrect.',
-				});
-			}
-			if( response.status == 403 ){
-				swal.fire({
-					icon: 'error',
-					title: 'Oops!',
-					text: 'Your account has not been verified',
-				});
+			if( has(error,'response') ){
+				if( !isEmpty(response.data) && response.data.statusCode == 400 ){
+					response.data.message.forEach( (value) => {
+						toast.info(value);
+					});
+				}
+				if( response.status == 404 ){
+					swal.fire({
+						icon: 'error',
+						title: 'Oops!',
+						text: 'Sorry we could not your account. Register a new account.'
+					});
+				}
+				if( response.status == 401 ){
+					swal.fire({
+						icon: 'error',
+						title: 'Oops!',
+						text: 'Your email or password is incorrect.',
+					});
+				}
+				if( response.status == 403 ){
+					swal.fire({
+						icon: 'error',
+						title: 'Oops!',
+						text: 'Your account has not been verified',
+					});
+				}
 			}
 		})
 		.finally( () => {
