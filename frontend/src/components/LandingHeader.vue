@@ -54,14 +54,14 @@
                             </li>
                             <li class="onhover-dropdown mobile-account p-3">
                                 <i class="fa fa-user" aria-hidden="true"></i>
-                                <span v-if="isEmpty(authUser)">My Account</span>
-                                <span v-else>{{ authUser.first_name }} {{  authUser.last_name }}</span>
-                                <ul class="onhover-show-div" v-show="isEmpty(authUser)">
+                                <span v-if="isEmpty(auth)">My Account</span>
+                                <span v-else>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
+                                <ul class="onhover-show-div" v-show="isEmpty(auth)">
                                     <li><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
                                     <li><a href="#" @click.prevent="$router.push({name:'Overview'})">Dashboard</a></li>
                                     <li><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
                                 </ul>
-                                <ul class="onhover-show-div" v-show="!isEmpty(authUser)">
+                                <ul class="onhover-show-div" v-show="!isEmpty(auth)">
                                     <li><a href="#" @click.prevent="$router.push({name:'AccountProfile'})">Profile</a></li>
                                     <li><a href="#" @click.prevent="logout">Logout</a></li>
                                 </ul>
@@ -105,11 +105,12 @@
     <!-- header end -->
 </template>
 <script setup>
-import { cloneDeep, debounce, isEmpty, isNull } from 'lodash';
+import { cloneDeep, debounce, get, isEmpty, isNull } from 'lodash';
 import { useStore } from 'vuex';
 import { computed, onBeforeMount, onMounted, inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import router from '../router';
+import localStorage from 'reactive-localstorage';
 
 const $api     = inject('$api');
 const $swal    = inject('$swal');
@@ -119,7 +120,7 @@ const data     = reactive({categories: Array() });
 
 //Computed
 const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
-const authUser   = computed( () => $store.getters.authUser);
+const auth       = computed( () => $store.getters.auth);
 const cart       = computed( () => $store.getters.cart);
 const home       = computed({ get: () => $store.getters.home, set(val) { $store.commit('home',val); } });
 
@@ -154,15 +155,22 @@ const initMenus = debounce( () => {
     });
 },500);
 
-const logout = () =>{
+/**
+ * Logout function to clear the user's authentication data and redirect to the login page.
+ */
+const logout = () => {
+    // Show a confirmation dialog to the user
     $swal.fire({
-        icon: 'question',
-        title: 'Logout',
-        text: 'Are you sure you want to logout ?',
-        showCancelButton: true
+        icon: 'question', // Set the icon to a question mark
+        title: 'Logout', // Set the title of the dialog to 'Logout'
+        text: 'Are you sure you want to logout ?', // Set the text of the dialog
+        showCancelButton: true // Show a cancel button in the dialog
     }).then((result) => {
-        if( result.isConfirmed ){
-            $store.dispatch('logout');
+        // If the user confirms the logout
+        if(result.isConfirmed) {
+            // Clear the user's authentication data from local storage
+            localStorage.setItem(`${get($store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({}));
+            // Redirect the user to the login page
             $router.push({ name: "Login" });
         }
     });	

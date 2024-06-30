@@ -34,8 +34,8 @@
                                 <img src="/assets/home/images/avtar.jpg" alt="" class="img-fluid">
                             </div>
                             <div class="profile-detail">
-                                <h5>{{ authUser.first_name }} {{ authUser.last_name }}</h5>
-                                <h6>{{ authUser.email }}</h6>
+                                <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+                                <h6>{{ user.email }}</h6>
                             </div>
                         </div>
                         <div class="faq-tab">
@@ -71,12 +71,12 @@
 </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { get } from 'lodash';
 export default {
     computed: {
-        ...mapGetters([
-            'authUser'
-        ])
+        user(){
+            return get(this.$store.getters.auth,'user') 
+        }
     }
 }
 </script>

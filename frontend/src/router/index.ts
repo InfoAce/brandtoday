@@ -22,6 +22,7 @@ const router = createRouter({
           meta: {
             title: 'Home',
             auth: false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -33,6 +34,7 @@ const router = createRouter({
           meta: {
             title: 'Not Found',
             auth: false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -44,6 +46,7 @@ const router = createRouter({
           meta: {
             title: 'Login',
             auth:   false,
+            redirectIfAuth: true,
             state:  0,
             admin: false
           },
@@ -55,6 +58,7 @@ const router = createRouter({
           meta: {
             title: 'Get to Know Us',
             auth:   false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -66,6 +70,7 @@ const router = createRouter({
           meta: {
             title: 'Privacy Policy',
             auth:   false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -77,6 +82,7 @@ const router = createRouter({
           meta: {
             title: 'Return Refunds',
             auth:   false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -88,6 +94,7 @@ const router = createRouter({
           meta: {
             title: 'Terms & Conditions',
             auth:   false,
+            redirectIfAuth: false,
             state:  0,
             admin: false
           },
@@ -99,6 +106,7 @@ const router = createRouter({
           meta: {
             title: 'Our Brands',
             auth:  false,
+            redirectIfAuth: false,
             state: 0,
             admin: false
           },
@@ -113,6 +121,7 @@ const router = createRouter({
               meta: {
                 title: 'Product Category',
                 auth:  false,
+                redirectIfAuth: false,
                 state: 0,
                 admin: false
               },
@@ -124,6 +133,7 @@ const router = createRouter({
               meta: {
                 title: 'Not Found',
                 auth: false,
+                redirectIfAuth: false,
                 state:  0,
                 admin: false
               },
@@ -141,6 +151,7 @@ const router = createRouter({
               meta: {
                 title: 'Cart',
                 auth:   false,
+                redirectIfAuth: false,
                 state:  0,
                 admin: false
               },
@@ -155,6 +166,7 @@ const router = createRouter({
                   meta: {
                     title: 'Checkout',
                     auth:   false,
+                    redirectIfAuth: false,
                     state:  0,
                     admin:  false
                   },
@@ -166,6 +178,7 @@ const router = createRouter({
                   meta: {
                     title: 'Order Success',
                     auth:   false,
+                    redirectIfAuth: false,
                     state:  0,
                     admin:  false
                   },
@@ -186,6 +199,7 @@ const router = createRouter({
               meta: {
                 title: 'Products',
                 auth: false,
+                redirectIfAuth: false,
                 state:  0,
                 admin: false
               },
@@ -198,6 +212,7 @@ const router = createRouter({
                 title: 'Product',
                 auth:   false,
                 state:  0,
+                redirectIfAuth: false,
                 admin: false
               },
               component: () => import('@/views/home/Product.vue')
@@ -211,6 +226,7 @@ const router = createRouter({
             title: 'Signup',
             auth: false,
             state:  0,
+            redirectIfAuth: true,
             admin: false
           },
           component: () => import('@/views/home/Signup.vue')
@@ -225,6 +241,7 @@ const router = createRouter({
                 title: 'Email Verification',
                 auth: false,
                 state:  0,
+                redirectIfAuth: false,
                 admin: false
               },
               component: () => import('@/views/home/Verify.vue')
@@ -242,6 +259,7 @@ const router = createRouter({
                 title: 'Account Profile',
                 auth: true,
                 state:  0,
+                redirectIfAuth: false,
                 admin: false
               },
               component: () => import('@/views/home/Account.vue')
@@ -253,6 +271,7 @@ const router = createRouter({
                 title: 'Client Orders',
                 auth: true,
                 state:  0,
+                redirectIfAuth: false,
                 admin: false
               },
               component: () => import('@/views/home/Orders.vue')
@@ -264,6 +283,7 @@ const router = createRouter({
                 title: 'Address Book',
                 auth:   true,
                 state:  0,
+                redirectIfAuth: false,
                 admin:  false
               },
               component: () => import('@/views/home/AddressBook.vue')
@@ -275,6 +295,7 @@ const router = createRouter({
                 title: 'Favourites',
                 auth: true,
                 state:  0,
+                redirectIfAuth: false,
                 admin: false
               },
               component: () => import('@/views/home/Favourites.vue')
@@ -285,6 +306,7 @@ const router = createRouter({
               meta: {
                 title: 'Client Security',
                 auth: true,
+                redirectIfAuth: false,
                 state:  0,
                 admin: false
               },
@@ -308,6 +330,7 @@ const router = createRouter({
             title: 'Dashboard Login',
             state: 1,
             auth:  false,
+            redirectIfAuth: true,
             admin: true
           },
           component: () => import('@/views/dashboard/Login.vue')
@@ -318,6 +341,7 @@ const router = createRouter({
           meta: {
             title:     'Overview',
             auth:  true,
+            redirectIfAuth: false,
             state: 1,
             admin: true
           },
@@ -330,6 +354,7 @@ const router = createRouter({
             title: 'Clients',
             auth:  true,
             state: 1,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/Clients.vue')
@@ -340,6 +365,7 @@ const router = createRouter({
           meta: {
             title: 'Orders',
             auth:  true,
+            redirectIfAuth: false,
             state: 1,
             admin: true
           },
@@ -352,6 +378,7 @@ const router = createRouter({
             title: 'Staff Members',
             auth:  true,
             state: 2,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/Staff.vue')
@@ -363,6 +390,7 @@ const router = createRouter({
             title: 'Company',
             auth:  true,
             state: 2,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/Company.vue')
@@ -374,6 +402,7 @@ const router = createRouter({
             title: 'Website Setup',
             auth:  true,
             state: 2,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/Website.vue')
@@ -385,6 +414,7 @@ const router = createRouter({
             title: 'Profile',
             auth:  true,
             state: 1,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/Profile.vue')
@@ -396,6 +426,7 @@ const router = createRouter({
             title: 'System',
             auth:  true,
             state: 3,
+            redirectIfAuth: false,
             admin: true
           },
           component: () => import('@/views/dashboard/System.vue')
@@ -414,6 +445,7 @@ const router = createRouter({
                 title: 'Verify Account',
                 auth:  false,
                 state: 0,
+                redirectIfAuth: false,
                 admin: true
               },
               component: () => import('@/views/dashboard/VerifyAccount.vue')
@@ -424,6 +456,7 @@ const router = createRouter({
               meta: {
                 title: 'Not Found',
                 auth:  false,
+                redirectIfAuth: false,
                 state: 0,
                 admin: false
               },
@@ -443,8 +476,8 @@ router.beforeEach(
 
     store.commit('loader',true);
     
-    const { name: routeName, meta: { auth, state, landing, admin } } = to;
-    
+    const { name: routeName, meta: { auth, state, landing, admin, redirectIfAuth } } = to;
+
     if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
       window.document.getElementById("mySidenav").classList.remove('open-side')
     }
@@ -452,26 +485,31 @@ router.beforeEach(
     window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
         
     if( !auth && admin ){
-      if( !isEmpty(store.getters.auth) ) { next({ name: "Overview" }) }
-      if( isEmpty(store.getters.auth) ) {  next() }
+      if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Overview'}) }
+      if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (isEmpty(store.getters.auth) && !redirectIfAuth) ) { next() }
+      if( isEmpty(store.getters.auth) && redirectIfAuth ){ next() }
     }
+
+    if( auth && admin ){
+      if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
+      if( isEmpty(store.getters.auth) && routeName != 'AdminLogin' ){ next({ name: 'AdminLogin'}) }
+     }
 
     if( !auth && !admin ){
-      if( !isEmpty(store.getters.auth) ) { next({ name: "Home" }) }
-      if( isEmpty(store.getters.auth) ) {  next() }
+      if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Home'}) }
+      if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (isEmpty(store.getters.auth) && !redirectIfAuth) ) { next() }
+      if( isEmpty(store.getters.auth) && redirectIfAuth ){ next() }
     }
 
-    if( admin && auth && isEmpty(store.getters.auth) ){ 
-      next({ name: "AdminLogin" }); 
-    }
-
-    if( !admin && auth && isEmpty(store.getters.auth) ){ 
-      next({ name: "Login" }); 
+    if( auth && !admin ){
+      if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
+      if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login'}) }
+      // if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (!isEmpty(store.getters.auth) && !redirectIfAuth) ) {  next() }
     }
     
-    if( auth && !isEmpty(store.getters.auth) ) {
-      checkRole(to,next);        
-    }
+    // if( auth && !isEmpty(store.getters.auth) ) {
+    //   checkRole(to,next);        
+    // }
 
 });
 

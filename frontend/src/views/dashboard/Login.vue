@@ -75,60 +75,87 @@ const formSchema = yup.object().shape({
 						 .required("*Password is required"),
 });
 
+/**
+ * Validates the form field and updates the error state accordingly.
+ * 
+ * @param {string} field - The name of the field to validate.
+ * @returns {void}
+ */
 const validateForm = (field) => {
+	// Validate the form field using the form schema
 	formSchema.validateAt(field, data.form)
         .then((value,key) => {
-			delete data.errors[field];
-		})
-        .catch((err) => {
-          data.errors[err.path] = err.message;
+            // If the validation is successful, remove the error message for the field
+            delete data.errors[field];
         })
-		.finally( () => {
-			data.isDisabled = !isEmpty(data.errors);
-		});
+        .catch((err) => {
+            // If there is an error, set the error message for the field
+            data.errors[err.path] = err.message;
+        })
+        .finally( () => {
+            // Update the isDisabled state based on whether there are any errors
+            data.isDisabled = !isEmpty(data.errors);
+        });
 }
 
+/**
+ * Sends a login request to the API and handles the response.
+ * 
+ * @returns {void}
+ */
 const login = () => {
 	
-	data.loading.login      = Boolean(true);
-	$api.post('/auth/login',data.form)
-		.then( ({ data:{ user, token }}) => {
-			localStorage.setItem(`${get(store.getters.env,'VITE_APP_NAME').replaceAll(' ','')}_AUTH`,JSON.stringify({user, token}));
+	// Set the loading state to true
+	data.loading.login = true;
+	
+	// Send a POST request to the login endpoint
+	$api.post('/auth/login', data.form)
+		.then( ({ data: { user, token } }) => {
+			// If the request is successful, save the user and token to local storage
+			localStorage.setItem(`${get(store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({ user, token }));
+			
+			// Redirect the user to the overview page
 			router.push({ name: 'Overview' });
 		})
-		.catch( (error) => {
+		.catch((error) => {
+			// If there is an error, handle the response
 			store.commit('loader',false);
-			if( has(error,'response') ){
-				if( !isEmpty(response.data) && response.data.statusCode == 400 ){
-					response.data.message.forEach( (value) => {
+			if (has(error, 'response')) {
+				if (!isEmpty(error.response.data) && error.response.data.statusCode == 400) {
+					// Display information about validation errors
+					error.response.data.message.forEach((value) => {
 						toast.info(value);
 					});
 				}
-				if( response.status == 404 ){
+				if (error.response.status == 404) {
+					// Display an error message if the account is not found
 					swal.fire({
 						icon: 'error',
 						title: 'Oops!',
-						text: 'Sorry we could not your account. Register a new account.'
+						text: 'Sorry we could not find your account. Register a new account.'
 					});
 				}
-				if( response.status == 401 ){
+				if (error.response.status == 401) {
+					// Display an error message if the email or password is incorrect
 					swal.fire({
 						icon: 'error',
 						title: 'Oops!',
-						text: 'Your email or password is incorrect.',
+						text: 'Your email or password is incorrect.'
 					});
 				}
-				if( response.status == 403 ){
+				if (error.response.status == 403) {
+					// Display an error message if the account is not verified
 					swal.fire({
 						icon: 'error',
 						title: 'Oops!',
-						text: 'Your account has not been verified',
+						text: 'Your account has not been verified'
 					});
 				}
 			}
 		})
-		.finally( () => {
-			data.loading.login = Boolean();
+		.finally(() => {
+			// Set the loading state to false
+			data.loading.login = false;
 		});
 }
 

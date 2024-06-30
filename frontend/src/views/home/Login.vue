@@ -64,11 +64,12 @@
 
 <script setup>
 import { inject, reactive, ref, watch } from 'vue';
-import { each, isEmpty, has } from 'lodash';
+import { each, get, isEmpty, has } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
 import { toast  } from "vue3-toastify";
 import { useStore } from 'vuex';
+import localStorage from 'reactive-localstorage';
 
 const store  = useStore();
 const router = useRouter();
@@ -92,63 +93,84 @@ const formSchema = yup.object().shape({
 						 .required("*Password is required"),
 });
 
+/**
+ * Validates a form field based on the provided field name.
+ * Uses the formSchema to validate the field and updates the errors object accordingly.
+ * Updates the isDisabled property based on the presence of errors.
+ *
+ * @param {string} field - The name of the field to validate.
+ */
 const validateForm = (field) => {
+	// Validate the field using the formSchema
 	formSchema.validateAt(field, data.form)
         .then((value,key) => {
+			// If the field is valid, delete the corresponding error from the errors object
 			delete data.errors[field];
 		})
         .catch((err) => {
+          // If the field is invalid, update the errors object with the error message
           data.errors[err.path] = err.message;
         })
 		.finally(() => {
+			// Update the isDisabled property based on the presence of errors
 			data.isDisabled = !isEmpty(data.errors);
 		})
 }
 
+/**
+ * Logs in a user by sending a POST request to the /auth/login endpoint.
+ * If the login is successful, the user's authentication data is stored in the Vuex store.
+ * A success message is displayed using sweetalert2 and the page is reloaded.
+ * If the login fails, different error messages are displayed based on the response status.
+ */
 const login = () => {
-	store.commit('loader',true);
-	$api.post('/auth/login',data.form)
-		.then( ({ data:{ user, token }}) => {
-			store.commit('auth',{user, token});
-			swal.fire({
-				icon: 'success',
-				title: 'Alright!',
-				text: 'Login successfull.'
-			}).then((result) => {
-				window.location.reload();
-			});	
+	// Show loader while the login request is being processed
+	store.commit('loader', true);
+
+	// Send a POST request to the /auth/login endpoint with the user's login data
+	$api.post('/auth/login', data.form)
+		.then(({ data: { user, token } }) => {
+			// If the request is successful, save the user and token to local storage
+			localStorage.setItem(`${get(store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({ user, token }));
+			
+			// Redirect the user to the overview page
+			router.push({ name: 'Home' });
 		})
-		.catch( ({ response }) => {
-			store.commit('loader',false);
-			if( !isEmpty(response.data) && response.data.statusCode == 400 ){
-				response.data.message.forEach( (value) => {
+		.catch(({ response }) => {
+			// Hide the loader
+			store.commit('loader', false);
+
+			// Display different error messages based on the response status
+			if (!isEmpty(response.data) && response.data.statusCode == 400) {
+				response.data.message.forEach((value) => {
 					toast.info(value);
 				});
 			}
-			if( response.status == 404 ){
+			if (response.status == 404) {
 				swal.fire({
 					icon: 'error',
 					title: 'Oops!',
-					text: 'Sorry we could not your account. Register a new account.'
+					text: 'Sorry, we could not find your account. Register a new account.'
 				});
 			}
-			if( response.status == 401 ){
+			if (response.status == 401) {
 				swal.fire({
 					icon: 'error',
 					title: 'Oops!',
 					text: 'Your email or password is incorrect.',
 				});
 			}
-			if( response.status == 403 ){
+			if (response.status == 403) {
 				swal.fire({
 					icon: 'error',
 					title: 'Oops!',
-					text: 'Your account has not been verified',
+					text: 'Your account has not been verified.',
 				});
 			}
 		})
-		.finally( () => {
-			store.commit('loader',false);
+		.finally(() => {
+			// Hide the loader
+			store.commit('loader', false);
 		});
 }
 

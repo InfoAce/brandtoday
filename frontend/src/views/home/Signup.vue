@@ -145,59 +145,119 @@ const formSchema = yup.object().shape({
 						 .required("*Password is required"),                         
 });
 
+/**
+ * Validates a form field based on the form schema.
+ * @param {string} field - The field to validate.
+ */
 const validateForm = (field) => {
-	formSchema.validateAt(field, data.form)
-        .then((value,key) => {
-			delete data.errors[field];
-		})
+    // Validate the field in the form schema
+    formSchema.validateAt(field, data.form)
+        .then((value, key) => {
+            // If the field is valid, remove any errors associated with it
+            delete data.errors[field];
+        })
         .catch((err) => {
-          data.errors[err.path] = err.message;
+            // If the field is invalid, set the error message for the field
+            data.errors[err.path] = err.message;
         })
-        .finally( () => {
+        .finally(() => {
+            // Determine if any errors exist in the form and disable the form accordingly
+            // Log the result to the console for debugging purposes
             console.log(!isEmpty(data.errors));
-		    data.isDisabled = !isEmpty(data.errors);
-        })
+            data.isDisabled = !isEmpty(data.errors);
+        });
 }
 
+/**
+ * Submits the signup form.
+ * Sends a POST request to the '/auth/signup' endpoint with the form data.
+ * Displays a success message if the request is successful,
+ * or an error message if the request fails.
+ */
 const signup = () => {
-	data.loader.signup = true;
-	$api.post('/auth/signup',data.form)
-		.then( () => {
-			swal.fire({
-				icon: 'success',
-				title: 'Alright!',
-				text: 'Account successfully created. Check your email for account verification.'
-			})
-		})
-		.catch( ({ response }) => {
-			store.commit('loader',false);
-			if( !isEmpty(response.data) && response.data.statusCode == 400 ){
-				response.data.message.forEach( (value) => {
-					toast.info(value);
-				});
-			}
-			if( response.status == 404 ){
-				swal.fire({
-					icon: 'error',
-					title: 'Oops!',
-					text: 'Sorry we could not your account. Register router-link new account.'
-				});
-			}
-			if( response.status == 401 ){
-				swal.fire({
-					icon: 'error',
-					title: 'Oops!',
-					text: 'Your email or password is incorrect.',
-				});
-			}
-		})
-		.finally( () => {
+    // Set the loader to true
+    data.loader.signup = true;
+
+    // Send the POST request
+    $api.post('/auth/signup',data.form)
+        // If the request is successful
+        .then( () => {
+            // Display a success message
+            swal.fire({
+                icon: 'success',
+                title: 'Alright!',
+                text: 'Account successfully created. Check your email for account verification.'
+            });
+            resetForm();
+        })
+        // If the request fails
+        .catch( ({ response }) => {
+            // Reset the loader
+            store.commit('loader',false);
+
+            // If there are errors in the response
+            if( !isEmpty(response.data) && response.data.statusCode == 400 ){
+                // Display each error message
+                response.data.message.forEach( (value) => {
+                    toast.info(value);
+                });
+            }
+
+            // If the status code is 404
+            if( response.status == 404 ){
+                // Display an error message
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: 'Sorry we could not your account. Register router-link new account.'
+                });
+            }
+
+            // If the status code is 401
+            if( response.status == 401 ){
+                // Display an error message
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: 'Your email or password is incorrect.',
+                });
+            }
+        })
+        // Regardless of the outcome, reset the loader
+        .finally( () => {
             data.loader.signup = false;
-		});
+        });
 }
 
+/**
+ * Update the phone number in the form data.
+ *
+ * @param {Event|String} $event - The event object or the phone number.
+ * @return {void}
+ */
 const getPhoneNumber = ($event) => {
+    // Check if the event is a string or not.
+    // If it's a string, assign it to the phone number field.
+    // If it's an event object, assign the value of the target to the phone number field.
     data.form.phone_number = $event.constructor == String ? $event : $event.target.value 
+}
+
+
+/**
+ * Reset the form data to its initial state.
+ *
+ * @return {void}
+ */
+const resetForm = () => {
+    // Reset the form data to its initial state
+    data.form = {
+        first_name:       String(), // First name
+        last_name:        String(), // Last name
+        email:            String(), // Email address
+        password:         String(), // Password
+        phone_number:     String(), // Phone number
+        confirm_password: String(), // Confirmation password
+    };
 }
 
 watch(
