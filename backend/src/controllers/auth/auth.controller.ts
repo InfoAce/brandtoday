@@ -69,7 +69,7 @@ export class AuthController {
      */
     async signup(
         @Body() registerUser: RegisterValidation, 
-        @Res() res: Response
+        @Res()  res:          Response
     ){
         try{
             // Generate random string for token

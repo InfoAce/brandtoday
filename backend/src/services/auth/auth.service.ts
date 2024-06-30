@@ -67,7 +67,7 @@ export class AuthService {
             // Find user model
             const user = await this.userModel.findOne({
                 where: { email },
-                select: ['id', 'first_name', 'last_name', 'email', 'image', 'email_verified_at']
+                select: ['id', 'first_name', 'last_name', 'email', 'image', 'email_verified_at','company_id']
             });
 
             // Jwt signing

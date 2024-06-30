@@ -101,7 +101,6 @@ export default {
             this.$api.get('/account')
                 .then( ({ data:{ user }}) => {
                     this.user = user;
-                    console.log(user);
                 })
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);

@@ -10,6 +10,7 @@ import {
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { ModelException } from 'src/exceptions/model.exception';
 
 class UserModelException extends ExceptionsHandler {}
 
@@ -75,6 +76,14 @@ export default class UserModel {
     }
   }
 
+
+  /**
+   * Find a single user by the provided data.
+   *
+   * @param {object} data - The data used to find the user.
+   * @returns {Promise<UserEntity>} A promise that resolves to the found user.
+   * @throws {ModelException} Throws a ModelException if the user is not found.
+   */
   async findOneBy(data: object): Promise<UserEntity> {
     try {
 
@@ -84,8 +93,10 @@ export default class UserModel {
         
       this.logger.error(error);
       
+      throw new ModelException(error);
     }
   }
+
 
   queryBuilder(): QueryBuilder<UserEntity> {
     return this.usersRepository.createQueryBuilder("user");

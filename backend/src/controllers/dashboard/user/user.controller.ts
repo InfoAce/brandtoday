@@ -1,6 +1,6 @@
 import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Injectable, ParseIntPipe, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
-import { AuthGuard } from "src/guards";
+import { AdminGuard } from "src/guards";
 import { RoleModel, UserModel } from "src/models";
 import { get, has, set } from 'lodash';
 import { StaffValidation } from "src/validation";
@@ -20,7 +20,7 @@ export class UserController {
         private roleModel: RoleModel,
     ){}
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Get('')
     /**
      * Retrieves a paginated list of users based on the provided query parameters.
@@ -49,7 +49,7 @@ export class UserController {
         }
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(AdminGuard)
     @Post('')
     async store(
         @Req() req: Request,

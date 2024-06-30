@@ -26,7 +26,8 @@ export class OptionalGuard implements CanActivate {
     if (token != undefined) {
       try {
         let { id }   = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
-        let authUser =  await this.userModel.findOne({ where: { id } });
+        let authUser = await this.userModel.findOneBy({ id });
+
           // 💡 We're assigning the payload to the request object here
           // so that we can access it in our route handlers
           set(request,'user',authUser);

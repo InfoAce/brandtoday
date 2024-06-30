@@ -105,7 +105,7 @@ export class UserEntity {
   })
   phone_number: string;
 
-  @OneToMany(() => OrderEntity, (order) => order.user, { lazy: true })
+  @OneToMany(() => OrderEntity, (order) => order.user)
   @JoinColumn({
     name:                 "id",
     referencedColumnName: "user_id"
