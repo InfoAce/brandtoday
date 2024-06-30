@@ -32,7 +32,15 @@ export class PesapalService {
         return this.httpService;
     }
 
+    /**
+     * Authenticate with Pesapal API
+     * Retrieves an authentication token from Pesapal API
+     * 
+     * @returns {Promise<Object>} - The authentication response from Pesapal API
+     * @throws {PesapalServiceException} - If there is an error during authentication
+     */
     async auth(){
+        // Retrieve consumer key and secret from config
         let { 
             configuration:{
                 consumer_key,
@@ -40,24 +48,24 @@ export class PesapalService {
             }
         }  = this.config;
 
-        let { data } = await firstValueFrom(
-            this.request()
-                .post(
+        try {
+            // Send POST request to Pesapal API authentication endpoint
+            // with consumer key and secret
+            let { data } = await firstValueFrom(
+                this.request().post(
                     this.config.endpoints.auth,
-                    {
-                        consumer_key,
-                        consumer_secret
-                    }
+                    {consumer_key,consumer_secret }
                 )
-                .pipe(
-                    catchError((error: any) => {
-                        let { response: { status, data: { message }} } = error;
-                        throw new PesapalServiceException(message,status);
-                    })
-                )
-        );
+            );
+            
+            // Return authentication response from Pesapal API
+            return data;
 
-        return data;
+        } catch(error) {
+            // Throw PesapalServiceException if there is an error during authentication
+            throw new PesapalServiceException(error);
+
+        }
 
     }
 
@@ -100,8 +108,7 @@ export class PesapalService {
                 )
                 .pipe(
                     catchError((error: any) => {
-                        let { response: { status, data: { message }} } = error;
-                        throw new PesapalServiceException(message,status);
+                        throw new PesapalServiceException(error);
                     })
                 )
         );
@@ -125,8 +132,7 @@ export class PesapalService {
                 )
                 .pipe(
                     catchError((error: any) => {
-                        let { response: { status, data: { message }} } = error;
-                        throw new PesapalServiceException(message,status);
+                        throw new PesapalServiceException(error);
                     })
                 )
         );
@@ -145,8 +151,7 @@ export class PesapalService {
                 .get(`${this.config.endpoints.status}?orderTrackingId=${order_id}`)
                 .pipe(
                     catchError((error: any) => {
-                        let { response: { status, data: { message }} } = error;
-                        throw new PesapalServiceException(message,status);
+                        throw new PesapalServiceException(error);
                     })
                 )
         );

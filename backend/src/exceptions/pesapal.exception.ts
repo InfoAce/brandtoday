@@ -1,3 +1,3 @@
-import { HttpException } from "@nestjs/common";
+import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 
-export class PesapalServiceException extends HttpException {}
+export class PesapalServiceException extends ExceptionsHandler {}

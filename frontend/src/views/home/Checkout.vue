@@ -359,6 +359,7 @@ const checkTransactionStatus = (statusInterval,order_id:string) => {
                 $toast.success('Payment successful. Please check your email for order details.')
 
                 setTimeout( () => {
+                    $store.commit('cart',[]);
                     $router.push({ name: "OrderSuccess", params:{ order: transaction.order_id }});
                 },1000);
             }
@@ -405,7 +406,6 @@ const placeOrder = () => {
     const data         = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
     $api.post('/orders',data)
         .then( ({ data: { order }}) => {
-            $store.commit('cart',[]);
             return $api.put(`/orders/${order.id}/transaction`);
         })
         .then(({ data }) => {

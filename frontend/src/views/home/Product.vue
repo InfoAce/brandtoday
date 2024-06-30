@@ -126,7 +126,7 @@
                                             </button>                                             
                                         </div>
                                         <div class="px-4">
-                                            <template v-if="$isEmpty($store.getters.authUser)">
+                                            <template v-if="$isEmpty($store.getters.auth)">
                                                 <button class="btn btn-solid btn-animation" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
                                                     <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                                     wishlist
@@ -433,7 +433,7 @@ export default {
         },
         addToFavourites(){
             this.loading.wishlist = true; // Set loader
-            let form = cloneDeep({ product_code: this.product.fullCode,content: JSON.stringify(this.form) }); // Refactor form data
+            let form = cloneDeep({ product_code: this.product.fullCode,content: this.form }); // Refactor form data
             // Add this product to wishlist
             this.$api
                 .post('favourites',form)

@@ -56,10 +56,13 @@ export class MailService {
   async createOrder(order: OrderEntity) {
 
     try{
-  
+      
+      // Get the user associated with the order.
+      let user = await order.user;
+
       // Send the email.
       return await this.mailerService.sendMail({
-        to: order.user.email,  // The recipient's email address.
+        to: user.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
         template: 'order/create',  // The name of the handlebars template to use.
         context: { // The data to pass to the template.
@@ -74,6 +77,33 @@ export class MailService {
       return false;
     }
   }
+
+
+  async payment(order: OrderEntity) {
+
+    try{
+      
+      // Get the user associated with the order.
+      let user = await order.user;
+
+      // Send the email.
+      return await this.mailerService.sendMail({
+        to: user.email,  // The recipient's email address.
+        subject: `${this.configService.get<string>('APP_NAME') } Payment Successful for Order #${order.num_id}`,  // The subject of the email.
+        template: 'order/payment',  // The name of the handlebars template to use.
+        context: { // The data to pass to the template.
+          items:        order.items,
+          order_number: order.num_id,
+          transaction:  order.transaction
+        },
+      });
+
+    } catch (error) {
+      // Log any errors that occur during the sending of the email.
+      this.logger.error(error);
+      return false;
+    }
+  }  
 
   /**
    * Sends a confirmation email to a staff member.

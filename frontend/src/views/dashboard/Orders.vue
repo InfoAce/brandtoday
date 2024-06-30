@@ -83,7 +83,7 @@
                           </div>
                           <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.orders)">
                               <paginate
-                                  :page-count="$data.orders.meta.itemCount"
+                                  :page-count="$data.orders.meta.totalPages"
                                   :click-handler="fetchPaginate"
                                   :prev-text="'Prev'"
                                   :next-text="'Next'"

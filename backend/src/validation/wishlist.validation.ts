@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class WishlistValidation {
 
@@ -7,7 +7,7 @@ export class WishlistValidation {
   product_code: string
 
   @IsNotEmpty()
-  @IsString()
-  content: string
+  @IsObject()
+  content: object
 
 }

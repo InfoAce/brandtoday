@@ -36,11 +36,11 @@
                                                                 <a href="javascript:void(0)">
                                                                     <img :src="item.image" class="img-fluid blur-up lazyload" alt="">
                                                                 </a>
-                                                                <h5>{{ item.name }}</h5>
+                                                                <h5>{{ item.name }}<br><span v-if="has(item,'sizes')">{{ item.sizes.map( size => size.name ).join(',') }}</span></h5>
                                                             </td>
                                                             <td>
                                                                 <p>Quantity</p>
-                                                                <h5>{{ item.quantity }}</h5>
+                                                                <h5>{{ has(item,'sizes') ? sum(item.sizes.map( size => size.quantity )) : item.quantity }}</h5>
                                                             </td>
                                                             <td>
                                                                 <p>Price</p>
@@ -48,7 +48,7 @@
                                                             </td>
                                                             <td class="text-end">
                                                                 <p>Total</p>
-                                                                <h5>{{ item.price * item.quantity }}</h5>
+                                                                <h5>{{ has(item,'sizes') ?  item.price * sum(item.sizes.map( size => size.quantity )) : item.price * item.quantity }}</h5>
                                                             </td>
                                                         </tr>
 
@@ -84,11 +84,11 @@
 
                                                 <div class="col-12">
                                                     <div class="order-success">
-                                                        <h4>shipping address</h4>
+                                                        <h4>Shipping address</h4>
                                                         <ul class="order-details">
-                                                            <li>Gerg Harvell</li>
-                                                            <li>568, Suite Ave.</li>
-                                                            <li>Austrlia, 235153 Contact No. 48465465465</li>
+                                                            <li>{{ order.address.address_line_1 }} {{ order.address.postal_code }},</li>
+                                                            <li>{{ order.address.city_town }} {{ order.address.county_state }},</li>
+                                                            <li>{{ order.address.country }}</li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -116,13 +116,9 @@
                                                     </div>
                                                     <div class="order-success" v-if="isEmpty(get(order,'transaction'))">
                                                         <div class="payment-mode">
-                                                            <h4>payment method</h4>
-                                                            <ul class="list-group">
-                                                                <li class="list-item">Payment Method: {{ order.transaction.payment_method }}</li>
-                                                                <li class="list-item">Transaction Id: {{ order.transaction.confirmation_code }}</li>
-                                                            </ul>
+                                                            <h4 class="text-danger">Pending Payment</h4>                                                          
                                                         </div>
-                                                    </div>
+                                                    </div>                                                   
                                                 </div>
                                             </div>
                                         </div>
@@ -145,7 +141,7 @@
 
 <script setup lang="ts">
 import { computed, defineProps, watch } from 'vue';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, has, sum } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -179,7 +175,12 @@ const order = computed(() => $props.data);
  * @param {defineProps}
  * @returns {Object}
  */
-const total = computed(() => isEmpty($props.data) ? 0 : order.value.items.map( item => item.price * item.quantity ).reduce( (result, current) => result + current, 0)  )
+const total = computed(() => isEmpty($props.data) ?  0 : 
+                                    order.value.items.map( 
+                                        item => has(item,'sizes') ? 
+                                                    item.price * item.sizes.map( size => size.quantity).reduce( (result, current) => result + current, 0)  
+                                                        : item.price * item.quantity ).reduce( (result, current) => result + current, 0)  
+                                                    )
 // ; // Get total amount
 
 /**
