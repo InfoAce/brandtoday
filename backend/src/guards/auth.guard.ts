@@ -29,7 +29,7 @@ import { UserModel } from 'src/models';
 
       try {
         const { id }   = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
-        const authUser =  await this.userModel.findOneBy({ where: { id } });
+        const authUser =  await this.userModel.findOneBy({ id });
         // 💡 We're assigning the payload to the request object here
         // so that we can access it in our route handlers
         set(request,'user',authUser);

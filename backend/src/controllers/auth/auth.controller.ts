@@ -141,16 +141,23 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('user')
+    /**
+     * Fetches the user profile of the authenticated user.
+     *
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     */
     async getProfile(@Req() req: Request,  @Res() res: Response) {
-
         try {
+            // Fetch the user profile of the authenticated user from the database.
+            let user = await this.userModel.findOneBy({ id: get(req,'user').id });
 
-            let user = await this.userModel.findOne({ where: { id: get(req,'user.id') } });
-
+            // Return the user profile as a JSON response with a 200 status code.
             res.status(HttpStatus.OK).json({ user });
 
         } catch(error) {
-
+            // Log any errors that occur.
             this.logger.error(error);
 
         }
@@ -158,14 +165,27 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Post('user')
+    /**
+     * Updates the authenticated user's profile.
+     *
+     * @param {any} body - The request body containing the updated user data.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     */
     async updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+        // Get the authenticated user from the request.
         let authUser = get(req,'user');
         try {
-            let updatedUser = await this.userModel.updateOne({id: authUser.id},body)
+            // Update the user's data in the database.
+            let updatedUser = await this.userModel.updateOne({id: authUser.id}, body);
+            // Update the authenticated user in the request object.
             set(req,'user',updatedUser);
+            // Return the updated user data as a JSON response with a 200 status code.
             res.status(HttpStatus.OK).json({user: get(req,'user') });
         } catch (err) {
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR);        
+            // Return an internal server error response if an error occurs.
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR);       
         }
     } 
 
