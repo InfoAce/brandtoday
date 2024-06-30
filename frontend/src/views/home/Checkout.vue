@@ -272,7 +272,7 @@ const $data   = reactive({
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 // Computed
-const authUser = computed( () => $store.getters.authUser );
+const authUser = computed( () => $store.getters.auth.user );
 const cart     = computed( () => $store.getters.cart );
 const total    = computed( () => { 
     return sum(cart.value.map( (val:any) => { 

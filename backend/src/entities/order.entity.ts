@@ -51,12 +51,12 @@ export class OrderEntity {
   @OneToOne(() => TransactionEntity,transaction => transaction.order,{ eager: true })
   transaction: TransactionEntity
 
-  @ManyToOne(() => UserEntity, (entity) => entity.favourites, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.orders, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "user_id",
     referencedColumnName: "id",
   })
-  user: Promise<UserEntity>;
+  user: UserEntity;
 
   @Column({
     nullable: false

@@ -6,7 +6,7 @@
                     <div class="card-body">
                         <div class="top-sec">
                             <h3>Address Book</h3>
-                            <a href="#" class="btn btn-sm btn-solid" @click="data.modals.add = true">
+                            <a href="#" class="btn btn-sm btn-solid" @click.prevent="data.modals.add = true">
                                 <i class="fa fa-plus"></i>
                                 Add New
                             </a>
@@ -16,7 +16,7 @@
                                 <template v-if="!isEmpty(data.addresses)">
                                     <div class="select-box active col-xl-4 col-md-6" v-for="(address, index) in data.addresses" :key="index">
                                         <div class="address-box">
-                                            <div class="top mb-6">
+                                            <div class="top mb-6">+-----------------------------------------------------
                                                 <h6><span>{{ address.category }}</span></h6>
                                             </div>
                                             <div class="middle">
