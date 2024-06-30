@@ -377,19 +377,30 @@ export default {
         this.$has          = has;
         this.$convertToHex = (colour) =>  convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
 
-        // Promisory validation for the form schema
+        /**
+         * Validates a form field based on the provided field name.
+         * Uses the formSchema to validate the field and updates the errors object accordingly.
+         * Updates the isDisabled property based on the presence of errors.
+         *
+         * @param {string} field - The name of the field to validate.
+         */
         this.validateForm = (field) => {
+            // Validate the field using the formSchema
             this.formSchema.validateAt(field, this.form)
                 .then((value,key) => {
+                    // If the field is valid, delete the corresponding error from the errors object
                     delete this.errors[field];
                 })
                 .catch((err) => {
+                    // If the field is invalid, update the errors object with the error message
                     this.errors[err.path] = err.message;
                 })
                 .finally(() => {
+                    // Update the isDisabled property based on the presence of errors
                     this.isDisabled = !isEmpty(this.errors);
                 })
         }         
+
     },
     data(){
         return{
@@ -482,7 +493,7 @@ export default {
             this.form.code            = product.fullCode;
             this.form.price           = product.price;
 
-            this.fetchColourStock(product); // Fetch colour stock           
+            // this.fetchColourStock(product); // Fetch colour stock           
         },        
         descreaseQuantity(){
             let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
@@ -506,6 +517,7 @@ export default {
                    .then( (colours) => {
                         colours.forEach( ({ data:{ stock }}) => {
                             this.stock[stock.colourCode] = stock.stock;
+                            console.log(this.stock[stock.colourCode]);
                             if( stock.stock == 0 ){
                                 this.$refs[stock.colourCode][0].classList.add('inactive');
                             }
@@ -592,24 +604,7 @@ export default {
                     if( !isEmpty(this.cartItem) ){
                         this.form = cloneDeep(this.cartItem);
                     }    
-                    $('[data-toggle="tooltip"]').tooltip()
-                    this.$watch(
-                        () => this.selections.colour,
-                        (value) => {
-                            Promise.all(
-                                keys(this.groupedVariants).map( variant => this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) )
-                            ).then( (variants) => {
-                                variants.forEach( ({ data }) => {
-                                    if( has(data,'stock') ){
-                                        set(this.stock,data.stock.fullCode.replace(`${this.product.fullCode}-${value.code}-`,''),data.stock.stock);
-                                    }
-                                });
-                            });
-                        },
-                        {
-                            deep: true,
-                        }
-                    );                    
+                    $('[data-toggle="tooltip"]').tooltip()                                 
                 },
                 200
             )
@@ -624,6 +619,32 @@ export default {
             },
             deep: true,
             immediate: false
+        },
+        "selections.colour": {
+            /**
+             * Watches for changes in the 'selections.colour' property and fetches stock for all variants of the selected colour.
+             *
+             * @param {Object} value - The selected colour object.
+             */
+            async handler(value){
+                // If a colour is selected, fetch stock for all variants of the selected colour
+                if( !isEmpty(value) ){         
+                    
+                    try {
+                        // Fetch stock for all variants of the selected colour
+                        let variants = await Promise.all(keys(this.groupedVariants).map( async (variant) => await this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) ));
+
+                        // Update the stock object with the fetched stock for each variant
+                        variants.forEach( ({ data: { code, stock }}) => {
+                            set(this.stock,code.replace(`${this.product.fullCode}-${value.code}-`,''),stock.stock);
+                        });
+
+                    } catch(error) {
+
+                    }
+                }
+            },
+            deep: true
         }
     }
 }

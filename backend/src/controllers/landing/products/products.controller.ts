@@ -112,48 +112,81 @@ export class ProductsController {
 
     @UseGuards(OptionalGuard)
     @Put(':code')
+    /**
+     * Show a product by its code.
+     *
+     * @param {string} code - The code of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
     async show(
-      @Param('code') code: any,
-      @Req() req: Request,  
-      @Res() res: Response
+      @Param('code') code: any, // The code of the product
+      @Req() req: Request,  // The request object
+      @Res() res: Response // The response object
     ) {
       try {
 
-        let user: any            = get(req,'user');
+        // Get the user from the request object
+        let user: any = get(req,'user');
+        // Clone the cached products and prices
         let cached_products: any = cloneDeep(this.amrod.products);
-        let cached_prices: any   = cloneDeep(this.amrod.prices);
-        let product: any         = cached_products.find( product => product.fullCode == code );
-        let data_price           = cached_prices.find(   price => price.fullCode.includes(code) );
-        let favourite: any       = {};
-        
-        if( user ){
+        let cached_prices: any = cloneDeep(this.amrod.prices);
+        // Find the product with the given code
+        let product: any = cached_products.find( product => product.fullCode == code );
+        // Find the price data for the given code
+        let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
+        // Initialize the favourite object
+        let favourite: any = {};
+
+        // If a user is logged in, find their favourite with the given product code
+        if( user ) {
           favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
         }
 
+        // If price data is found, set the product price
         if( data_price != undefined ){ product.price = data_price.price; }
-  
+
+        // Send the product and favourite as a JSON response with a status code of 200 (OK)
         res.status(HttpStatus.OK).json({ product, favourite });
 
       } catch(error){
 
+        // Log any errors that occur
         this.logger.error(error);
 
       }
     }
 
     @Put('stock/:code')
+    /**
+     * Fetch the stock of a product by its code.
+     *
+     * @param {string} code - The code of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
     async fetchSize(@Param('code') code: any, @Req() req: Request,  @Res() res: Response) {
       try {
         
+        // Clone the cached stocks to avoid modifying the original data.
         let cached_stocks: any = cloneDeep(this.amrod.stock);
-        let stock: any         = cached_stocks.find( val => val.fullCode == code );
+        
+        // Search for the product in the cached stocks.
+        let stock: any = cached_stocks.find(val => val.fullCode == code);
 
-        res.status(HttpStatus.OK).json({ stock });
+        // If the product is not found in the stocks, set the stock to 0.
+        if (stock == undefined) {
+          stock = { stock: 0 };
+        }
 
-      } catch(error){
+        // Send the stock as a JSON response with a status code of 200 (OK).
+        res.status(HttpStatus.OK).json({ stock, code });
 
+      } catch (error) {
+        // Log any errors that occur.
         this.logger.error(error);
-
       }
     }
 }
