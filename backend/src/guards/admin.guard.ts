@@ -41,7 +41,7 @@ import { UserModel } from 'src/models';
 
       try {
         // Verify the token and get the user's id
-        let authUser    = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
+        let authUser = await this.jwtService.verifyAsync(token,{secret: this.configService.get<string>('app.JWT_SESSION_KEY') });
 
         // If the user's role is greater than 0, set the user object in the request
         if( authUser.role.state > 0 ){

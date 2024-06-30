@@ -71,17 +71,14 @@ import { inject, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 import { clone, debounce, each, isEmpty, has } from 'lodash';
 
 const $api  = inject('$api');
-const $data = reactive({ loader: Boolean(), terms_conditions: String() });
+const $data = reactive({ terms_conditions: String() });
 
-onBeforeMount(() => $data.loader = Boolean(true) )
-
-onMounted( 
+onBeforeMount( 
     debounce( async () => {
         try {
             
             let { data:{ terms_conditions } } = await $api.get('website/terms-conditions');
-            
-            $data.loader           = Boolean()
+        
             $data.terms_conditions = clone(terms_conditions);
 
         } catch(error) {

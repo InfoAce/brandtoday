@@ -41,6 +41,15 @@
                             <li class="nav-item">
                                 <a :class="$data.tab == 3 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#termsandconditions" role="tab" aria-controls="termsandconditions " aria-selected="false" data-original-title="Terms and Conditions" title="Terms and Conditions" @click="$data.tab = 3">Terms and Conditions</a>
                             </li>
+                            <li class="nav-item">
+                                <a :class="$data.tab == 4 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#aboutus" role="tab" aria-controls="aboutus " aria-selected="false" data-original-title="About Us" title="About Us" @click="$data.tab = 4">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a :class="$data.tab == 5 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#faq" role="tab" aria-controls="faq " aria-selected="false" data-original-title="Faq" title="Faqs" @click="$data.tab = 5">Faqs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a :class="$data.tab == 6 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#returnrefunds" role="tab" aria-controls="returnrefunds " aria-selected="false" data-original-title="Return & Refunds" title="Return & Refunds" @click="$data.tab = 6">Return & Refunds</a>
+                            </li>
                         </ul>
                         <div class="tab-content" id="homeTabContent" v-if="$data.tab == 1">
                             <HomeTab @update-company="updateCompany" :company.sync="$data.company" />
@@ -50,6 +59,15 @@
                         </div>
                         <div class="tab-content" id="termsandconditionsTabContent" v-if="$data.tab == 3">
                             <TermsAndConditionsTab @update-company="updateCompany" :company.sync="$data.company" />
+                        </div>
+                        <div class="tab-content" id="aboutusTabContent" v-if="$data.tab == 4">
+                            <AboutUsTab @update-company="updateCompany" :company.sync="$data.company" />
+                        </div>
+                        <div class="tab-content" id="faqTabContent" v-if="$data.tab == 5">
+                            <FaqTab @update-company="updateCompany" :company.sync="$data.company" />
+                        </div>
+                        <div class="tab-content" id="returnrefundTabContent" v-if="$data.tab == 6">
+                            <ReturnRefundsTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
                     </div>
                 </div>
@@ -63,7 +81,7 @@
 <script setup>
 import { cloneDeep, has } from 'lodash';
 import { inject, onBeforeMount, reactive } from 'vue';
-import { HomeTab, PrivacyTab, TermsAndConditionsTab } from './tabs';
+import { AboutUsTab, FaqTab, HomeTab, PrivacyTab, TermsAndConditionsTab, ReturnRefundsTab } from './tabs';
 
 // Magin variables
 const $api  = inject('$api');
@@ -99,22 +117,46 @@ const fetch = async () => {
 }
 
 /**
- * Update company details
+ * Updates the company details based on the provided data.
+ * 
+ * @param {Object} data - The data containing the updated company details.
  */
 const updateCompany = (data) => {
-    console.log(data);
-    //Check if data has banners
+    // Check if data has banners
     if( has(data,'banners') ){
+        // Update the banners in the company object
         $data.company.banners = data.banners;
     }
+    
     // Check if data has privacy policy
     if( has(data,'privacy_policy') ){
+        // Update the privacy policy in the company object
         $data.company.privacy_policy = data.privacy_policy;        
     }
+    
     // Check if data has terms and conditions
     if( has(data,'terms_conditions') ){
+        // Update the terms and conditions in the company object
         $data.company.terms_conditions = data.terms_conditions;        
     }
+    
+    // Check if data has FAQs
+    if( has(data,'faqs') ){
+        // Update the FAQs in the company object
+        $data.company.faqs = data.faqs;        
+    }
+    
+    // Check if data has about us content
+    if( has(data,'about_us') ){
+        // Update the about us content in the company object
+        $data.company.about_us = data.about_us;        
+    }
+    
+    // Check if data has return and refunds content
+    if( has(data,'return_refunds') ){
+        // Update the return and refunds content in the company object
+        $data.company.return_refunds = data.return_refunds;        
+    }            
 }
 
 onBeforeMount( () => fetch())

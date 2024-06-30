@@ -39,6 +39,55 @@ export class WebsiteController {
             
         }
     } 
+    /**
+     * This function handles the GET request to the About Us page.
+     * It fetches the about us information from the company model and returns it.
+     * @param req - The request object.
+     * @param res - The response object.
+     * @returns A Promise that resolves when the about us information is returned in the response.
+     * @throws HttpException if there is an error fetching the about us information.
+     */
+    @Get('about-us')
+    async aboutUs(@Req() req: Request,  @Res() res: Response) {
+        try{
+
+            // Fetch the about us information from the company model
+            let { about_us } = await this.companyModel.first();
+
+            // Return the about us information in the response
+            return res.status(HttpStatus.OK).json({ about_us });
+
+        } catch(error) {
+
+            // Throw an HttpException with the error message and status
+            throw new HttpException(error.message, error.status);
+            
+        }
+    } 
+
+    /**
+     * This function handles the GET request to the FAQs page.
+     * It fetches the FAQs from the company model and returns them.
+     * @param req - The request object.
+     * @param res - The response object.
+     * @returns A Promise that resolves when the FAQs are returned in the response.
+     * @throws HttpException if there is an error fetching the FAQs.
+     */
+    @Get('faqs')
+    async faqs(@Req() req: Request,  @Res() res: Response) {
+        try{
+            // Fetch the FAQs from the company model
+            let { faqs } = await this.companyModel.first();
+
+            // Return the FAQs in the response
+            return res.status(HttpStatus.OK).json({ faqs });
+
+        } catch(error) {
+            // Throw an HttpException with the error message and status
+            throw new HttpException(error.message, error.status);
+            
+        }
+    }    
     
     /**
      * This function handles the GET request to the terms and conditions page.

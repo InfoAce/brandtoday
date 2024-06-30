@@ -69,6 +69,7 @@
                                         <li><a href="#" @click.prevent="$router.push({ name: 'PrivacyPolicy'})">Privacy Policy</a></li>
                                         <li><a href="#" @click.prevent="$router.push({ name: 'ReturnRefunds'})">Return & Refunds</a></li>
                                         <li><a href="#" @click.prevent="$router.push({ name: 'TermsAndConditions'})">Terms & Conditions</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Frequently Asked Questions</a></li>
                                     </ul>
                                 </div>
                             </div>

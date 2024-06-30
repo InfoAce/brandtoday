@@ -28,7 +28,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-12">
-                    <div v-html="$data.terms_conditions"></div>
+                    <div v-html="$data.about_us"></div>
                 </div>
 			</div>
 		</div>
@@ -43,15 +43,15 @@ import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
 import { clone, debounce, each, isEmpty, has } from 'lodash';
 
 const $api  = inject('$api');
-const $data = reactive({ terms_conditions: String() });
+const $data = reactive({ about_us: String() });
 
 onBeforeMount( 
     debounce( async () => {
         try {
             
-            let { data:{ terms_conditions } } = await $api.get('website/terms-conditions');
+            let { data:{ about_us } } = await $api.get('website/about-us');
 
-            $data.terms_conditions = clone(terms_conditions);
+            $data.about_us = clone(about_us);
 
         } catch(error) {
 

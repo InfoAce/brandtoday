@@ -9,6 +9,12 @@ export class CompanyEntity {
   id: string;
 
   @Column({
+    nullable: true,
+    type: 'longtext'
+  })
+  about_us: string;
+
+  @Column({
     nullable: true
   })
   address: string;
@@ -28,6 +34,12 @@ export class CompanyEntity {
     unique: true
   })
   email: string
+
+  @Column({
+    nullable: true,
+    type: 'longtext'
+  })
+  faqs: string;
 
   @Column({
     nullable: true
