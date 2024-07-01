@@ -4,11 +4,11 @@ import { isEmpty, toPlainObject } from 'lodash';
 export default {
     install: (app: any, options: any) => {
         // State variables
-        const { auth, env:{ VITE_APP_URL } } = toPlainObject(app.config.globalProperties.$store.getters);
+        const { auth, env:{ VITE_API_URL } } = toPlainObject(app.config.globalProperties.$store.getters);
 
         // Init axios
         const api = axios.create({
-            baseURL: `${VITE_APP_URL}/api/v1`,
+            baseURL: `${VITE_API_URL}`,
             headers: {
                 'Accept':           'application/json',  
                 'X-Requested-With': 'XMLHttpRequest'
