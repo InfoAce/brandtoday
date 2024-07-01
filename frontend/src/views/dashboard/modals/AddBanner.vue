@@ -81,6 +81,8 @@ const $props = defineProps({
 });
 const $store         = useStore();
 const dropzoneBanner = ref(null);
+const auth           = computed( () => $store.getters.auth );
+const env            = computed( () => $store.getters.env );
 
 
 // Banner Schema
@@ -163,9 +165,11 @@ watch(
 ); 
 
 onBeforeMount( () => {
-    let { authToken, env: { VITE_API_BASE_URL } } = $store.getters;
-    $data.dropzoneOptions.url     = `${VITE_API_BASE_URL}/dashboard/website/upload`;
-    $data.dropzoneOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};    
+    let { VITE_API_BASE_URL }     = env.value;
+    let { token }                 = auth.value;
+    console.log(token);
+    // $data.dropzoneOptions.url     = `${VITE_API_BASE_URL}/dashboard/website/upload`;
+    // $data.dropzoneOptions.headers = { "Authorization": `${token.token_type} ${token.token}`};    
 });
 
 </script>
