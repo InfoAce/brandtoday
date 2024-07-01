@@ -79,8 +79,10 @@ export class AuthController {
             let { id: companyId } = await this.companyModel.first();
             let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
 
+            console.log(parseInt(this.configService.get('SALT_LENGTH'))));
+            console.log(await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH'))));
             // Hash password and generate token
-            registerUser.password      = await bcrypt.hash(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
+            registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
             registerUser['token']      = randomstring.generate(100);
             registerUser['company_id'] = companyId;
             registerUser['role_id']    = roleId;
