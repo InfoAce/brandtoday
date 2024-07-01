@@ -9,12 +9,12 @@
                     <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
                     <div class="container-fluid" >
                         <div class="row">
-                            <div class="col-12 px-0" style="background-color: rgba(200,200,200,0.7) !important;">
+                            <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
                                 <div class="slider-contain container">
                                     <div class="row">
-                                        <div class="col-12 text-left">
-                                            <h4>{{ image.description }}</h4>
-                                            <h1>{{ image.title }}</h1>
+                                        <div class="col-12 text-left d-flex flex-column align-items-start">
+                                            <h4 class="text-white">{{ image.description }}</h4>
+                                            <h1 class="text-white">{{ image.title }}</h1>
                                             <a href="#" class="btn btn-solid">shop now</a>
                                         </div>
                                     </div>

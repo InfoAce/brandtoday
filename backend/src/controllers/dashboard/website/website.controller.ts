@@ -48,13 +48,12 @@ export class WebsiteController {
             // Return the company details as a JSON response with a 200 status code
             return res.status(HttpStatus.OK).json({ company });
         } catch (error) {
+            console.log(error);
             // Log any errors that occur
             this.logger.error(error);  
         }
     }
 
-    @UseGuards(AdminGuard)
-    @Post('banner')
     /**
      * Store a banner for the company
      *
@@ -72,22 +71,23 @@ export class WebsiteController {
     ) {
         try{   
             // Get the authenticated user from the request
-            let user = get(req,'user');
-            let banners = Array();
+            let user        = get(req,'user');
+            let company     = await this.companyModel.findOne({ id: user.company_id });
+            let banners:any = Array();
 
             // Append the base URL to the banner path
-            data.path = `${this.configService.get('APP_URL')}/${data.path}`
+            data.path = `${this.configService.get('APP_URL')}/images/${data.path}`
 
             // Get the existing banners for the company (if any)
-            if( !isNull(user.company.banners) ){
-                banners = user.company.banners;
+            if( !isNull(company.banners) ){
+                banners = company.banners;
             }
             
             // Add the new banner to the list of banners
             banners.push(data);
 
             // Save the updated list of banners for the company
-            await this.companyModel.save({ id: user.company.id, banners });
+            await this.companyModel.save({ id: company.id, banners });
 
             // Return the response with a status code of 200
             return res.status(HttpStatus.OK).json();
@@ -125,6 +125,7 @@ export class WebsiteController {
     async uploadIcon(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
 
         try {
+
             // Return the uploaded file as a JSON response with a status code of 200
             return res.status(HttpStatus.OK).json({file});
 

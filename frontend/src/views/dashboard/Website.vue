@@ -52,7 +52,7 @@
                             </li>
                         </ul>
                         <div class="tab-content" id="homeTabContent" v-if="$data.tab == 1">
-                            <HomeTab @update-company="updateCompany" :company.sync="$data.company" />
+                            <HomeTab @fetch-company="fetch" :company.sync="$data.company" />
                         </div>
                         <div class="tab-content" id="privacyTabContent" v-if="$data.tab == 2">
                             <PrivacyTab @update-company="updateCompany" :company.sync="$data.company" />

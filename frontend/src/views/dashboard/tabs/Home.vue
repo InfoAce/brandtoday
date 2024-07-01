@@ -45,6 +45,7 @@
         <AddBanner 
             :show="$data.modal.add" 
             @update-modal="updateModal" 
+            @fetch="$emit('fetch-company')"
         />
         <!-- Container-fluid Ends-->
     </div>    
@@ -65,7 +66,7 @@ const $data = reactive({
     }
 });
 // Define emitters 
-const emit    = defineEmits(['update-company']);
+const $emit   = defineEmits(['fetch-company']);
 const $store  = useStore();
 const $swal   = inject('$swal');
 const banners = computed( () => $props.company.banners ?? []);
@@ -81,43 +82,62 @@ const $props  = defineProps({
 // Methods
 
 /**
- * Delete banner prompt
- * @param item 
+ * Prompts the user to confirm the deletion of a banner image.
+ * If the user confirms, the `removeBanner` function is called.
+ *
+ * @param {Object} item - The banner image to be deleted.
  */
 const deleteBanner = (item) => {
+    // Show a confirmation dialog to the user
     $swal?.fire({
-        icon: 'question',
-        title: 'Delete Banner',
-        text: 'Are you want to delete this banner image ?',
-        showCancelButton: true
+        icon: 'question', // Icon to display in the dialog
+        title: 'Delete Banner', // Title of the dialog
+        text: 'Are you want to delete this banner image ?', // Text content of the dialog
+        showCancelButton: true // Whether to show a "Cancel" button
     }).then((result: any) => {
-        if( result.isConfirmed ){
-            removeBanner(item);        
+        // If the user confirms the deletion
+        if( result.isConfirmed ) {
+            // Call the function to remove the banner image
+            removeBanner(item);
         }
     });	
 }
 
 /**
  * Delete banner image
+ *
+ * @param {Object} item - The banner image to be deleted.
+ * @returns {Promise} A promise that resolves when the banner has been deleted.
  */
-const removeBanner = (item) => {
+const removeBanner = async (item) => {
+    // Show a loader to indicate that the request is being processed
     $store.commit('loader',true);
-    $api.put(
-            '/dashboard/website/banner',
-            { banners: $data.company.banners.filter( banner => banner.path != item.path ) }
-        )
-        .then( ({ data: { company } }) => {
-            $data.company = cloneDeep(company);
-        })
-        .catch( () => {
-            $store.commit('loader',false);
-        })
-        .finally( () => {
-            $store.commit('loader',false);
+
+    try {
+        // Send a PUT request to delete the banner image from the server
+        const { data: { company } } = await $api.put('/dashboard/website/banner',{
+            banners: $data.company.banners.filter( banner => banner.path != item.path )
         });
+
+        // Update the company data with the deleted banner image
+        $data.company = cloneDeep(company);
+    } catch (error) {
+        // If an error occurs, show a loader to indicate that the request failed
+        $store.commit('loader',false);
+    } finally {
+        // Hide the loader
+        $store.commit('loader',false);
+    }
 }
 
+/**
+ * Updates the `add` property of the `modal` object.
+ *
+ * @param {boolean} value - The new value for the `add` property.
+ * @returns {void} This function does not return anything.
+ */
 const updateModal = (value:boolean) => {
+    // Update the `add` property of the `modal` object with the given value.
     $data.modal.add = value;
 }
 
