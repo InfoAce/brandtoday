@@ -32,7 +32,7 @@ export default createStore({
   },
   getters:{
     auth:              (state) => state.auth,
-    assetsUrl:         (state) => state.env.VITE_API_URL,
+    assetsUrl:         (state) => state.env.VITE_API_URL.replace('api/v1',''),
     cart:              (state) => state.cart,
     env:               (state) => state.env,
     home:              (state) => state.home,
