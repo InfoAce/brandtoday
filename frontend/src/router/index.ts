@@ -336,143 +336,150 @@ const router = createRouter({
           component: () => import('@/views/dashboard/Login.vue')
         },
         {
-          path: '',
-          name: "Overview",
-          meta: {
-            title:     'Overview',
-            auth:  true,
-            redirectIfAuth: false,
-            state: 1,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Overview.vue')
-        },      
-        {
-          path: 'clients',
-          name: "Clients",
-          meta: {
-            title: 'Clients',
-            auth:  true,
-            state: 1,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Clients.vue')
-        },
-        {
-          path: 'orders',
-          name: "Orders",
-          meta: {
-            title: 'Orders',
-            auth:  true,
-            redirectIfAuth: false,
-            state: 1,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Orders.vue')
-        },
-        {
-          path: 'staff',
-          name: "Staff",
-          meta: {
-            title: 'Staff Members',
-            auth:  true,
-            state: 2,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Staff.vue')
-        },
-        {
-          path: 'company',
-          name: "Company",
-          meta: {
-            title: 'Company',
-            auth:  true,
-            state: 2,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Company.vue')
-        },
-        {
-          path: 'website',
-          name: "Website",
-          meta: {
-            title: 'Website Setup',
-            auth:  true,
-            state: 2,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Website.vue')
-        },        
-        {
-          path: 'profile',
-          name: "Profile",
-          meta: {
-            title: 'Profile',
-            auth:  true,
-            state: 1,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Profile.vue')
-        },       
-        {
-          path: 'system',
-          name: "System",
-          meta: {
-            title: 'System',
-            auth:  true,
-            state: 3,
-            redirectIfAuth: false,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/System.vue')
-        },
-        {
-          path: 'verify',
-          children:[
+          path:'',
+          children: [
             {
               path: '',
-              redirect: '/dashboard/verify/error'
-            },
-            {
-              path: ':token',
-              name: 'VerifyAccount',
+              name: "Overview",
               meta: {
-                title: 'Verify Account',
-                auth:  false,
-                state: 0,
+                title:     'Overview',
+                auth:  true,
+                redirectIfAuth: false,
+                state: 1,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/Overview.vue')
+            },      
+            {
+              path: 'clients',
+              name: "Clients",
+              meta: {
+                title: 'Clients',
+                auth:  true,
+                state: 1,
                 redirectIfAuth: false,
                 admin: true
               },
-              component: () => import('@/views/dashboard/VerifyAccount.vue')
+              component: () => import('@/views/dashboard/Clients.vue')
             },
             {
-              path: 'error',
-              name: "VerifyError404",
+              path: 'orders',
+              name: "Orders",
               meta: {
-                title: 'Not Found',
-                auth:  false,
+                title: 'Orders',
+                auth:  true,
                 redirectIfAuth: false,
-                state: 0,
-                admin: false
+                state: 1,
+                admin: true
               },
-              component: () => import('@/views/dashboard/VerifyError.vue')
+              component: () => import('@/views/dashboard/Orders.vue')
             },
+            {
+              path: 'staff',
+              name: "Staff",
+              meta: {
+                title: 'Staff Members',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/Staff.vue')
+            },
+            {
+              path: 'company',
+              name: "Company",
+              meta: {
+                title: 'Company',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/Company.vue')
+            },
+            {
+              path: 'website',
+              name: "Website",
+              meta: {
+                title: 'Website Setup',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/Website.vue')
+            },        
+            {
+              path: 'profile',
+              name: "Profile",
+              meta: {
+                title: 'Profile',
+                auth:  true,
+                state: 1,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/Profile.vue')
+            },       
+            {
+              path: 'system',
+              name: "System",
+              meta: {
+                title: 'System',
+                auth:  true,
+                state: 3,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/System.vue')
+            },
+            {
+              path: 'verify',
+              children:[
+                {
+                  path: '',
+                  redirect: '/dashboard/verify/error'
+                },
+                {
+                  path: ':token',
+                  name: 'VerifyAccount',
+                  meta: {
+                    title: 'Verify Account',
+                    auth:  false,
+                    state: 0,
+                    redirectIfAuth: false,
+                    admin: true
+                  },
+                  component: () => import('@/views/dashboard/VerifyAccount.vue')
+                },
+                {
+                  path: 'error',
+                  name: "VerifyError404",
+                  meta: {
+                    title: 'Not Found',
+                    auth:  false,
+                    redirectIfAuth: false,
+                    state: 0,
+                    admin: false
+                  },
+                  component: () => import('@/views/dashboard/VerifyError.vue')
+                },
+              ],
+              component: RouterView
+            }  
           ],
-          component: RouterView
-        }                                    
+          component: () => import('@/views/layouts/Dashboard.vue')
+        },                                  
       ],
-      component: () => import('@/views/layouts/Dashboard.vue')
+      component: RouterView
     }
   ]
 });
 
 router.beforeEach( 
-  (to, from, next) => {
+  debounce( 
+    (to, from, next) => {
 
     store.commit('loader',true);
     
@@ -504,14 +511,10 @@ router.beforeEach(
     if( auth && !admin ){
       if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
       if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login'}) }
-      // if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (!isEmpty(store.getters.auth) && !redirectIfAuth) ) {  next() }
     }
-    
-    // if( auth && !isEmpty(store.getters.auth) ) {
-    //   checkRole(to,next);        
-    // }
-
-});
+  
+  },1000)
+);
 
 router.afterEach(
   debounce((to, from) => {
