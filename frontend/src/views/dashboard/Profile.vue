@@ -35,7 +35,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: 100vh;">
                 <VuePictureCropper
                     v-if="!$isEmpty(profileImage)"
                     :boxStyle="cropBorderStyle"
@@ -163,6 +163,7 @@ import * as yup from "yup";
 // import vueDropzone from 'dropzone-vue3'
 import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
 import '@jaxtheprime/vue3-dropzone/dist/style.css'
+import Cropper from 'cropperjs';
 
 export default {
     beforeCreate(){
@@ -192,10 +193,10 @@ export default {
         }, 
         authUser:{
             get() {
-                return this.$store.getters.authUser;
+                return this.$store.getters.auth.user;
             },
             set(val){
-                this.$store.commit('authUser',val);
+                this.$store.commit('auth',val);
             }
         },  
         backendUri(){
@@ -203,7 +204,7 @@ export default {
         },
         croppingOption: () => ({
             viewMode: 1,
-            dragMode: 'crop',
+            dragMode: 'move',
             aspectRatio: 1,
             cropBoxResizable: false,
         }),
@@ -211,15 +212,15 @@ export default {
             width: '100%',
             height: '100%',
             backgroundColor: '#f8f8f8',
-            margin: 'auto',
+            margin: 'auto',          
         }),
         env() {
             return this.$store.getters.env;
         },
         presetMode: () => ({
             mode: 'round',
-            width: 40,
-            height: 500,
+            width: 100,
+            height: 100,
         })
     },
     data(){
@@ -293,21 +294,21 @@ export default {
                 });
         },
         imagedropzone(event: any){
-            console.log(arguments);
-            // let files = event.target.files;
+            // console.log(arguments);
+            let files = event.target.files;
 
-            // if( !isEmpty(files) ){
+            if( !isEmpty(files) ){
 
-            //     const reader = new FileReader();
-            //     reader.readAsDataURL(files[0]);
-            //     reader.onload = () => {
-            //         this.profileImage = reader.result;
-            //         $('#imagecropper').modal('show');
-            //     };
-            //     reader.onerror = () => {
-            //         console.log(arguments);
-            //     };
-            // }
+                const reader = new FileReader();
+                reader.readAsDataURL(files[0]);
+                reader.onload = () => {
+                    this.profileImage = reader.result;
+                    $('#imagecropper').modal('show');
+                };
+                reader.onerror = () => {
+                    console.log(arguments);
+                };
+            }
 
         },
         updateUser(){
