@@ -72,36 +72,37 @@ export class AuthController {
         @Body() registerUser: RegisterValidation, 
         @Res()  res:          Response
     ){
-        console.log(await bcrypt.hashSync('testing', parseInt(this.configService.get('SALT_LENGTH'))));
-        try{
-            // Generate random string for token
-            let randomstring = require("randomstring");
+        let encrypt = await bcrypt.hashSync('testing', parseInt(this.configService.get('SALT_LENGTH')));
+        res.status(HttpStatus.OK).json({encrypt});
+        // try{
+        //     // Generate random string for token
+        //     let randomstring = require("randomstring");
             
-            // Get company and role IDs
-            let { id: companyId } = await this.companyModel.first();
-            let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
+        //     // Get company and role IDs
+        //     let { id: companyId } = await this.companyModel.first();
+        //     let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
 
-            // Hash password and generate token
-            registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
-            registerUser['token']      = randomstring.generate(100);
-            registerUser['company_id'] = companyId;
-            registerUser['role_id']    = roleId;
+        //     // Hash password and generate token
+        //     registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
+        //     registerUser['token']      = randomstring.generate(100);
+        //     registerUser['company_id'] = companyId;
+        //     registerUser['role_id']    = roleId;
             
-            // Remove confirm password field
-            delete registerUser.confirm_password;
+        //     // Remove confirm password field
+        //     delete registerUser.confirm_password;
 
-            // Save user and send confirmation email
-            let user = await this.userModel.save(registerUser);
-            await this.mailService.sendUserConfirmation(user);
+        //     // Save user and send confirmation email
+        //     let user = await this.userModel.save(registerUser);
+        //     await this.mailService.sendUserConfirmation(user);
 
-            // Send response with user details
-            res.status(HttpStatus.OK).json({user});
+        //     // Send response with user details
+        //     res.status(HttpStatus.OK).json({user});
 
-        } catch(error) {
-            this.logger.error(error);
-            // Log and throw error
-            throw new ControllerException(error);            
-        }   
+        // } catch(error) {
+        //     this.logger.error(error);
+        //     // Log and throw error
+        //     throw new ControllerException(error);            
+        // }   
     }
 
     @Put('verify/:token')
