@@ -11,6 +11,7 @@ import * as path from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { ControllerException } from 'src/exceptions/controller.exception';
 
 @Controller('auth')
 export class AuthController {
@@ -97,10 +98,10 @@ export class AuthController {
             // Send response with user details
             res.status(HttpStatus.OK).json({user});
 
-        } catch(err) {
+        } catch(error) {
+            console.log(error);
             // Log and throw error
-            console.log(err);
-            throw new ExceptionsHandler(err);            
+            throw new ControllerException(error);            
         }   
     }
 
