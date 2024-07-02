@@ -72,8 +72,9 @@ export class AuthController {
         @Body() registerUser: RegisterValidation, 
         @Res()  res:          Response
     ){
-        let encrypt = await bcrypt.hashSync('testing', parseInt(this.configService.get('app.SALT_LENGTH')));
-        res.status(HttpStatus.OK).json({encrypt});
+        // let encrypt = await bcrypt.hashSync('testing', parseInt(this.configService.get('app.SALT_LENGTH')));
+        let salt = this.configService.get('app.SALT_LENGTH');
+        res.status(HttpStatus.OK).json({salt});
         // try{
         //     // Generate random string for token
         //     let randomstring = require("randomstring");
