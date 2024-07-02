@@ -20,13 +20,30 @@ async function bootstrap() {
           new transports.File({
             filename: `${process.cwd()}${sep}public${sep}logs${sep}error.log`,
             level: 'error',
-            format: format.combine(format.timestamp(), format.json()),
+            format: format.combine(
+              format.timestamp(), 
+              format.json(),
+              format.splat(),
+              format.printf((error) => {
+                if (error.stack) {
+                    // print log trace 
+                    return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
+                  }
+                return `${error.timestamp} ${error.level}: ${error.message} - ${error.context}`;
+              }),
+            ),
           }),
           // logging all level
           new transports.File({
             filename: `${process.cwd()}${sep}public${sep}logs${sep}info.log`,
             level: 'info',
-            format: format.combine(format.timestamp(), format.json()),
+            format: format.combine(
+              format.timestamp(), 
+              format.json(),
+              format.printf(({ context, level, message, timestamp, }) => {
+                return `${timestamp} ${level}: ${message} - ${context}`;
+              }),
+            ),
           }),
           // we also want to see logs in our console
           new transports.Console({
