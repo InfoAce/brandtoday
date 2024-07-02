@@ -7,6 +7,7 @@ import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
 import { isEmpty } from 'lodash';
+import * as moment from 'moment';
 // Directory separator
 const { sep } = require('path');
 
@@ -18,7 +19,7 @@ async function bootstrap() {
         transports: [
           // let's log errors into its own file
           new transports.File({
-            filename: `${process.cwd()}${sep}public${sep}logs${sep}error.log`,
+            filename: `${process.cwd()}${sep}public${sep}logs${sep}error-${moment().format('YYYY-MM-DD')}.log`,
             level: 'error',
             format: format.combine(
               format.timestamp(), 
@@ -26,6 +27,7 @@ async function bootstrap() {
               format.splat(),
               format.printf((error) => {
                 if ( !isEmpty(error.stack) ) {
+                  console.log(error.stack);
                   // print log trace 
                   return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
                 }
@@ -35,7 +37,7 @@ async function bootstrap() {
           }),
           // logging all level
           new transports.File({
-            filename: `${process.cwd()}${sep}public${sep}logs${sep}info.log`,
+            filename: `${process.cwd()}${sep}public${sep}logs${sep}info-${moment().format('YYYY-MM-DD')}.log`,
             level: 'info',
             format: format.combine(
               format.timestamp(), 
