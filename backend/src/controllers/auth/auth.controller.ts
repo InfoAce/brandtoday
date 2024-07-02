@@ -72,7 +72,7 @@ export class AuthController {
         @Body() registerUser: RegisterValidation, 
         @Res()  res:          Response
     ){
-        let encrypt = await bcrypt.hashSync('testing', parseInt(this.configService.get('SALT_LENGTH')));
+        let encrypt = await bcrypt.hashSync('testing', parseInt(this.configService.get('app.SALT_LENGTH')));
         res.status(HttpStatus.OK).json({encrypt});
         // try{
         //     // Generate random string for token
@@ -83,7 +83,7 @@ export class AuthController {
         //     let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
 
         //     // Hash password and generate token
-        //     registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
+        //     registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('app.SALT_LENGTH')));
         //     registerUser['token']      = randomstring.generate(100);
         //     registerUser['company_id'] = companyId;
         //     registerUser['role_id']    = roleId;
