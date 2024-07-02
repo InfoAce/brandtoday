@@ -30,9 +30,8 @@ export class MailService {
       return await this.mailerService.sendMail({
         to: user.email,  // The recipient's email address.
         // from: '"Support Team" <support@example.com>', // override default from
-        subject: `${this.configService.get<string>('APP_NAME') } Email Confirmation`,  // The subject of the email.
+        subject: `${this.configService.get<string>('APP_NAME') } Account Registration`,  // The subject of the email.
         template: 'welcome/index',  // The name of the handlebars template to use.
-        // html: fs.readFileSync(`${process.cwd()}${sep}views${sep}emails${sep}welcome${sep}index.html`, 'utf8'),
         context: { // The data to pass to the template.
           app_url:     this.configService.get<string>('APP_NAME'),  // The name of the application.
           verify_link: `${this.configService.get('APP_FRONTEND_URL')}/home/verify/email/${user.token}`, // The URL for the email verification link.

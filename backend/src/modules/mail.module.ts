@@ -26,9 +26,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
           },
           template: {
             dir: `${process.cwd()}${sep}views${sep}emails`,
-            adapter: new PugAdapter({
-              inlineCssEnabled: true, 
-            }),
+            adapter: new PugAdapter(),
             options: {
               strict: false,
             },
