@@ -33,8 +33,7 @@ export class MailService {
         subject: `${this.configService.get<string>('APP_NAME') } Account Registration`,  // The subject of the email.
         template: 'welcome/index',  // The name of the handlebars template to use.
         context: { // The data to pass to the template.
-          app_url:     this.configService.get<string>('APP_NAME'),  // The name of the application.
-          verify_link: `${this.configService.get('APP_FRONTEND_URL')}/home/verify/email/${user.token}`, // The URL for the email verification link.
+          verify_link: `${this.configService.get('app.APP_FRONTEND_URL')}/home/verify/email/${user.token}`, // The URL for the email verification link.
         },
       });
 
