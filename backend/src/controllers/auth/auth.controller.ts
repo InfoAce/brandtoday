@@ -72,6 +72,7 @@ export class AuthController {
         @Body() registerUser: RegisterValidation, 
         @Res()  res:          Response
     ){
+        console.log(await bcrypt.hashSync('testing', parseInt(this.configService.get('SALT_LENGTH'))));
         try{
             // Generate random string for token
             let randomstring = require("randomstring");
@@ -80,8 +81,6 @@ export class AuthController {
             let { id: companyId } = await this.companyModel.first();
             let { id: roleId }    = await this.roleModel.findOneBy({ name: 'client'});
 
-            this.logger.error(parseInt(this.configService.get('SALT_LENGTH')));
-            this.logger.error(await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH'))));
             // Hash password and generate token
             registerUser.password      = await bcrypt.hashSync(registerUser.password, parseInt(this.configService.get('SALT_LENGTH')));
             registerUser['token']      = randomstring.generate(100);
