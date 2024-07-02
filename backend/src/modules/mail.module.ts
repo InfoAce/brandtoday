@@ -28,10 +28,6 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
             dir: `${process.cwd()}${sep}views${sep}emails`,
             adapter: new PugAdapter({
               inlineCssEnabled: true, 
-              inlineCssOptions:{ 
-                baseUrl: `${process.cwd()}${sep}public${sep}assets${sep}css${sep}emails${sep}`.replace(/\\/g,'/'),    
-                keepLinkTags: true,       
-              }
             }),
             options: {
               strict: false,
