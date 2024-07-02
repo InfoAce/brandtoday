@@ -324,6 +324,15 @@ const router = createRouter({
       },
       children:[
         {
+          beforeEnter(to,from,next){
+            if( !isEmpty(store.getters.auth) ){
+              next({ name: 'Overview' });
+            }
+
+            if( isEmpty(store.getters.auth) ){
+              next();
+            }
+          },
           path: 'login',
           name: "AdminLogin",
           meta: {
@@ -336,6 +345,15 @@ const router = createRouter({
           component: () => import('@/views/dashboard/Login.vue')
         },
         {
+          beforeEnter(to,from,next){
+            if( !isEmpty(store.getters.auth) ){
+              next();
+            }
+
+            if( isEmpty(store.getters.auth) ){
+              next({ name: 'AdminLogin'});
+            }
+          },
           path:'',
           children: [
             {

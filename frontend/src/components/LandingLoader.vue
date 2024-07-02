@@ -27,7 +27,7 @@ export default {
   display: block;
   margin:15px auto;
   position: relative;
-  color: #FFF;
+  color: #ededed;
   left: -100px;
   box-sizing: border-box;
   animation: shadowRolling 2s linear infinite;

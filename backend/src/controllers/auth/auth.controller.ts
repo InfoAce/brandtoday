@@ -2,11 +2,11 @@ import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorEx
 import { AuthGuard } from '../../guards';
 import { Request, Response } from 'express';
 import { AuthService, MailService } from 'src/services';
-import { LoginValidation, RegisterValidation } from 'src/validation';
+import { LoginValidation, RegisterValidation, UpdateAuthValidation } from 'src/validation';
 import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { get, isEmpty, isNull, pick, set } from 'lodash';
+import { get, isEmpty, isNull, pick, omit, set } from 'lodash';
 import * as path from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -164,8 +164,6 @@ export class AuthController {
         }
     } 
 
-    @UseGuards(AuthGuard)
-    @Post('user')
     /**
      * Updates the authenticated user's profile.
      *
@@ -174,16 +172,24 @@ export class AuthController {
      * @param {Response} res - The response object.
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
      */
-    async updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
+    @UseGuards(AuthGuard)
+    @Post('user')
+    async updateUser(
+        @Body() body: UpdateAuthValidation, 
+        @Req()  req: Request,  
+        @Res()  res: Response
+    ) {
         // Get the authenticated user from the request.
         let authUser = get(req,'user');
         try {
             // Update the user's data in the database.
-            let updatedUser = await this.userModel.updateOne({id: authUser.id}, body);
-            // Update the authenticated user in the request object.
-            set(req,'user',updatedUser);
+            await this.userModel.save({id: authUser.id, ...body});
+
+            // Fetch the user's data in the database
+            let user = await this.userModel.findOneBy({ id: get(req,'user').id });
+
             // Return the updated user data as a JSON response with a 200 status code.
-            res.status(HttpStatus.OK).json({user: get(req,'user') });
+            res.status(HttpStatus.OK).json({ user: omit(user,['company']) });
         } catch (err) {
             // Return an internal server error response if an error occurs.
             res.status(HttpStatus.INTERNAL_SERVER_ERROR);       
@@ -208,9 +214,13 @@ export class AuthController {
         )
     )
     uploadImage(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
-        let user = get(req,'user');
-        this.userModel.save({ id: user.id, image: `images/${file.filename}` });
-        return res.status(HttpStatus.OK).json({});
+        try {
+            // Return the uploaded file as a JSON response with a status code of 200
+            return res.status(HttpStatus.OK).json({ location:`${this.configService.get<string>('app.APP_URL')}/images/${file.filename}`});
+        } catch(error) {
+            // Log any errors that occur
+            this.logger.error(error);
+        }
     }
 
     @UseGuards(AuthGuard)

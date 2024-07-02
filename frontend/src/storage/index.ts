@@ -28,9 +28,20 @@ export default {
 
         // Add a change listener to the local storage.
         localStorage.on('change', (key, value) => {
+
             // If the key is the authentication key, parse the value from JSON and commit it to the Vuex store.
             if( key == `${VITE_APP_NAME.replaceAll(' ','')}_AUTH` ) {
-                $store.commit('auth',JSON.parse(value));
+                const auth = JSON.parse(value);
+                app.config.globalProperties.$api.interceptors.request.use(
+                    (config) => {
+                        if( !isEmpty(auth) ){
+                            config.headers.Authorization = `${auth.token.token_type} ${auth.token.token}`;
+                        }
+                        return config;
+                    },
+                    error => Promise.reject(error)
+                );
+                $store.commit('auth',auth);
             }
         });
     }

@@ -114,8 +114,10 @@ const login = () => {
 			// If the request is successful, save the user and token to local storage
 			localStorage.setItem(`${get(store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({ user, token }));
 			
-			// Redirect the user to the overview page
-			router.push({ name: 'Overview' });
+			setTimeout(() => {
+				// Redirect the user to the overview page
+				router.push({ name: 'Overview' });				
+			}, 1000);
 		})
 		.catch((error) => {
 			// If there is an error, handle the response

@@ -39,8 +39,8 @@
                             </div>
                             <div class="footer-contant">
                                 <div class="footer-logo" v-show="!isEmpty(home.company)">
-                                    <img v-if="isNull(home.company.image)" src="/assets/home/images/icon/logo.png" :alt="home.company.name">
-                                    <img v-else :src="`${backendUri}${home.company.logo}`" width="200" :alt="home.company.name">
+                                    <img v-if="isNull(home.company.logo)" src="/assets/home/images/icon/logo.png" :alt="home.company.name">
+                                    <img v-else :src="home.company.logo" width="200" :alt="home.company.name">
                                 </div>
                             </div>
                         </div>

@@ -123,12 +123,16 @@ const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace(
 const auth       = computed( () => $store.getters.auth);
 const cart       = computed( () => $store.getters.cart);
 const home       = computed({ get: () => $store.getters.home, set(val) { $store.commit('home',val); } });
-
+const addIcon    = (icon) => {
+	document.querySelector('link[rel="icon"]')?.setAttribute('type','image/x-icon');
+	document.querySelector('link[rel="icon"]')?.setAttribute('href',icon);
+}
 const fetchMenus = () => {
     $api.get('header')
         .then( ({ data: { categories, company } }) => {
             home.value.categories = cloneDeep(categories);
             home.value.company    = cloneDeep(company);
+            addIcon(company.icon)
         })
         .catch( () => {
 

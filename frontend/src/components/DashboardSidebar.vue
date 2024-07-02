@@ -2,23 +2,23 @@
 <!-- Page Sidebar Start-->
 <div class="page-sidebar">
 	<div class="main-header-left d-none d-lg-block">
-		<div class="logo-wrapper">
+		<div class="logo-wrapper m-2 p-0">
 			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
-				<i data-feather="bar-chart" v-if="isNull($data.company.logo)"></i>
-				<img v-else class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${backendUri}${$data.company.logo}`"  :alt="`${$data.company.name}`">
+				<i data-feather="bar-chart" v-if="!isEmpty($data.company) && isNull($data.company.logo)"></i>
+				<img v-if="!isEmpty($data.company) && !isNull($data.company.logo)" class="d-none d-lg-block blur-up lazyloaded w-100" :src="$data.company.logo"  :alt="`${$data.company.name}`">
 			</a>
 		</div>
 	</div>
 	<div class="sidebar custom-scrollbar">
 		<a href="javascript:void(0)" class="sidebar-back d-lg-none d-block"><i class="fa fa-times" aria-hidden="true"></i></a>
-		<div class="sidebar-user">
-			<i data-feather="bar-chart" v-if="isNull($data.company.logo)"></i>
-			<img v-else class="img-60" :src="`${backendUri}${auth.user.image}`"  :alt="`${auth.user.first_name} ${auth.user.last_name}`" >
-			<div>
+		<!-- <div class="sidebar-user">
+			<i data-feather="bar-chart" v-if="!isEmpty($data.company) && isNull($data.company.logo)"></i>
+			<img v-if="!isEmpty(authUser) && !isNull($data.company.logo)" class="img-60" :src="`${backendUri}${auth.user.image}`"  :alt="`${auth.user.first_name} ${auth.user.last_name}`" >
+			<div v-if="!isEmpty(authUser) ">
 				<h6 class="f-14">{{ auth.user.first_name }} {{ auth.user.last_name }}</h6>
 				<p>{{ auth.user.role.name }}</p>
 			</div>
-		</div>
+		</div> -->
 		<ul class="sidebar-menu">
 			<template v-for="(menu,index) in menus" :key="index">
 				<li>
@@ -49,11 +49,13 @@
 <!-- Page Sidebar Ends-->	
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onBeforeMount, reactive, watch} from 'vue';
-import { debounce, has, get, isNull } from 'lodash';
+import { computed, inject, onMounted, onBeforeMount, reactive, watch} from 'vue';
+import { cloneDeep, debounce, has, get, isNull, isEmpty } from 'lodash';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 
+const $api    = inject('$api');
+const $toast  = inject('$toast');
 const $route  = useRoute();
 const $router = useRouter();
 const $store  = useStore();
@@ -66,22 +68,25 @@ const $data   = reactive({
 // Computed 
 const auth       = computed( () => $store.getters.auth );
 const backendUri = computed( () => get($store.getters.env,'VITE_API_URL').replace('api/v1','') );
-
+const addIcon    = (icon) => {
+	document.querySelector('link[rel="icon"]')?.setAttribute('type','image/x-icon');
+	document.querySelector('link[rel="icon"]')?.setAttribute('href',icon);
+}
 onMounted(
 	debounce( async() => {
 		window?.feather.replace();
 		$(`a[data-route-name="${$route.name}"]`).addClass('active');	
 		try {
             let { data:{ company } } = await $api.get('dashboard/sidebar');
+			$data.company = cloneDeep(company);
+			addIcon(company.icon);
         } catch(error) {
-            if( has(error,'response') ){
-            }
+			$toast.error('Oops!! Something went wrong while fetching company information.')
         }
 	},500)
 );
 
 onBeforeMount( () =>{ 
-
   const scripts = [
     '/assets/dashboard/js/feather.min.js',
 	'/assets/dashboard/js/sidebar-menu.js'

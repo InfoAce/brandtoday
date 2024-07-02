@@ -15,3 +15,9 @@ export { WishlistValidation as WishlistValidation } from './wishlist.validation'
 // Company Banner
 export { CreateBannerValidation as CreateBannerValidation } from './banner/create.validation';
 export { UpdateBannerValidation as UpdateBannerValidation } from './banner/update.validation';
+
+// Auth
+export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth.validation';
+
+// Company
+export { UpdateCompanyValidation as UpdateCompanyValidation } from './company/update.company.validation';

@@ -5,8 +5,8 @@
         <div class="main-header-left d-lg-none w-auto">
             <div class="logo-wrapper">
                 <a href="index.html">
-                    <i data-feather="bar-chart" v-if="isNull(authUser.image)"></i>
-                    <img v-else class="blur-up lazyloaded d-block d-lg-none" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`">
+                    <i data-feather="bar-chart" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
+                    <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="blur-up lazyloaded d-block d-lg-none" :src="authUser.image"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                 </a>
             </div>
         </div>
@@ -28,8 +28,8 @@
                 </li>
                 <li class="onhover-dropdown">
                     <div class="media align-items-center">
-                        <i data-feather="user" v-if="isNull(authUser.image)"></i>
-                        <img v-else class="align-self-center pull-right img-50 blur-up lazyloaded" :src="`${backendUri}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`">
+                        <i data-feather="user" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
+                        <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="align-self-center pull-right img-50 blur-up lazyloaded" :src="authUser.image"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                         <div class="dotted-animation">
                             <span class="animate-circle"></span>
                             <span class="main-circle"></span>
@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { isNull, get } from 'lodash';
+import { isEmpty, isNull, get } from 'lodash';
 import { computed, inject } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';

@@ -24,74 +24,49 @@
         </div>
     </div>
 </div>
-<!-- Container-fluid Ends-->  
-<!-- Modal start -->
-<div class="modal theme-modal fade bd-example-modal-lg" id="imagecropper" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crop Profile Image</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="height: 100vh;">
-                <VuePictureCropper
-                    v-if="!$isEmpty(profileImage)"
-                    :boxStyle="cropBorderStyle"
-                    :img="profileImage"
-                    :options="croppingOption"
-                    :presetMode="presetMode"
-                    @ready="() => console.log('ready')"
-                />
-            </div>
-            <div class="modal-footer">
-                <!-- <button @click="() => addUser()" class="btn btn-primary" type="button" :disabled="data.isDisabled || data.loader.register">
-                    <i v-if="data.loader.register" class="fa fa-spinner fa-spin"></i>
-                    Create
-                </button> -->
-            </div>
-        </div>
-    </div>
-</div>  
+<!-- Container-fluid Ends-->   
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
         <div class="col-xl-5 col-lg-5 col-md-6">
             <div class="card">
+                <CardLoader />
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 mb-2">
                             <label>Profile Photo</label>
-                            <!-- <div class="dropzone digits">
-                                <div class="dz-message needsclick">
-                                    <i class="fa fa-cloud-upload"></i>
-                                    <h4 class="mb-0 f-w-600">Drop files here or click to upload.</h4>
-                                </div>
-                            </div> -->
-                            <Vue3Dropzone 
-                                width="350" 
-                                height="350" 
-                                :maxFiles="1" 
-                                @error="($event) => console.log($event)"
-                                @change="imagedropzone"
-                                :maxFileSize="2"
-                                :accept="['png', 'jpg', 'jpeg']" 
-                            />
-                            <!-- <vue-dropzone
-                                v-if="edit.image"
-                                ref="dropzoneLogo" 
-                                @vdropzone-success="imageUpdate"
-                                id="dropzoneLogo" 
-                                :options="dropzoneOptions"
-                            />        
-                            <template v-else>
-                                <img v-if="!$isEmpty(user.image)" :src="`${backendUri}${user.image}`" :alt="`${user.first_name} ${user.last_name}`" class="img-fluid blur-up lazyloaded col-12">
-                                <img v-else src="/assets/dashboard/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded col-12">
-                            </template>
-                            <div class="col-12 text-center">
-                                <button class="btn btn-primary btn-sm my-2" @click="edit.image = true">Edit Image</button>
-                            </div> -->
+                            <div class="col-12">
+                                <template v-if="!$isEmpty(user.image) && !edit.image && $isEmpty(form.path)">
+                                    <div class="col-12 d-flex flex-column align-items-center">
+                                        <img :src="user.image" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                        <button class="btn btn-primary mt-2" @click="edit.image = true">Edit</button>
+                                    </div>
+                                </template>
+                                <template v-if="!$isEmpty(form.path) && !edit.image">
+                                    <div class="col-12 d-flex flex-column align-items-center">
+                                        <img :src="form.path" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                        <button class="btn btn-primary mt-2" @click="edit.image = true">Edit</button>
+                                    </div>
+                                </template>                                 
+                                <template v-if="edit.image && !$isEmpty(profileImage) && $isEmpty(form.path)">
+                                    <VuePictureCropper                                
+                                        :boxStyle="cropBorderStyle"
+                                        :img="profileImage"
+                                        :options="croppingOption"
+                                        :presetMode="presetMode"
+                                    /> 
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <button class="btn btn-primary ml-2" type="button" @click="selectCrop">Crop</button>
+                                        <button class="btn btn-primary ml-2" type="button" @click="profileImage = String()">Cancel</button>
+                                    </div>
+                                </template>
+                                <template v-if="edit.image && $isEmpty(profileImage) && $isEmpty(form.path)">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <h1 style="border: 3px solid #ededed; border-radius: 500px;" class="p-5"><i class="fa fa-user fa-lg"></i></h1>
+                                    </div>
+                                    <input class="form-control" type="file" @change="onFileChange($event)" v-if="$isEmpty(profileImage) && $isEmpty(form.path)" />
+                                </template> 
+                            </div>
                         </div>
                         <div class="col-12">
                             <div class="form-group">
@@ -133,14 +108,7 @@
                             </div>                            
                         </div>
                         <div class="col-12">
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <input class="form-control" id="address" type="text" v-model="user.address">
-                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.address}}</p>								
-                            </div>                            
-                        </div>
-                        <div class="col-12">
-                            <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
+                            <button class="btn btn-primary" :disabled="isDisabled || loading.updating" @click="updateUser">
                                 <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
                                 Save Changes
                             </button>
@@ -156,15 +124,15 @@
 </template>
 <script lang="ts">
 import { inject, reactive, ref, watch } from 'vue';
-import { each, debounce, isEmpty, keys, has, pick } from 'lodash';
+import { cloneDeep, each, debounce, get, isEmpty, keys, has, pick } from 'lodash';
 import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-// import vueDropzone from 'dropzone-vue3'
+import moment from 'moment';
 import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
 import '@jaxtheprime/vue3-dropzone/dist/style.css'
-import Cropper from 'cropperjs';
-
+import { CardLoader } from '../../components';
+import localStorage from 'reactive-localstorage';
 export default {
     beforeCreate(){
         this.checkUser = debounce( (user) => {
@@ -184,6 +152,7 @@ export default {
         });
     },
     components:{
+        CardLoader,
         VuePictureCropper,
         Vue3Dropzone,
     },
@@ -206,21 +175,21 @@ export default {
             viewMode: 1,
             dragMode: 'move',
             aspectRatio: 1,
-            cropBoxResizable: false,
+            cropBoxResizable: false
         }),
         cropBorderStyle: () => ({
             width: '100%',
             height: '100%',
             backgroundColor: '#f8f8f8',
-            margin: 'auto',          
+            margin: 'auto',
         }),
         env() {
             return this.$store.getters.env;
         },
         presetMode: () => ({
             mode: 'round',
-            width: 100,
-            height: 100,
+            width: 200,
+            height: 300,
         })
     },
     data(){
@@ -229,18 +198,15 @@ export default {
             edit: {
                 image: false,
             },
-            dropzoneOptions:     {
-                url: 'https://httpbin.org/post',
-                thumbnailWidth: 300,
-                maxFilesize:    2.0,   
-                headers:        {}             
-            },  
             errors: {},
+            form: {
+                path: String()
+            },
             loading: {
+                fetching: false,
                 updating: false
             },
             user: {
-                address:      String(),
                 first_name:   String(),
                 last_name:    String(),
                 email:        String(),
@@ -257,8 +223,6 @@ export default {
 
         // user schema
         this.userSchema = yup.object().shape({
-            address:          yup.string()
-                                 .required("*Address is required"),
             first_name:       yup.string()
                                 .required("*First Name is required"),
             last_name:        yup.string()
@@ -266,7 +230,8 @@ export default {
             email:            yup.string()
                                 .email("*Enter a valid email address")
                                 .required("*Email address is required"),
-            gender:           yup.string(),
+            gender:           yup.string()
+                                 .required("*Gender is required"),
             phone_number:     yup.string()
                                 .required("*Phone number is required"),                         
         });
@@ -275,55 +240,111 @@ export default {
         this.imageUpdate = debounce(() => {
             this.fetchUser();
         },1000);
+
+        /**
+         * Handles the change event of the file input element.
+         * 
+         * @param {Event} event - The event object.
+         * @returns {Promise<void>} - A promise that resolves when the image file is loaded.
+         */
+        this.onFileChange = async (event) => {
+            // Get the selected file and retrieve its data URL using the getImageFile function
+            this.profileImage = await this.getImageFile(event.target);
+        }
+
+        /**
+         * Asynchronously selects a cropped image from the picture cropper and updates the form with its path.
+         *
+         * @return {Promise<void>} Resolves when the cropped image is selected and the form is updated.
+         */
+        this.selectCrop = async () => {
+            try {
+                // Check if the cropper is available
+                if (!cropper) return;
+
+                // Get the cropped image as a blob
+                let blob: Blob       = await cropper.getBlob();
+
+                // Get the type of the blob and extract the file extension
+                let type: any        = blob?.type.split('/');
+                let filename: number = moment().unix();
+
+                // Create a new File object with the cropped image and a unique filename
+                let file: object = new File([blob], `${filename.toString()}.${type[1]}`, {
+                    type:         blob?.type,
+                    lastModified: new Date().getTime()
+                });
+
+                // Send the cropped image to the server for upload
+                let { data: { location } } = await this.$api.post(`auth/upload/image`, {
+                    file
+                }, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                // Update the form with the path of the uploaded image
+                this.form.path = location;
+
+                // Reset the picked image
+                this.profileImage = String();
+
+                this.edit.image   = Boolean();
+
+            } catch (error) {
+                // Handle any errors that occur during the process
+            }
+        }
+
+        /**
+         * Asynchronously reads the contents of a file as a data URL and returns it.
+         *
+         * @param {Object} target - The target input element containing the file to be read.
+         * @return {Promise} A Promise that resolves to the data URL of the file.
+         */
+        this.getImageFile = (target) => {
+            // Create a new FileReader instance
+            return new Promise(resolve => {
+                const reader = new FileReader()
+
+                // Define the onload callback function
+                reader.onload = function () {
+                    // Resolve the Promise with the data URL of the file
+                    resolve(reader.result)
+                }
+
+                // Read the contents of the file as a data URL
+                reader.readAsDataURL(target.files[0])
+            })        
+        }
     },
     methods:{
-        fetchUser(){
-            const { authToken, env: { VITE_API_URL }, edit } = this;
-            this.$api.get('/auth/user')
-                .then( ({ data:{ user } }) => {
-                    this.user                    = user;
-                    this.dropzoneOptions.url     = `${VITE_API_URL}/api/v1/auth/upload/image`;
-                    this.dropzoneOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};
-                    this.authUser.image          = user.image;
-                    this.authUser.company        = user.company;
-                })
-                .catch( ({ response }) => {
-                })
-                .finally( () => {
-                    if( edit.image ) { this.edit.image = false }
-                });
-        },
-        imagedropzone(event: any){
-            // console.log(arguments);
-            let files = event.target.files;
+        async fetchUser(){
 
-            if( !isEmpty(files) ){
-
-                const reader = new FileReader();
-                reader.readAsDataURL(files[0]);
-                reader.onload = () => {
-                    this.profileImage = reader.result;
-                    $('#imagecropper').modal('show');
-                };
-                reader.onerror = () => {
-                    console.log(arguments);
-                };
+            try {
+                this.$store.commit('card_loader',true);      
+                let { data: { user } } = await this.$api.get('/auth/user');
+                this.user = cloneDeep(user);       
+                this.$store.commit('card_loader',false);      
+            } catch(error){
+                this.$store.commit('card_loader',false);  
             }
-
         },
-        updateUser(){
-            this.loading.updating = true;        
-            this.isDisabled       = true;
-            this.$api
-                .post('/auth/user',pick(this.user,['first_name','last_name','phone_number','address','gender','email']) )
-                .then( ({ data:{ user } }) => {
-
-                })
-                .catch( ({ response }) => {
-                })
-                .finally( () => {
-                    this.loading.updating = false;
-                });
+        async updateUser(){
+            try {
+                this.$store.commit('card_loader',true);      
+                this.isDisabled       = true;
+                let { data:{ user } } = await this.$api.post('/auth/user',pick(this.user,['first_name','last_name','phone_number','address','gender','image']) );
+                localStorage.
+                this.$toast.success('Profile has been updated.');
+                this.user       = cloneDeep(user);
+                this.isDisabled = false;
+                this.$store.commit('card_loader',false);      
+            } catch(error){
+                this.isDisabled = false;
+                this.$store.commit('card_loader',false);      
+            }
         },
         // Validate the user
         validateProfile(field,user){
@@ -343,6 +364,9 @@ export default {
                 this.isDisabled = !isEmpty(errors);
             },
             deep: true
+        },
+        "form.path"(value){
+            this.user.image = String(value);
         },
         user: {
             handler(user){

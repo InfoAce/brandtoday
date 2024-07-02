@@ -24,6 +24,9 @@ export default createStore({
         company:    Object()
       },
       loader: false,
+      loaders: {
+        card: false,
+      },
       sideBar:{
         menus:     menuLinks,
         visible:   true,
@@ -37,6 +40,7 @@ export default createStore({
     env:               (state) => state.env,
     home:              (state) => state.home,
     loader:            (state) => state.loader,
+    loaders:           (state) => state.loaders,
     sidebarMenus:      (state) => state.sideBar.menus,
     sidebarUnfoldable: (state) => state.sideBar.unfoldable,
     sidebarVisible:    (state) => state.sideBar.visible,
@@ -44,6 +48,9 @@ export default createStore({
   mutations: {
     auth(state,value) {
       state.auth = value;
+    },
+    card_loader(state,value) {
+      state.loaders.card = value
     },
     cart(state,value) {
       state.cart = cloneDeep(value);

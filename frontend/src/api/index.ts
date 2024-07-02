@@ -4,10 +4,10 @@ import { isEmpty, toPlainObject } from 'lodash';
 export default {
     install: (app: any, options: any) => {
         // State variables
-        const { auth, env:{ VITE_API_URL } } = toPlainObject(app.config.globalProperties.$store.getters);
-
+        let { auth, env:{ VITE_API_URL } } = toPlainObject(app.config.globalProperties.$store.getters);
+        console.log(auth);
         // Init axios
-        const api = axios.create({
+        let api = axios.create({
             baseURL: `${VITE_API_URL}`,
             headers: {
                 'Accept':           'application/json',  
@@ -16,7 +16,7 @@ export default {
         });
 
         if( !isEmpty(auth) ){
-            const { token_type, token } = auth.token;
+            let { token_type, token } = auth.token;
 
             api.interceptors.request.use(
                 (config) => {

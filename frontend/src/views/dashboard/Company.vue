@@ -30,41 +30,80 @@
     <div class="row">
         <div class="col-xl-5 col-lg-5 col-md-6">
             <div class="card">
+                <CardLoader />
                 <div class="card-body">     
                     <div class="row">                    
-                        <div class="col-12 mb-2">
+                        <div class="col-12">
                             <label>Company Logo</label>
-                            <vue-dropzone
-                                v-if="edit.logo"
-                                ref="dropzoneLogo" 
-                                @vdropzone-success="imageUpdate"
-                                id="dropzoneLogo" 
-                                :options="dropzoneLogoOptions"
-                            />
-                            <template v-else>
-                                <div class="col-12 text-center">
-                                    <img v-if="!$isEmpty(company.logo)" :src="`${backendUri}${company.logo}`" :alt="`${company.name}`" class="img-fluid blur-up lazyloaded col-12">
-                                    <img v-else src="/assets/home/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded col-12">
-                                    <button class="btn btn-primary btn-sm my-2" @click="edit.logo = true">Edit Logo</button>
+                            <template v-if="!$isEmpty(company.logo) && !edit.logo && $isEmpty(form.logo)">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="company.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
                                 </div>
                             </template>
+                            <template v-if="!$isEmpty(form.logo) && !edit.logo">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="form.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
+                                </div>
+                            </template>                                 
+                            <template v-if="edit.logo && !$isEmpty(images.logo) && $isEmpty(form.logo)">
+                                <div class="col-12">
+                                    <VuePictureCropper                                
+                                        :boxStyle="cropBorderStyle"
+                                        :img="images.logo"
+                                        :options="logoCroppingOption"
+                                        :presetMode="logoPresetMode"
+                                    />          
+                                    <div class="d-flex justify-content-between mt-2 col-12">                         
+                                        <button class="btn btn-primary ml-2" type="button" @click="selectCrop('logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>
+                                        <button class="btn btn-primary ml-2" type="button" @click="images.logo = String()">Cancel</button>
+                                    </div> 
+                                </div>
+                            </template>
+                            <template v-if="edit.logo && $isEmpty(images.logo) && $isEmpty(form.logo)">
+                                <div class="col-12 d-flex justify-content-center p-4" style="border: 3px solid #ededed;">
+                                    <h1><i class="fa fa-building fa-lg"></i></h1>
+                                </div>
+                                <input class="form-control mt-2" type="file" @change="onFileChange($event,'logo')" v-if="$isEmpty(edit.logo) && $isEmpty(form.logo)" />
+                            </template> 
+                            <p class="text-danger col col-12 mb-0" v-show="$has(errors,'logo')">{{errors.logo}}</p>								
                         </div>
                         <div class="col-12 mb-2">
                             <label>Company Icon</label>
-                            <vue-dropzone
-                                v-if="edit.icon"
-                                @vdropzone-success="imageUpdate"
-                                ref="dropzoneIcon" 
-                                id="dropzoneIcon" 
-                                :options="dropzoneIconOptions"
-                            />  
-                            <template v-else>
-                                <div class="col-12 text-center">
-                                    <img v-if="!$isEmpty(company.icon)" :src="`${backendUri}${company.icon}`" :alt="`${company.name}`" class="img-fluid blur-up lazyloaded col-12">
-                                    <img v-else src="/assets/home/images/dashboard/designer.jpg" alt="" class="img-fluid blur-up lazyloaded col-12">
-                                    <button class="btn btn-primary btn-sm my-2" @click="edit.icon = true">Edit Icon</button>
+                            <template v-if="!$isEmpty(company.icon) && !edit.icon && $isEmpty(form.icon)">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="company.icon" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.icon = true">Edit</button>
                                 </div>
-                            </template>       
+                            </template>
+                            <template v-if="!$isEmpty(form.icon) && !edit.icon">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="form.icon" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.icon = true">Edit</button>
+                                </div>
+                            </template>                                 
+                            <template v-if="edit.icon && !$isEmpty(images.icon) && $isEmpty(form.icon)">
+                                <div class="col-12">
+                                    <VuePictureCropper                                
+                                        :boxStyle="cropBorderStyle"
+                                        :img="images.icon"
+                                        :options="iconCroppingOption"
+                                        :presetMode="iconPresetMode"
+                                    /> 
+                                    <div class="d-flex justify-content-between mt-2 col-12">                                         
+                                        <button class="btn btn-primary ml-2" type="button" :disabled="loading.icon" @click="selectCrop('icon')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i><span v-else>Crop</span></button>
+                                        <button class="btn btn-primary ml-2" type="button" @click="images.icon = String()">Cancel</button>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-if="edit.icon && $isEmpty(images.icon) && $isEmpty(form.icon)">
+                                <div class="col-12 d-flex justify-content-center">
+                                    <h1 style="border: 3px solid #ededed; border-radius: 500px;" class="p-5"><i class="fa fa-user fa-lg"></i></h1>
+                                </div>
+                                <input class="form-control" type="file" @change="onFileChange($event,'icon')" v-if="$isEmpty(edit.icon) && $isEmpty(form.icon)" />
+                            </template>      
+                            <p class="text-danger col col-12 mb-0" v-show="$has(errors,'icon')">{{errors.icon}}</p>								
                         </div>
                         <div class="col-12">
                             <div class="form-group">
@@ -90,12 +129,12 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="address">Address</label>
-                                <input class="form-control" id="address" type="text" required="">
+                                <input class="form-control" id="address" type="text"  v-model="company.address">
                                 <p class="text-danger col col-12 mb-0" v-show="$has(errors,'address')">{{errors.address}}</p>								
                             </div>                            
                         </div>
                         <div class="col-12">
-                            <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
+                            <button class="btn btn-primary" :disabled="isDisabled || loading.updating" @click="updateCompany">
                                 <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
                                 Save Changes
                             </button>
@@ -111,9 +150,12 @@
 </template>
 <script>
 import { inject, reactive, ref, watch } from 'vue';
-import { cloneDeep, each, debounce, isEmpty, has, pick } from 'lodash';
+import { cloneDeep, each, debounce, isEmpty, isNull, has, pick } from 'lodash';
 import * as yup from "yup";
 import vueDropzone from 'dropzone-vue3'
+import { CardLoader } from '../../components';
+import VuePictureCropper, { cropper } from 'vue-picture-cropper'
+import moment from 'moment';
 
 export default {
     beforeCreate(){
@@ -134,7 +176,8 @@ export default {
         });
     },
     components: {
-        vueDropzone,
+        CardLoader,
+        VuePictureCropper
     },
     computed:{
         authToken(){
@@ -148,12 +191,37 @@ export default {
                 this.$store.commit('authUser',val);
             }
         },  
-        backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api/v1','');
-        },
         env() {
             return this.$store.getters.env;
-        }
+        },
+        iconCroppingOption: () => ({
+            viewMode: 1,
+            dragMode: 'move',
+            aspectRatio: 1,
+            cropBoxResizable: false
+        }),
+        logoCroppingOption: () => ({
+            viewMode: 1,
+            dragMode: 'move',
+            aspectRatio: 21 / 9,
+            cropBoxResizable: false
+        }),
+        cropBorderStyle: () => ({
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#f8f8f8',
+            margin: 'auto',
+        }),
+        iconPresetMode: () => ({
+            mode: 'round',
+            width: 100,
+            height: 150,
+        }),
+        logoPresetMode: () => ({
+            // mode: 'fixedSize',
+            width: 1920,
+            height: 720,
+        })
     },
     data(){
         return {
@@ -170,21 +238,19 @@ export default {
                 logo:         String(),
                 phone_number: String(),
             },
-            loading:{
-                updating: Boolean()
+            images: {
+                icon: false,
+                logo: false
             },
-            dropzoneLogoOptions:     {
-                url: 'https://httpbin.org/post',
-                thumbnailWidth: 300,
-                maxFilesize:    2.0,   
-                headers:        {}             
-            },  
-            dropzoneIconOptions: {
-                url: 'https://httpbin.org/post',
-                thumbnailWidth: 300,
-                maxFilesize:    0.5,                
-                headers:        {}             
-            },       
+            form:{
+                logo: String(),
+                icon: String()
+            },
+            loading:{
+                icon:     Boolean(),
+                logo:     Boolean(),
+                updating: Boolean()
+            },      
             isDisabled: true
         }
     },
@@ -196,8 +262,14 @@ export default {
         this.companySchema = yup.object().shape({
             address:          yup.string()
                                 .required("*Address is required"),
-            name:            yup.string()
-                                .required("*Name is required"),                                                
+            name:             yup.string()
+                                 .required("*Name is required"),  
+            logo:             yup.string()
+                                 .required("*Logo is required")
+                                 .test( val => isNull(val)),  
+            icon:             yup.string()
+                                 .required("*Icon is required")
+                                 .test( val => isNull(val)),                                                                                                                  
             email:            yup.string()
                                 .email("*Enter a valid email address")
                                 .required("*Email address is required"),                         
@@ -210,49 +282,133 @@ export default {
             this.fetchCompany();
         },1000);
 
+        /**
+         * Handles the change event of the file input element.
+         * 
+         * @param {Event} event - The event object.
+         * @returns {Promise<void>} - A promise that resolves when the image file is loaded.
+         */
+        this.onFileChange = async (event, type) => {
+            if( type == 'logo'){
+                // Get the selected file and retrieve its data URL using the getImageFile function
+                this.images.logo = await this.getImageFile(event.target);
+                this.edit.logo   = true;
+            }
+            if( type == 'icon'){
+                // Get the selected file and retrieve its data URL using the getImageFile function
+                this.images.icon = await this.getImageFile(event.target);
+                this.edit.icon   = true;
+            }
+        }
+
+        /**
+         * Asynchronously selects a cropped image from the picture cropper and updates the form with its path.
+         *
+         * @return {Promise<void>} Resolves when the cropped image is selected and the form is updated.
+         */
+        this.selectCrop = async (category) => {
+            try {
+                console.log(category);
+                // Activate logo loading
+                if( category == 'logo'){ this.loading.logo = Boolean(true) }
+                
+                // Activate icon loading
+                if( category == 'icon'){ this.loading.icon = Boolean(true) }
+                
+                // Check if the cropper is available
+                if (!cropper) return;
+
+                // Get the cropped image as a blob
+                let blob     = await cropper.getBlob();
+
+                // Get the type of the blob and extract the file extension
+                let type     = blob?.type.split('/');
+                let filename = moment().unix();
+
+                // Create a new File object with the cropped image and a unique filename
+                let file     = new File([blob], `${filename.toString()}.${type[1]}`, {
+                    type:         blob?.type,
+                    lastModified: new Date().getTime()
+                });
+
+                // Send the cropped image to the server for upload
+                let { data: { location } } = await this.$api.post(`auth/upload/image`, { file }, { headers: { 'Content-Type': 'multipart/form-data'} });
+
+                if( category == 'logo'){
+                    // Update the form with the path of the uploaded image
+                    this.form.logo = location;
+                    // Reset the picked image
+                    this.images.logo  = String();
+                    this.edit.logo    = Boolean();
+                    this.loading.logo = Boolean();
+                }
+
+                if( category == 'icon'){
+                    // Update the form with the path of the uploaded image
+                    this.form.icon    = location;
+                    // Reset the picked image
+                    this.images.icon  = String();
+                    this.edit.icon    = Boolean();
+                    this.loading.icon = Boolean();
+                }
+            } catch (error) {
+                // Handle any errors that occur during the process
+                this.$toast.error('Oops!! Something went wrong while cropping image.')
+                console.log(error);
+            }
+        }
+
+        /**
+         * Asynchronously reads the contents of a file as a data URL and returns it.
+         *
+         * @param {Object} target - The target input element containing the file to be read.
+         * @return {Promise} A Promise that resolves to the data URL of the file.
+         */
+        this.getImageFile = async (target) => {
+            // Create a new FileReader instance
+            return new Promise(resolve => {
+                const reader = new FileReader()
+
+                // Define the onload callback function
+                reader.onload = function () {
+                    // Resolve the Promise with the data URL of the file
+                    resolve(reader.result)
+                }
+
+                // Read the contents of the file as a data URL
+                reader.readAsDataURL(target.files[0])
+            })        
+        }        
+
     },
     methods:{
-        fetchCompany(){
-            const { authToken, env: { VITE_API_BASE_URL }, edit } = this;
-            this.$store.commit('loader',true);
-            this.$api.get('/dashboard/company')
-                .then( ({ data:{ company } }) => {
-                
-                    this.company = company;
-                    
-                    this.dropzoneLogoOptions.url     = `${VITE_API_BASE_URL}/dashboard/company/${company.id}/upload/logo`;
-                    this.dropzoneLogoOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};
+        async fetchCompany(){
+            try {
+                this.$store.commit('card_loader',true);
 
-                    this.dropzoneIconOptions.url     = `${VITE_API_BASE_URL}/dashboard/company/${company.id}/upload/icon`;
-                    this.dropzoneIconOptions.headers = { "Authorization": `${authToken.token_type} ${authToken.token}`};              
-                    
-                    this.authUser.company            = cloneDeep(company);
-                })
-                .catch( ({ response }) => {
-                })
-                .finally( () => {
-                    if( edit.logo ) { this.edit.logo = false }
-                    if( edit.icon ) { this.edit.icon = false }                    
-                    this.$store.commit('loader',false);
-                });
+                let { data: { company } } = await this.$api.get('/dashboard/company');
+                this.company              = cloneDeep(company);
+                
+                this.$store.commit('card_loader',false);
+            } catch(error) {
+               this.$toast.error('Something went wrong while fetching company information.')
+               this.$store.commit('card_loader',false);
+            }
         },
         // Update company information
-        updateCompany(){
-            this.$store.commit('loader',true);
-            this.isDisabled = true;
-            this.$api
-                .post(
-                    '/dashboard/company',
-                    pick(this.company,['name','phone_number','address','email']) 
-                )
-                .then( ({ data:{ company } }) => {
+        async updateCompany(){
+            try {
+                this.loading.updating    = true;
+                this.isDisabled          = true;
 
-                })
-                .catch( ({ response }) => {
-                })
-                .finally( () => {
-                    this.$store.commit('loader',false);
-                });
+                let { data: {company } } = await this.$api.put(`/dashboard/company/${this.company.id}/update`,this.company);
+                
+                this.company             = cloneDeep(company);
+                this.loading.updating    = false;
+            } catch(error) {
+               this.$toast.error('Something went wrong while updating company information.')
+               this.loading.updating    = false;
+            }
         },
         // Validate the user
         validateCompany(field,company){
@@ -271,7 +427,13 @@ export default {
             handler(errors){
                 this.isDisabled = !isEmpty(errors);
             },
-            deep: true
+            deep: true,
+        },
+        "form.icon"(value){
+            this.company.icon = String(value);
+        },
+        "form.logo"(value){
+            this.company.logo = String(value);
         },
         company: {
             handler(company){
