@@ -6,7 +6,7 @@ import { join, resolve } from 'path';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
-
+import { isEmpty } from 'lodash';
 // Directory separator
 const { sep } = require('path');
 
@@ -25,10 +25,10 @@ async function bootstrap() {
               format.json(),
               format.splat(),
               format.printf((error) => {
-                if (error.stack) {
-                    // print log trace 
-                    return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
-                  }
+                if ( !isEmpty(error.stack) ) {
+                  // print log trace 
+                  return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
+                }
                 return `${error.timestamp} ${error.level}: ${error.message} - ${error.context}`;
               }),
             ),

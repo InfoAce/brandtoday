@@ -99,7 +99,7 @@ export class AuthController {
             res.status(HttpStatus.OK).json({user});
 
         } catch(error) {
-            console.log(error);
+            this.logger.error(error);
             // Log and throw error
             throw new ControllerException(error);            
         }   
