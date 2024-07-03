@@ -48,7 +48,7 @@
                                         <button class="btn btn-primary mt-2" @click="edit.image = true">Edit</button>
                                     </div>
                                 </template>                                 
-                                <template v-if="edit.image && !$isEmpty(profileImage) && $isEmpty(form.path)">
+                                <template v-if="edit.image && !$isEmpty(profileImage)">
                                     <VuePictureCropper                                
                                         :boxStyle="cropBorderStyle"
                                         :img="profileImage"
@@ -60,11 +60,11 @@
                                         <button class="btn btn-primary ml-2" type="button" @click="profileImage = String()">Cancel</button>
                                     </div>
                                 </template>
-                                <template v-if="edit.image && $isEmpty(profileImage) && $isEmpty(form.path)">
+                                <template v-if="(edit.image && $isEmpty(profileImage) && $isEmpty(form.path)) || $isNull(user.image) && $isEmpty(profileImage) && $isEmpty(form.path)">
                                     <div class="col-12 d-flex justify-content-center">
                                         <h1 style="border: 3px solid #ededed; border-radius: 500px;" class="p-5"><i class="fa fa-user fa-lg"></i></h1>
                                     </div>
-                                    <input class="form-control" type="file" @change="onFileChange($event)" v-if="$isEmpty(profileImage) && $isEmpty(form.path)" />
+                                    <input class="form-control" type="file" @change="onFileChange($event)" />
                                 </template> 
                             </div>
                         </div>
@@ -123,10 +123,8 @@
 </div> 
 </template>
 <script lang="ts">
-import { inject, reactive, ref, watch } from 'vue';
-import { cloneDeep, each, debounce, get, isEmpty, keys, has, pick } from 'lodash';
+import { cloneDeep, each, debounce, get, isEmpty, isNull, keys, has, pick } from 'lodash';
 import VuePictureCropper, { cropper } from 'vue-picture-cropper'
-import { useRouter } from 'vue-router';
 import * as yup from "yup";
 import moment from 'moment';
 import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
@@ -168,9 +166,6 @@ export default {
                 this.$store.commit('auth',val);
             }
         },  
-        backendUri(){
-            return this.env.VITE_API_BASE_URL.replace('api/v1','');
-        },
         croppingOption: () => ({
             viewMode: 1,
             dragMode: 'move',
@@ -219,6 +214,7 @@ export default {
     },
     created(){
         this.$isEmpty = isEmpty;
+        this.$isNull  = isNull;
         this.$has     = has;
 
         // user schema
@@ -250,6 +246,8 @@ export default {
         this.onFileChange = async (event) => {
             // Get the selected file and retrieve its data URL using the getImageFile function
             this.profileImage = await this.getImageFile(event.target);
+            // Enable image editting
+            this.edit.image   = true;
         }
 
         /**

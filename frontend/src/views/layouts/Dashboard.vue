@@ -21,12 +21,25 @@
 <script setup lang="ts">
 import { DashboardLoader, DashboardHeader, DashboardSidebar } from '../../components';
 import { useStore } from 'vuex'
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { isEmpty } from 'lodash';
+import { useRouter } from 'vue-router';
 
-const $isEmpty = isEmpty;
-const store   = useStore();
+const $store  = useStore();
+const $router = useRouter();
 
-const auth = computed( () => store.getters.auth );
+const auth    = computed( () => $store.getters.auth );
+
+watch( 
+  () => $store.getters.auth,
+  (auth) => {
+    if( isEmpty(auth) ){
+      $router.push({ name: 'AdminLogin'});
+    }
+  },
+  {
+    deep: true
+  }
+)
 
 </script>

@@ -27,7 +27,6 @@ async function bootstrap() {
               format.splat(),
               format.printf((error) => {
                 if ( !isEmpty(error.stack) ) {
-                  console.log(error.stack);
                   // print log trace 
                   return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
                 }

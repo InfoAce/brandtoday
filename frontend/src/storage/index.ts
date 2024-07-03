@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { isEmpty, toPlainObject } from 'lodash';
+import { isEmpty } from 'lodash';
 import localStorage from 'reactive-localstorage';
 
 export default {
@@ -13,10 +12,10 @@ export default {
         const $store = app.config.globalProperties.$store;
 
         // Get the name of the application from the Vuex store.
-        const { VITE_APP_NAME } = $store.getters.env;
+        const { VITE_APP_ID } = $store.getters.env;
 
         // Get the authentication data stored in the local storage.
-        const auth = localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ', '')}_AUTH`);
+        const auth = localStorage.getItem(VITE_APP_ID);
 
         /**
          * If the authentication data is not empty, commit it to the Vuex store.
@@ -30,7 +29,7 @@ export default {
         localStorage.on('change', (key, value) => {
 
             // If the key is the authentication key, parse the value from JSON and commit it to the Vuex store.
-            if( key == `${VITE_APP_NAME.replaceAll(' ','')}_AUTH` ) {
+            if( key == VITE_APP_ID ) {
                 const auth = JSON.parse(value);
                 app.config.globalProperties.$api.interceptors.request.use(
                     (config) => {

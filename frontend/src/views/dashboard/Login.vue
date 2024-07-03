@@ -112,7 +112,7 @@ const login = () => {
 	$api.post('/auth/login', data.form)
 		.then( ({ data: { user, token } }) => {
 			// If the request is successful, save the user and token to local storage
-			localStorage.setItem(`${get(store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({ user, token }));
+			localStorage.setItem(`${get(store.getters.env, 'VITE_APP_ID').replaceAll(' ', '')}`, JSON.stringify({ user, token }));
 			
 			setTimeout(() => {
 				// Redirect the user to the overview page

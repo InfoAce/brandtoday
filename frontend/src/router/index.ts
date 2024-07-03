@@ -12,7 +12,17 @@ const router = createRouter({
     {
       path: '/home',
       beforeEnter(to,from,next){
-        addHomeTheme(); next();
+        addHomeTheme();
+
+        if( !isEmpty(store.getters.auth) ){
+          const { user: { role } } = store.getters.auth;
+          if( role.state > 0 ){ next({ name: 'Overview'}) }
+          if( role.state == 0 ){ next() }
+        }
+
+        if( isEmpty(store.getters.auth) ){
+          next();
+        }
       },
       component: () => import('@/views/layouts/Landing.vue'),
       children: [

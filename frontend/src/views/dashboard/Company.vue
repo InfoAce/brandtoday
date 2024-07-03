@@ -33,42 +33,6 @@
                 <CardLoader />
                 <div class="card-body">     
                     <div class="row">                    
-                        <div class="col-12">
-                            <label>Company Logo</label>
-                            <template v-if="!$isEmpty(company.logo) && !edit.logo && $isEmpty(form.logo)">
-                                <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="company.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
-                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
-                                </div>
-                            </template>
-                            <template v-if="!$isEmpty(form.logo) && !edit.logo">
-                                <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="form.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
-                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
-                                </div>
-                            </template>                                 
-                            <template v-if="edit.logo && !$isEmpty(images.logo) && $isEmpty(form.logo)">
-                                <div class="col-12">
-                                    <VuePictureCropper                                
-                                        :boxStyle="cropBorderStyle"
-                                        :img="images.logo"
-                                        :options="logoCroppingOption"
-                                        :presetMode="logoPresetMode"
-                                    />          
-                                    <div class="d-flex justify-content-between mt-2 col-12">                         
-                                        <button class="btn btn-primary ml-2" type="button" @click="selectCrop('logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>
-                                        <button class="btn btn-primary ml-2" type="button" @click="images.logo = String()">Cancel</button>
-                                    </div> 
-                                </div>
-                            </template>
-                            <template v-if="edit.logo && $isEmpty(images.logo) && $isEmpty(form.logo)">
-                                <div class="col-12 d-flex justify-content-center p-4" style="border: 3px solid #ededed;">
-                                    <h1><i class="fa fa-building fa-lg"></i></h1>
-                                </div>
-                                <input class="form-control mt-2" type="file" @change="onFileChange($event,'logo')" v-if="$isEmpty(edit.logo) && $isEmpty(form.logo)" />
-                            </template> 
-                            <p class="text-danger col col-12 mb-0" v-show="$has(errors,'logo')">{{errors.logo}}</p>								
-                        </div>
                         <div class="col-12 mb-2">
                             <label>Company Icon</label>
                             <template v-if="!$isEmpty(company.icon) && !edit.icon && $isEmpty(form.icon)">
@@ -97,13 +61,49 @@
                                     </div>
                                 </div>
                             </template>
-                            <template v-if="edit.icon && $isEmpty(images.icon) && $isEmpty(form.icon)">
+                            <template v-if="edit.icon && $isEmpty(images.icon) && $isEmpty(form.icon) || $isNull(company.icon) && $isEmpty(images.icon) && $isEmpty(form.icon)">
                                 <div class="col-12 d-flex justify-content-center">
                                     <h1 style="border: 3px solid #ededed; border-radius: 500px;" class="p-5"><i class="fa fa-user fa-lg"></i></h1>
                                 </div>
-                                <input class="form-control" type="file" @change="onFileChange($event,'icon')" v-if="$isEmpty(edit.icon) && $isEmpty(form.icon)" />
+                                <input class="form-control" type="file" @change="onFileChange($event,'icon')" />
                             </template>      
                             <p class="text-danger col col-12 mb-0" v-show="$has(errors,'icon')">{{errors.icon}}</p>								
+                        </div>                        
+                        <div class="col-12">
+                            <label>Company Logo</label>
+                            <template v-if="!$isEmpty(company.logo) && !edit.logo && $isEmpty(form.logo)">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="company.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
+                                </div>
+                            </template>
+                            <template v-if="!$isEmpty(form.logo) && !edit.logo">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="form.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
+                                </div>
+                            </template>                                 
+                            <template v-if="edit.logo && !$isEmpty(images.logo) && $isEmpty(form.logo)">
+                                <div class="col-12">
+                                    <VuePictureCropper                                
+                                        :boxStyle="cropBorderStyle"
+                                        :img="images.logo"
+                                        :options="logoCroppingOption"
+                                        :presetMode="logoPresetMode"
+                                    />          
+                                    <div class="d-flex justify-content-between mt-2 col-12">                         
+                                        <button class="btn btn-primary ml-2" type="button" @click="selectCrop('logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>
+                                        <button class="btn btn-primary ml-2" type="button" @click="images.logo = String()">Cancel</button>
+                                    </div> 
+                                </div>
+                            </template>
+                            <template v-if="edit.logo && $isEmpty(images.logo) && $isEmpty(form.logo) || $isNull(company.logo) && $isEmpty(images.logo) && $isEmpty(form.logo)">
+                                <div class="col-12 d-flex justify-content-center p-4" style="border: 3px solid #ededed;">
+                                    <h1><i class="fa fa-building fa-lg"></i></h1>
+                                </div>
+                                <input class="form-control mt-2" type="file" @change="onFileChange($event,'logo')" />
+                            </template> 
+                            <p class="text-danger col col-12 mb-0" v-show="$has(errors,'logo')">{{errors.logo}}</p>								
                         </div>
                         <div class="col-12">
                             <div class="form-group">
@@ -257,6 +257,7 @@ export default {
     created(){
         this.$isEmpty = isEmpty;
         this.$has     = has;
+        this.$isNull  = isNull;
 
         // company schema
         this.companySchema = yup.object().shape({
@@ -428,6 +429,7 @@ export default {
                 this.isDisabled = !isEmpty(errors);
             },
             deep: true,
+            immediate: true
         },
         "form.icon"(value){
             this.company.icon = String(value);

@@ -3,15 +3,15 @@ import menuLinks from './menus';
 import { cloneDeep, isNull } from 'lodash';
 import localStorage from 'reactive-localstorage';
 
-const { VITE_APP_NAME }       = import.meta.env;
-const app_session_auth:  any  = localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`);
+const { VITE_APP_NAME, VITE_APP_ID } = import.meta.env;
+const app_session_auth:  any         = localStorage.getItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`);
 
 // Create a new store instance.
 export default createStore({
   actions:{
     logout({ commit },$router){
-      localStorage.setItem(`${VITE_APP_NAME.replaceAll(' ','')}_AUTH`,JSON.stringify({}));
-      $router.push({ name: "AdminLogin" });
+      localStorage.setItem(VITE_APP_ID,JSON.stringify({}));
+      // $router.push({ name: "AdminLogin" });
     }
   },
   state: () => {
