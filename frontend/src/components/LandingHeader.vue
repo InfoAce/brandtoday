@@ -9,14 +9,18 @@
                     <div class="col-lg-6">
                         <div class="header-contact">
                             <ul>
-                                <li>{{ $store.getters.env.VITE_APP_NAME }}</li>
+                                <li>
+                                    <a href="javascript::void" @click.prevent="$router.push({ name: 'Home' })">
+                                        <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
+                                    </a>
+                                </li>
                                 <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-lg-6 text-end d-flex justify-content-end">
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
-                            <li class="mobile-wishlist p-3">
+                            <li class="onhover-div mobile-search mobile-wishlist p-3">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart" aria-hidden="true"></i></a>
                             </li>
                             <li class="onhover-div mobile-search p-3">
@@ -32,12 +36,9 @@
                                                     <div class="col-xl-12">
                                                         <form>
                                                             <div class="form-group">
-                                                                <input type="text" class="form-control"
-                                                                    id="exampleInputPassword1"
-                                                                    placeholder="Search a Product">
+                                                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search a Product">
                                                             </div>
-                                                            <button type="submit" class="btn btn-primary"><i
-                                                                    class="fa fa-search"></i></button>
+                                                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -73,29 +74,42 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
-                    <div class="main-menu justify-content-center py-4">                
-                        <div class="menu-right pull-center">
-                            <div>
-                                <nav id="main-nav">
-                                    <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
-                                    <ul id="main-menu" class="sm pixelstrap sm-horizontal">
-                                        <li>
-                                            <div class="mobile-back text-end">
-                                                Back
-                                                <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
-                                            </div>
-                                        </li>
-                                        <template v-if="!isEmpty(home.categories)" >
-                                            <li v-for="(item,index) in home.categories" :key="index" class="px-2">
-                                                <a :href="navigateTo(item).href" class="p-0">
-                                                    {{ item.categoryName  }}
-                                                </a>
-                                            </li> 
-                                        </template>                                                                              
-                                    </ul>
-                                </nav>
+                <div class="col-12" >
+                    <div id="main-menu" class="d-flex w-100 justify-content-center">
+                        <!-- <div class="menu-left">
+                            <div class="navbar">
+                                <a href="javascript:void(0)">
+                                    <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i></div>
+                                </a>
                             </div>
+                            <div class="brand-logo">
+                                <a @click.prevent="$router.push({ name: 'Home' })">
+                                    <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
+                                </a>
+                            </div>
+                        </div>                                      -->
+                        <div class="menu-center pull-center m-2 ">
+                            <nav id="main-nav">
+                                <div class="toggle-nav p-0">
+                                    <i class="fa fa-bars sidebar-bar"></i>
+                                    <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
+                                </div>
+                                <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+                                    <li>
+                                        <div class="mobile-back text-end">
+                                            Back
+                                            <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                                        </div>
+                                    </li>
+                                    <template v-if="!isEmpty(home.categories)" >
+                                        <li v-for="(item,index) in home.categories" :key="index">
+                                            <a href="javascript::void" @click.prevent="navigateTo(item)" class="py-2 px-2">
+                                                {{ item.categoryName  }}
+                                            </a>
+                                        </li> 
+                                    </template>                                                                              
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -104,6 +118,13 @@
     </header>
     <!-- header end -->
 </template>
+<style>
+    .pixelstrap a {
+        letter-spacing: 0em !important;
+        line-height:    0px !important;
+        text-transform: none !important;
+    }
+</style>
 <script setup>
 import { cloneDeep, debounce, get, isEmpty, isNull } from 'lodash';
 import { useStore } from 'vuex';
@@ -181,7 +202,7 @@ const logout = () => {
 }
 
 const navigateTo = (item) => {
-    return $router.resolve({ name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } });
+    return $router.push({ name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } });
 }
 
 onBeforeMount( () => fetchMenus() );

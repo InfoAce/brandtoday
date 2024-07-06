@@ -98,7 +98,7 @@ export default {
     methods:{
         fetchUser(){
             this.$store.commit('loader',true);
-            this.$api.get('/account')
+            this.$api.get('/auth/user')
                 .then( ({ data:{ user }}) => {
                     this.user = user;
                 })

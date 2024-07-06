@@ -17,6 +17,7 @@ export class OverviewController {
   private readonly logger = new Logger(OverviewController.name);
 
   constructor(
+    private orderModel: OrderModel,
     private userModel: UserModel
   ){}
 
@@ -29,11 +30,12 @@ export class OverviewController {
 
     try{
 
-      let [ clients, clientsCount ] = await this.userModel.findAndCount({ role: { name: 'client' } });
-      let [ staff,   staffCount   ] = await this.userModel.findAndCount({ role: { name: '' } });
+      let [ clients, clientsCount ] = await this.userModel.findAndCount({ where: { role: { name: 'client' } } });
+      let [ staff,   staffCount   ] = await this.userModel.findAndCount({ where: { role: { name: 'staff' } } });
+      let [ orders,  ordersCount  ] = await this.orderModel.findAndCount();
 
       return res.status(HttpStatus.OK).json({ 
-        summary: { clients: clientsCount, staff: staffCount } 
+        summary: { clients: clientsCount, staff: staffCount, orders: ordersCount } 
       });
 
     } catch (error) {

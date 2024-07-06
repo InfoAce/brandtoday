@@ -11,8 +11,8 @@ const router = createRouter({
     },
     {
       path: '/home',
-      beforeEnter(to,from,next){
-        addHomeTheme();
+      async beforeEnter(to,from,next){
+        await addHomeTheme();
 
         if( !isEmpty(store.getters.auth) ){
           const { user: { role } } = store.getters.auth;
@@ -329,8 +329,11 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      beforeEnter(to,from,next){
-        addDashbordTheme(); next();
+      async beforeEnter(to,from,next){
+        await new Promise((resolve) => {
+          resolve(setTimeout(() => addDashbordTheme(), 500)) 
+        });
+        next();
       },
       children:[
         {
@@ -353,7 +356,41 @@ const router = createRouter({
             admin: true
           },
           component: () => import('@/views/dashboard/Login.vue')
-        },
+        }, 
+        {
+          path: 'verify',
+          children:[
+            {
+              path: '',
+              redirect: '/dashboard/verify/error'
+            },
+            {
+              path: ':token',
+              name: 'VerifyAccount',
+              meta: {
+                title: 'Verify Account',
+                auth:  false,
+                state: 0,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/dashboard/VerifyAccount.vue')
+            },
+            {
+              path: 'error',
+              name: "VerifyError404",
+              meta: {
+                title: 'Not Found',
+                auth:  false,
+                redirectIfAuth: false,
+                state: 0,
+                admin: false
+              },
+              component: () => import('@/views/dashboard/VerifyError.vue')
+            },
+          ],
+          component: RouterView
+        },      
         {
           beforeEnter(to,from,next){
             if( !isEmpty(store.getters.auth) ){
@@ -367,6 +404,9 @@ const router = createRouter({
           path:'',
           children: [
             {
+              beforeEnter(to,from,next){
+                next();
+              },
               path: '',
               name: "Overview",
               meta: {
@@ -462,40 +502,6 @@ const router = createRouter({
               },
               component: () => import('@/views/dashboard/System.vue')
             },
-            {
-              path: 'verify',
-              children:[
-                {
-                  path: '',
-                  redirect: '/dashboard/verify/error'
-                },
-                {
-                  path: ':token',
-                  name: 'VerifyAccount',
-                  meta: {
-                    title: 'Verify Account',
-                    auth:  false,
-                    state: 0,
-                    redirectIfAuth: false,
-                    admin: true
-                  },
-                  component: () => import('@/views/dashboard/VerifyAccount.vue')
-                },
-                {
-                  path: 'error',
-                  name: "VerifyError404",
-                  meta: {
-                    title: 'Not Found',
-                    auth:  false,
-                    redirectIfAuth: false,
-                    state: 0,
-                    admin: false
-                  },
-                  component: () => import('@/views/dashboard/VerifyError.vue')
-                },
-              ],
-              component: RouterView
-            }  
           ],
           component: () => import('@/views/layouts/Dashboard.vue')
         },                                  
@@ -603,7 +609,6 @@ const addDashbordTheme = () => {
     '/assets/dashboard/js/sidebar-menu.js',
     '/assets/dashboard/js/lazysizes.min.js',
     '/assets/dashboard/js/admin-customizer.js',
-    '/assets/dashboard/js/default.js',
     '/assets/dashboard/js/jquery.dataTables.min.js',
     '/assets/dashboard/js/admin-script.js'	
   ].map( 
@@ -666,7 +671,7 @@ const addDashbordTheme = () => {
  * 
  * @return {void} This function does not return anything.
  */
-const addHomeTheme = () => {
+const addHomeTheme = async () => {
 
   // Define the array of CSS and JS files needed for the home theme
   const scripts = [
@@ -697,32 +702,32 @@ const addHomeTheme = () => {
     document.head.appendChild(link);
   });
 
-  /**
-   * Function to add a script tag to the document.
-   *
-   * Creates a new script element and appends it to the document body.
-   * The script element's source is set to the provided URL.
-   *
-   * @param {string} url - The URL of the script file.
-   * @return {void} This function does not return anything.
-   */
-  const addScript = (url:string) => {
-    // Create a new script element
-    let script    = document.createElement('script');
-
-    // Set the type attribute of the script element to 'text/javascript'
-    script.type   = 'text/javascript';
-
-    // Set the src attribute of the script element to the provided URL
-    script.src    = url;
-
-    // Append the script element to the document body
-    document.body.appendChild(script);
-  }
-
   // Wait for all the promises to resolve before continuing
-  Promise.all(scripts);
+  await Promise.all(scripts);
 
+}
+
+/**
+ * Function to add a script tag to the document.
+ *
+ * Creates a new script element and appends it to the document body.
+ * The script element's source is set to the provided URL.
+ *
+ * @param {string} url - The URL of the script file.
+ * @return {void} This function does not return anything.
+ */
+const addScript = (url:string) => {
+  // Create a new script element
+  let script    = document.createElement('script');
+
+  // Set the type attribute of the script element to 'text/javascript'
+  script.type   = 'text/javascript';
+
+  // Set the src attribute of the script element to the provided URL
+  script.src    = url;
+
+  // Append the script element to the document body
+  document.body.appendChild(script);
 }
 
 export default router

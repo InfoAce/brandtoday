@@ -64,6 +64,26 @@ export default class OrderModel {
       throw new OrderModelException(err);
     }
   }
+
+  /**
+   * Find all users and count based on the provided data.
+   *
+   * @param {object} data - The data used to filter the users.
+   * @return {Promise<any>} - A promise that resolves to an object containing an array of UserEntity objects and the count of total users.
+   */
+  async findAndCount(data: any = {}): Promise<any> {
+    try {
+
+      // Find all users in the repository based on the provided data.
+      return await this.orderRepository.findAndCount(data);
+
+    } catch(error){
+      
+      // Log any errors that occur during the execution of the function.
+      this.logger.error(error);
+
+    }
+  }
   async paginate(options: IPaginationOptions, data: any = {}): Promise<Pagination<OrderEntity>> {
     return paginate<OrderEntity>(this.orderRepository, options, data);
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Injectable, ParseIntPipe, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Injectable, ParseIntPipe, Post, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
 import { AdminGuard } from "src/guards";
 import { RoleModel, UserModel } from "src/models";
@@ -7,7 +7,6 @@ import { StaffValidation } from "src/validation";
 import { MailService } from "src/services";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from 'bcrypt';
-import { QueryFailedError } from "typeorm";
 
 @Injectable()
 @Controller('dashboard/users')
@@ -52,18 +51,18 @@ export class UserController {
     @UseGuards(AdminGuard)
     @Post('')
     async store(
-        @Req() req: Request,
+        @Req()  req: Request,
         @Body() staffUser: StaffValidation,
         @Res()  res: Response,
     ){
         try{
 
-            let randomstring  = require("randomstring"),
-            { id: roleId }    = await this.roleModel.findOneBy({ name: 'staff'}),
-            { company: { id: companyId } } = get(req,'user'),
-            genPassword       = await bcrypt.hash(randomstring.generate(10), parseInt(this.configService.get('SALT_LENGTH')));
+            let randomstring   = require("randomstring");
+            let { id: roleId } = await this.roleModel.findOneBy({ name: 'staff'});
+            let { company_id } = get(req,'user');
+            let genPassword    = await bcrypt.hashSync(randomstring.generate(10), parseInt(this.configService.get('app.SALT_LENGTH')));
 
-            set(staffUser,'company_id',companyId);
+            set(staffUser,'company_id',company_id);
             set(staffUser,'role_id',roleId);
             set(staffUser,'password',genPassword);
             set(staffUser,'token',randomstring.generate(100));
@@ -74,15 +73,11 @@ export class UserController {
             
             return res.status(HttpStatus.OK).json({});
             
-        } catch(err) {
+        } catch(error) {
 
-            if( has(err,'applicationRef') ){
-                switch(err.applicationRef.constructor){
-                    case QueryFailedError:
-                        console.log(err);
-                    break;
-                }
-
+            console.log(error);
+            if( has(error,'applicationRef') ){
+                throw new HttpException(error.applicationRef.status,error.applicationRef.message);
             }
 
         }

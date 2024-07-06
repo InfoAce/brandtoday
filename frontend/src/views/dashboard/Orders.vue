@@ -55,7 +55,7 @@
                                       </tr>
                                   </thead>
                                   <tbody>
-                                    <template v-if="!isEmpty($data.orders)">
+                                    <template v-if="!isEmpty($data.orders.items)">
                                         <tr v-for="(order,index) in $data.orders.items" :key="index">
                                           <td>{{ index + 1 }}</td>
                                           <td> {{ order.num_id }}</td>
@@ -73,7 +73,7 @@
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="8" class="text-center">
+                                            <td colspan="8" class="text-center p-5">
                                                 <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No orders found.</h4>
                                             </td>
                                         </tr>

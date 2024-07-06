@@ -203,7 +203,7 @@
                                         </div>
                                         <div class="payment-box">
                                             <div class="text-center">
-                                                <button class="btn-solid btn" type="button" @click="recaptcha" :disabled="$data.isDisabled || $store.getters.loader">
+                                                <button class="btn-solid btn" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
                                                     <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                     Place Order
                                                 </button>
@@ -260,7 +260,8 @@ const $data   = reactive({
         postal_code:      String(),
         county_state:     String(),
         city_town:        String(),
-        items:            Array()
+        items:            Array(),
+        type:             String('existing')
 	},
     loader:    {
         addresses: Boolean(),
@@ -320,7 +321,8 @@ const signupFormSchema = yup.object().shape({
                          .required("*Confirmation password is required")
                          .oneOf([yup.ref('password'), null], 'Password mismatch'),
 	password:         yup.string()
-						 .required("*Password is required"),                         
+						 .required("*Password is required"),  
+    type:             yup.string()                       
 });
 
 const validateSignupForm = (field) => {
@@ -354,6 +356,7 @@ const checkTransactionStatus = (statusInterval,order_id:string) => {
     $api.get(`/orders/${order_id}/status`)
         .then( ({ data: { transaction }}) => {
             if( transaction.status_code === 1){
+                $data.loader.order = false;
                 clearInterval(statusInterval);
                 document.querySelector('#payment_box').style.visibility = 'hidden';
                 $toast.success('Payment successful. Please check your email for order details.')
@@ -378,7 +381,7 @@ const  openPesapal = () => {
     const iframe                    = document.createElement('iframe');
     const statusInterval            = setInterval( () => {
         checkTransactionStatus(statusInterval,order_id);
-    },5000);  
+    },3000);  
 
     iframe.setAttribute('src',redirect_url);
     iframe.setAttribute('height',window.screen.height);
@@ -401,30 +404,22 @@ const  openPesapal = () => {
             
 }
 
-const placeOrder = () => {
-    $store.commit('loader',false);
-    const data         = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
-    $api.post('/orders',data)
-        .then( ({ data: { order }}) => {
-            return $api.put(`/orders/${order.id}/transaction`);
-        })
-        .then(({ data }) => {
-            $data.order = data;
-            openPesapal();          
-        })
-        .catch( ({ response: { data} }) => {
-            $store.commit('loader',false);
-
-            if( data.statusCode == 400 ){
-                data.message.forEach( (value:string) => {
-                    $toast.error(value);
-                })
-            }
-            
-        })
-        .finally( () => {
-            $store.commit('loader',false);            
-        });
+const placeOrder = async () => {
+    try{
+        $data.loader.order      = true;
+        const data              = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.signup_form,'type','new');
+        let { data: { order } } = await $api.post('/orders',data);
+        let { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
+        $data.order             = cloneDeep(orderData);
+        openPesapal();
+    } catch ({ response: { data } }) {
+        $data.loader.order = true;
+        if( data.statusCode == 400 ){
+            data.message.forEach( (value:string) => {
+                $toast.error(value);
+            })
+        }
+    }
 }
 
 const getPhoneNumber = ($event) => {

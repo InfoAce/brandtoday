@@ -34,6 +34,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
+                    <CardLoader />
                     <div class="card-header py-4">
                         <form class="form-inline search-form search-box">
                             <div class="form-group">
@@ -56,27 +57,36 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(client,index) in data.clients.items" :key="index">
-                                        <td>{{ index + 1 }}</td>
-                                        <td>
-                                          <img v-if="!$isNull(client.image)" :src="`${backendUri}${client.image}`" :alt="`${client.first_name} ${client.last_name}`"/>
-                                          <h2 v-else><i class="fa fa-user-circle"></i></h2>
-                                        </td>
-                                        <td>{{ client.first_name }} {{ client.last_name }}</td>
-                                        <td>{{ client.email }}</td>
-                                        <td>{{ client.phone_number }}</td>
-                                        <td class="td-check">
-                                            <i v-if="!$isEmpty(client.email_verified_at)" data-feather="check-circle"></i>
-                                            <i v-if="$isEmpty(client.email_verified_at)" data-feather="x-circle"></i>
-                                        </td>
-                                        <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
-                                    </tr>
+                                    <template v-if="!$isEmpty($data.clients.items)">
+                                        <tr v-for="(client,index) in $data.clients.items" :key="index">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>
+                                            <img v-if="!$isNull(client.image)" :src="client.image" :alt="`${client.first_name} ${client.last_name}`"/>
+                                            <h2 v-else><i class="fa fa-user-circle"></i></h2>
+                                            </td>
+                                            <td>{{ client.first_name }} {{ client.last_name }}</td>
+                                            <td>{{ client.email }}</td>
+                                            <td>{{ client.phone_number }}</td>
+                                            <td class="td-check">
+                                                <i v-if="!$isEmpty(client.email_verified_at)" data-feather="check-circle"></i>
+                                                <i v-if="$isEmpty(client.email_verified_at)" data-feather="x-circle"></i>
+                                            </td>
+                                            <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
+                                        </tr>
+                                    </template>
+                                    <template v-else>
+                                        <tr>
+                                            <td colspan="8" class="text-center p-5">
+                                                <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No clients found.</h4>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty(data.clients)">
+                        <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.clients)">
                             <paginate
-                                :page-count="data.clients.meta.itemCount"
+                                :page-count="$data.clients.meta.itemCount"
                                 :click-handler="fetchPaginate"
                                 :prev-text="'Prev'"
                                 :next-text="'Next'"
@@ -96,8 +106,7 @@
 import { inject, reactive, ref, watch, onMounted, onBeforeMount } from 'vue';
 import { cloneDeep, debounce, each, isEmpty, isNull, has, set, times } from 'lodash';
 import { useRouter } from 'vue-router';
-import * as yup from "yup";
-import { toast  } from "vue3-toastify";
+import { CardLoader } from '../../components';
 import { useStore } from 'vuex';
 import moment from 'moment';
 import Paginate from "vuejs-paginate-next";
@@ -110,21 +119,18 @@ const $moment  = moment;
 const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
-const data     = reactive({clients: Object()});
+const $data    = reactive({clients: Object()});
 
-const fetch = (params = { page: 1, limit: 10}) => {
-	store.commit('loader',true);
-    let { page, limit } = params,url = `/dashboard/users?type=client&page=${page}&limit=${limit}`;
-	$api.get(url)
-		.then( ({ data:{ users } }) => {
-            set(data,'clients',cloneDeep(users));
-		})
-		.catch( ({ response }) => {
-			store.commit('loader',false);
-		})
-		.finally( () => {
-			store.commit('loader',false);
-		});
+const fetch = async (params = { page: 1, limit: 10}) => {
+    try {
+        store.commit('card_loader',true);
+        let { page, limit } = params,url = `/dashboard/users?type=client&page=${page}&limit=${limit}`;
+        let { data: { users } } = await $api.get(url);
+        store.commit('card_loader',false);
+        $data.clients = cloneDeep(users);
+    } catch(error) {
+        store.commit('card_loader',false);
+    }
 }
 
 const fetchPaginate = () => {

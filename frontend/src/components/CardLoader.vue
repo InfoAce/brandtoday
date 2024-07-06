@@ -1,5 +1,5 @@
 <template>
-    <div class="card-overlay" v-show="$store.getters.loaders.card">
+    <div class="card-overlay" v-show="!$store.getters.loaders.card">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
 </template>
@@ -15,7 +15,7 @@ const $store = useStore();
     min-height: 100%;
     width: 100%;
     z-index: 1;
-    background: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.9);
     display: flex;
     align-items: center;
     justify-content: center;

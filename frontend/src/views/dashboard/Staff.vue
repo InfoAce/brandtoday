@@ -32,13 +32,14 @@
           <div class="row">
               <div class="col-sm-12">
                   <div class="card">
+                    <CardLoader />
                       <div class="card-header py-4">
                           <form class="form-inline search-form search-box">
                               <div class="form-group">
                                   <input class="form-control-plaintext" type="search" placeholder="Search..">
                               </div>
                           </form>  
-                          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addstaff" >Add User</button>
+                          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addstaff" >Add Staff Member</button>
                       </div>
                       <div class="card-body">                    
                           <div class="table-responsive table-desi">
@@ -56,38 +57,38 @@
                                       </tr>
                                   </thead>
                                   <tbody>
-                                    <template v-if="!$isEmpty(data.clients.items)">
-                                        <tr v-for="(client,index) in data.clients.items" :key="index">
+                                    <template v-if="!$isEmpty($data.staff.items)">
+                                        <tr v-for="(staff,index) in $data.staff.items" :key="index">
                                           <td>{{ index + 1 }}</td>
                                           <td>
-                                            <img v-if="!$isNull(client.image)" :src="`${backendUri}${client.image}`" :alt="`${client.first_name} ${client.last_name}`"/>
+                                            <img v-if="!$isNull(staff.image)" :src="staff.image" :alt="`${staff.first_name} ${staff.last_name}`"/>
                                             <h2 v-else><i class="fa fa-user-circle"></i></h2>
                                           </td>
-                                          <td>{{ client.first_name }} {{ client.last_name }}</td>
-                                          <td>{{ client.email }}</td>
-                                          <td>{{ client.phone_number }}</td>
-                                          <td v-if="!$isEmpty(client.email_verified_at)" class="td-check">
+                                          <td>{{ staff.first_name }} {{ staff.last_name }}</td>
+                                          <td>{{ staff.email }}</td>
+                                          <td>{{ staff.phone_number }}</td>
+                                          <td v-if="!$isEmpty(staff.email_verified_at)" class="td-check">
                                               <i data-feather="check-circle"></i>
                                           </td>
-                                          <td v-if="$isEmpty(client.email_verified_at)" class="td-cross">
+                                          <td v-if="$isEmpty(staff.email_verified_at)" class="td-cross">
                                               <i data-feather="x-circle"></i>
                                           </td>
-                                          <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
+                                          <td>{{ $moment(staff.created_at).format('Do MMMM, Y')}}</td>                                        
                                       </tr>
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="8" class="text-center">
-                                                <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No user found.</h4>
+                                            <td colspan="8" class="text-center p-5">
+                                                <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No staff members found.</h4>
                                             </td>
                                         </tr>
                                     </template>
                                   </tbody>
                               </table>
                           </div>
-                          <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty(data.clients)">
+                          <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.staff)">
                               <paginate
-                                  :page-count="data.clients.meta.itemCount"
+                                  :page-count="$data.staff.meta.itemCount"
                                   :click-handler="fetchPaginate"
                                   :prev-text="'Prev'"
                                   :next-text="'Next'"
@@ -113,23 +114,23 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="first_name" class="col-form-label">First Name</label>
-                        <input type="text" class="form-control" id="first_name" v-model="data.form.first_name">
-                        <p class="text-danger col col-12 mb-4" v-show="has(data.errors,'first_name')">{{data.errors.first_name}}</p>	
+                        <input type="text" class="form-control" id="first_name" v-model="$data.form.first_name">
+                        <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'first_name')">{{$data.errors.first_name}}</p>	
                     </div>
                     <div class="form-group">
                         <label for="last_name" class="col-form-label">Last Name</label>
-                        <input type="text" class="form-control" id="last_name" v-model="data.form.last_name">
-                        <p class="text-danger col col-12 mb-4" v-show="has(data.errors,'last_name')">{{data.errors.last_name}}</p>	
+                        <input type="text" class="form-control" id="last_name" v-model="$data.form.last_name">
+                        <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'last_name')">{{$data.errors.last_name}}</p>	
                     </div>
                     <div class="form-group">
                         <label for="email" class="col-form-label">Email Address</label>
-                        <input type="text" class="form-control" id="email" v-model="data.form.email">
-                        <p class="text-danger col col-12 mb-4" v-show="has(data.errors,'email')">{{data.errors.email}}</p>	
+                        <input type="text" class="form-control" id="email" v-model="$data.form.email">
+                        <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'email')">{{$data.errors.email}}</p>	
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button @click="() => addUser()" class="btn btn-primary" type="button" :disabled="data.isDisabled || data.loader.register">
-                        <i v-if="data.loader.register" class="fa fa-spinner fa-spin"></i>
+                    <button @click="() => addUser()" class="btn btn-primary" type="button" :disabled="$data.isDisabled || $data.loader.register">
+                        <i v-if="$data.loader.register" class="fa fa-spinner fa-spin"></i>
                         Create
                     </button>
                 </div>
@@ -149,6 +150,7 @@ import { toast  } from "vue3-toastify";
 import { useStore } from 'vuex';
 import moment from 'moment';
 import Paginate from "vuejs-paginate-next";
+import { CardLoader } from '../../components';
 
 const store    = useStore();
 const router   = useRouter();
@@ -158,8 +160,7 @@ const $moment  = moment;
 const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
-const data     = reactive({
-    clients: Object(),
+const $data    = reactive({
     errors:  Object(),
     form:{ 
         first_name: String(), 
@@ -169,7 +170,8 @@ const data     = reactive({
     loader: {
         register: false
     },
-    isDisabled: true
+    isDisabled: true,
+    staff: Object(),
 });
 
 const formSchema = yup.object().shape({
@@ -183,45 +185,49 @@ const formSchema = yup.object().shape({
 });
 
 const validateForm = (field) => {
-	formSchema.validateAt(field, data.form)
+	formSchema.validateAt(field, $data.form)
         .then((value,key) => {
-			delete data.errors[field];
+			delete $data.errors[field];
 		})
         .catch((err) => {
-          data.errors[err.path] = err.message;
+          $data.errors[err.path] = err.message;
         })
         .finally( () => {
-		    data.isDisabled = !isEmpty(data.errors);
+		    $data.isDisabled = !isEmpty($data.errors);
         })
 }
 
 const fetch = (params = { page: 1, limit: 10}) => {
-    let { page, limit } = params,url = `/users?type=staff&page=${page}&limit=${limit}`;
-    $api.get(url)
+    let { page, limit } = params;
+
+    store.commit('card_loader',true);
+    
+    $api.get(`/dashboard/users?type=staff&page=${page}&limit=${limit}`)
         .then( ({ data:{ users } }) => {
-            set(data,'clients',cloneDeep(users));
+            $data.staff = cloneDeep(users);
         })
         .catch( ({ response }) => {
-            store.commit('loader',false);
+            store.commit('card_loader',false);
         })
         .finally( () => {
-            store.commit('loader',false);
+            store.commit('card_loader',false);
         });
 }
 
 const addUser = () => {
-    data.loader.register = true;
-    $api.post(`users`,data.form)
+    $data.loader.register = true;
+    $api.post(`/dashboard/users`,$data.form)
         .then( () => {
+            $('#addstaff').modal('hide');
             toast.info('Staff member has been successfully added. Registration email has been sent.');
             resetForm();
-        fetch();
+            fetch();
         })
         .catch( ({ response }) => {
-            data.loader.register = false;
+            $data.loader.register = false;
         })
         .finally( () => {
-            data.loader.register = false;
+            $data.loader.register = false;
         });
 }
 
@@ -238,7 +244,7 @@ const resetForm = () => {
 }
 // Watch form changes
 watch(
-	() => data.form, 
+	() => $data.form, 
 	(form) => {
 		each(form,(value,key) => {
 			validateForm(key);
