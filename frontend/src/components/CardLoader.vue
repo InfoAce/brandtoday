@@ -1,5 +1,5 @@
 <template>
-    <div class="card-overlay" v-show="!$store.getters.loaders.card">
+    <div class="card-overlay" v-show="$store.getters.loaders.card">
         <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
 </template>
