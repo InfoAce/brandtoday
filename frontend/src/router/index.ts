@@ -331,9 +331,8 @@ const router = createRouter({
       path: '/dashboard',
       async beforeEnter(to,from,next){
         await new Promise((resolve) => {
-          resolve(setTimeout(() => addDashbordTheme(), 500)) 
+          resolve(addDashbordTheme(next)) 
         });
-        next();
       },
       children:[
         {
@@ -602,7 +601,7 @@ const checkRole = (to:any,next: any) => {
  * 
  * @return {void} This function does not return anything.
  */
-const addDashbordTheme = () => {
+const addDashbordTheme = async (next) => {
 
   // Define the array of CSS and JS files needed for the dashboard theme
   const scripts = [
@@ -660,7 +659,9 @@ const addDashbordTheme = () => {
   }
 
   // Wait for all the promises to resolve before continuing
-  Promise.all(scripts);
+  await Promise.all(scripts);
+
+  next();
 
 }
 
