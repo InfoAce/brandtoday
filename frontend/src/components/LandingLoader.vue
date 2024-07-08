@@ -1,6 +1,6 @@
 <template>
   <div class="overlay" v-show="$store.getters.loader">
-    <span class="loader"></span>
+    <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
   </div>
 </template>
 <script>
@@ -8,7 +8,7 @@ export default {
   name: 'LandingLoader'
 }
 </script>
-<style>
+<style scoped>
 .overlay {
   position: fixed;
   min-height: 100%;
@@ -20,46 +20,101 @@ export default {
   justify-content: center;
 }
 
-.loader {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: block;
-  margin:15px auto;
-  position: relative;
-  color: #ededed;
-  left: -100px;
-  box-sizing: border-box;
-  animation: shadowRolling 2s linear infinite;
+.card-overlay {
+    position: absolute;
+    min-height: 100%;
+    width: 100%;
+    z-index: 1;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-@keyframes shadowRolling {
-  0% {
-    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-  }
-  12% {
-    box-shadow: 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-  }
-  25% {
-    box-shadow: 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
-  }
-  36% {
-    box-shadow: 120px 0 white, 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0);
+   
+.lds-default,
+.lds-default div {
+  box-sizing: border-box;
+}
+.lds-default {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-default div {
+  position: absolute;
+  width: 6.4px;
+  height: 6.4px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: lds-default 1.2s linear infinite;
+}
+.lds-default div:nth-child(1) {
+  animation-delay: 0s;
+  top: 36.8px;
+  left: 66.24px;
+}
+.lds-default div:nth-child(2) {
+  animation-delay: -0.1s;
+  top: 22.08px;
+  left: 62.29579px;
+}
+.lds-default div:nth-child(3) {
+  animation-delay: -0.2s;
+  top: 11.30421px;
+  left: 51.52px;
+}
+.lds-default div:nth-child(4) {
+  animation-delay: -0.3s;
+  top: 7.36px;
+  left: 36.8px;
+}
+.lds-default div:nth-child(5) {
+  animation-delay: -0.4s;
+  top: 11.30421px;
+  left: 22.08px;
+}
+.lds-default div:nth-child(6) {
+  animation-delay: -0.5s;
+  top: 22.08px;
+  left: 11.30421px;
+}
+.lds-default div:nth-child(7) {
+  animation-delay: -0.6s;
+  top: 36.8px;
+  left: 7.36px;
+}
+.lds-default div:nth-child(8) {
+  animation-delay: -0.7s;
+  top: 51.52px;
+  left: 11.30421px;
+}
+.lds-default div:nth-child(9) {
+  animation-delay: -0.8s;
+  top: 62.29579px;
+  left: 22.08px;
+}
+.lds-default div:nth-child(10) {
+  animation-delay: -0.9s;
+  top: 66.24px;
+  left: 36.8px;
+}
+.lds-default div:nth-child(11) {
+  animation-delay: -1s;
+  top: 62.29579px;
+  left: 51.52px;
+}
+.lds-default div:nth-child(12) {
+  animation-delay: -1.1s;
+  top: 51.52px;
+  left: 62.29579px;
+}
+@keyframes lds-default {
+  0%, 20%, 80%, 100% {
+    transform: scale(1);
   }
   50% {
-    box-shadow: 130px 0 white, 120px 0 white, 110px 0 white, 100px 0 white;
-  }
-  62% {
-    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white, 110px 0 white;
-  }
-  75% {
-    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white;
-  }
-  87% {
-    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white;
-  }
-  100% {
-    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+    transform: scale(1.5);
   }
 }
 </style>

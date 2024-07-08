@@ -116,10 +116,178 @@
                                         </div>
                                     </div>
                                     <div class="product-wrapper-grid">
-                                        <div class="row margin-res" v-show="$isEmpty(products.data)">
+                                        <div class="row margin-res p-4" v-show="$isEmpty(products.data) && loading">
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>  
                                             
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>   
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                                                                     
                                         </div>
-                                        <div class="row margin-res" v-show="!$isEmpty(products.data)">
+                                        <div class="row margin-res" v-show="!$isEmpty(products.data) && !loading">
                                             <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products.data" :key="index">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
@@ -205,6 +373,7 @@ export default {
     data(){
         return{
             products:           Array(),
+            loading:            Boolean(true),
             sub_categories:     Array(),
             sub_category:       String(),
             sub_child_category: String()
@@ -265,6 +434,7 @@ export default {
                     }
                 })
                 .finally( () => {
+                    // this.loading = false;
                     this.$store.commit('loader',false);
                 });            
 

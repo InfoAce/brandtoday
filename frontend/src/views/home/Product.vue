@@ -72,7 +72,7 @@
                                     </h6>	
                                 </div>
                                 <div id="selectSize" class="addeffect-section product-description border-product">
-                                    <template v-if="isVariant && !$isEmpty(groupedVariants)">
+                                    <template v-if="isVariant && !$isEmpty(groupedSizeVariants)">
                                         <div class="row pb-2">
                                             <div class="col-12">
                                                 <h6>
@@ -81,7 +81,7 @@
                                                     <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
                                                 </h6>
                                             </div>                                            
-                                            <div class="col-md-6 py-2" v-for="(variant,sizeName) of groupedVariants" :key="sizeName">
+                                            <div class="col-md-6 py-2" v-for="(variant,sizeName) of groupedSizeVariants" :key="sizeName">
                                                 <div class="quantity-box">
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
@@ -364,7 +364,7 @@ export default {
         cartItem(){
             return this.cart.find( val => val.code == this.product.fullCode ) ?? {};
         },
-        groupedVariants(){
+        groupedSizeVariants(){
             return groupBy(this.product.variants,'codeSizeName');
         },
         isVariant(){
@@ -400,7 +400,6 @@ export default {
                     this.isDisabled = !isEmpty(this.errors);
                 })
         }         
-
     },
     data(){
         return{
@@ -415,17 +414,31 @@ export default {
             stock:       Object(),
             schemaShape: Object(),
             sizeKeys:    Object(),
-            selections:  Object()
+            selections:  {
+                colour: Object(),
+                size:   Object()
+            }
         }
     },
     methods:{
         addToCart(){
-            let { isVariant, product, selections } = this, data = cloneDeep(this.form);
-            if( has(selections,'colour') ){
+            let { isVariant, product, selections } = this;
+            let data     = cloneDeep(this.form);
+            let selected = product.variants.find( value => selections.colour.code == value.codeColour );
+
+            data.price = product.price;
+            data.name  = product.productName;
+
+            if( has(selections,'colour') && !isEmpty(selections.colour.images) ){
                 data.image = selections.colour.images[0].urls[0].url;
-                data.price = product.price;
-                data.name  = product.productName;
             }
+
+            if( isEmpty(selections.colour.images) && !isEmpty(this.product.images) ){
+                let image  = this.product.images.find( val => val.name == selected.fullCode || `${this.$route.params.code}_default`)
+                console.log(image);
+                data.image = image.urls[0].url;
+            }
+
             this.cart.push(cloneDeep(data));
         },
         addQuantity(event){
@@ -537,7 +550,6 @@ export default {
                     this.$store.commit('loader',false);
                 })
                 .finally( () => {
-                    this.$store.commit('loader',false);
                     this.initScripts();
                 });            
         },
@@ -620,6 +632,14 @@ export default {
             deep: true,
             immediate: false
         },
+        product:{
+            handler(value){
+                if( !isEmpty(value) && this.$store.getters.loader ){
+                    this.$store.commit('loader',false);
+                }
+            },
+            deep: true
+        },
         "selections.colour": {
             /**
              * Watches for changes in the 'selections.colour' property and fetches stock for all variants of the selected colour.
@@ -628,11 +648,11 @@ export default {
              */
             async handler(value){
                 // If a colour is selected, fetch stock for all variants of the selected colour
-                if( !isEmpty(value) ){         
+                if( !isEmpty(value) && !isEmpty(this.groupedSizeVariants) ){         
                     
                     try {
                         // Fetch stock for all variants of the selected colour
-                        let variants = await Promise.all(keys(this.groupedVariants).map( async (variant) => await this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) ));
+                        let variants = await Promise.all(keys(this.groupedSizeVariants).map( async (variant) => await this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) ));
 
                         // Update the stock object with the fetched stock for each variant
                         variants.forEach( ({ data: { code, stock }}) => {

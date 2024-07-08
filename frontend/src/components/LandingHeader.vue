@@ -74,7 +74,7 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12" >
+                <div class="col-12 p-4" >
                     <div id="main-menu" class="d-flex w-100 justify-content-center">
                         <!-- <div class="menu-left">
                             <div class="navbar">

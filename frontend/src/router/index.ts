@@ -12,17 +12,7 @@ const router = createRouter({
     {
       path: '/home',
       async beforeEnter(to,from,next){
-        await addHomeTheme();
-
-        if( !isEmpty(store.getters.auth) ){
-          const { user: { role } } = store.getters.auth;
-          if( role.state > 0 ){ next({ name: 'Overview'}) }
-          if( role.state == 0 ){ next() }
-        }
-
-        if( isEmpty(store.getters.auth) ){
-          next();
-        }
+        await new Promise((resolve) => resolve(addHomeTheme(next)));
       },
       component: () => import('@/views/layouts/Landing.vue'),
       children: [
@@ -330,9 +320,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       async beforeEnter(to,from,next){
-        await new Promise((resolve) => {
-          resolve(addDashbordTheme(next)) 
-        });
+        await new Promise((resolve) => resolve(addDashbordTheme(next)));
       },
       children:[
         {
@@ -672,13 +660,13 @@ const addDashbordTheme = async (next) => {
  * 
  * @return {void} This function does not return anything.
  */
-const addHomeTheme = async () => {
+const addHomeTheme = async (next: any) => {
 
   // Define the array of CSS and JS files needed for the home theme
   const scripts = [
     '/assets/home/js/jquery.exitintent.js',
     '/assets/home/js/fly-cart.js',
-    '/assets/home/js/menu.js',
+    // '/assets/home/js/menu.js',
     '/assets/home/js/lazysizes.min.js',
     '/assets/home/js/addtocart.js',
   ].map( 
@@ -705,6 +693,16 @@ const addHomeTheme = async () => {
 
   // Wait for all the promises to resolve before continuing
   await Promise.all(scripts);
+
+  if( !isEmpty(store.getters.auth) ){
+    const { user: { role } } = store.getters.auth;
+    if( role.state > 0 ){ next({ name: 'Overview'}) }
+    if( role.state == 0 ){ next() }
+  }
+
+  if( isEmpty(store.getters.auth) ){
+    next();
+  }
 
 }
 

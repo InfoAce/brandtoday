@@ -129,13 +129,19 @@ export class ProductsController {
 
         // Get the user from the request object
         let user: any = get(req,'user');
+        
         // Clone the cached products and prices
         let cached_products: any = cloneDeep(this.amrod.products);
-        let cached_prices: any = cloneDeep(this.amrod.prices);
+        let cached_prices: any   = cloneDeep(this.amrod.prices);
+        
+        // console.log(cached_products);
+
         // Find the product with the given code
-        let product: any = cached_products.find( product => product.fullCode == code );
+        let product: any    = cached_products.find( product => product.fullCode == code );
+
         // Find the price data for the given code
         let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
+        
         // Initialize the favourite object
         let favourite: any = {};
 

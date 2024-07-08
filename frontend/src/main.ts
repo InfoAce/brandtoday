@@ -18,6 +18,8 @@ window.document.querySelector('title').innerHTML = `${import.meta.env.VITE_APP_N
 import { VueReCaptcha } from 'vue-recaptcha-v3';
 import storage from './storage';
 
+import "skeleton-screen-css";
+
 const app = createApp(App)
 
 app.use(toast);

@@ -10,7 +10,7 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule } from './modules';
-import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, RoleEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderReviewEntity, ProductReviewEntity, RoleEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrderSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -19,6 +19,7 @@ import { AppService } from './app.service';
 import { resolve } from 'path';
 import { SessionSerialize } from './utils';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TimelineEntity } from './entities/timeline.entity';
 
 @Module({
   imports: [
@@ -66,11 +67,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
           CompanyEntity,
           FavouriteEntity,
           OrderEntity,
+          OrderReviewEntity,
+          ProductReviewEntity,
           RoleEntity,
+          TimelineEntity,
           TransactionEntity,
           UserEntity
         ],
-        synchronize: false,
+        synchronize: true,
         subscribers: [
           OrderSubscriber,
           UserSubscriber

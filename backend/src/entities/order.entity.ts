@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { AddressBookEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
+import { AddressBookEntity, OrderReviewEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
 import { Seed } from 'nestjs-class-seeder';
+import { TimelineEntity } from './timeline.entity';
 
 export enum Status {
   PAID         = "paid",
@@ -48,8 +49,18 @@ export class OrderEntity {
   })
   status: string;
 
+  @OneToMany(() => TimelineEntity, timeline => timeline.order)
+  @JoinColumn({
+    name:                 "id",
+    referencedColumnName: "order_id",
+  })
+  timelines: TimelineEntity[];
+
   @OneToOne(() => TransactionEntity,transaction => transaction.order,{ eager: true })
   transaction: TransactionEntity
+
+  @OneToOne(() => OrderReviewEntity,review => review.order,{ eager: true })
+  review: OrderReviewEntity
 
   @ManyToOne(() => UserEntity, (user) => user.orders, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
