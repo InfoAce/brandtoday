@@ -12,6 +12,7 @@ const router = createRouter({
     {
       path: '/home',
       async beforeEnter(to,from,next){
+        store.commit('loader',true);
         await new Promise((resolve) => resolve(addHomeTheme(next)));
       },
       component: () => import('@/views/layouts/Landing.vue'),
@@ -501,8 +502,6 @@ const router = createRouter({
 router.beforeEach( 
   debounce( 
     (to, from, next) => {
-
-    store.commit('loader',true);
     
     const { name: routeName, meta: { auth, state, landing, admin, redirectIfAuth } } = to;
 

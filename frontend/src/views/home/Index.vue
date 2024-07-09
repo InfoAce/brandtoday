@@ -3,15 +3,16 @@
 
     <!-- Home slider -->
     <section class="p-0">
-        <template v-if="isEmpty($data.banners) && $data.loading">
+        <template v-if="isEmpty($data.banners) && $data.loading || isEmpty($data.banners) && !$data.loading">
             <div class="ssc">
                 <div class="ssc-wrapper">
-                    <div class="ssc-square mb"></div>                               
+                    <div class="ssc-square"></div>                               
+                    <div class="ssc-square"></div>                               
+                    <div class="ssc-square"></div>                               
                 </div>
             </div>             
         </template>
-        <template v-if="!isEmpty($data.banners) && !$data.loading">
-            <div class="slide-1 home-slider">
+        <div class="slide-1 home-slider" v-show="!isEmpty($data.banners) && !$data.loading">
                 <template  v-for="(image,key) in $data.banners" :key="key">
                     <div class="home text-center">
                         <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
@@ -33,7 +34,6 @@
                     </div>
                 </template>
             </div>
-        </template>
     </section>
     <!-- Home slider end -->
 
@@ -54,10 +54,10 @@
 
 
     <!-- Product slider -->
-    <section class="section-b-space pt-0 ratio_asos">
+    <section class="section-b-space py-0 ratio_asos">
         <div class="container">
             <div class="row">
-                <template v-if="isEmpty($data.categories) && $data.loading">
+                <template v-if="isEmpty($data.categories) && $data.loading || isEmpty($data.categories) && !$data.loading">
                     <div class="col-xl-3 col-6">
                         <div class="ssc">
                             <div class="ssc-wrapper">
@@ -87,31 +87,37 @@
                         </div>    
                     </div>                             
                 </template>
-                <template v-if="!isEmpty($data.categories) && !$data.loading">
-                    <div class="col">
-                        <div class="product-4 product-m no-arrow">
-                            <div class="product-box" v-for="(category,index) in $data.categories" :key="index">
-                                <div class="img-wrapper">
-                                    <div class="front">
-                                        <router-link :to="navigateTo(category,'categoryPath')">
-                                            <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
-                                        </router-link>
+                <carousel  
+                    v-show="!isEmpty($data.categories) && !$data.loading" 
+                    :settings="$data.settings.categories" 
+                    :itemsToShow="3" 
+                    :wrapAround="true" 
+                    :transition="10000"
+                    :breakpoints="$data.breakpoints.categories"
+                    :autoplay="true"
+                >
+                    <slide v-for="(category,index) in $data.categories" :key="index">
+                        <div class="carousel__item">
+                            <router-link :to="navigateTo(category,'categoryPath')">
+                                <div class="classic-effect">
+                                    <div>
+                                        <img :src="category.image"  :alt="category.categoryName" width="100%" height="250" />
                                     </div>
-                                    <div class="back">
-                                        <router-link :to="navigateTo(category,'categoryPath')">
-                                            <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
-                                        </router-link>
-                                    </div>
+                                    <span></span>
                                 </div>
-                                <div class="product-detail">
-                                    <router-link :to="navigateTo(category,'categoryPath')">
-                                        <h4>{{ category.categoryName }}</h4>
-                                    </router-link>
-                                </div>
+                            </router-link>
+                            <div class="blog-details">
+                                <router-link :to="navigateTo(category,'categoryPath')">
+                                    <p>{{ category.categoryName }}</p>
+                                </router-link>
                             </div>
                         </div>
-                    </div>
-                </template>
+                    </slide>
+                    <template #addons>
+                        <navigation />
+                        <pagination />
+                    </template>
+                </carousel>
             </div>
         </div>
     </section>
@@ -121,30 +127,57 @@
     <div class="title1 section-t-space">
         <h2 class="title-inner1">Brands</h2>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3">
-                <div class="product-para">
-                    <p class="text-center">We have grouped the products into these categories. Try it out.</p>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Paragraph end -->
 
     <!--  logo section -->
     <section class="section-b-space py-0">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="logo-list no-arrow">
-                        <div v-for="(brand,index) in $data.brands" :key="index">
-                            <div class="logo-block">
-                                <a href="#"><img :src="brand.image" :alt="brand.name" width="300"></a>
+                <template v-if="isEmpty($data.brands) && $data.loading">
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
                             </div>
-                        </div>                       
+                        </div>    
                     </div>
-                </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>         
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>                             
+                </template>
+                <carousel  
+                    v-show="!isEmpty($data.brands) && !$data.loading"
+                    :settings="$data.settings.brands" 
+                    :itemsToShow="3" 
+                    :wrapAround="true" 
+                    :transition="5000"
+                    :breakpoints="$data.breakpoints.brands"
+                    :autoplay="true"
+                >
+                    <slide v-for="(brand,index) in $data.brands" :key="index">
+                        <div class="carousel__item">
+                            <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="450"></a>
+                        </div>
+                    </slide>
+                </carousel>               
             </div>
         </div>
     </section>
@@ -154,83 +187,266 @@
     <div class="title1 section-t-space">
         <h2 class="title-inner1">Testimonials</h2>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3">
-                <div class="product-para">
-                    <p class="text-center">We have grouped the products into these categories. Try it out.</p>
-                </div>
+    <section class="section-b-space py-0">
+        <div class="container">
+            <div class="row">
+                <template v-if="isEmpty($data.testimonials) && $data.loading">
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>         
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>                             
+                </template>
+                <carousel  
+                    v-show="isEmpty($data.testimonials) && !$data.loading"
+                    :settings="$data.settings.testimonials" 
+                    :itemsToShow="3" 
+                    :wrapAround="true" 
+                    :transition="5000"
+                    :breakpoints="$data.breakpoints.testimonials"
+                >
+                    <slide v-for="(testimonial,index) in dummyTestimonials" :key="index">
+                        <div class="carousel__item">
+                            <div class="media">
+                                <div class="media-body">
+                                    <h4>{{ testimonial.name }} <span>( {{ testimonial.date  }} )</span></h4>
+                                    <p>{{ testimonial.description }}</p>                    
+                                </div>
+                            </div>              
+                        </div>
+                    </slide>
+                </carousel> 
+                <carousel  
+                    v-if="!isEmpty($data.testimonials) && !$data.loading"
+                    :settings="$data.settings.testimonials" 
+                    :itemsToShow="3" 
+                    :wrapAround="true" 
+                    :transition="10000"
+                    :breakpoints="$data.breakpoints.testimonials"
+                >
+                    <slide v-for="(testimonial,index) in $data.testimonials" :key="index">
+                        <div class="carousel__item">
+                            <div class="media">
+                                <div class="media-body">
+                                    <h6>{{ testimonial.name }} <span>( {{ testimonial.created_at  }} )</span></h6>
+                                    <p>{{ testimonial.description }}</p>                    
+                                </div>
+                            </div>              
+                        </div>
+                    </slide>
+                </carousel>               
             </div>
         </div>
-    </div>
+    </section>
     <!-- Paragraph end -->    
 </div>
 </template>
-
 <script setup>
-import { computed, inject, nextTick, onBeforeMount, onMounted, reactive } from 'vue';
+import { computed, inject, nextTick, onBeforeMount, onMounted, reactive, watch } from 'vue';
 import { cloneDeep, debounce, isEmpty } from 'lodash';
 import { useStore } from 'vuex';
+import 'vue3-carousel/dist/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+import moment from 'moment';
 
 const $api   = inject('$api');
 const $store = useStore();
 const $data  = reactive({ 
-    categories: Array(), 
-    brands:     Array(), 
-    banners:    Array(),
-    loading:    Boolean(true)
+    categories:   Array(), 
+    brands:       Array(), 
+    banners:      Array(),
+    loading:      Boolean(true),
+    testimonials: Array(),
+    breakpoints: {
+        brands: {
+            720: {
+                itemsToShow: 4,
+                snapAlign: 'center',
+            },
+            // 1024 and up
+            1920: {
+                itemsToShow: 5,
+                snapAlign: 'start',
+            },
+        },
+        categories: {
+            720: {
+                itemsToShow: 4,
+                snapAlign: 'center',
+            },
+            // 1024 and up
+            1920: {
+                itemsToShow: 5,
+                snapAlign: 'start',
+            },
+        },
+        testimonials: {
+            720: {
+                itemsToShow: 4,
+                snapAlign: 'center',
+            },
+            // 1024 and up
+            1920: {
+                itemsToShow: 5,
+                snapAlign: 'start',
+            },
+        }
+    },
+    settings: {
+        brands: {
+            itemsToShow: 1,
+            snapAlign: 'center',
+        },
+        categories: {
+            itemsToShow: 1,
+            snapAlign: 'center',
+        },
+        testimonials: {
+            itemsToShow: 1,
+            snapAlign: 'center',
+        }
+    }
 });
 
-// Methdos //
-const fetch = () => {
-    $store.commit('loader',true);
-    $api.get('/home')
-        .then( ({ data: { brands, categories, banners }}) => {
-            $data.brands     = cloneDeep(brands);
-            $data.categories = cloneDeep(categories);
-            $data.banners    = cloneDeep(banners);       
-        })
-        .catch( () => {
-            $store.commit('loader',false);
-        })
-        .finally( () => {
-            $store.commit('loader',false);
-            $('.product-4, .brand-list, .logo-list').slick({
-                infinite: true,
-                speed: 300,
-                slidesToShow: 4,
-                slidesToScroll: 4,
-                autoplay: true,
-                autoplaySpeed: 3000,
-                responsive: [{
-                        breakpoint: 1200,
-                        settings: {
-                            slidesToShow: 3,
-                            slidesToScroll: 3
-                        }
-                    },
-                    {
-                        breakpoint: 991,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    }
-                ]
-            });               
-            $('.slide-1').slick({});
-            // $data.loading = Boolean();
-        })
+const dummyTestimonials = computed( () => Array(
+    {
+        date:        moment().subtract(1,'day').format('Do MMMM, Y'),
+        name:        'Lucas Doe',
+        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
+                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
+                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
+                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
+                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
+                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
+                        erat tempor quis. Vestibulum eu vestibulum ex.`
+    },
+    {
+        date:        moment().subtract(2,'day').format('Do MMMM, Y'),
+        name:        'Mark Masai',
+        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
+                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
+                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
+                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
+                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
+                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
+                        erat tempor quis. Vestibulum eu vestibulum ex.`
+    },
+    {
+        date:        moment().subtract(3,'day').format('Do MMMM, Y'),
+        name:        'Jane Foster',
+        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
+                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
+                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
+                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
+                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
+                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
+                        erat tempor quis. Vestibulum eu vestibulum ex.`
+    },
+    {
+        date:        moment().subtract(4,'day').format('Do MMMM, Y'),
+        name:        'Dean Sean',
+        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
+                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
+                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
+                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
+                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
+                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
+                        erat tempor quis. Vestibulum eu vestibulum ex.`
+    },
+));
+
+/**
+ * Fetches the home data from the API and updates the component's data.
+ *
+ * @return {Promise} A promise that resolves when the data is fetched and the component's data is updated.
+ */
+const fetch = async () => {
+    try {
+        // Fetch data from API
+        const { data: { brands, categories, banners } } = await $api.get('/home');
+
+        // Update component's data
+        $data.brands = cloneDeep(brands);
+        $data.categories = cloneDeep(categories);
+        $data.banners = cloneDeep(banners);  
+
+    } catch (error) {
+        // Handle error
+        $data.loading = false;
+    } finally {
+        $data.loading = false;
+    }
 };
 
+/**
+ * Generates a route object for navigating to the 'Products' view
+ * with the category parameter set to the base64 encoded lowercase 
+ * value of the specified item's key
+ *
+ * @param {Object} item - The item object containing the key
+ * @param {string} key - The key to use for generating the category parameter
+ * @return {Object} - The route object for navigating to the 'Products' view
+ */
 const navigateTo = (item,key) => {
-    return { name: 'Products',params: { category: btoa(item[key].toLowerCase()) } }
+    // Generate the base64 encoded lowercase value of the specified item's key
+    const category = btoa(item[key].toLowerCase());
+
+    // Generate and return the route object for navigating to the 'Products' view
+    return { name: 'Products', params: { category } };
 }
 
 onBeforeMount( () => fetch() );
 
 onMounted( () => {
-    // $('.slide-1').slick({});
-
+    setTimeout( () => {
+        // $('.product-4, .brand-list, .logo-list').slick({
+        //     infinite: true,
+        //     speed: 300,
+        //     slidesToShow: 4,
+        //     slidesToScroll: 4,
+        //     autoplay: true,
+        //     autoplaySpeed: 3000,
+        //     responsive: [{
+        //             breakpoint: 1200,
+        //             settings: {
+        //                 slidesToShow: 3,
+        //                 slidesToScroll: 3
+        //             }
+        //         },
+        //         {
+        //             breakpoint: 991,
+        //             settings: {
+        //                 slidesToShow: 2,
+        //                 slidesToScroll: 2
+        //             }
+        //         }
+        //     ]
+        // }); 
+        $('.slide-1').slick({});
+    },1000)
 });
+
 </script>
