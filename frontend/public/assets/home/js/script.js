@@ -377,7 +377,7 @@
     /*=====================
      14. slick slider
      ==========================*/
-    // $('.slide-1').slick({});
+    $('.slide-1').slick({});
 
     $('.slide-center').slick({
         centerMode: true,

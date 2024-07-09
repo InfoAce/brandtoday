@@ -21,23 +21,6 @@ if( !isEmpty(app_shopping_cart) ){
 	store.commit('cart',JSON.parse(app_shopping_cart));
 }
 
-const scripts = [
-	'/assets/home/js/script.js'	
-].map( 
-	async (url) => new Promise( 
-		resolve => setTimeout( async() => resolve(addScript(url)),0)
-	) 
-);
-
-const addScript = (url:string) => {
-	let script    = document.createElement('script');
-	script.type   = 'text/javascript';
-	script.src    = url;
-	document.body.appendChild(script);
-}
-
-Promise.all(scripts);
-
 watch( 
 	() => store.getters.cart,
 	(value) => {
@@ -54,36 +37,6 @@ watch(
 	}
 )
 
-onMounted( 
-	debounce(
-		() => {
-			$(function() {
-				$.exitIntent('enable');
-				$(document).bind('exitintent', function() {
-					if(typeof(Storage) !== "undefined") {
-						if(sessionStorage.exit_popup == 'true'){
-						}
-						else{
-							sessionStorage.exit_popup = 'true';
-							setTimeout(function () {
-								if( $.cookie("exit-popup") == 'hide_exit_popup' ){
-								}
-								else{
-									$("#exit_popup").modal('show');
-								}
-							}, 100);
-						}
-					}
-				});
-				$("#exit_popup a").bind('click', function() {
-					$("#exit_popup").hide();
-					return false;
-				});
-			});
-		},
-		200
-	)
-)
 
 </script>
 

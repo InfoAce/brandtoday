@@ -13,7 +13,8 @@ const router = createRouter({
       path: '/home',
       async beforeEnter(to,from,next){
         store.commit('loader',true);
-        await new Promise((resolve) => resolve(addHomeTheme(next)));
+        // await new Promise((resolve) => resolve(addHomeTheme(next)));
+        next();
       },
       component: () => import('@/views/layouts/Landing.vue'),
       children: [
@@ -320,9 +321,9 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      async beforeEnter(to,from,next){
-        await new Promise((resolve) => resolve(addDashbordTheme(next)));
-      },
+      // async beforeEnter(to,from,next){
+      //   await new Promise((resolve) => resolve(addDashbordTheme(next)));
+      // },
       children:[
         {
           beforeEnter(to,from,next){

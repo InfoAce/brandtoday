@@ -12,28 +12,28 @@
                 </div>
             </div>             
         </template>
-        <div class="slide-1 home-slider" v-show="!isEmpty($data.banners) && !$data.loading">
-                <template  v-for="(image,key) in $data.banners" :key="key">
-                    <div class="home text-center">
-                        <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
-                        <div class="container-fluid" >
-                            <div class="row">
-                                <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
-                                    <div class="slider-contain container">
-                                        <div class="row">
-                                            <div class="col-12 text-left d-flex flex-column align-items-start">
-                                                <h4 class="text-white">{{ image.description }}</h4>
-                                                <h1 class="text-white">{{ image.title }}</h1>
-                                                <a href="#" class="btn btn-solid">shop now</a>
-                                            </div>
+        <template v-if="!isEmpty($data.banners) && !$data.loading">
+            <div class="home-slider slide-1">
+                <div v-for="(image,key) in $data.banners" :key="key" class="home text-center">
+                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                    <div class="container-fluid" >
+                        <div class="row">
+                            <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
+                                <div class="slider-contain container">
+                                    <div class="row">
+                                        <div class="col-12 text-left d-flex flex-column align-items-start">
+                                            <h4 class="text-white">{{ image.description }}</h4>
+                                            <h1 class="text-white">{{ image.title }}</h1>
+                                            <a href="#" class="btn btn-solid">shop now</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </template>
+                </div>
             </div>
+        </template>
     </section>
     <!-- Home slider end -->
 
@@ -389,14 +389,15 @@ const fetch = async () => {
         const { data: { brands, categories, banners } } = await $api.get('/home');
 
         // Update component's data
-        $data.brands = cloneDeep(brands);
+        $data.brands     = cloneDeep(brands);
         $data.categories = cloneDeep(categories);
-        $data.banners = cloneDeep(banners);  
+        $data.banners    = cloneDeep(banners);  
 
     } catch (error) {
         // Handle error
         $data.loading = false;
     } finally {
+        $('#banner-slider').slick({})
         $data.loading = false;
     }
 };
@@ -421,32 +422,7 @@ const navigateTo = (item,key) => {
 onBeforeMount( () => fetch() );
 
 onMounted( () => {
-    setTimeout( () => {
-        // $('.product-4, .brand-list, .logo-list').slick({
-        //     infinite: true,
-        //     speed: 300,
-        //     slidesToShow: 4,
-        //     slidesToScroll: 4,
-        //     autoplay: true,
-        //     autoplaySpeed: 3000,
-        //     responsive: [{
-        //             breakpoint: 1200,
-        //             settings: {
-        //                 slidesToShow: 3,
-        //                 slidesToScroll: 3
-        //             }
-        //         },
-        //         {
-        //             breakpoint: 991,
-        //             settings: {
-        //                 slidesToShow: 2,
-        //                 slidesToScroll: 2
-        //             }
-        //         }
-        //     ]
-        // }); 
-        $('.slide-1').slick({});
-    },1000)
-});
+    $('.slide-1').slick({});
+})
 
 </script>

@@ -9,11 +9,6 @@
                     <div class="col-lg-6">
                         <div class="header-contact">
                             <ul>
-                                <li>
-                                    <a href="javascript::void" @click.prevent="$router.push({ name: 'Home' })">
-                                        <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
-                                    </a>
-                                </li>
                                 <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</li>
                             </ul>
                         </div>
@@ -102,20 +97,15 @@
                 </template>
                 <template v-if="!isEmpty(home.categories)" >
                     <div class="col-12 p-4" >
-                            <div id="main-menu" class="d-flex w-100 justify-content-center">
-                                <!-- <div class="menu-left">
-                                    <div class="navbar">
-                                        <a href="javascript:void(0)">
-                                            <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i></div>
-                                        </a>
-                                    </div>
+                            <div id="main-menu" class="d-flex w-100 justify-content-center align-items-center">
+                                <div class="menu-left">
                                     <div class="brand-logo">
                                         <a @click.prevent="$router.push({ name: 'Home' })">
                                             <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
                                         </a>
                                     </div>
-                                </div>                                      -->
-                                <div class="menu-center pull-center m-2 ">
+                                </div>                                     
+                                <div class="menu-center pull-center m-2">
                                     <nav id="main-nav">
                                         <div class="toggle-nav p-0">
                                             <i class="fa fa-bars sidebar-bar"></i>

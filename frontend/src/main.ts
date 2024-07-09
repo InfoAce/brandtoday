@@ -19,6 +19,7 @@ import { VueReCaptcha } from 'vue-recaptcha-v3';
 import storage from './storage';
 
 import "skeleton-screen-css";
+import themes from './theme';
 
 const app = createApp(App)
 
@@ -29,5 +30,5 @@ app.use(router)
 app.use(api);
 app.use(VueSweetalert2);
 app.use(VueReCaptcha, { siteKey: '6LfUKLkpAAAAAMFo0iomiilG1QUpAkw8Xph5tz-Y' })
-
+app.use(themes,{ router });
 app.mount('#app')
