@@ -35,13 +35,43 @@
                                 <div class="collection-collapse-block open">
                                     <h3 class="collapse-block-title">Sub Categories</h3>
                                     <div class="collection-collapse-block-content" id="sub_categories">
-                                        <div class="collection-brand-filter">
-                                            <div class="form-check collection-filter-checkbox align-items-center">
-                                                <input type="radio" class="form-check-input" value="all" name="sub_category" @change="selectSubCategory($event.target.value)" checked id="all" style="width: 1.5em; height: 1.5em;" >
-                                                <label class="form-check-label mb-0" for="all">All</label>
+                                        <template v-if="$isEmpty(sub_categories) && loading">
+                                            <div class="ssc">
+                                                <div class="ssc-wrapper px-0">                  
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>   
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-100 mbs"></div>
+                                                    <div class="ssc-line w-70 mbs"></div>
+                                                    <div class="ssc-line w-90 mbs"></div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <template v-if="!$isEmpty(sub_categories)">
+                                        </template>
+                                        <template v-if="!$isEmpty(sub_categories) && !loading">
+                                            <div class="collection-brand-filter">
+                                                <div class="form-check collection-filter-checkbox align-items-center">
+                                                    <input type="radio" class="form-check-input" value="all" name="sub_category" @change="selectSubCategory($event.target.value)" checked id="all" style="width: 1.5em; height: 1.5em;" >
+                                                    <label class="form-check-label mb-0" for="all">All</label>
+                                                </div>
+                                            </div>
                                             <div class="collection-brand-filter" v-for="(category,index) in sub_categories" :key="index">
                                                 <div class="form-check collection-filter-checkbox align-items-center justify-content-between">
                                                     <div>
@@ -116,8 +146,8 @@
                                         </div>
                                     </div>
                                     <div class="product-wrapper-grid">
-                                        <div class="row margin-res p-4" v-show="$isEmpty(products.data) && loading">
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                        <div class="row margin-res p-2" v-show="$isEmpty(products.data) && loading">
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -131,7 +161,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -145,7 +175,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -159,7 +189,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -174,7 +204,7 @@
                                                 </div>
                                             </div>  
                                             
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -188,7 +218,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -202,7 +232,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -216,7 +246,22 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
+                                                <div class="ssc ssc-card">
+                                                    <div class="ssc-wrapper">
+                                                        <div class="ssc-square mb"></div>
+                                                        <div class="flex align-center justify-between">
+                                                            <div class="w-40">
+                                                                <div class="ssc-line w-70 mbs"></div>
+                                                                <div class="ssc-line w-100 mbs"></div>
+                                                            </div>
+                                                            <div class="ssc-head-line w-50"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -230,21 +275,7 @@
                                                     </div>
                                                 </div>
                                             </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -258,7 +289,7 @@
                                                     </div>
                                                 </div>
                                             </div> 
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -272,7 +303,7 @@
                                                     </div>
                                                 </div>
                                             </div> 
-                                            <div class="col-xl-3 col-6 col-grid-box" >
+                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
                                                         <div class="ssc-square mb"></div>
@@ -434,7 +465,7 @@ export default {
                     }
                 })
                 .finally( () => {
-                    // this.loading = false;
+                    this.loading = false;
                     this.$store.commit('loader',false);
                 });            
 
@@ -493,6 +524,7 @@ export default {
     watch:{
         "$route.params":{
             handler(){
+                this.loading = true;
                 this.fetchSubCategories();
                 this.fetchData();
             },

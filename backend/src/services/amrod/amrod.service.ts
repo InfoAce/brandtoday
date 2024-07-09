@@ -98,7 +98,7 @@ export class AmrodService {
         try {
 
             let auth  = await this.cacheManager.get('amrod_auth'),
-            { data }  = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.stocks.updated}`) );
+            { data }  = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.stocks.all}`) );
             
             return data;
             

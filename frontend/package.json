@@ -32,7 +32,6 @@
     "moment": "^2.30.1",
     "reactive-localstorage": "^1.0.1",
     "skeleton-screen-css": "^1.1.0",
-    "skeleton-webcomponent-loader": "^2.1.4",
     "url": "^0.11.3",
     "vue": "^3.3.4",
     "vue-chartjs": "^5.3.1",
