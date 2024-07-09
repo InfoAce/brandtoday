@@ -3,28 +3,37 @@
 
     <!-- Home slider -->
     <section class="p-0">
-        <div class="slide-1 home-slider">
-            <template  v-for="(image,key) in $data.banners" :key="key">
-                <div class="home text-center">
-                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
-                    <div class="container-fluid" >
-                        <div class="row">
-                            <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
-                                <div class="slider-contain container">
-                                    <div class="row">
-                                        <div class="col-12 text-left d-flex flex-column align-items-start">
-                                            <h4 class="text-white">{{ image.description }}</h4>
-                                            <h1 class="text-white">{{ image.title }}</h1>
-                                            <a href="#" class="btn btn-solid">shop now</a>
+        <template v-if="isEmpty($data.banners) && $data.loading">
+            <div class="ssc">
+                <div class="ssc-wrapper">
+                    <div class="ssc-square mb"></div>                               
+                </div>
+            </div>             
+        </template>
+        <template v-if="!isEmpty($data.banners) && !$data.loading">
+            <div class="slide-1 home-slider">
+                <template  v-for="(image,key) in $data.banners" :key="key">
+                    <div class="home text-center">
+                        <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                        <div class="container-fluid" >
+                            <div class="row">
+                                <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
+                                    <div class="slider-contain container">
+                                        <div class="row">
+                                            <div class="col-12 text-left d-flex flex-column align-items-start">
+                                                <h4 class="text-white">{{ image.description }}</h4>
+                                                <h1 class="text-white">{{ image.title }}</h1>
+                                                <a href="#" class="btn btn-solid">shop now</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </template>
-        </div>
+                </template>
+            </div>
+        </template>
     </section>
     <!-- Home slider end -->
 
@@ -48,33 +57,80 @@
     <section class="section-b-space pt-0 ratio_asos">
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <div class="product-4 product-m no-arrow">
-                        <div class="product-box" v-for="(category,index) in $data.categories" :key="index">
-                            <div class="img-wrapper">
-                                <div class="front">
-                                    <router-link :to="navigateTo(category,'categoryPath')">
-                                        <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </router-link>
-                                </div>
-                                <div class="back">
-                                    <router-link :to="navigateTo(category,'categoryPath')">
-                                        <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </router-link>
-                                </div>
+                <template v-if="isEmpty($data.categories) && $data.loading">
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
                             </div>
-                            <div class="product-detail">
-                                <router-link :to="navigateTo(category,'categoryPath')">
-                                    <h4>{{ category.categoryName }}</h4>
-                                </router-link>
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>         
+                    <div class="col-xl-3 col-6">
+                        <div class="ssc">
+                            <div class="ssc-wrapper">
+                                <div class="ssc-square mb"></div>                               
+                            </div>
+                        </div>    
+                    </div>                             
+                </template>
+                <template v-if="!isEmpty($data.categories) && !$data.loading">
+                    <div class="col">
+                        <div class="product-4 product-m no-arrow">
+                            <div class="product-box" v-for="(category,index) in $data.categories" :key="index">
+                                <div class="img-wrapper">
+                                    <div class="front">
+                                        <router-link :to="navigateTo(category,'categoryPath')">
+                                            <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
+                                        </router-link>
+                                    </div>
+                                    <div class="back">
+                                        <router-link :to="navigateTo(category,'categoryPath')">
+                                            <img :src="category.image" class="img-fluid blur-up lazyload bg-img" alt="">
+                                        </router-link>
+                                    </div>
+                                </div>
+                                <div class="product-detail">
+                                    <router-link :to="navigateTo(category,'categoryPath')">
+                                        <h4>{{ category.categoryName }}</h4>
+                                    </router-link>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </template>
             </div>
         </div>
     </section>
     <!-- Product slider end -->
+
+    <!-- Paragraph-->
+    <div class="title1 section-t-space">
+        <h2 class="title-inner1">Brands</h2>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="product-para">
+                    <p class="text-center">We have grouped the products into these categories. Try it out.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Paragraph end -->
 
     <!--  logo section -->
     <section class="section-b-space py-0">
@@ -93,20 +149,37 @@
         </div>
     </section>
     <!--  logo section end-->
+
+    <!-- Paragraph-->
+    <div class="title1 section-t-space">
+        <h2 class="title-inner1">Testimonials</h2>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="product-para">
+                    <p class="text-center">We have grouped the products into these categories. Try it out.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Paragraph end -->    
 </div>
 </template>
 
 <script setup>
 import { computed, inject, nextTick, onBeforeMount, onMounted, reactive } from 'vue';
-import { cloneDeep, debounce } from 'lodash';
+import { cloneDeep, debounce, isEmpty } from 'lodash';
 import { useStore } from 'vuex';
 
 const $api   = inject('$api');
 const $store = useStore();
-const $data  = reactive({ categories: Array(), brands: Array(), banners: Array() });
-
-// Computed variables //
-const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
+const $data  = reactive({ 
+    categories: Array(), 
+    brands:     Array(), 
+    banners:    Array(),
+    loading:    Boolean(true)
+});
 
 // Methdos //
 const fetch = () => {
@@ -146,6 +219,7 @@ const fetch = () => {
                 ]
             });               
             $('.slide-1').slick({});
+            // $data.loading = Boolean();
         })
 };
 

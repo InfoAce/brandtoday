@@ -74,45 +74,71 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12 p-4" >
-                    <div id="main-menu" class="d-flex w-100 justify-content-center">
-                        <!-- <div class="menu-left">
-                            <div class="navbar">
-                                <a href="javascript:void(0)">
-                                    <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i></div>
-                                </a>
-                            </div>
-                            <div class="brand-logo">
-                                <a @click.prevent="$router.push({ name: 'Home' })">
-                                    <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
-                                </a>
-                            </div>
-                        </div>                                      -->
-                        <div class="menu-center pull-center m-2 ">
-                            <nav id="main-nav">
-                                <div class="toggle-nav p-0">
-                                    <i class="fa fa-bars sidebar-bar"></i>
-                                    <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
+                <template v-if="isEmpty(home.categories)" >
+                    <div class="ssc">
+                        <div class="ssc-wrapper px-0"> 
+                            <div class="flex align-center justify-between">
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
                                 </div>
-                                <ul id="main-menu" class="sm pixelstrap sm-horizontal">
-                                    <li>
-                                        <div class="mobile-back text-end">
-                                            Back
-                                            <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
-                                        </div>
-                                    </li>
-                                    <template v-if="!isEmpty(home.categories)" >
-                                        <li v-for="(item,index) in home.categories" :key="index">
-                                            <a href="javascript::void" @click.prevent="navigateTo(item)" class="py-2 px-2">
-                                                {{ item.categoryName  }}
-                                            </a>
-                                        </li> 
-                                    </template>                                                                              
-                                </ul>
-                            </nav>
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
+                                </div>
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
+                                </div>
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
+                                </div>
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
+                                </div>
+                                <div class="w-40">
+                                    <div class="ssc-line w-90 mbs"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </template>
+                <template v-if="!isEmpty(home.categories)" >
+                    <div class="col-12 p-4" >
+                            <div id="main-menu" class="d-flex w-100 justify-content-center">
+                                <!-- <div class="menu-left">
+                                    <div class="navbar">
+                                        <a href="javascript:void(0)">
+                                            <div class="bar-style"><i class="fa fa-bars sidebar-bar" aria-hidden="true"></i></div>
+                                        </a>
+                                    </div>
+                                    <div class="brand-logo">
+                                        <a @click.prevent="$router.push({ name: 'Home' })">
+                                            <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
+                                        </a>
+                                    </div>
+                                </div>                                      -->
+                                <div class="menu-center pull-center m-2 ">
+                                    <nav id="main-nav">
+                                        <div class="toggle-nav p-0">
+                                            <i class="fa fa-bars sidebar-bar"></i>
+                                            <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
+                                        </div>
+                                        <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+                                            <li>
+                                                <div class="mobile-back text-end">
+                                                    Back
+                                                    <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                                                </div>
+                                            </li>
+                                                <li v-for="(item,index) in home.categories" :key="index">
+                                                    <a href="javascript::void" @click.prevent="navigateTo(item)" class="py-2 px-2">
+                                                        {{ item.categoryName  }}
+                                                    </a>
+                                                </li>                                                                         
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                    </div>
+                </template>
             </div>
         </div>
     </header>
