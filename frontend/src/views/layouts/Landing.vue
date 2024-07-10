@@ -21,6 +21,10 @@ if( !isEmpty(app_shopping_cart) ){
 	store.commit('cart',JSON.parse(app_shopping_cart));
 }
 
+window.addEventListener("resize", debounce((event) => {
+	store.commit('device_width',window.innerWidth)
+},200));
+
 watch( 
 	() => store.getters.cart,
 	(value) => {

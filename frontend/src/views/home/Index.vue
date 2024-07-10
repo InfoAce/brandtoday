@@ -12,12 +12,18 @@
                 </div>
             </div>             
         </template>
-        <div class="home-slider" v-show="!isEmpty($data.banners) && !$data.loading">
-            <div v-for="(image,key) in $data.banners" :key="key" class="home text-center">
+        <carousel  
+            v-show="!isEmpty($data.categories) && !$data.loading" 
+            :itemsToShow="1" 
+            :wrapAround="true" 
+            :transition="10000"
+            class="p-0"
+        >
+            <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px`">
                 <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
                 <div class="container-fluid" >
                     <div class="row">
-                        <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
+                        <div class="col-12 px-0 d-flex align-items-center" :style="`background-color: rgba(0,0,0,0.5) !important; height:${$store.getters.banner_height}px`">
                             <div class="slider-contain container">
                                 <div class="row">
                                     <div class="col-12 text-left d-flex flex-column align-items-start">
@@ -30,8 +36,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </slide>
+            <template #addons>
+                <navigation />
+                <pagination />
+            </template>
+        </carousel>        
     </section>
     <!-- Home slider end -->
 
@@ -269,6 +279,8 @@ import { useStore } from 'vuex';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import moment from 'moment';
+import { ListSlickMethods, VueSlickCarousel } from "vue-slick-ts";
+import "vue-slick-ts/dist/css/slick.css";
 
 const $api   = inject('$api');
 const $store = useStore();
@@ -418,24 +430,24 @@ const navigateTo = (item,key) => {
 
 onBeforeMount( () => fetch() );
 
-watch(
-    () => $data.banners,
-    (banners) =>{
-        nextTick( () => {
-            if( !isEmpty(banners) && !$data.loading ){
-                $(document).ready( () => {
-                    $('.home-slider').slick({
-                        infinite: true,
-                        speed: 300,
-                        slidesToShow: 1,
-                    });
-                });
-            }
-        });
-    },
-    {
-        deep: true
-    }
-)
+// watch(
+//     () => $data.banners,
+//     (banners) =>{
+//         nextTick( () => {
+//             if( !isEmpty(banners) && !$data.loading ){
+//                 $(document).ready( () => {
+//                     $('.home-slider').slick({
+//                         infinite: true,
+//                         speed: 300,
+//                         slidesToShow: 1,
+//                     });
+//                 });
+//             }
+//         });
+//     },
+//     {
+//         deep: true
+//     }
+// )
 
 </script>

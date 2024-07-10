@@ -12,6 +12,7 @@ export default defineConfig( ({command,mode}) => {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
         "~": fileURLToPath(new URL("./public", import.meta.url)),
+        "^": fileURLToPath(new URL("./node_modules", import.meta.url)),
       },
     }
   }

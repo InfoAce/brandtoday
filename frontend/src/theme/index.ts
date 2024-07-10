@@ -66,7 +66,7 @@ const addHomeTheme = async () => {
     const scripts = [
         '/assets/home/js/jquery.exitintent.js',
         '/assets/home/js/fly-cart.js',
-        // '/assets/home/js/slick.js',
+        '/assets/home/js/slick.js',
         // '/assets/home/js/menu.js',
         '/assets/home/js/lazysizes.min.js',
         '/assets/home/js/addtocart.js',
@@ -81,6 +81,8 @@ const addHomeTheme = async () => {
 
     // Define the array of CSS files needed for the home theme
     const cssFiles = [
+        '/assets/global/css/slick-theme.css',
+        '/assets/global/css/slick.css',
         '/assets/home/css/vendors/themify-icons.css',
         '/assets/home/css/style.css',
     ].map( 

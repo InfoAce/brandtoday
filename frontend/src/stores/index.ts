@@ -30,13 +30,16 @@ export default createStore({
       sideBar:{
         menus:     menuLinks,
         visible:   true,
-      }
+      },
+      device_width: window.innerWidth,
     }
   },
   getters:{
     auth:              (state) => state.auth,
     assetsUrl:         (state) => state.env.VITE_API_URL.replace('api/v1',''),
+    banner_height:      (state) => state.device_width * 0.42,
     cart:              (state) => state.cart,
+    device_width:      (state) => state.device_width,
     env:               (state) => state.env,
     home:              (state) => state.home,
     loader:            (state) => state.loader,
@@ -54,6 +57,9 @@ export default createStore({
     },
     cart(state,value) {
       state.cart = cloneDeep(value);
+    },
+    device_width(state,value) {
+      state.device_width = value;
     },
     home(state,value) {
       state.home = value
