@@ -66,11 +66,11 @@ const addHomeTheme = async () => {
     const scripts = [
         '/assets/home/js/jquery.exitintent.js',
         '/assets/home/js/fly-cart.js',
-        '/assets/home/js/slick.js',
+        // '/assets/home/js/slick.js',
         // '/assets/home/js/menu.js',
         '/assets/home/js/lazysizes.min.js',
         '/assets/home/js/addtocart.js',
-        '/assets/home/js/script.js'
+        // '/assets/home/js/script.js'
     ].map( 
         // Map over the array of URLs and create a promise for each URL
         async (url) => new Promise( 

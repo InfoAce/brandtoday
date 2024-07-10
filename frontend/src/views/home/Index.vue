@@ -12,20 +12,18 @@
                 </div>
             </div>             
         </template>
-        <template v-if="!isEmpty($data.banners) && !$data.loading">
-            <div class="home-slider slide-1">
-                <div v-for="(image,key) in $data.banners" :key="key" class="home text-center">
-                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
-                    <div class="container-fluid" >
-                        <div class="row">
-                            <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
-                                <div class="slider-contain container">
-                                    <div class="row">
-                                        <div class="col-12 text-left d-flex flex-column align-items-start">
-                                            <h4 class="text-white">{{ image.description }}</h4>
-                                            <h1 class="text-white">{{ image.title }}</h1>
-                                            <a href="#" class="btn btn-solid">shop now</a>
-                                        </div>
+        <div class="home-slider" v-show="!isEmpty($data.banners) && !$data.loading">
+            <div v-for="(image,key) in $data.banners" :key="key" class="home text-center">
+                <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                <div class="container-fluid" >
+                    <div class="row">
+                        <div class="col-12 px-0" style="background-color: rgba(0,0,0,0.8) !important;">
+                            <div class="slider-contain container">
+                                <div class="row">
+                                    <div class="col-12 text-left d-flex flex-column align-items-start">
+                                        <h4 class="text-white">{{ image.description }}</h4>
+                                        <h1 class="text-white">{{ image.title }}</h1>
+                                        <a href="#" class="btn btn-solid">shop now</a>
                                     </div>
                                 </div>
                             </div>
@@ -33,7 +31,7 @@
                     </div>
                 </div>
             </div>
-        </template>
+        </div>
     </section>
     <!-- Home slider end -->
 
@@ -397,7 +395,6 @@ const fetch = async () => {
         // Handle error
         $data.loading = false;
     } finally {
-        $('#banner-slider').slick({})
         $data.loading = false;
     }
 };
@@ -421,8 +418,24 @@ const navigateTo = (item,key) => {
 
 onBeforeMount( () => fetch() );
 
-onMounted( () => {
-    $('.slide-1').slick({});
-})
+watch(
+    () => $data.banners,
+    (banners) =>{
+        nextTick( () => {
+            if( !isEmpty(banners) && !$data.loading ){
+                $(document).ready( () => {
+                    $('.home-slider').slick({
+                        infinite: true,
+                        speed: 300,
+                        slidesToShow: 1,
+                    });
+                });
+            }
+        });
+    },
+    {
+        deep: true
+    }
+)
 
 </script>
