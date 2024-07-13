@@ -279,8 +279,6 @@ import { useStore } from 'vuex';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import moment from 'moment';
-import { ListSlickMethods, VueSlickCarousel } from "vue-slick-ts";
-import "vue-slick-ts/dist/css/slick.css";
 
 const $api   = inject('$api');
 const $store = useStore();

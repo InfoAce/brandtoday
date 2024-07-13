@@ -131,7 +131,7 @@ export class AuthService {
         } catch (error) {
 
             // Log and throw error
-            this.logger.error(error);
+            // this.logger.error(error);
             
             throw new HttpException(error.message,error.status);
         }        

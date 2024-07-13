@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Catch, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
 import { has } from 'lodash';
-import { QueryBuilder, QueryFailedError } from 'typeorm';
+import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryBuilder, QueryFailedError } from 'typeorm';
 import {
   paginate,
   Pagination,
@@ -15,6 +15,7 @@ import { ModelException } from 'src/exceptions/model.exception';
 class UserModelException extends ExceptionsHandler {}
 
 @Injectable()
+@Catch(QueryFailedError, EntityNotFoundError,CannotCreateEntityIdMapError)
 export default class UserModel {
 
   private readonly logger = new Logger(UserEntity.name);
@@ -113,16 +114,49 @@ export default class UserModel {
       
     }
   }
-
-  async save(data: any): Promise<any>{
+  
+  /**
+   * Create a new user in the database.
+   *
+   * @param {any} data - The user data to save.
+   * @returns {Promise<UserEntity>} A promise that resolves to the saved user.
+   * @throws {Error} Throws an error if there is an error saving the user.
+   */
+  async create(data: any) {
     try {
-    
-      return await this.usersRepository.save(data);
-    
-    } catch(error){
+      // Save the user data to the database.
+      return await this.usersRepository.create(data);
 
-      this.logger.error(error);  
-    
+    } catch(error) {
+      // Log any errors that occur during the save operation.
+      this.logger.error(error);
+
+      // Re-throw the error to be handled by the caller.
+      throw error;
+    }
+  }
+
+  /**
+   * Save a user to the database.
+   *
+   * @param {any} data - The user data to save.
+   * @returns {Promise<any>} A promise that resolves to the saved user.
+   * @throws {Error} Throws an error if there is an error saving the user.
+   */
+  async save(data: any): Promise<any> {
+    try {
+
+      // Save the user data to the database.
+      return await this.usersRepository.save(data);
+
+    } catch(error) {
+
+      // Log any errors that occur during the save operation.
+      this.logger.error(error);
+
+      // Re-throw the error to be handled by the caller.
+      throw new CannotCreateEntityIdMapError(error.message,error);
+
     }
   }
 

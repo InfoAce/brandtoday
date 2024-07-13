@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Inject, Injectable, Logger, Param, P
 import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { cloneDeep, isEmpty, first, has, get, omit, shuffle } from 'lodash';
+import { cloneDeep, intersectionBy, isEmpty, first, has, get, omit, shuffle } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { FavouriteModel } from 'src/models';
@@ -134,13 +134,32 @@ export class ProductsController {
         let cached_products: any = cloneDeep(this.amrod.products);
         let cached_prices: any   = cloneDeep(this.amrod.prices);
         
-        // console.log(cached_products);
-
         // Find the product with the given code
         let product: any    = cached_products.find( product => product.fullCode == code );
 
         // Find the price data for the given code
         let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
+
+        let related_products: any = product.categories.map( 
+                                                        category => cached_products.find( 
+                                                          item => item.categories.find( val => {
+                                                            let subject = category.path.split('/');
+
+                                                            if( subject.lenght == 1 || subject.length == 2 ){
+                                                              return val.path.includes(subject[0]);
+                                                            }
+
+                                                            subject.splice(subject.length - 1)
+                                                            return val.path.includes(subject.join('/'));
+
+                                                          }) 
+                                                        )
+                                                      )
+                                                      .filter( item => item.fullCode != product.fullCode )
+                                                      .map( item => { 
+                                                        let price = cached_prices.find( price => price.fullCode.includes(item.fullCode) );
+                                                        return { ...item, price: price.price };
+                                                      });
         
         // Initialize the favourite object
         let favourite: any = {};
@@ -154,7 +173,7 @@ export class ProductsController {
         if( data_price != undefined ){ product.price = data_price.price; }
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        res.status(HttpStatus.OK).json({ product, favourite });
+        res.status(HttpStatus.OK).json({ product, favourite, related_products });
 
       } catch(error){
 

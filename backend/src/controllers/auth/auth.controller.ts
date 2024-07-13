@@ -91,6 +91,7 @@ export class AuthController {
 
             // Save user and send confirmation email
             let user = await this.userModel.save(registerUser);
+            
             await this.mailService.sendUserConfirmation(user);
 
             // Send response with user details

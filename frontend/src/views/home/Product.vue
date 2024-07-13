@@ -29,17 +29,31 @@
             <div class="collection-wrapper">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-6">
-                            <div class="product-slick">
-                                <div v-for="(image,index) in product.images" :key="index">
-                                    <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload image_zoom_cls-0">
-                                </div>        
-                            </div>
-                            <div class="row">
-                                <div class="col-12 p-0">
-                                    
-                                </div>
-                            </div>
+                        <div class="col-lg-6 col-xs-12">
+                            <template v-if="$isEmpty(product) && loading.product">
+                                <div class="ssc">
+                                    <div class="ssc-wrapper">
+                                        <div class="ssc-square"></div>                               
+                                        <div class="ssc-square"></div>                               
+                                        <div class="ssc-square"></div>                               
+                                    </div>
+                                </div>                                  
+                            </template>
+                            <template v-if="!$isEmpty(product) && !loading.product">
+                                <Carousel  
+                                    v-if="!$isEmpty(product.images)"
+                                    :settings="settings.images" 
+                                    :itemsToShow="1" 
+                                    :wrapAround="true" 
+                                >
+                                    <Slide v-for="(image,index) in product.images" :key="index">
+                                        <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload">
+                                    </Slide>
+                                    <template #addons>
+                                        <Navigation />
+                                    </template>
+                                </Carousel>   
+                            </template>                        
                         </div>
                         <div class="col-lg-6 rtl-text">
                             <div class="product-right">
@@ -143,13 +157,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="border-product">
-                                    <div class="slider-nav">
-                                        <div v-for="(image,index) in product.images" :key="index">
-                                            <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload">
-                                        </div>
-                                    </div>
-                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -170,12 +178,7 @@
                                         class="icofont icofont-ui-home"></i>Details</a>
                                 <div class="material-border"></div>
                             </li>
-                            <li class="nav-item"><a class="nav-link" id="profile-top-tab" data-bs-toggle="tab"
-                                    href="#top-profile" role="tab" aria-selected="false"><i
-                                        class="icofont icofont-man-in-glasses"></i>Specification</a>
-                                <div class="material-border"></div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" id="review-top-tab" data-bs-toggle="tab"
+                            <li class="nav-item" v-if="!$isEmpty(auth)"><a class="nav-link" id="review-top-tab" data-bs-toggle="tab"
                                     href="#top-review" role="tab" aria-selected="false"><i
                                         class="icofont icofont-contacts"></i>Write Review</a>
                                 <div class="material-border"></div>
@@ -185,100 +188,11 @@
                             <div class="tab-pane fade show active" id="top-home" role="tabpanel"
                                 aria-labelledby="top-home-tab">
                                 <div class="product-tab-discription">
-                                    <div class="part" v-html="product.description">
-                                    </div>
-                                    <div class="part">
-                                        <h5 class="inner-title">fabric:</h5>
-                                        <p>Art silk is manufactured by synthetic fibres like rayon. It's light in weight and
-                                            is soft on the skin for comfort in summers.Art silk is manufactured by synthetic
-                                            fibres like rayon. It's light in weight and is soft on the skin for comfort in
-                                            summers.</p>
-                                    </div>
-                                    <div class="part">
-                                        <h5 class="inner-title">size & fit:</h5>
-                                        <p>The model (height 5'8") is wearing a size S</p>
-                                    </div>
-                                    <div class="part">
-                                        <h5 class="inner-title">Material & Care:</h5>
-                                        <p>Top fabric: pure cotton</p>
-                                        <p>Bottom fabric: pure cotton</p>
-                                        <p>Hand-wash</p>
-                                    </div>
+                                    <div class="part" v-html="product.description"></div>                                
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="top-profile" role="tabpanel" aria-labelledby="profile-top-tab">
-                                <p>The Model is wearing a white blouse from our stylist's collection, see the image for a
-                                    mock-up of what the actual blouse would look like.it has text written on it in a black
-                                    cursive language which looks great on a white color.</p>
-                                <div class="single-product-tables">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>Sleeve Length</td>
-                                                <td>Sleevless</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Neck</td>
-                                                <td>Round Neck</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Occasion</td>
-                                                <td>Sports</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>Fabric</td>
-                                                <td>Polyester</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Fit</td>
-                                                <td>Regular Fit</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="top-review" role="tabpanel" aria-labelledby="review-top-tab">
-                                <form class="theme-form">
-                                    <div class="form-row row">
-                                        <div class="col-md-12">
-                                            <div class="media">
-                                                <label>Rating</label>
-                                                <div class="media-body ms-3">
-                                                    <div class="rating three-star"><i class="fa fa-star"></i> <i
-                                                            class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-                                                            class="fa fa-star"></i> <i class="fa fa-star"></i></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="name">Name</label>
-                                            <input type="text" class="form-control" id="name" placeholder="Enter Your name"
-                                                required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="email">Email</label>
-                                            <input type="text" class="form-control" id="email" placeholder="Email" required>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label for="review">Review Title</label>
-                                            <input type="text" class="form-control" id="review"
-                                                placeholder="Enter your Review Subjects" required>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label for="review">Review Title</label>
-                                            <textarea class="form-control" placeholder="Wrire Your Testimonial Here"
-                                                id="exampleFormControlTextarea1" rows="6"></textarea>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <button class="btn btn-solid" type="submit">Submit YOur
-                                                Review</button>
-                                        </div>
-                                    </div>
-                                </form>
+                            </div>                        
+                            <div class="tab-pane fade" id="top-review" role="tabpanel" aria-labelledby="review-top-tab" v-if="!$isEmpty(auth)">
+                                <ProductRatingForm />
                             </div>
                         </div>
                     </div>
@@ -296,42 +210,72 @@
                     </div>
                 </div>
                 <div class="row search-product">
-                    <div class="col-xl-2 col-md-4 col-6">
-                        <div class="product-box">
-                            <div class="img-wrapper">
-                                <div class="front">
-                                    <a href="#"><img src="/assets/home/images/pro3/33.jpg"
-                                            class="img-fluid blur-up lazyload bg-img" alt=""></a>
+                    <template v-if="$isEmpty(related_products) && loading.product">
+                        <div class="col-xl-3">
+                            <div class="ssc ssc-card">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>
+                                    <div class="flex align-center justify-between">
+                                        <div class="w-40">
+                                            <div class="ssc-line w-70 mbs"></div>
+                                            <div class="ssc-line w-100 mbs"></div>
+                                        </div>
+                                        <div class="ssc-head-line w-50"></div>
+                                    </div>
                                 </div>
-                                <div class="back">
-                                    <a href="#"><img src="/assets/home/images/pro3/34.jpg"
-                                            class="img-fluid blur-up lazyload bg-img" alt=""></a>
-                                </div>
-                                <div class="cart-info cart-wrap">
-                                    <button data-bs-toggle="modal" data-bs-target="#addtocart" title="Add to cart"><i
-                                            class="ti-shopping-cart"></i></button> <a href="javascript:void(0)"
-                                        title="Add to Wishlist"><i class="ti-heart" aria-hidden="true"></i></a> <a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#quick-view" title="Quick View"><i
-                                            class="ti-search" aria-hidden="true"></i></a> <a href="compare.html"
-                                        title="Compare"><i class="ti-reload" aria-hidden="true"></i></a>
-                                </div>
-                            </div>
-                            <div class="product-detail">
-                                <div class="rating"><i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
-                                        class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i>
-                                </div>
-                                <a href="product-page(no-sidebar).html">
-                                    <h6>Slim Fit Cotton Shirt</h6>
-                                </a>
-                                <h4>$500.00</h4>
-                                <ul class="color-variant">
-                                    <li class="bg-light0"></li>
-                                    <li class="bg-light1"></li>
-                                    <li class="bg-light2"></li>
-                                </ul>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-xl-3">
+                            <div class="ssc ssc-card">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>
+                                    <div class="flex align-center justify-between">
+                                        <div class="w-40">
+                                            <div class="ssc-line w-70 mbs"></div>
+                                            <div class="ssc-line w-100 mbs"></div>
+                                        </div>
+                                        <div class="ssc-head-line w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3">
+                            <div class="ssc ssc-card">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>
+                                    <div class="flex align-center justify-between">
+                                        <div class="w-40">
+                                            <div class="ssc-line w-70 mbs"></div>
+                                            <div class="ssc-line w-100 mbs"></div>
+                                        </div>
+                                        <div class="ssc-head-line w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3">
+                            <div class="ssc ssc-card">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>
+                                    <div class="flex align-center justify-between">
+                                        <div class="w-40">
+                                            <div class="ssc-line w-70 mbs"></div>
+                                            <div class="ssc-line w-100 mbs"></div>
+                                        </div>
+                                        <div class="ssc-head-line w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="$isEmpty(related_products) && !loading.product">
+                        <div class="col-12">
+                            <h4>Nothing Found Here</h4>
+                        </div>
+                    </template>
+                    <template v-if="!$isEmpty(related_products) && !loading.product">
+                        <RelatedProduct v-for="(product, index) in related_products" :key="index" :data="product" />
+                    </template>
                 </div>
             </div>
         </section>
@@ -345,6 +289,10 @@
 import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, keys, has, omit, set, min } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
+import 'vue3-carousel/dist/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+import { ProductRatingForm, RelatedProduct } from './components';
+
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -352,7 +300,13 @@ export default {
             next();
         });
     },
+    components:{
+        Carousel, Slide, Pagination, Navigation, ProductRatingForm, RelatedProduct
+    },
     computed:{
+        auth(){
+            return this.$store.getters.auth;
+        },
         cart:{
             get(){
                 return this.$store.getters.cart;
@@ -408,15 +362,23 @@ export default {
             form:        Object(),
             isDisabled:  Boolean(),
             loading:     {
+                product: Boolean(true),
                 wishlist: Boolean()
             },
             product:     Object(),
+            related_products: Array(),
             stock:       Object(),
             schemaShape: Object(),
             sizeKeys:    Object(),
             selections:  {
                 colour: Object(),
                 size:   Object()
+            },
+            settings:{
+                images:{
+                    itemsToShow: 1,
+                    snapAlign: 'center',
+                }
             }
         }
     },
@@ -537,20 +499,32 @@ export default {
                         });
                    });
         },
+        /**
+         * Fetches the product details from the server and initializes the view.
+         * @returns {Promise} A promise that resolves when the product details and related products are fetched and the view is initialized.
+         */
         fetchProduct(){
             this.$store.commit('loader',true); // Set loader
-            const { $route: { params: { product } } } = this; // Destructor route params
+            
+            // Destructure route params
+            const { $route: { params: { product } } } = this;
+            
             // Fetch product details
             this.$api.put(`/products/${product}`)
-                .then( ({ data:{ product, favourite }}) => {
+                .then( ({ data:{ product, favourite,related_products }}) => {
+                    // Update state with fetched data
                     this.favourite = cloneDeep(favourite);
+                    this.related_products = cloneDeep(related_products)
+                    
+                    // Initialize view
                     this.initView(product);
                 })
                 .catch( ({ response }) => {
                     this.$store.commit('loader',false);
                 })
                 .finally( () => {
-                    this.initScripts();
+                    this.loading.product = Boolean();
+                    // this.initScripts();
                 });            
         },
         fetchStock(code){
@@ -637,6 +611,13 @@ export default {
                 if( !isEmpty(value) && this.$store.getters.loader ){
                     this.$store.commit('loader',false);
                 }
+            },
+            deep: true
+        },
+        "$route.params":{
+            handler(){
+                this.product.loading = true;
+                this.fetchProduct();
             },
             deep: true
         },
