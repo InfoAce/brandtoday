@@ -1,276 +1,274 @@
 <template>
     <div>
 
-    <!-- Home slider -->
-    <section class="p-0">
-        <template v-if="isEmpty($data.banners) && $data.loading || isEmpty($data.banners) && !$data.loading">
-            <div class="ssc">
-                <div class="ssc-wrapper">
-                    <div class="ssc-square"></div>                               
-                    <div class="ssc-square"></div>                               
-                    <div class="ssc-square"></div>                               
-                </div>
-            </div>             
-        </template>
-        <carousel  
-            v-show="!isEmpty($data.categories) && !$data.loading" 
-            :itemsToShow="1" 
-            :wrapAround="true" 
-            :transition="10000"
-            class="p-0"
-        >
-            <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px`">
-                <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
-                <div class="container-fluid" >
-                    <div class="row">
-                        <div class="col-12 px-0 d-flex align-items-center" :style="`background-color: rgba(0,0,0,0.5) !important; height:${$store.getters.banner_height}px`">
-                            <div class="slider-contain container">
-                                <div class="row">
-                                    <div class="col-12 text-left d-flex flex-column align-items-start">
-                                        <h4 class="text-white">{{ image.description }}</h4>
-                                        <h1 class="text-white">{{ image.title }}</h1>
-                                        <a href="#" class="btn btn-solid">shop now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Home slider -->
+        <section class="p-0">
+            <template v-if="isEmpty($data.banners) && $data.loading || isEmpty($data.banners) && !$data.loading">
+                <div class="ssc">
+                    <div class="ssc-wrapper">
+                        <div class="ssc-square"></div>                               
+                        <div class="ssc-square"></div>                               
+                        <div class="ssc-square"></div>                               
                     </div>
-                </div>
-            </slide>
-            <template #addons>
-                <navigation />
-                <pagination />
+                </div>             
             </template>
-        </carousel>        
-    </section>
-    <!-- Home slider end -->
+            <carousel  
+                v-show="!isEmpty($data.categories) && !$data.loading" 
+                :transition="10000"
+                class="p-0"
+                :settings="$data.settings.banners" 
+            >
+                <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px;`">
+                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 px-0 d-flex align-items-center" :style="`height:${$store.getters.banner_height}px;`">
+                                <div class="slider-contain container">
+                                    <div class="row">
+                                        <div class="col-12 text-left d-flex flex-column align-items-start">
+                                            <h4 class="text-white">{{ image.description }}</h4>
+                                            <h1 class="text-white">{{ image.title }}</h1>
+                                            <a href="#" class="btn btn-solid">shop now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </slide>
+                <template #addons>
+                    <pagination />
+                </template>
+            </carousel>        
+        </section>
+        <!-- Home slider end -->
 
-    <!-- Paragraph-->
-    <div class="title1 section-t-space">
-        <h2 class="title-inner1">View products by category</h2>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3">
-                <div class="product-para">
-                    <p class="text-center">We have grouped the products into these categories. Try it out.</p>
+        <!-- Paragraph-->
+        <div class="title1 section-t-space">
+            <h2 class="title-inner1">View products by category</h2>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <div class="product-para">
+                        <p class="text-center">We have grouped the products into these categories. Try it out.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Paragraph end -->
+        <!-- Paragraph end -->
 
 
-    <!-- Product slider -->
-    <section class="section-b-space py-0 ratio_asos">
-        <div class="container">
-            <div class="row">
-                <template v-if="isEmpty($data.categories) && $data.loading || isEmpty($data.categories) && !$data.loading">
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>         
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>                             
-                </template>
-                <carousel  
-                    v-show="!isEmpty($data.categories) && !$data.loading" 
-                    :settings="$data.settings.categories" 
-                    :itemsToShow="3" 
-                    :wrapAround="true" 
-                    :transition="10000"
-                    :breakpoints="$data.breakpoints.categories"
-                    :autoplay="true"
-                >
-                    <slide v-for="(category,index) in $data.categories" :key="index">
-                        <div class="carousel__item">
-                            <router-link :to="navigateTo(category,'categoryPath')">
-                                <div class="classic-effect">
-                                    <div>
-                                        <img :src="category.image"  :alt="category.categoryName" width="100%" height="250" />
-                                    </div>
-                                    <span></span>
+        <!-- Product slider -->
+        <section class="section-b-space py-0 ratio_asos">
+            <div class="container">
+                <div class="row">
+                    <template v-if="isEmpty($data.categories) && $data.loading || isEmpty($data.categories) && !$data.loading">
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
                                 </div>
-                            </router-link>
-                            <div class="blog-details">
-                                <router-link :to="navigateTo(category,'categoryPath')">
-                                    <p>{{ category.categoryName }}</p>
-                                </router-link>
-                            </div>
+                            </div>    
                         </div>
-                    </slide>
-                    <template #addons>
-                        <navigation />
-                        <pagination />
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>         
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>                             
                     </template>
-                </carousel>
-            </div>
-        </div>
-    </section>
-    <!-- Product slider end -->
-
-    <!-- Paragraph-->
-    <div class="title1 section-t-space">
-        <h2 class="title-inner1">Brands</h2>
-    </div>
-    <!-- Paragraph end -->
-
-    <!--  logo section -->
-    <section class="section-b-space py-0">
-        <div class="container">
-            <div class="row">
-                <template v-if="isEmpty($data.brands) && $data.loading">
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>         
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>                             
-                </template>
-                <carousel  
-                    v-show="!isEmpty($data.brands) && !$data.loading"
-                    :settings="$data.settings.brands" 
-                    :itemsToShow="3" 
-                    :wrapAround="true" 
-                    :transition="5000"
-                    :breakpoints="$data.breakpoints.brands"
-                    :autoplay="true"
-                >
-                    <slide v-for="(brand,index) in $data.brands" :key="index">
-                        <div class="carousel__item">
-                            <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="450"></a>
-                        </div>
-                    </slide>
-                </carousel>               
-            </div>
-        </div>
-    </section>
-    <!--  logo section end-->
-
-    <!-- Paragraph-->
-    <div class="title1 section-t-space">
-        <h2 class="title-inner1">Testimonials</h2>
-    </div>
-    <section class="section-b-space py-0">
-        <div class="container">
-            <div class="row">
-                <template v-if="isEmpty($data.testimonials) && $data.loading">
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>         
-                    <div class="col-xl-3 col-6">
-                        <div class="ssc">
-                            <div class="ssc-wrapper">
-                                <div class="ssc-square mb"></div>                               
-                            </div>
-                        </div>    
-                    </div>                             
-                </template>
-                <carousel  
-                    v-show="isEmpty($data.testimonials) && !$data.loading"
-                    :settings="$data.settings.testimonials" 
-                    :itemsToShow="3" 
-                    :wrapAround="true" 
-                    :transition="5000"
-                    :breakpoints="$data.breakpoints.testimonials"
-                >
-                    <slide v-for="(testimonial,index) in dummyTestimonials" :key="index">
-                        <div class="carousel__item">
-                            <div class="media">
-                                <div class="media-body">
-                                    <h4>{{ testimonial.name }} <span>( {{ testimonial.date  }} )</span></h4>
-                                    <p>{{ testimonial.description }}</p>                    
+                    <carousel  
+                        v-show="!isEmpty($data.categories) && !$data.loading" 
+                        :settings="$data.settings.categories" 
+                        :itemsToShow="3" 
+                        :wrapAround="true" 
+                        :transition="10000"
+                        :breakpoints="$data.breakpoints.categories"
+                        :autoplay="true"
+                    >
+                        <slide v-for="(category,index) in $data.categories" :key="index">
+                            <div class="carousel__item">
+                                <router-link :to="navigateTo(category,'categoryPath')">
+                                    <div class="classic-effect">
+                                        <div>
+                                            <img :src="category.image"  :alt="category.categoryName" width="100%" height="250" />
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                </router-link>
+                                <div class="blog-details">
+                                    <router-link :to="navigateTo(category,'categoryPath')">
+                                        <p>{{ category.categoryName }}</p>
+                                    </router-link>
                                 </div>
-                            </div>              
-                        </div>
-                    </slide>
-                </carousel> 
-                <carousel  
-                    v-if="!isEmpty($data.testimonials) && !$data.loading"
-                    :settings="$data.settings.testimonials" 
-                    :itemsToShow="3" 
-                    :wrapAround="true" 
-                    :transition="10000"
-                    :breakpoints="$data.breakpoints.testimonials"
-                >
-                    <slide v-for="(testimonial,index) in $data.testimonials" :key="index">
-                        <div class="carousel__item">
-                            <div class="media">
-                                <div class="media-body">
-                                    <h6>{{ testimonial.name }} <span>( {{ testimonial.created_at  }} )</span></h6>
-                                    <p>{{ testimonial.description }}</p>                    
-                                </div>
-                            </div>              
-                        </div>
-                    </slide>
-                </carousel>               
+                            </div>
+                        </slide>
+                        <template #addons>
+                            <navigation />
+                            <pagination />
+                        </template>
+                    </carousel>
+                </div>
             </div>
+        </section>
+        <!-- Product slider end -->
+
+        <!-- Paragraph-->
+        <div class="title1 section-t-space">
+            <h2 class="title-inner1">Brands</h2>
         </div>
-    </section>
-    <!-- Paragraph end -->    
-</div>
+        <!-- Paragraph end -->
+
+        <!--  logo section -->
+        <section class="section-b-space py-0">
+            <div class="container">
+                <div class="row">
+                    <template v-if="isEmpty($data.brands) && $data.loading">
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>         
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>                             
+                    </template>
+                    <carousel  
+                        v-show="!isEmpty($data.brands) && !$data.loading"
+                        :settings="$data.settings.brands" 
+                        :itemsToShow="3" 
+                        :wrapAround="true" 
+                        :transition="5000"
+                        :breakpoints="$data.breakpoints.brands"
+                        :autoplay="true"
+                    >
+                        <slide v-for="(brand,index) in $data.brands" :key="index">
+                            <div class="carousel__item">
+                                <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="450"></a>
+                            </div>
+                        </slide>
+                    </carousel>               
+                </div>
+            </div>
+        </section>
+        <!--  logo section end-->
+
+        <!-- Paragraph-->
+        <div class="title1 section-t-space">
+            <h2 class="title-inner1">Testimonials</h2>
+        </div>
+        <section class="section-b-space py-0">
+            <div class="container">
+                <div class="row">
+                    <template v-if="isEmpty($data.testimonials) && $data.loading">
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>         
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>                             
+                    </template>
+                    <carousel  
+                        v-show="isEmpty($data.testimonials) && !$data.loading"
+                        :settings="$data.settings.testimonials" 
+                        :itemsToShow="3" 
+                        :wrapAround="true" 
+                        :transition="5000"
+                        :breakpoints="$data.breakpoints.testimonials"
+                    >
+                        <slide v-for="(testimonial,index) in dummyTestimonials" :key="index">
+                            <div class="carousel__item">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h4>{{ testimonial.name }} <span>( {{ testimonial.date  }} )</span></h4>
+                                        <p>{{ testimonial.description }}</p>                    
+                                    </div>
+                                </div>              
+                            </div>
+                        </slide>
+                    </carousel> 
+                    <carousel  
+                        v-if="!isEmpty($data.testimonials) && !$data.loading"
+                        :settings="$data.settings.testimonials" 
+                        :itemsToShow="3" 
+                        :wrapAround="true" 
+                        :transition="10000"
+                        :breakpoints="$data.breakpoints.testimonials"
+                    >
+                        <slide v-for="(testimonial,index) in $data.testimonials" :key="index">
+                            <div class="carousel__item">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h6>{{ testimonial.name }} <span>( {{ testimonial.created_at  }} )</span></h6>
+                                        <p>{{ testimonial.description }}</p>                    
+                                    </div>
+                                </div>              
+                            </div>
+                        </slide>
+                    </carousel>               
+                </div>
+            </div>
+        </section>
+        <!-- Paragraph end -->    
+    </div>
 </template>
 <script setup>
 import { computed, inject, nextTick, onBeforeMount, onMounted, reactive, watch } from 'vue';
@@ -324,6 +322,10 @@ const $data  = reactive({
         }
     },
     settings: {
+        banners: {
+            itemsToShow: 2,
+            snapAlign: 'center',
+        },
         brands: {
             itemsToShow: 1,
             snapAlign: 'center',
