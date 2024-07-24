@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Inject, Injectable, Logger, Param, P
 import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { cloneDeep, intersectionBy, isEmpty, first, has, get, omit, shuffle } from 'lodash';
+import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, take, uniqBy } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { FavouriteModel } from 'src/models';
@@ -61,7 +61,19 @@ export class ProductsController {
     }
 
     @Get('')
+    /**
+     * Index method to get products based on the query parameters.
+     *
+     * @param {string} queryName - The name of the product.
+     * @param {string} queryCategory - The category of the product.
+     * @param {string} querySubCategory - The sub category of the product.
+     * @param {string} querySubChildCategory - The sub child category of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
     async index(
+      @Query('name') queryName: string,
       @Query('category') queryCategory: string,
       @Query('sub_category') querySubCategory: string,
       @Query('sub_child_category') querySubChildCategory: string,
@@ -69,46 +81,64 @@ export class ProductsController {
       @Res() res: Response
     ) {
       try {  
+        // Clone the products and prices objects
         let cached_products: any = cloneDeep(this.amrod.products);
         let cached_prices:   any = cloneDeep(this.amrod.prices);
         let category:        any = Object();
+        let sub_categories: any  = Array();
 
-        if( !isEmpty(queryCategory) ){
-          category             = this.amrod.categories.find( category => category.categoryPath == atob(queryCategory) );
-          cached_products      = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(queryCategory))) );
+        // Filter products based on name query
+        if( !isEmpty(queryName) ){
+          cached_products = cached_products.filter( product => product.productName.includes(queryName));
+          // Find sub categories based on filtered products
+          sub_categories = uniqBy(cached_products.map( value => value.categories).flat(1),'name').map( sub_cat => this.amrod.categories.map( value => value.children).flat(1).find( value => value.categoryPath.includes(take(sub_cat.path.split('/'),2).join('/')) ) );
         }
 
+        // Filter products based on category query
+        if( !isEmpty(queryCategory) ){
+          category = this.amrod.categories.find( category => category.categoryName.toLowerCase().includes(atob(queryCategory)) );
+          cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(queryCategory))) );
+          // Find sub categories based on filtered products and the category
+          sub_categories = uniqBy(uniqBy(cached_products.map( value => value.categories).flat(1),'name').map( sub_cat => category.children.find( value => value.categoryPath.includes(take(sub_cat.path.split('/'),2).join('/')) ) ).filter( value => value != null ),'categoryName');
+        }
+
+        // Filter products based on sub category query
         if( !isEmpty(querySubCategory) ){
           cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(querySubCategory))) );
         }
 
+        // Filter products based on sub child category query
         if( !isEmpty(querySubChildCategory) ){
           cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(atob(querySubChildCategory))) );
         }
         
+        // Paginate the products based on the query parameters
         switch(!isEmpty(req.query) && has(req.query,'page')){
           case true:
-            cached_products  = paginate(cached_products,{ page: req.query.page, perPage: req.query.perPage });
+            cached_products = paginate(cached_products,{ page: req.query.page, perPage: req.query.perPage });
           break;
           case false:
-            cached_products  = paginate(cached_products);
+            cached_products = paginate(cached_products);
           break;
         }
 
+        // Add price to the products
         cached_products.data = cached_products.data.map( product => {
           let data_price = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
           if( data_price != undefined ){ product.price = data_price.price; }
           return product;
         }); 
         
-        res.status(HttpStatus.OK).json({ products: cached_products, category });
-         
+        // Send the products, category, and sub categories as a JSON response
+        res.status(HttpStatus.OK).json({ products: cached_products, category, sub_categories });
+        
       } catch(error){
 
+        // Log the error
         this.logger.error(error);
 
       }
-    }  
+    } 
 
     @UseGuards(OptionalGuard)
     @Put(':code')

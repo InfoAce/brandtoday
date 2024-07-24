@@ -86,12 +86,12 @@
                                         <li><a href="#" @click.prevent="$router.push({ name: 'Brands'})">Our Brands</a></li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="col px-0">
                             <div class="sub-title">
                                 <div class="footer-title">
-                                    <h4>store information</h4>
+                                    <h4>Contact Us</h4>
                                 </div>
                                 <div class="footer-contant">
                                     <ul class="contact-list">

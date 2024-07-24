@@ -1,6 +1,6 @@
 <template>
     <div>
-
+        
         <!-- Home slider -->
         <section class="p-0">
             <template v-if="isEmpty($data.banners) && $data.loading || isEmpty($data.banners) && !$data.loading">
@@ -191,7 +191,7 @@
 
         <!-- Paragraph-->
         <div class="title1 section-t-space">
-            <h2 class="title-inner1">Testimonials</h2>
+            <h2 class="title-inner1">What Our Clients Say About Us</h2>
         </div>
         <section class="section-b-space py-0">
             <div class="container">
@@ -344,7 +344,7 @@ const $data  = reactive({
 const dummyTestimonials = computed( () => Array(
     {
         date:        moment().subtract(1,'day').format('Do MMMM, Y'),
-        name:        'Lucas Doe',
+        name:        'Anonymous',
         description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
                         fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
                         faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
@@ -355,7 +355,7 @@ const dummyTestimonials = computed( () => Array(
     },
     {
         date:        moment().subtract(2,'day').format('Do MMMM, Y'),
-        name:        'Mark Masai',
+        name:        'Anonymous',
         description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
                         fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
                         faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
@@ -366,7 +366,7 @@ const dummyTestimonials = computed( () => Array(
     },
     {
         date:        moment().subtract(3,'day').format('Do MMMM, Y'),
-        name:        'Jane Foster',
+        name:        'Anonymous',
         description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
                         fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
                         faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
@@ -377,7 +377,7 @@ const dummyTestimonials = computed( () => Array(
     },
     {
         date:        moment().subtract(4,'day').format('Do MMMM, Y'),
-        name:        'Dean Sean',
+        name:        'Anonymous',
         description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
                         fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
                         faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique

@@ -1,11 +1,10 @@
-import { Body, Controller, Get, HttpStatus, Inject, Injectable, Logger, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, Logger, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { cloneDeep, first, get, isEmpty, omit, shuffle } from 'lodash';
 import { sep } from 'path';
-
 @Controller('categories')
 export class CategoryController {
 
@@ -57,29 +56,34 @@ export class CategoryController {
 
     }  
     
-    @Put('view/:category')
+    @Put('view')
     async view(
-      @Param('category') category: string,
+      @Query('category',new DefaultValuePipe(String())) queryCategory: string,
+      @Query('name',new DefaultValuePipe(String())) queryName: string,
       @Req() req: Request,
       @Res() res: Response
     ){
 
       try {
 
-        let cached_categories: any = cloneDeep(this.amrod.categories);
-        let cached_category:   any = cached_categories.find( val => btoa(val.categoryPath.toLowerCase()) == category);
-        let cached_products:   any = cloneDeep(this.amrod.products);
-        let sub_categories:    any = cached_category != undefined ? 
-                                      get(cached_category,'children')
-                                        .map( child => {
+        let cached_categories: any = cloneDeep(this.amrod.categories), cached_category = Object(), cached_products: any = cloneDeep(this.amrod.products), sub_categories = Array()
 
-                                          let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryPath.toLowerCase()) )) ),'categories');
-                                          let image: any      = get(first(shuffle(categories)),'image');
-                                        
-                                          return { ...child, image };
-                                        
-                                        }) : 
-                                      [];
+        if( !isEmpty(queryName) ) {
+          sub_categories = cached_categories.map( value => value.children).flat(1).filter( value => value.categoryPath.includes(queryName.toLowerCase()) ).map( child => {
+            let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryPath.toLowerCase()) )) ),'categories');
+            let image: any      = get(first(shuffle(categories)),'image');
+            return { ...child, image };
+          });
+        }
+
+        if( !isEmpty(queryCategory) ){
+          cached_category = cached_categories.find( val => btoa(val.categoryPath.toLowerCase()) == queryCategory);
+          sub_categories = get(cached_category,'children').map( child => {
+            let categories: any = get(cached_products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryPath.toLowerCase()) )) ),'categories');
+            let image: any      = get(first(shuffle(categories)),'image');
+            return { ...child, image };
+          });
+        }
 
         return res.status(HttpStatus.OK).json({ sub_categories });
 

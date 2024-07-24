@@ -4,7 +4,7 @@
     <header>
         <div class="mobile-fix-option"></div>
         <div class="top-header">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="header-contact">
@@ -20,22 +20,22 @@
                             </li>
                             <li class="onhover-div mobile-search p-3">
                                 <div>
-                                    <i class="ti-search" onclick="openSearch()"></i>
+                                    <a href="#" @click.prevent="openSearch"><i class="ti-search"></i></a>
                                 </div>
                                 <div id="search-overlay" class="search-overlay">
                                     <div> 
-                                        <span class="closebtn" onclick="closeSearch()" title="Close Overlay">×</span>
+                                        <span class="closebtn" @click.prevent="closeSearch" title="Close Overlay">×</span>
                                         <div class="overlay-content">
                                             <div class="container">
                                                 <div class="row">
-                                                    <div class="col-xl-12">
-                                                        <form>
+                                                    <form @submit.prevent="searchProduct">
+                                                        <div class="col-xl-12">
                                                             <div class="form-group">
-                                                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Search a Product">
+                                                                <input type="text" class="form-control" id="searchProduct" v-model="data.search" placeholder="Search a Product">
                                                             </div>
                                                             <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
-                                                        </form>
-                                                    </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -48,20 +48,25 @@
                                     <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span>
                                 </a>
                             </li>
-                            <li class="onhover-dropdown mobile-account p-3">
-                                <i class="fa fa-user" aria-hidden="true"></i>
-                                <span v-if="isEmpty(auth)">My Account</span>
-                                <span v-else>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
-                                <ul class="onhover-show-div" v-show="isEmpty(auth)">
-                                    <li><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
-                                    <li><a href="#" @click.prevent="$router.push({name:'Overview'})">Dashboard</a></li>
-                                    <li><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
-                                </ul>
-                                <ul class="onhover-show-div" v-show="!isEmpty(auth)">
-                                    <li><a href="#" @click.prevent="$router.push({name:'AccountProfile'})">Profile</a></li>
-                                    <li><a href="#" @click.prevent="logout">Logout</a></li>
-                                </ul>
-                            </li>
+                            <template v-if="isEmpty(auth)">
+                                <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
+                                <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Overview'})">Dashboard</a></li>
+                                <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
+                            </template>
+                            <template v-if="!isEmpty(auth)">
+                                <li class="p-3">
+                                    <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                        <span>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
+                                    </a>
+                                </li>
+                                <li class="p-3">
+                                    <a href="#" @click.prevent="logout">
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                        Logout
+                                    </a>
+                                </li>
+                            </template>
                         </ul>
                     </div>
                 </div>
@@ -96,8 +101,8 @@
                     </div>
                 </template>
                 <template v-if="!isEmpty(home.categories)" >
-                    <div class="col-12 p-4" >
-                            <div id="main-menu" class="d-flex w-100 justify-content-center align-items-center">
+                    <div class="col-12 px-0" >
+                            <div id="main-menu" class="d-flex w-100 justify-content-between align-items-center">
                                 <div class="menu-left">
                                     <div class="brand-logo">
                                         <a @click.prevent="$router.push({ name: 'Home' })">
@@ -120,7 +125,7 @@
                                             </li>
                                                 <li v-for="(item,index) in home.categories" :key="index">
                                                     <a href="javascript::void" @click.prevent="navigateTo(item)" class="py-2 px-2">
-                                                        {{ item.categoryName  }}
+                                                        {{ item.categoryName.toUpperCase()  }}
                                                     </a>
                                                 </li>                                                                         
                                         </ul>
@@ -153,7 +158,7 @@ const $api     = inject('$api');
 const $swal    = inject('$swal');
 const $store   = useStore();
 const $router  = useRouter(); 
-const data     = reactive({categories: Array() });
+const data     = reactive({categories: Array(), search: String() });
 
 //Computed
 const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
@@ -210,7 +215,7 @@ const logout = () => {
         // If the user confirms the logout
         if(result.isConfirmed) {
             // Clear the user's authentication data from local storage
-            localStorage.setItem(`${get($store.getters.env, 'VITE_APP_NAME').replaceAll(' ', '')}_AUTH`, JSON.stringify({}));
+            localStorage.setItem(get($store.getters.env, 'VITE_APP_ID'), JSON.stringify({}));
             // Redirect the user to the login page
             $router.push({ name: "Login" });
         }
@@ -218,7 +223,56 @@ const logout = () => {
 }
 
 const navigateTo = (item) => {
-    return $router.push({ name: 'Products',params: { category: btoa(item.categoryPath.toLowerCase()) } });
+    return $router.push({ name: 'Products',query: { category: btoa(item.categoryPath.toLowerCase()) } });
+}
+
+/**
+ * Opens the search overlay.
+ *
+ * This function is responsible for opening the search overlay on the page.
+ * It is triggered when the user clicks on the search icon or text.
+ *
+ * @return {void} This function does not return anything.
+ */
+const openSearch = () => {
+    // Open the search overlay
+    document.getElementById("search-overlay").style.display = "block";
+    // Focus on the search input field
+    document.getElementById("searchProduct").focus();
+}
+
+/**
+ * Closes the search overlay.
+ *
+ * This function is responsible for closing the search overlay on the page.
+ * It is triggered when the user clicks on the close icon or outside the search overlay.
+ *
+ * @return {void} This function does not return anything.
+ */
+const closeSearch = () => {
+    // Close the search overlay
+    document.getElementById("search-overlay").style.display = "none";
+    // Reset the search input field
+    document.getElementById("searchProduct").value = "";
+}
+
+/**
+ * Navigates to the search results page with the given search query.
+ *
+ * This function is responsible for navigating to the search results page
+ * with the given search query. It is triggered when the user presses the
+ * enter key while typing in the search field or clicks on the search
+ * button.
+ *
+ * @return {void} This function does not return anything.
+ */
+const searchProduct = () => {
+    // Navigate to the search results page with the given search query
+    $router.push({
+        name: 'Products',
+        query: { name: data.search }
+    });
+    closeSearch();
 }
 
 onBeforeMount( () => fetchMenus() );
