@@ -35,6 +35,7 @@
                                 <div class="collection-collapse-block open">
                                     <h3 class="collapse-block-title">Sub Categories</h3>
                                     <div class="collection-collapse-block-content" id="sub_categories">
+                                        <CardLoader v-if="!$isEmpty(sub_categories)" />
                                         <template v-if="$isEmpty(sub_categories) && loading">
                                             <div class="ssc">
                                                 <div class="ssc-wrapper px-0">                  
@@ -75,16 +76,16 @@
                                             <div class="collection-brand-filter" v-for="(category,index) in sub_categories" :key="index">
                                                 <div class="form-check collection-filter-checkbox align-items-center justify-content-between">
                                                     <div>
-                                                        <input type="radio" class="form-check-input" :value="category.categoryName" @change="selectSubCategory($event.target.value,category)" name="sub_category" :id="category.categoryName" style="width: 1.5em; height: 1.5em;" >
-                                                        <label class="form-check-label mb-0" :for="category.categoryName">{{ category.categoryName }}</label>
+                                                        <input type="radio" class="form-check-input" :value="category.categoryName.toLowerCase().replaceAll(' ','')" @change="selectSubCategory($event.target.value,category)" name="sub_category" style="width: 1.5em !important; height: 1.5em !important; " >
+                                                        <label class="form-check-label mb-0" :for="category.categoryName.toLowerCase().replaceAll(' ','')">{{ category.categoryName }}</label>
                                                     </div>
                                                     <a class="text-end" v-if="!$isEmpty(category.children)" href="#" @click="showCollapsed($event,category)"><i class="fa fa-chevron-down"></i></a>
                                                 </div>
-                                                <div class="collapse" :id="category.categoryCode.toLowerCase()" :aria-labelledby="category.categoryCode.toLowerCase()" data-parent="#sub_categories" v-show="sub_category == toBase64(category.categoryName.toLowerCase())">
+                                                <div class="collapse" :id="category.categoryCode.toLowerCase().replaceAll(' ','')" :aria-labelledby="category.categoryCode.toLowerCase().replaceAll(' ','')" data-parent="#sub_categories">
                                                     <ul class="list-group">
                                                         <li v-for="(child,child_index) in category.children" :key="child_index" class="list-group-item">
                                                             <div class="form-check collection-filter-checkbox align-items-center mt-0">
-                                                                <input type="radio" class="form-check-input" :value="child.categoryName" @change="selectSubChildCategory($event.target.value)" name="sub_child_category" :id="child.categoryName">
+                                                                <input type="radio" class="form-check-input" :value="sub_child_category" @change="selectSubChildCategory(child)" name="sub_child_category" :id="child.categoryName">
                                                                 <label class="form-check-label mb-0" :for="child.categoryName">{{ child.categoryName }}</label>
                                                             </div>                                                            
                                                         </li>
@@ -385,7 +386,7 @@ export default {
     beforeRouteEnter(to, from, next) {
         // Fetch the data required for the view
         next(vm => {
-            vm.fetchData(),
+            vm.fetchProducts(),
             next(); // Call the next function to continue with the route change
         });
     },
@@ -444,19 +445,6 @@ export default {
         }
     },
     methods:{
-        /**
-         * Fetches the data from the server and updates the component state
-         * @async
-         * @function fetchData
-         * @returns {Promise} A promise that resolves when the data is fetched and the component state is updated
-         */
-        fetchData(){
-            // Reset the products array to empty
-            this.products = cloneDeep({});
-            
-            // Fetch the products from the server
-            this.fetchProducts();
-        },
         /**
          * Fetch products based on the provided data
          * @param {Object} data - Object containing page, perPage, sub_category, and overwrite options
@@ -531,8 +519,8 @@ export default {
                 });            
 
         },
-        toBase64(string){
-            return window.btoa(string);
+        toBase64(string,reverse = true){
+            return reverse ? window.btoa(string) : window.atob(string);
         },  
         loadMore(event){
 
@@ -551,20 +539,23 @@ export default {
         },
         selectSubCategory(value,category){
             this.sub_category = btoa(value.toLowerCase());
+            $('div[data-parent="#sub_categories"].show').collapse('hide');
+            $('input[name="sub_child_category"]').prop('checked',false);
             if( !isEmpty(category.children) ){
-                $(`#${category.categoryCode.toLowerCase()}`).collapse('show');
+                this.sub_child_category = String();
+                $(`#${category.categoryName.toLowerCase().replaceAll(' ','')}`).collapse('show');
             }
         },
-        selectSubChildCategory(value) {
-            this.sub_child_category = btoa(value.toLowerCase());
+        selectSubChildCategory(category) {
+            this.sub_child_category = btoa(category.categoryName.toLowerCase());
         },
         showCollapsed(event,category){
             event.preventDefault();
-            $(`#${category.categoryCode.toLowerCase()}`).collapse('show')
+            $(`#${category.categoryName.toLowerCase().replaceAll(' ','')}`).collapse('show')
         }
     },
     watch:{
-        "$route.params":{
+        "$route.query":{
             /**
              * Watch for changes in the route parameters and trigger the necessary
              * actions to update the data.
@@ -575,11 +566,13 @@ export default {
                 // Set loading to true to indicate that data is being fetched.
                 this.loading = true;
 
-                // Fetch the sub-categories.
-                this.fetchSubCategories();
+                this.products = {};
+
+                // Commit a card_loader mutation to show the loader.
+                this.$store.commit('loader',true);
 
                 // Fetch the data based on the updated route parameters.
-                this.fetchData();
+                this.fetchProducts();
             },
             deep: true
         },
