@@ -78,4 +78,26 @@ watch(
 .product-right .color-variant li {
 	border: 2px solid #ababab;
 }
+.top-header, footer {
+	background-color: #7e1414 !important;
+	color: #fff !important;
+}
+* {
+	--theme-color: #7e1414 !important
+}
+.footer-contant > ul > li > a, 
+.footer-title > h4, 
+.footer-contant > .contact-list > li,
+.header-contact > ul > li,
+.header-contact > ul > li > i,
+.header-dropdown > li,
+.header-dropdown > li > a, 
+.header-dropdown > li > div > a > i, 
+.header-dropdown > li > a > i {
+	color: #fff !important;
+}
+
+.text-theme {
+	color: #7e1414 !important;
+}
 </style>

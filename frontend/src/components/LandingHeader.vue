@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="container-fluid">
-            <div class="row">
+            <div class="row px-4">
                 <template v-if="isEmpty(home.categories)" >
                     <div class="ssc">
                         <div class="ssc-wrapper px-0"> 
@@ -222,8 +222,18 @@ const logout = () => {
     });	
 }
 
+/**
+ * Navigates to the category page with the given category name as query parameter.
+ *
+ * @param {Object} item - The category object containing the category name.
+ * @return {Object} The navigation object returned by the Vue Router.
+ */
 const navigateTo = (item) => {
-    return $router.push({ name: 'Products',query: { category: btoa(item.categoryPath.toLowerCase()) } });
+    // Use the Vue Router to navigate to the Category page with the category name as query parameter.
+    return $router.push({ 
+        name: 'Category', 
+        query: { name: item.categoryName } 
+    });
 }
 
 /**

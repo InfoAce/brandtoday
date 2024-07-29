@@ -118,7 +118,11 @@ const router = createRouter({
           path: 'category',
           children: [
             {
-              path: ':category',
+              beforeEnter(to,from,next){
+                // window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+                next();
+              },
+              path: '',
               name: "Category",
               meta: {
                 title: 'Product Category',
@@ -196,7 +200,7 @@ const router = createRouter({
           path: 'products',
           children: [
             {
-              path: ':category?',
+              path: '',
               name: "Products",
               meta: {
                 title: 'Products',
@@ -501,9 +505,7 @@ const router = createRouter({
 });
 
 router.beforeEach( 
-  debounce( 
-    (to, from, next) => {
-    
+  (to, from, next) => {
     const { name: routeName, meta: { auth, state, landing, admin, redirectIfAuth } } = to;
 
     if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
@@ -521,7 +523,7 @@ router.beforeEach(
     if( auth && admin ){
       if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
       if( isEmpty(store.getters.auth) && routeName != 'AdminLogin' ){ next({ name: 'AdminLogin'}) }
-     }
+    }
 
     if( !auth && !admin ){
       if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Home'}) }
@@ -530,11 +532,10 @@ router.beforeEach(
     }
 
     if( auth && !admin ){
+      if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login' }); }
       if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
-      if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login'}) }
     }
-  
-  },1000)
+  }
 );
 
 router.afterEach(
