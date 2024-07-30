@@ -118,7 +118,7 @@ export class CategoryController {
         let sub_categories = category.children.map( child => {
 
           // List of products
-          let products: any = this.amrod.products.filter( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryPath.toLowerCase()) )) );
+          let products: any = this.amrod.products.filter( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryName.toLowerCase()) )) );
           
           // Add products count
           products_count += products.length 

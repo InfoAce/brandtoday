@@ -13,7 +13,7 @@
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $route.query.name }}</li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ $route.query.category }}</li>
                             </ol>
                         </nav>
                     </div>
@@ -34,7 +34,7 @@
                                     <div class="product-wrapper-grid">
                                         <div class="row margin-res" v-show="!isEmpty($data.sub_categories)">
                                             <div class="col-xl-3 col-6 col-grid-box mb-4" v-for="(sub_category,index) in $data.sub_categories" :key="index">
-                                                <a href="#" >
+                                                <a href="#" @click.prevent="viewProducts(sub_category)">
                                                     <div class="product-box">
                                                         <div class="img-wrapper">
                                                             <div class="front">                                                    
@@ -78,9 +78,9 @@ const $data   = reactive({
 
 // Methods
 const fetch = () => {
-    const { query: { name } } = $route;
+    const { query: { category } } = $route;
     $store.commit('loader',true);
-    $api.put(`/categories/${btoa(name)}/sub_categories`)
+    $api.put(`/categories/${btoa(category)}/sub_categories`)
         .then( ({ data: { products_count, sub_categories } }) => {
             $data.sub_categories = cloneDeep(sub_categories);
             $data.products_count = products_count;
@@ -93,7 +93,7 @@ const fetch = () => {
         })
 }
 const viewProducts = (sub_category) => {
-    $router.push({ name: 'Products', params: { category: btoa(sub_category.categoryPath.toLowerCase()) }})
+    $router.push({ name: 'Products', query: { category: $route.query.category, sub_category: sub_category.categoryName }})
 }
 
 // Initialize component

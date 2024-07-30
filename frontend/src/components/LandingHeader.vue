@@ -232,7 +232,7 @@ const navigateTo = (item) => {
     // Use the Vue Router to navigate to the Category page with the category name as query parameter.
     return $router.push({ 
         name: 'Category', 
-        query: { name: item.categoryName } 
+        query: { category: item.categoryName } 
     });
 }
 
