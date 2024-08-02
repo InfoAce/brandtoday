@@ -1,9 +1,13 @@
 export { AddressBookEntity as AddressBookEntity } from './address.book.entity';
+export { BrandEntity as BrandEntity } from './brand.entity';
+export { CategoryEntity as CategoryEntity } from './category.entity';
 export { CompanyEntity as CompanyEntity } from './company.entity';
 export { FavouriteEntity as FavouriteEntity } from './favourite.entity';
 export { RoleEntity as RoleEntity } from './role.entity';
 export { OrderEntity as OrderEntity } from './order.entity';
 export { OrderReviewEntity as OrderReviewEntity } from './order-review.entity';
 export { ProductReviewEntity  as ProductReviewEntity } from './product-review.entity';
+export { StockEntity  as StockEntity } from './stock.entity';
+export { SubCategoryEntity  as SubCategoryEntity } from './sub-category.entity';
 export { TransactionEntity as TransactionEntity } from './transaction.entity';
 export { UserEntity as UserEntity } from './user.entity';

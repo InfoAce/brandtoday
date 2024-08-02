@@ -1,8 +1,12 @@
 export { AddressBookModule as AddressBookModule } from './address.book.module';
+export { BrandModule as BrandModule } from './brand.module';
+export { CategoryModule as CategoryModule } from './category.module';
 export { CompanyModule as CompanyModule } from './company.module';
 export { FavouriteModule as FavouriteModule } from './favourite.module';
 export { MailModule as MailModule } from './mail.module';
 export { RoleModule as RoleModule } from './role.module';
 export { OrderModule as OrderModule } from './order.module';
+export { StockModule as StockModule } from './stock.module';
+export { SubCategoryModule as SubCategoryModule } from './sub-category.module';
 export { TransactionModule as TransactionModule } from './transaction.module';
 export { UserModule as UserModule } from './user.module';
