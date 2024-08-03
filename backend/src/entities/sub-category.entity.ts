@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
-import { CategoryEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne } from 'typeorm';
+import { CategoryEntity, ProductEntity } from './index';
 
 @Entity("sub_categories")
 export class SubCategoryEntity {
@@ -7,7 +7,7 @@ export class SubCategoryEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.sub_categories,{ eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+  @ManyToOne(() => CategoryEntity, (category) => category.sub_categories,{  cascade: true, eager: true, orphanedRowAction: 'nullify' })
   @JoinColumn({
     name:                 "category_id",
     referencedColumnName: "id",
@@ -22,6 +22,13 @@ export class SubCategoryEntity {
 
   @Column()
   path: string;
+
+  // @OneToMany(() => ProductEntity, (product) => product.sub_category, { lazy: true })
+  // @JoinColumn({
+  //   name:                 "id",
+  //   referencedColumnName: "sub_category_id"
+  // })
+  // products: ProductEntity[];
 
   @CreateDateColumn()
   created_at: Date; // Creation date

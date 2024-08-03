@@ -47,7 +47,7 @@ export class AppService {
     this.config = this.configService.get<string>('services.amrod');     
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_11PM)
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
   /**
    * Updates the products and prices in the local storage with the latest ones from Amrod.
    * Also updates the local list of Amrod brands.

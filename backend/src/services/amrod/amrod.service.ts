@@ -114,7 +114,7 @@ export class AmrodService {
      * @returns {Promise<Array<Object>>} A promise that resolves with an array of product objects
      * @throws {AmrodServiceException} If an error occurs during the request
      */
-    async getProducts(): Promise<Array<Object>> {
+    async getProducts(): Promise<Array<any>> {
         try {
 
             // Get the authentication token from the cache
@@ -144,7 +144,7 @@ export class AmrodService {
      * 
      * @returns {Promise<Array<Object>>} A promise that resolves with an array of stock objects
      */
-    async getStock(): Promise<Array<Object>> {
+    async getStock(): Promise<any> {
         try {
 
             // Get the authentication token from the cache
@@ -160,6 +160,7 @@ export class AmrodService {
 
             // Log any errors that occur during the request
             this.logger.error(`Stock: ${error}`);
+
             // Throw an AmrodServiceException with the error
             throw new AmrodServiceException(error);
 
@@ -199,7 +200,7 @@ export class AmrodService {
      * 
      * @returns {Promise<Array<Object>>} A promise that resolves with an array of price objects
      */
-    async getPrices(): Promise<Array<Object>> {
+    async getPrices(): Promise<Array<any>> {
         try {
 
             // Get the authentication token from the cache

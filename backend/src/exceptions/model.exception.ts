@@ -1,3 +1,3 @@
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { TypeORMError } from "typeorm";
 
-export class ModelException extends ExceptionsHandler {}
+export class ModelException extends TypeORMError {}

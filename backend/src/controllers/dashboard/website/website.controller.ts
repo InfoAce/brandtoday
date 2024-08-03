@@ -9,7 +9,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { UpdateReturnRefundsValidation } from "src/validation/website/update.return-refunds.validation";
 import { UpdateFaqsValidation } from "src/validation/website/update.faqs.validation";
-import { UpdateAboutUsValidation } from "src/validation/website/update.about-us.validation";
+import { UpdateContactUsValidation,UpdateAboutUsValidation } from "src/validation";
 
 @Injectable()
 @Controller('dashboard/website')
@@ -209,6 +209,33 @@ export class WebsiteController {
         try {
             // Update the company's privacy policy and save the changes
             let company = await this.companyModel.save({ id: get(req,'user').company_id, about_us });
+
+            // Return the updated company object
+            return res.status(HttpStatus.OK).json({ company });
+
+        } catch(error) {
+            // Log any errors that occur
+            this.logger.error(error);
+        }
+    }
+
+    /**
+     * Update company contact us information
+     * @param {UpdateContactUsValidation} data - The updated contact us information for the company
+     * @param {Request} req - The request object
+     * @param {Response} res - The response object
+     * @returns {Promise<Object>} A Promise that resolves to the updated company object
+     */
+    @UseGuards(AdminGuard)
+    @Put('contact_us')
+    async updateContactUs(
+        @Body() { contact_us }: UpdateContactUsValidation,
+        @Req()  req:  Request,
+        @Res()  res:  Response,
+    ) { 
+        try {
+            // Update the company's contact us information and save the changes
+            let company = await this.companyModel.save({ id: get(req,'user').company_id, contact_us });
 
             // Return the updated company object
             return res.status(HttpStatus.OK).json({ company });
