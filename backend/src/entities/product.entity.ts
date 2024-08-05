@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
 import { CategoryEntity, PriceEntity, ProductCategoryEntity, SubCategoryEntity } from './index';
 
 @Entity("products")
@@ -8,6 +8,7 @@ export class ProductEntity {
   id: string;
 
   @Column({
+    nullable: true,
     type: 'json'
   })
   branding_templates: string;
@@ -15,12 +16,12 @@ export class ProductEntity {
   @Column()
   brand_id: string;
 
-  @OneToMany(() => ProductCategoryEntity, (category) => category.product, { cascade: true, eager: true, orphanedRowAction: 'nullify' })
+  @OneToMany(() => ProductCategoryEntity, (category) => category.product, { lazy: true })
   @JoinColumn({
     name:                 "id",
     referencedColumnName: "product_id",
   })
-  category: CategoryEntity;
+  categories: ProductCategoryEntity[];
 
   @Column({
     nullable: true,

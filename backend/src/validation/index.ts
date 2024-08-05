@@ -21,3 +21,7 @@ export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth
 
 // Company
 export { UpdateCompanyValidation as UpdateCompanyValidation } from './company/update.company.validation';
+
+// Website
+export { UpdateAboutUsValidation as UpdateAboutUsValidation } from './website/update.about-us.validation';
+export { UpdateContactUsValidation as UpdateContactUsValidation } from './website/update.contact-us.validation';

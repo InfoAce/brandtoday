@@ -2,6 +2,7 @@ export { AddressBookEntity as AddressBookEntity } from './address.book.entity';
 export { BrandEntity as BrandEntity } from './brand.entity';
 export { CategoryEntity as CategoryEntity } from './category.entity';
 export { CompanyEntity as CompanyEntity } from './company.entity';
+export { ChildSubCategoryEntity as ChildSubCategoryEntity } from './child-sub-category.entity';
 export { FavouriteEntity as FavouriteEntity } from './favourite.entity';
 export { RoleEntity as RoleEntity } from './role.entity';
 export { OrderEntity as OrderEntity } from './order.entity';

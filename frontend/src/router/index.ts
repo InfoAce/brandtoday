@@ -118,11 +118,11 @@ const router = createRouter({
           path: 'category',
           children: [
             {
-              beforeEnter(to,from,next){
-                // window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
-                next();
-              },
-              path: '',
+              // beforeEnter(to,from,next){
+              //   // window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+              //   next();
+              // },
+              path: ':category',
               name: "Category",
               meta: {
                 title: 'Product Category',
@@ -200,16 +200,22 @@ const router = createRouter({
           path: 'products',
           children: [
             {
-              path: '',
-              name: "Products",
-              meta: {
-                title: 'Products',
-                auth: false,
-                redirectIfAuth: false,
-                state:  0,
-                admin: false
-              },
-              component: () => import('@/views/home/Products.vue')
+              path: ':category',
+              children:[
+                {
+                  path: ':sub_category',
+                  name: "Products",
+                  meta: {
+                    title: 'Products',
+                    auth: false,
+                    redirectIfAuth: false,
+                    state:  0,
+                    admin: false
+                  },
+                  component: () => import('@/views/home/Products.vue')
+                }
+              ],
+              component: RouterView
             },
             {
               path: 'view/:product',

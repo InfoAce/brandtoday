@@ -13,7 +13,7 @@
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $route.query.category }}</li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ $data.category.name }}</li>
                             </ol>
                         </nav>
                     </div>
@@ -42,7 +42,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="product-detail">
-                                                            <h4>{{ sub_category.categoryName }}</h4>
+                                                            <h4>{{ sub_category.name }}</h4>
+                                                            <h6 class="text-muted">{{ sub_category.products_count }} products</h6>
                                                         </div>
                                                     </div>
                                                 </a>
@@ -72,18 +73,20 @@ const $route  = useRoute();
 const $router = useRouter();
 const $store  = useStore();
 const $data   = reactive({
+    category:       Object(),
     products_count: Number(),
     sub_categories: Array()
 });
 
 // Methods
 const fetch = () => {
-    const { query: { category } } = $route;
+    const { params: { category } } = $route;
     $store.commit('loader',true);
-    $api.put(`/categories/${btoa(category)}/sub_categories`)
-        .then( ({ data: { products_count, sub_categories } }) => {
-            $data.sub_categories = cloneDeep(sub_categories);
+    $api.put(`/categories/${category}/sub_categories`)
+        .then( ({ data: { products_count, sub_categories, category } }) => {
+            $data.sub_categories = cloneDeep(sub_categories).filter( sub => sub.products_count > 0 );
             $data.products_count = products_count;
+            $data.category       = cloneDeep(category);
         })
         .catch( () => {
             $store.commit('loader',false);            
@@ -93,7 +96,7 @@ const fetch = () => {
         })
 }
 const viewProducts = (sub_category) => {
-    $router.push({ name: 'Products', query: { category: $route.query.category, sub_category: sub_category.categoryName }})
+    $router.push({ name: 'Products', params: { category: $route.params.category, sub_category: sub_category.id }})
 }
 
 // Initialize component

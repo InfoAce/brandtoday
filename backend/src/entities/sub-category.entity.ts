@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne } from 'typeorm';
-import { CategoryEntity, ProductEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany } from 'typeorm';
+import { CategoryEntity, ChildSubCategoryEntity, ProductCategoryEntity, ProductEntity } from './index';
 
 @Entity("sub_categories")
 export class SubCategoryEntity {
@@ -7,7 +7,7 @@ export class SubCategoryEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.sub_categories,{  cascade: true, eager: true, orphanedRowAction: 'nullify' })
+  @ManyToOne(() => CategoryEntity, (category) => category.sub_categories,{ eager: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinColumn({
     name:                 "category_id",
     referencedColumnName: "id",
@@ -23,12 +23,26 @@ export class SubCategoryEntity {
   @Column()
   path: string;
 
-  // @OneToMany(() => ProductEntity, (product) => product.sub_category, { lazy: true })
-  // @JoinColumn({
-  //   name:                 "id",
-  //   referencedColumnName: "sub_category_id"
-  // })
-  // products: ProductEntity[];
+  @OneToMany(() => ChildSubCategoryEntity, (child_sub_category) => child_sub_category.sub_category, { lazy: true })
+  @JoinColumn({
+    name:                 "id",
+    referencedColumnName: "sub_category_id"
+  })
+  child_sub_categories: ChildSubCategoryEntity[];
+  
+  @OneToMany(() => ProductCategoryEntity, (product_category) => product_category.sub_category,{ lazy: true } )
+  @JoinTable({
+      name: "products", // table name for the junction table of this relation
+      joinColumn: {
+        name: "id",
+        referencedColumnName: "sub_category_id"
+      },
+      inverseJoinColumn: {
+        name: "sub_category_id",
+        referencedColumnName: "id"
+      }
+  })
+  product_categories: ProductCategoryEntity[];
 
   @CreateDateColumn()
   created_at: Date; // Creation date

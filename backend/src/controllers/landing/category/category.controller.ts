@@ -3,8 +3,10 @@ import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { cloneDeep, first, get, isEmpty, omit, shuffle } from 'lodash';
+import { cloneDeep, first, get, isEmpty, omit, shuffle, toPlainObject } from 'lodash';
 import { sep } from 'path';
+import { CategoryModel } from 'src/models';
+
 @Controller('categories')
 export class CategoryController {
 
@@ -29,6 +31,7 @@ export class CategoryController {
      */
     constructor(
       private amrodService: AmrodService,
+      private categoryModel: CategoryModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache
     ){
       // Try to read JSON files and assign them to the 'amrod' object
@@ -92,7 +95,7 @@ export class CategoryController {
 
     }  
 
-    @Put(':category_name/sub_categories')
+    @Put(':id/sub_categories')
     /**
      * Get a list of subcategories for a given category.
      *
@@ -102,7 +105,7 @@ export class CategoryController {
      * @return {Promise<void>}
      */
     async show(
-      @Param('category_name', new DefaultValuePipe(String()) ) categoryName: string,
+      @Param('id', new DefaultValuePipe(String()) ) categoryId: string,
       @Req() req: Request,
       @Res() res: Response
     ) {
@@ -112,29 +115,32 @@ export class CategoryController {
         let products_count: number = 0;
 
         // Find the category based on the provided path
-        let category = this.amrod.categories.find( category => btoa(category.categoryName).includes(categoryName));
+        let category = await this.categoryModel.findOne({ where: { id: categoryId } });
 
         // Map the subcategories to include an image from the products
-        let sub_categories = category.children.map( child => {
+        let sub_categories: any = await (
+          await Promise.all( 
+            (await category.sub_categories).map( async (sub_category) => {
+              let product_categories = await sub_category.product_categories;
 
-          // List of products
-          let products: any = this.amrod.products.filter( value => !isEmpty(value.categories.find( cat => cat.path.includes(child.categoryName.toLowerCase()) )) );
-          
-          // Add products count
-          products_count += products.length 
-
-          // Get the categories for the child category
-          let images: any   = get(first(shuffle(products)),'images');
-
-          // Get the first image from the categories
-          let image: any = first(shuffle(images));
-         
-          return { ...omit(child,['children']), image };
-        });
-
+              // Add products count
+              products_count += product_categories.length 
+    
+              let product = get(first(shuffle(product_categories)),'product');
+    
+              // Get the categories for the child category
+              let images: any   = get(product,'images');
+    
+              // Get the first image from the categories
+              let image: any = first(shuffle(images));
+            
+              return await { ...omit(toPlainObject(( await sub_category)),['__product_categories__','__has_product_categories__']), image, products_count: product_categories.length };
+            })
+          )
+        );
 
         // Return the subcategories as a JSON response
-        return res.status(HttpStatus.OK).json({ products_count, sub_categories });
+        return res.status(HttpStatus.OK).json({ products_count, sub_categories, category });
 
       } catch (error) {
         // Log any errors that occur during the process

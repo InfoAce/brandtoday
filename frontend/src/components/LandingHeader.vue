@@ -124,8 +124,8 @@
                                                 </div>
                                             </li>
                                                 <li v-for="(item,index) in home.categories" :key="index">
-                                                    <a href="javascript::void" @click.prevent="navigateTo(item)" class="py-2 px-2">
-                                                        {{ item.categoryName.toUpperCase()  }}
+                                                    <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2">
+                                                        {{ item.name.toUpperCase()  }}
                                                     </a>
                                                 </li>                                                                         
                                         </ul>
@@ -230,9 +230,9 @@ const logout = () => {
  */
 const navigateTo = (item) => {
     // Use the Vue Router to navigate to the Category page with the category name as query parameter.
-    return $router.push({ 
-        name: 'Category', 
-        query: { category: item.categoryName } 
+    $router.push({ 
+        name:   'Category', 
+        params: { category: item.id } 
     });
 }
 

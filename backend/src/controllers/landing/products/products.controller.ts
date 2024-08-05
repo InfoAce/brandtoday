@@ -5,8 +5,9 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, sortBy, take, uniqBy } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { FavouriteModel } from 'src/models';
+import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel } from 'src/models';
 import { sep } from 'path';
+import { ILike } from 'typeorm';
 
 @Controller('products')
 export class ProductsController {
@@ -38,10 +39,9 @@ export class ProductsController {
      * @param cacheManager - The instance of CacheManager
      */
     constructor(
-      private amrodService:   AmrodService,
-      private favouriteModel: FavouriteModel,
-      @Inject(CACHE_MANAGER) 
-      private cacheManager: Cache,
+      private categoryModel:         CategoryModel,
+      private priceModel:            PriceModel,
+      private productCategoryModel:  ProductCategoryModel,
     ){
       // Try to read JSON files and assign them to the 'amrod' object
       try {
@@ -65,7 +65,7 @@ export class ProductsController {
       }
     }
 
-    @Get('')
+    @Get(':category/:sub_category')
     /**
      * Index method to get products based on the query parameters.
      *
@@ -79,9 +79,8 @@ export class ProductsController {
      */
     async index(
       @Query('name',new DefaultValuePipe(String())) queryName: string,
-      @Query('category',new DefaultValuePipe(String())) queryCategory: string,
-      @Query('sub_category',new DefaultValuePipe(String())) querySubCategory: string,
-      @Query('sub_child_category',new DefaultValuePipe(String())) querySubChildCategory: string,
+      @Param('category',new DefaultValuePipe(String())) category: string,
+      @Param('sub_category',new DefaultValuePipe(String())) sub_category: string,
       @Query('page',new DefaultValuePipe(1)) queryPage: number,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: number,
       @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
@@ -89,45 +88,23 @@ export class ProductsController {
       @Res() res: Response
     ) {
       try {  
-        // Clone the products and prices objects
-        let cached_products:  any = cloneDeep(this.amrod.products);
-        let cached_prices:    any = cloneDeep(this.amrod.prices);
-        let cached_brands:    any = cloneDeep(this.amrod.brands);
-        
+        let where: object = { category_id: category, sub_category_id: sub_category }
+
         // Filter products based on name query
         if( !isEmpty(queryName) ){
-          cached_products = cached_products.filter( product => product.productName.includes(queryName));
-        }
-
-        // Filter products based on category query
-        if( !isEmpty(queryCategory) ){
-          cached_products = cached_products.filter( product => product.categories.find( item => item.path.includes(queryCategory.toLowerCase())) );
+          where = { ...where, name: ILike(`%${queryName}%`) }
         }
         
-        // Filter products based on sub category query
-        if( !isEmpty(querySubCategory) ){
-          cached_products  = cached_products.filter( product => product.categories.find( category => category.path.includes(querySubCategory.toLowerCase())) );
-        }
+        // Fetch products category
+        let products_categories: any = await this.productCategoryModel.find({ where, take: queryPerPage, skip: queryPage });
 
-        // Filter products based on sub child category query
-        if( !isEmpty(querySubChildCategory) ){
-          cached_products = cached_products.filter( product => product.categories.find( category => category.path.includes(querySubChildCategory)) );
-        }
-        
-        // Paginate the products based on the query parameters
-        cached_products = paginate(cached_products,{ page: queryPage, perPage: queryPerPage });
+        // List products fetched
+        let products: any            = await Promise.all(
+          products_categories.map( product_category => product_category.product )
+        );
 
-        // Add price to the products
-        cached_products.data = cached_products.data.map( product => {
-          let data_price = cached_prices.find( val => product.simpleCode.includes(val.simplecode) );
-          if( data_price != undefined ){ product.price = data_price.price; }
-          return product;
-        }); 
-
-        cached_products.data = querySortPricing == 'descending' ?  cached_products.data.sort((a,b) => a.price - b.price) :  cached_products.data.sort( (a,b) => b.price - a.price );
-        
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({ brands: cached_brands, products: cached_products });
+        res.status(HttpStatus.OK).json({ products });
         
       } catch(error){
 

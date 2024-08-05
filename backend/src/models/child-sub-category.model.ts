@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity } from '../entities';
-import { CategoryRepository } from '../repositories';
+import { ChildSubCategoryEntity } from '../entities';
+import { ChildSubCategoryRepository } from '../repositories';
 import { DeleteResult } from 'typeorm';
 import {
     paginate,
@@ -11,34 +11,34 @@ import {
 import { ModelException } from 'src/exceptions/model.exception';
 
 @Injectable()
-export default class CategoryModel {
+export default class ChildSubCategoryModel {
   /**
    * BrandModel constructor.
    * 
-   * @param categoryRepository - The brand repository.
+   * @param childSubCategoryRepository - The brand repository.
    */
   constructor(
     /**
      * The brand repository.
      * This repository is injected by NestJS using the @InjectRepository decorator.
-     * It is used to perform database operations related to the CategoryEntity.
+     * It is used to perform database operations related to the ChildSubCategoryEntity.
      */
-    @InjectRepository(CategoryEntity)
-    private categoryRepository: CategoryRepository,
+    @InjectRepository(ChildSubCategoryEntity)
+    private childSubCategoryRepository: ChildSubCategoryRepository,
   ) {}
   
   /**
    * Finds multiple brand entities based on the provided data.
    *
    * @param {any} data - The data used to find the brands.
-   * @return {Promise<CategoryEntity[]>} A promise that resolves to an array of found brands.
+   * @return {Promise<ChildSubCategoryEntity[]>} A promise that resolves to an array of found brands.
    * @throws {ModelException} Throws a ModelException if there is an error finding the brands.
    */
-  async find(data: any = {}): Promise<CategoryEntity[]> {
+  async find(data: any = {}): Promise<ChildSubCategoryEntity[]> {
     try {
       // Find multiple brand entities based on the provided data.
-      // The find method of the categoryRepository is used to find the brands.
-      return await this.categoryRepository.find(data);
+      // The find method of the childSubCategoryRepository is used to find the brands.
+      return await this.childSubCategoryRepository.find(data);
     } catch (error) {
       // If there is an error finding the brands, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -50,14 +50,14 @@ export default class CategoryModel {
    * Throws a ModelException if the brand is not found.
    *
    * @param {any} data - The data used to find the brand.
-   * @return {Promise<CategoryEntity>} A promise that resolves to the found brand.
+   * @return {Promise<ChildSubCategoryEntity>} A promise that resolves to the found brand.
    * @throws {ModelException} Throws a ModelException if the brand is not found.
    */
-  async findOne(data: any): Promise<CategoryEntity> {
+  async findOne(data: any): Promise<ChildSubCategoryEntity> {
     try {
       // Finds a single brand entity based on the provided data and throws an exception if it is not found.
-      // The findOneOrFail method of the categoryRepository is used to find the brand entity.
-      return await this.categoryRepository.findOneOrFail(data);
+      // The findOneOrFail method of the childSubCategoryRepository is used to find the brand entity.
+      return await this.childSubCategoryRepository.findOneOrFail(data);
     } catch (error) {
       // If the brand is not found, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -68,14 +68,14 @@ export default class CategoryModel {
    * Paginates the brand entities based on the provided pagination options.
    *
    * @param {IPaginationOptions} options - The pagination options.
-   * @return {Promise<Pagination<CategoryEntity>>} A promise that resolves to the paginated brand entities.
+   * @return {Promise<Pagination<ChildSubCategoryEntity>>} A promise that resolves to the paginated brand entities.
    */
   async paginate(
     options: IPaginationOptions,
-  ): Promise<Pagination<CategoryEntity>> {
+  ): Promise<Pagination<ChildSubCategoryEntity>> {
     // Paginates the brand entities using the paginate function from the 'nestjs-typeorm-paginate' library.
-    // The categoryRepository is passed as the first argument, and the options are passed as the second argument.
-    return paginate<CategoryEntity>(this.categoryRepository, options);
+    // The childSubCategoryRepository is passed as the first argument, and the options are passed as the second argument.
+    return paginate<ChildSubCategoryEntity>(this.childSubCategoryRepository, options);
   }
 
   /**
@@ -90,8 +90,8 @@ export default class CategoryModel {
   async updateOne(id: string, data: any): Promise<any> {
     try {
       // Updates a single brand entity based on the provided id and data.
-      // The categoryRepository's update method is used to update the brand entity.
-      return await this.categoryRepository.update({id}, data);
+      // The childSubCategoryRepository's update method is used to update the brand entity.
+      return await this.childSubCategoryRepository.update({id}, data);
     } catch (error) {
       // If the brand entity is not found, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -109,10 +109,9 @@ export default class CategoryModel {
   async save(data: any): Promise<any> {
     try {
       // Saves a single brand entity based on the provided data.
-      // The categoryRepository's save method is used to save the brand entity.
-      return await this.categoryRepository.save(data);
+      // The childSubCategoryRepository's save method is used to save the brand entity.
+      return await this.childSubCategoryRepository.save(data);
     } catch (error) {
-      console.log(error);
       // If there is an error saving the brand, throw a ModelException with the error message.
       throw new ModelException(error);
     }
@@ -128,9 +127,9 @@ export default class CategoryModel {
    */
   async remove(id: string): Promise<DeleteResult> {
     // Deletes a single brand entity based on the provided id.
-    // The categoryRepository's delete method is used to delete the brand entity.
+    // The childSubCategoryRepository's delete method is used to delete the brand entity.
     // The DeleteResult object contains information about the affected rows and the generated identifier.
     
-    return await this.categoryRepository.delete(id);
+    return await this.childSubCategoryRepository.delete(id);
   }
 }

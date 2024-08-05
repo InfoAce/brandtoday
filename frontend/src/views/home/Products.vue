@@ -126,7 +126,7 @@
                                     </div>                                
                                     <div class="product-wrapper-grid">
                                         <CardLoader v-if="!$isEmpty(products.data)" />
-                                        <div class="row margin-res p-2" v-show="$isEmpty(products.data) && loading">
+                                        <div class="row margin-res p-2" v-show="$isEmpty(products) && loading">
                                             <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
@@ -298,18 +298,18 @@
                                                 </div>
                                             </div>                                                                                     
                                         </div>
-                                        <div class="row margin-res" v-show="!$isEmpty(products.data) && !loading">
-                                            <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products.data" :key="index">
+                                        <div class="row margin-res" v-show="!$isEmpty(products) && !loading">
+                                            <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products" :key="index">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
                                                         <div v-if="!$isEmpty(product.images)">
                                                             <div class="front">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', perams: { product: product.fullCode }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
                                                                     <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
                                                                 </a>
                                                             </div>
                                                             <div class="back" v-if="product.images.length > 1">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', perams: { product: product.fullCode }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
                                                                     <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                                                 </a>
                                                             </div>
@@ -328,13 +328,13 @@
                                                     </div>
                                                     <div class="product-detail">
                                                         <div>
-                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', perams: { product: product.fullCode }})">
-                                                                <h6>{{ product.productName }}</h6>
+                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
+                                                                <h6>{{ product.name }}</h6>
                                                             </a>
                                                             <p v-html="product.description"></p>
                                                             <h4>KSH {{ product.price }}</h4>
-                                                            <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
-                                                                <li v-for="(colour,index) in product.colourImages" :key="index" :style="`background-color: ${ $convertToHex(colour.name) }; border: 1px solid #ededed;`"></li>
+                                                            <ul class="color-variant p-0" v-show="!$isEmpty(product.colour_images)">
+                                                                <li v-for="(colour,index) in product.colour_images" :key="index" :style="`background-color: ${ $convertToHex(colour.name) }; border: 1px solid #ededed;`"></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -466,35 +466,15 @@ export default {
         fetchProducts(data = { page: 1, perPage: 10, sub_category: String(), overwrite: false }){
 
             // Destructuring assignment for easier access
-            let {  $route: { query }, filter: { sort_pricing } } = this, url = `/products`, { page, perPage, sub_category, sub_child_category, overwrite } = data;
-
-            // Check if query contains category and append to URL
-            if( !isEmpty(query) && has(query,'category') && !isEmpty(query.category) ){
-                url = `${url}?category=${query.category}`;
-            }
+            let {  $route: { query, params }, filter: { sort_pricing } } = this, url = `/products/${params.category}/${params.sub_category}`, { page, perPage, overwrite } = data;
 
             // Check if query contains name and append to URL
             if( !isEmpty(query) && has(query,'name') && !isEmpty(query.name) ){
-                url = `${url}?name=${query.name}`;
+                url += `?${url}?name=${query.name}&page=${page}&perPage=${perPage}&sort_pricing=${sort_pricing}`;
+            } else {
+                // Append page and perPage to URL
+                url += `?page=${page}&perPage=${perPage}&sort_pricing=${sort_pricing}`;
             }
-
-            // Append sub_category to URL if not empty
-            if( !isEmpty(sub_category) ){
-                url += `&sub_category=${sub_category}`;
-            }
-
-            // Append query sub_category to URL if not empty
-            if( !isEmpty(query.sub_category) ){
-                url += `&sub_category=${query.sub_category}`;
-            }
-
-            // Append sub_child_category to URL if not empty
-            if( !isEmpty(sub_child_category) ){
-                url += `&sub_child_category=${sub_child_category}`;
-            }
-
-            // Append page and perPage to URL
-            url += `&page=${page}&perPage=${perPage}&sort_pricing=${sort_pricing}`;
             
             // Make API call to get products
             this.$api

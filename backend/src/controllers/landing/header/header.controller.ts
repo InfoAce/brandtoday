@@ -1,11 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Inject, Injectable, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
-import { AmrodService, AuthService, MailService } from 'src/services';
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { isEmpty } from 'lodash';
-import { CompanyModel } from 'src/models';
-import { sep } from 'path';
+import { CategoryModel, CompanyModel } from 'src/models';
 
 @Controller({
   version: '1',
@@ -13,41 +8,40 @@ import { sep } from 'path';
 })
 export class HeaderController {
 
-    private amrod_categories   = Array();
-
-    private readonly file_path = `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`;
-
     private readonly logger = new Logger(HeaderController.name);
 
-    private jsonPlugin      = require('json-reader-writer');
-
+    /**
+     * Constructor for the HeaderController.
+     *
+     * @param {CategoryModel} categoryModel - The category model to interact with the database.
+     * @param {CompanyModel} companyModel - The company model to interact with the database.
+     */
     constructor(
-      private amrodService: AmrodService,
-      private companyModel: CompanyModel,
-      @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    ){      
-      try {
-        this.amrod_categories = this.jsonPlugin.readJSON(this.file_path);
-      } catch(error){
-        this.amrod_categories = [];
-      }
-    }
+      private categoryModel: CategoryModel,  // The category model to interact with the database.
+      private companyModel:  CompanyModel,   // The company model to interact with the database.
+    ){}
 
+    /**
+     * Retrieves all categories and the first company from the database and responds with a JSON object containing
+     * the categories and the company.
+     * 
+     * @param {Request}  req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>} - A promise that resolves when the response has been sent.
+     */
     @Get('')
-    async index(@Req() req: Request,  @Res() res: Response) {
- 
-      try {
-        
-        let company           = await this.companyModel.first();
+    async index(@Req() req: Request,  @Res() res: Response): Promise<void> {
+        try {
+            // Retrieve all categories from the database
+            let categories = await this.categoryModel.find();
+            // Retrieve the first company from the database
+            let company = await this.companyModel.first();
 
-        res.status(HttpStatus.OK).json({ categories: this.amrod_categories, company });
-
-      } catch(error){
-
-        this.logger.error(error);
-
-      }
-
-    }   
-
+            // Send the categories and company as a JSON response with a 200 status code
+            res.status(HttpStatus.OK).json({ categories, company });
+        } catch(error) {
+            // Log any errors that occur during the process
+            this.logger.error(error);
+        }
+    }    
 }

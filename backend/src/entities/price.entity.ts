@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable } from 'typeorm';
 import { ProductEntity } from './product.entity';
 
 @Entity("prices")
@@ -12,6 +12,20 @@ export class PriceEntity {
 
   @Column()
   full_code: string
+
+  @OneToOne(() => ProductEntity)
+  @JoinTable({
+    name: "product",
+    joinColumn:{
+      name: "full_code",
+      referencedColumnName: "full_code"
+    },
+    inverseJoinColumn:{
+      name: "full_code",
+      referencedColumnName: "full_code"
+    }
+  })
+  product: ProductEntity
 
   @Column()
   simple_code: string

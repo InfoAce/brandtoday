@@ -24,7 +24,7 @@
                                 <div class="footer-contant">
                                     <ul>
                                         <li v-for="(category,index) in home.categories" :key="index">
-                                            <router-link :to="navigateTo(category)">{{ category.categoryName }}</router-link>
+                                            <a href="#" @click.prevent="navigateTo(category)">{{ category.name }}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -270,17 +270,31 @@
 import { isEmpty, isNull } from 'lodash';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import moment from 'moment';
 
 // Magic functions 
 const $store = useStore();
+const $router = useRouter();
 
 // Computed
 const backendUri = computed( () => $store.getters.env.VITE_API_URL.replace('api/v1','') );
 const home       = computed( () => $store.getters.home);
 
 // Methods
-const navigateTo = (category) => {
-    return { name: 'Products',params: { category: btoa(category.categoryPath.toLowerCase()) } }
+/**
+ * Navigates to the category page with the given category name as query parameter.
+ *
+ * @param {Object} item - The category object containing the category name.
+ * @return {Object} The navigation object returned by the Vue Router.
+ */
+ const navigateTo = (item) => {
+    $store.commit('loader',true);
+    // Use the Vue Router to navigate to the Category page with the category name as query parameter.
+    $router.push({ 
+        name:   'Category', 
+        params: { category: item.id } 
+    });
 }
+
 </script>

@@ -1,13 +1,25 @@
 import { Module } from '@nestjs/common';
-import { CategoryModel } from '../models';
-import { CategoryEntity } from 'src/entities';
+import { CategoryModel, ChildSubCategoryModel, SubCategoryModel } from '../models';
+import { CategoryEntity, ChildSubCategoryEntity, SubCategoryEntity } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  exports:[CategoryModel],
-  imports: [
-    TypeOrmModule.forFeature([CategoryEntity])
+  exports:[
+    CategoryModel,
+    ChildSubCategoryModel,
+    SubCategoryModel
   ],
-  providers: [CategoryModel],
+  imports: [
+    TypeOrmModule.forFeature([
+      CategoryEntity,
+      ChildSubCategoryEntity,
+      SubCategoryEntity
+    ])
+  ],
+  providers: [
+    CategoryModel,
+    ChildSubCategoryModel,
+    SubCategoryModel
+  ],
 })
 export class CategoryModule {}

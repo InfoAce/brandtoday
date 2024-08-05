@@ -9,8 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
-import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, SubCategoryModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule } from './modules';
-import { AddressBookEntity, BrandEntity, CategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, RoleEntity, StockEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule } from './modules';
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, RoleEntity, StockEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrderSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -67,6 +67,7 @@ import { TimelineEntity } from './entities/timeline.entity';
           BrandEntity,
           CategoryEntity,
           CompanyEntity,
+          ChildSubCategoryEntity,
           FavouriteEntity,
           OrderEntity,
           OrderReviewEntity,
@@ -114,7 +115,6 @@ import { TimelineEntity } from './entities/timeline.entity';
     ProductModule,
     RoleModule,
     StockModule,
-    SubCategoryModule,
     TransactionModule,
     UserModule 
   ],
