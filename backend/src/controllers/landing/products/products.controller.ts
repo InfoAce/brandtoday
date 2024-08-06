@@ -117,6 +117,11 @@ export class ProductsController {
             // Fetch the product for each product category
             let product = await product_category.product;
 
+            try {
+            } catch(error){
+              product.price = { amount: 0 };
+            }
+
             // If the product has colour images, add the hex code to each colour image
             if (!isNull(product.colour_images)) {
               product.colour_images = product.colour_images.map((color) => ({
@@ -124,6 +129,8 @@ export class ProductsController {
                 hex: this.colors[color.code].colour,
               }));
             }
+
+            product.variants = await Promise.all(product.variants.map( async variant => ({ ...variant, price: await this.priceModel.findOne({ where: { full_code: ILike(`%${variant.fullCode}%`) } }) }) ));
 
             return product;
           })

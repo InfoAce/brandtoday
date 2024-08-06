@@ -332,7 +332,7 @@
                                                                 <h6>{{ product.name }}</h6>
                                                             </a>
                                                             <p v-html="product.description"></p>
-                                                            <h4>KSH {{ product.price }}</h4>
+                                                            <h4>KSH {{ $get($first(product.variants),'price').amount }}</h4>
                                                             <ul class="color-variant p-0" v-if="!$isEmpty(product.colour_images) && !$isNull(product.colour_images)">
                                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                             </ul>
@@ -363,7 +363,7 @@
 @import '/assets/home/css/vendors/price-range.css';
 </style>
 <script>
-import { cloneDeep, isEmpty, isNull, has, times } from 'lodash';
+import { cloneDeep, first, get,isEmpty, isNull, has, times } from 'lodash';
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import { CardLoader } from '../../components';
 import VueSlider from "vue-3-slider-component";
@@ -421,6 +421,8 @@ export default {
      * Lifecycle hook called after the Vue instance is created
      */
     created(){
+        this.$first   = first;
+        this.$get     = get;
         this.$isNull  = isNull;
         this.$isEmpty = isEmpty;
         this.$times   = times;
