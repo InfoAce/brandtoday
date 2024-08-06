@@ -34,7 +34,7 @@ export default class BrandModel {
    * @return {Promise<BrandEntity[]>} A promise that resolves to an array of found brands.
    * @throws {ModelException} Throws a ModelException if there is an error finding the brands.
    */
-  async find(data: any): Promise<BrandEntity[]> {
+  async find(data: any = {}): Promise<BrandEntity[]> {
     try {
       // Find multiple brand entities based on the provided data.
       // The find method of the brandRepository is used to find the brands.

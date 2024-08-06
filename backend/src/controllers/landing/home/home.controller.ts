@@ -3,45 +3,21 @@ import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { first, isEmpty, get, omit, shuffle } from 'lodash';
-import { CompanyModel } from 'src/models';
+import { first, isEmpty, get, omit, shuffle, toPlainObject } from 'lodash';
+import { BrandModel, CategoryModel, CompanyModel } from 'src/models';
 import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('home')
 export class HomeController {
 
-    private amrod = {
-      brands:     [],
-      categories: [],
-      products:   [],
-    };
-
-    private readonly file_paths = {
-      brands:     `${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,
-      categories: `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
-      products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-    };
-
     private logger = new Logger(HomeController.name);
 
-    private jsonPlugin      = require('json-reader-writer');
-
     constructor(
-        private amrodService:  AmrodService,
-        private configService: ConfigService,
-        private companyModel:  CompanyModel,
-    ){
-      try {
-        this.amrod.brands     = this.jsonPlugin.readJSON(this.file_paths.brands);
-        this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
-        this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
-      } catch(error) {
-        this.amrod.brands     = [];
-        this.amrod.categories = [];
-        this.amrod.products   = []; 
-      }
-    }
+      private brandModel:    BrandModel,
+      private categoryModel: CategoryModel,
+      private companyModel:  CompanyModel,
+    ){}
 
 
     @Get('')
@@ -52,17 +28,24 @@ export class HomeController {
 
       try {
 
-        let categories: any        = shuffle(this.amrod.categories).map( category => {
+        let brands: any      = await this.brandModel.find();
+        let categories: any  = await this.categoryModel.find();
 
-          let categories: any = get(this.amrod.products.find( value => !isEmpty(value.categories.find( cat => cat.path.includes(category.categoryPath.toLowerCase()) )) ),'categories');
-          let image: any      = get(first(shuffle(categories)),'image');
-          return { ...omit(category,['children']), image };
-        
-        });
+        categories = await (
+          await Promise.all( 
+            (await categories).map( async (category) => {
+              let product_categories = await category.product_categories;
+              let product            = get(first(shuffle(product_categories)),'product');
+              // Get the categories for the child category
+              let images: any        = get(product,'images');          
+              return await { ...omit(toPlainObject(( await category)),['__product_categories__','__has_product_categories__']), image: first(first(shuffle(images)).urls).url };
+            })
+          )
+        );
 
         let company = await this.companyModel.first();
 
-        return res.status(HttpStatus.OK).json({ brands: this.amrod.brands, categories, banners: company.banners });
+        return res.status(HttpStatus.OK).json({ brands, categories, banners: company.banners });
 
       } catch(err) {
 

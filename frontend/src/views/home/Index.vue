@@ -61,8 +61,8 @@
 
         <!-- Product slider -->
         <section class="section-b-space py-0 ratio_asos">
-            <div class="container">
-                <div class="row">
+            <div class="container-fluid">
+                <div class="row px-2">
                     <template v-if="isEmpty($data.categories) && $data.loading || isEmpty($data.categories) && !$data.loading">
                         <div class="col-xl-3 col-6">
                             <div class="ssc">
@@ -100,21 +100,20 @@
                         :wrapAround="true" 
                         :transition="10000"
                         :breakpoints="$data.breakpoints.categories"
-                        :autoplay="true"
+                        :autoplay="2"
                     >
                         <slide v-for="(category,index) in $data.categories" :key="index">
                             <div class="carousel__item">
-                                <router-link :to="navigateTo(category,'categoryPath')">
+                                <router-link :to="navigateTo(category,'id')">
                                     <div class="classic-effect">
                                         <div>
-                                            <img :src="category.image"  :alt="category.categoryName" width="100%" height="250" />
+                                            <img :src="category.image"  :alt="category.name" width="100%" height="250" />
                                         </div>
-                                        <span></span>
                                     </div>
                                 </router-link>
                                 <div class="blog-details">
-                                    <router-link :to="navigateTo(category,'categoryPath')">
-                                        <p>{{ category.categoryName }}</p>
+                                    <router-link :to="navigateTo(category,'id')">
+                                        <p>{{ category.name }}</p>
                                     </router-link>
                                 </div>
                             </div>
@@ -137,8 +136,8 @@
 
         <!--  logo section -->
         <section class="section-b-space py-0">
-            <div class="container">
-                <div class="row">
+            <div class="container-fluid">
+                <div class="row px-2">
                     <template v-if="isEmpty($data.brands) && $data.loading">
                         <div class="col-xl-3 col-6">
                             <div class="ssc">
@@ -176,7 +175,7 @@
                         :wrapAround="true" 
                         :transition="5000"
                         :breakpoints="$data.breakpoints.brands"
-                        :autoplay="true"
+                        :autoplay="1"
                     >
                         <slide v-for="(brand,index) in $data.brands" :key="index">
                             <div class="carousel__item">
@@ -421,11 +420,8 @@ const fetch = async () => {
  * @return {Object} - The route object for navigating to the 'Products' view
  */
 const navigateTo = (item,key) => {
-    // Generate the base64 encoded lowercase value of the specified item's key
-    const category = btoa(item[key].toLowerCase());
-
     // Generate and return the route object for navigating to the 'Products' view
-    return { name: 'Products', params: { category } };
+    return { name: 'Category', params: { category: item[key] } };
 }
 
 onBeforeMount( () => fetch() );

@@ -21,7 +21,7 @@ export class CategoryEntity {
     name:                 "id",
     referencedColumnName: "category_id"
   })
-  products: ProductCategoryEntity[];
+  product_categories: ProductCategoryEntity[];
 
   @OneToMany(() => SubCategoryEntity, (product) => product.category, { lazy: true })
   @JoinColumn({
