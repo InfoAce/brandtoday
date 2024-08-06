@@ -86,7 +86,8 @@ export class SystemController {
                         
             brands = await Promise.all(
                 brands.map( async ({ code, image, name}, index) => {
-                    return new Promise( async resolve => setTimeout(await this.brandModel.save({ code, image, name}), (index * 1000) ));
+                    await this.brandModel.save({ code, image, name});
+                    await delay(index * 1000);
                 })
             );
 
