@@ -45,6 +45,24 @@ export default class ProductCategoryModel {
     }
   }
 
+    /**
+   * Finds multiple brand entities based on the provided data.
+   *
+   * @param {any} data - The data used to find the brands.
+   * @return {Promise<ProductCategoryEntity[]>} A promise that resolves to an array of found brands.
+   * @throws {ModelException} Throws a ModelException if there is an error finding the brands.
+   */
+    async findCount(data: any): Promise<Array<any>> {
+      try {
+        // Find multiple brand entities based on the provided data.
+        // The find method of the productCategorytRepository is used to find the brands.
+        return await this.productCategorytRepository.findAndCount(data)
+      } catch (error) {
+        // If there is an error finding the brands, throw a ModelException with the error message.
+        throw new ModelException(error);
+      }
+    }
+
   /**
    * Finds a single brand entity based on the provided data.
    * Throws a ModelException if the brand is not found.

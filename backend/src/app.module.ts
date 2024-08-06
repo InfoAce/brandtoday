@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { ConfigApp, ConfigDatabase, ConfigServices } from './config';
+import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule } from './modules';
 import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, RoleEntity, StockEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
@@ -25,7 +25,7 @@ import { TimelineEntity } from './entities/timeline.entity';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development','.env.production', '.env'],
-      load:[ ConfigApp, ConfigDatabase, ConfigServices],
+      load:[ ConfigApp, ConfigDatabase, ConfigServices, ConfigColors],
       isGlobal: true
     }), 
     CacheModule.registerAsync({

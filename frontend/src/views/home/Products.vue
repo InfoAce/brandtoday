@@ -6,15 +6,15 @@
                 <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2 class="text-theme">Products</h2>
+                            <h2 class="text-theme">Products - {{ products_count }}</h2>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="#" @click.prevent="$router.push({name:'Category',query: { category: $route.query.category }})">{{ $route.query.category }}</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $route.query.sub_category }}</li>
+                                <li class="breadcrumb-item active" aria-current="page"><a href="#" @click.prevent="$router.push({name:'Category',query: { category: category.id }})">{{ category.name }}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ sub_category.name }}</li>
                             </ol>
                         </nav>
                     </div>
@@ -333,8 +333,8 @@
                                                             </a>
                                                             <p v-html="product.description"></p>
                                                             <h4>KSH {{ product.price }}</h4>
-                                                            <ul class="color-variant p-0" v-show="!$isEmpty(product.colour_images)">
-                                                                <li v-for="(colour,index) in product.colour_images" :key="index" :style="`background-color: ${ $convertToHex(colour.name) }; border: 1px solid #ededed;`"></li>
+                                                            <ul class="color-variant p-0" v-if="!$isEmpty(product.colour_images) && !$isNull(product.colour_images)">
+                                                                <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -421,6 +421,7 @@ export default {
      * Lifecycle hook called after the Vue instance is created
      */
     created(){
+        this.$isNull  = isNull;
         this.$isEmpty = isEmpty;
         this.$times   = times;
         
@@ -446,6 +447,7 @@ export default {
      */
     data(){
         return{
+            category:         Object(),
             filter:{
                 per_page:     String(10),
                 sort_pricing: String('descending')
@@ -453,8 +455,9 @@ export default {
             products:           Array(),
             loading:            Boolean(true),
             price:              Array(0,1000),
+            product_count:      Number(),
             brands:             Array(),
-            sub_category:       String(),
+            sub_category:       Object(),
             sub_child_category: String()
         }
     },
@@ -479,8 +482,19 @@ export default {
             // Make API call to get products
             this.$api
                 .get(url)
-                .then( ({ data:{ products, brands}}) => {
-             
+                .then( ({ data:{ products, brands, category, sub_category, products_count }}) => {
+                    /**
+                     * Clones the category object and assigns it to the this.category property.
+                     * @type {Object}
+                     */
+                    this.category     = cloneDeep(category);
+                    
+                    /**
+                     * Clones the sub_category object and assigns it to the this.sub_category property.
+                     * @type {Object}
+                     */
+                    this.sub_category = cloneDeep(sub_category);
+
                     // Update products based on overwrite option
                     if( !isEmpty(this.products) ){
                         if( overwrite ){
@@ -502,6 +516,7 @@ export default {
                     // Update sub_categories
                     this.brands = cloneDeep(brands);
 
+                    this.products_count = products_count;
                 }) 
                 .catch( ({ response }) => {
                     this.loading = false;
@@ -586,51 +601,6 @@ export default {
             },
             deep: true
         },
-        /**
-         * Watch for changes in sub_category and update the products accordingly.
-         * If sub_child_category is not empty, set it to an empty string.
-         * Then, commit a card_loader mutation to show the loader and fetch the products.
-         *
-         * @peram {string} sub_category - The new sub_category value.
-         */
-        sub_category(sub_category){
-            // If sub_child_category is not empty, set it to an empty string.
-            if( !isEmpty(this.sub_child_category) ){
-                this.sub_child_category = String();
-            }
-
-            // Commit a card_loader mutation to show the loader.
-            this.$store.commit('card_loader',true);
-            
-            // Fetch the products with the new sub_category value.
-            this.fetchProducts({ 
-                page: 1, 
-                perPage: 10, 
-                sub_category, 
-                overwrite: true 
-            });
-        },
-        /**
-         * Watch for changes in sub_child_category and update the products accordingly.
-         * 
-         * @peram {string} sub_child_category - The new sub_child_category value.
-         */
-        sub_child_category(sub_child_category) {
-            // Get the current sub_category value
-            const { sub_category } = this;
-
-            // Commit a card_loader mutation to show the loader.
-            this.$store.commit('card_loader', true);
-
-            // Fetch the products with the new sub_category and sub_child_category values.
-            this.fetchProducts({ 
-                page: 1, 
-                perPage: 10, 
-                sub_category, 
-                sub_child_category, 
-                overwrite: true 
-            });
-        }
     }
 }
 </script>

@@ -5,9 +5,10 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, sortBy, take, uniqBy } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel } from 'src/models';
+import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
 import { ILike } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('products')
 export class ProductsController {
@@ -28,6 +29,8 @@ export class ProductsController {
       stock:      `${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,
     };
 
+    private colors          = Object();
+
     private jsonPlugin      = require('json-reader-writer');
 
     private logger          = new Logger(ProductsController.name);
@@ -40,9 +43,13 @@ export class ProductsController {
      */
     constructor(
       private categoryModel:         CategoryModel,
+      private configService:         ConfigService,
       private priceModel:            PriceModel,
       private productCategoryModel:  ProductCategoryModel,
+      private subCategoryModel:      SubCategoryModel
     ){
+
+      this.colors = this.configService.get<any>('colors');
       // Try to read JSON files and assign them to the 'amrod' object
       try {
         // Read categories JSON file
@@ -79,8 +86,8 @@ export class ProductsController {
      */
     async index(
       @Query('name',new DefaultValuePipe(String())) queryName: string,
-      @Param('category',new DefaultValuePipe(String())) category: string,
-      @Param('sub_category',new DefaultValuePipe(String())) sub_category: string,
+      @Param('category',new DefaultValuePipe(String())) category: any,
+      @Param('sub_category',new DefaultValuePipe(String())) sub_category: any,
       @Query('page',new DefaultValuePipe(1)) queryPage: number,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: number,
       @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
@@ -88,23 +95,42 @@ export class ProductsController {
       @Res() res: Response
     ) {
       try {  
-        let where: object = { category_id: category, sub_category_id: sub_category }
 
-        // Filter products based on name query
-        if( !isEmpty(queryName) ){
-          where = { ...where, name: ILike(`%${queryName}%`) }
+        // Find the category based on the provided category id
+        category = await this.categoryModel.findOne({ where: { id: category } });
+
+        // Find the sub category based on the provided sub category id
+        sub_category = await this.subCategoryModel.findOne({ where: { id: sub_category } });
+
+        // Define the where clause for filtering products based on category, sub category, and name (if provided)
+        let where: object = { category_id: category.id, sub_category_id: sub_category.id };
+        if (!isEmpty(queryName)) {
+          where = { ...where, name: ILike(`%${queryName}%`) };
         }
-        
-        // Fetch products category
-        let products_categories: any = await this.productCategoryModel.find({ where, take: queryPerPage, skip: queryPage });
+
+        // Fetch products categories based on the where clause
+        let [products_categories, count ]: any = await this.productCategoryModel.findCount({ where, take: queryPerPage, skip: queryPage });
 
         // List products fetched
-        let products: any            = await Promise.all(
-          products_categories.map( product_category => product_category.product )
+        let products: any = await Promise.all(
+          products_categories.map(async (product_category) => {
+            // Fetch the product for each product category
+            let product = await product_category.product;
+
+            // If the product has colour images, add the hex code to each colour image
+            if (!isNull(product.colour_images)) {
+              product.colour_images = product.colour_images.map((color) => ({
+                ...color,
+                hex: this.colors[color.code].colour,
+              }));
+            }
+
+            return product;
+          })
         );
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({ products });
+        res.status(HttpStatus.OK).json({ products, category, sub_category, products_count: count });
         
       } catch(error){
 
