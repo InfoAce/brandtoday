@@ -237,7 +237,6 @@ export class AmrodService {
 
             // Get the authentication token from the cache
             let auth = await this.cacheManager.get('amrod_auth');
-            this.logger.log(`Categories: ${JSON.stringify(auth)}`);
 
             // Make a GET request to the Amrod API to fetch all categories
             let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.categories.all}`) );
