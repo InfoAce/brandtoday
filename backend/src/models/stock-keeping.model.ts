@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StockEntity } from '../entities';
-import { StockRepository } from '../repositories';
+import { StockKeepingEntity } from '../entities';
+import { StockKeepingRepository } from '../repositories';
 import { DeleteResult } from 'typeorm';
 import {
     paginate,
@@ -11,34 +11,34 @@ import {
 import { ModelException } from 'src/exceptions/model.exception';
 
 @Injectable()
-export default class StockModel {
+export default class StockKeepingModel {
   /**
    * BrandModel constructor.
    * 
-   * @param stockRepository - The stock repository.
+   * @param stockKeepingRepository - The stock repository.
    */
   constructor(
     /**
      * The stock repository.
      * This repository is injected by NestJS using the @InjectRepository decorator.
-     * It is used to perform database operations related to the StockEntity.
+     * It is used to perform database operations related to the StockKeepingEntity.
      */
-    @InjectRepository(StockEntity)
-    private stockRepository: StockRepository,
+    @InjectRepository(StockKeepingEntity)
+    private stockKeepingRepository: StockKeepingRepository,
   ) {}
   
   /**
    * Finds multiple stock entities based on the provided data.
    *
    * @param {any} data - The data used to find the stocks.
-   * @return {Promise<StockEntity[]>} A promise that resolves to an array of found stocks.
+   * @return {Promise<StockKeepingEntity[]>} A promise that resolves to an array of found stocks.
    * @throws {ModelException} Throws a ModelException if there is an error finding the stocks.
    */
-  async find(data: any): Promise<StockEntity[]> {
+  async find(data: any): Promise<StockKeepingEntity[]> {
     try {
       // Find multiple stock entities based on the provided data.
-      // The find method of the stockRepository is used to find the stocks.
-      return await this.stockRepository.find(data);
+      // The find method of the stockKeepingRepository is used to find the stocks.
+      return await this.stockKeepingRepository.find(data);
     } catch (error) {
       // If there is an error finding the stocks, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -50,14 +50,14 @@ export default class StockModel {
    * Throws a ModelException if the stock is not found.
    *
    * @param {any} data - The data used to find the stock.
-   * @return {Promise<StockEntity>} A promise that resolves to the found stock.
+   * @return {Promise<StockKeepingEntity>} A promise that resolves to the found stock.
    * @throws {ModelException} Throws a ModelException if the stock is not found.
    */
-  async findOne(data: any): Promise<StockEntity> {
+  async findOne(data: any): Promise<StockKeepingEntity> {
     try {
       // Finds a single stock entity based on the provided data and throws an exception if it is not found.
-      // The findOneOrFail method of the stockRepository is used to find the stock entity.
-      return await this.stockRepository.findOneOrFail(data);
+      // The findOneOrFail method of the stockKeepingRepository is used to find the stock entity.
+      return await this.stockKeepingRepository.findOneOrFail(data);
     } catch (error) {
       // If the stock is not found, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -68,14 +68,14 @@ export default class StockModel {
    * Paginates the stock entities based on the provided pagination options.
    *
    * @param {IPaginationOptions} options - The pagination options.
-   * @return {Promise<Pagination<StockEntity>>} A promise that resolves to the paginated stock entities.
+   * @return {Promise<Pagination<StockKeepingEntity>>} A promise that resolves to the paginated stock entities.
    */
   async paginate(
     options: IPaginationOptions,
-  ): Promise<Pagination<StockEntity>> {
+  ): Promise<Pagination<StockKeepingEntity>> {
     // Paginates the stock entities using the paginate function from the 'nestjs-typeorm-paginate' library.
-    // The stockRepository is passed as the first argument, and the options are passed as the second argument.
-    return paginate<StockEntity>(this.stockRepository, options);
+    // The stockKeepingRepository is passed as the first argument, and the options are passed as the second argument.
+    return paginate<StockKeepingEntity>(this.stockKeepingRepository, options);
   }
 
   /**
@@ -90,8 +90,8 @@ export default class StockModel {
   async updateOne(id: string, data: any): Promise<any> {
     try {
       // Updates a single stock entity based on the provided id and data.
-      // The stockRepository's update method is used to update the stock entity.
-      return await this.stockRepository.update({id}, data);
+      // The stockKeepingRepository's update method is used to update the stock entity.
+      return await this.stockKeepingRepository.update({id}, data);
     } catch (error) {
       // If the stock entity is not found, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -109,8 +109,8 @@ export default class StockModel {
   async save(data: any): Promise<any> {
     try {
       // Saves a single stock entity based on the provided data.
-      // The stockRepository's save method is used to save the stock entity.
-      return await this.stockRepository.save(data);
+      // The stockKeepingRepository's save method is used to save the stock entity.
+      return await this.stockKeepingRepository.save(data);
     } catch (error) {
       // If there is an error saving the stock, throw a ModelException with the error message.
       throw new ModelException(error);
@@ -128,10 +128,9 @@ export default class StockModel {
   async insert(data: any): Promise<any> {
     try {
       // Inserts multiple stock entities based on the provided data.
-      // The stockRepository's insert method is used to save the stock entities.
-      return await this.stockRepository.insert(data);
+      // The stockKeepingRepository's insert method is used to save the stock entities.
+      return await this.stockKeepingRepository.insert(data);
     } catch (error) {
-      console.log(error);
       // If there is an error saving the stocks, throw a ModelException with the error message.
       throw new ModelException(error);
     }
@@ -146,9 +145,9 @@ export default class StockModel {
    */
   async remove(id: string): Promise<DeleteResult> {
     // Deletes a single stock entity based on the provided id.
-    // The stockRepository's delete method is used to delete the stock entity.
+    // The stockKeepingRepository's delete method is used to delete the stock entity.
     // The DeleteResult object contains information about the affected rows and the generated identifier.
     
-    return await this.stockRepository.delete(id);
+    return await this.stockKeepingRepository.delete(id);
   }
 }

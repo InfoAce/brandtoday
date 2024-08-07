@@ -3,15 +3,16 @@ import { AdminGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { RegisterValidation } from 'src/validation';
-import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductModel, RoleModel, SubCategoryModel, UserModel } from 'src/models';
+import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductModel, RoleModel, StockKeepingModel, SubCategoryModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { isEmpty, isNull, take } from 'lodash';
+import { isEmpty, isNull, keys, take } from 'lodash';
 import { sep } from 'path';
 import StockModel from 'src/models/stock.model';
 import { ILike } from 'typeorm';
 import { delay } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import ProductVairantModel from 'src/models/product-variant.model';
 
 @Controller('dashboard/system')
 export class SystemController {
@@ -31,7 +32,9 @@ export class SystemController {
         private priceModel:           PriceModel,
         private productModel:         ProductModel,
         private productCategoryModel: ProductCategoryModel,
+        private productVariantModel:  ProductVairantModel,
         private stockModel:           StockModel,
+        private stockKeepingModel:    StockKeepingModel,
         private subCategoryModel:     SubCategoryModel,
     ){}
 
@@ -74,16 +77,16 @@ export class SystemController {
             let categories = (await this.amrodService.getCategories()).map( category => ({ ...category, id: uuidv4() }));  
 
             // Fetch amrod prices
-            // let prices = await this.amrodService.getPrices();   
+            let prices = await this.amrodService.getPrices();   
 
             // Fetch amrod brands
             let brands = await this.amrodService.getBrands();  
             
             // // // Fetch amrod products
-            let products = (await this.amrodService.getProducts()).map( category => ({ ...category, id: uuidv4() }));    
+            let products = (await this.amrodService.getProducts()).map( product => ({ ...product, id: uuidv4() }));    
 
             // // Fetch amrod stock
-            // let stocks = await this.amrodService.getStock();
+            let stocks = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));  ;
 
             let sub_categories      = categories.map( category => category.children.map( sub_category => ({ ...sub_category, id: uuidv4(), category_id: category.id, children: sub_category.children }) ) ).flat();
 
@@ -121,76 +124,86 @@ export class SystemController {
                 ) 
             ).flat();
 
+            let variants = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
+
             await this.categoryModel.insert(categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) ))
 
             await this.subCategoryModel.insert(sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) ))
 
             await this.childSubCategory.insert(child_sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) ))
                        
-            await this.brandModel.saveMany(brands.map( ({ code, image, name}) => ({ code, name, image })));
+            await this.brandModel.insert(brands.map( ({ code, image, name}) => ({ code, name, image })));
 
             await this.productModel.insert(
                 products.map( 
-                    ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes, categories }) => 
+                    ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
                         ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
                 )
             );
 
-            await this.productCategoryModel.saveMany(product_categories.map( (product_category) => product_category ));
+            await this.productCategoryModel.insert( product_categories.map( (product_category) => product_category ) );
 
-            // await Promise.all([
-            //     products.map( 
-            //         async ({ fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes, categories }) => {
-            //             let product = await this.productModel.save({ full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name });
-            //             await Promise.all( 
-            //                 categories.map( async (category) => {
-            //                     let path = category.path.split('/');
-            //                     if( path.length > 2 ){
-            //                         try{
-            //                             let stored_child_sub_category = await this.childSubCategory.findOne({ where: { path: ILike(`%${take(path,3).join('/')}%`) }});
-            //                             let stored_sub_category       = await this.subCategoryModel.findOne({ id: stored_child_sub_category.sub_category_id });
-            //                             console.log(stored_child_sub_category);
-            //                             await this.productCategoryModel.save({ category_id: stored_sub_category.category_id, sub_category_id: stored_child_sub_category.sub_category_id, child_sub_category_id: stored_child_sub_category.id, product_id: product.id }) 
-            //                         } catch(error){}
-            //                     }
-            //                     if( path.length == 2) {
-            //                         try{
-            //                             let stored_sub_category       = await this.subCategoryModel.findOne({ where: { path: ILike(`%${take(path,2).join('/')}%`)  }});
-            //                             await this.productCategoryModel.save({ category_id: stored_sub_category.category_id, sub_category_id: stored_sub_category.id, product_id: product.id }) 
-            //                         } catch(error){}
-            //                     }
-            //                     if( path.length == 1) {
-            //                         try{
-            //                             let stored_category = await this.categoryModel.findOne({ where: { path: ILike(`%${take(path,1).join('/')}%`)  }});
-            //                             await this.productCategoryModel.save({ category_id: stored_category.id, product_id: product.id }) 
-            //                         } catch(error){}
-            //                     }
-            //                 }
-            //             ));
-            //         }
-            //     ),
-            // ]);
-            
-            // await Promise.all([
-            //     prices.map( async ({ fullCode: full_code, simplecode: simple_code, price: amount }) => {
-            //         await this.priceModel.save({ full_code, simple_code, amount})
-            //     })
-            // ]);
+            await this.productVariantModel.insert( 
+                variants.map( (variant, index) => { 
+                        return { 
+                            id:                      variant.id, 
+                            product_id:              variant.product_id, 
+                            simple_code:             variant.simpleCode, 
+                            full_code:               variant.fullCode, 
+                            code_colour:             variant.codeColour, 
+                            code_colour_name:        variant.codeColourName, 
+                            code_size:               variant.codeSize, 
+                            code_size_name:          variant.codeSizeName, 
+                            categorized_attribute:   variant.categorisedAttribute, 
+                            packaging_and_dimension: variant.packagingAndDimension, 
+                            product_dimension:       variant.productDimension, 
+                            is_logo_24:              variant.isLogo24, 
+                            components:              variant.components 
+                        }
+                    }
+                ) 
+            );
 
-            // await Promise.all([
-            //     stocks.map( 
-            //         async ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code}) => {
-            //             return await this.stockModel.save({ simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code })
-            //         }
-            //     )
-            // ]);    
+            await this.priceModel.insert( 
+                prices.map( ({ fullCode: full_code, simplecode: simple_code, price: amount }) => {
+                    let variant = variants.find( variant => variant.fullCode == full_code );
+                    return { full_code, simple_code, amount, variant_id: variant.id };
+                })
+            );
+
+            await this.stockModel.insert( 
+                stocks.map( 
+                    ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
+                        return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
+                    }
+                )
+            );
+
+            await this.stockKeepingModel.insert( 
+                stocks.map( 
+                    ({fullCode: full_code, id}) => {
+                        let variant = variants.find( variant => variant.fullCode == full_code );
+                        let product = products.find( product => product.fullCode == full_code );
+                        if( !isEmpty(variant)){
+                            return  { stock_id: id, variant_id: variant.id };
+                        } else {
+                            if( !isEmpty(product) ){
+                                return { stock_id: id, product_id: product.id }
+                            }
+                            return {}
+                        }
+                    }
+                ).filter( stock => !isEmpty(stock) )
+            );
 
             // Return the updated configurations
-            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path), product_categories });
+            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
 
         } catch(error) {
-            this.logger.error(error);
+
             console.log(error);
+
+            this.logger.error(error);
             // Return an error response if an error occurred
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
         }

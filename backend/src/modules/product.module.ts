@@ -1,22 +1,25 @@
 import { Module } from '@nestjs/common';
-import { ProductCategoryModel, ProductModel } from '../models';
-import { ProductCategoryEntity, ProductEntity } from 'src/entities';
+import { ProductCategoryModel, ProductModel, ProductVariantModel } from '../models';
+import { ProductCategoryEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   exports:[
     ProductModel,
-    ProductCategoryModel
+    ProductCategoryModel,
+    ProductVariantModel
   ],
   imports: [
     TypeOrmModule.forFeature([
       ProductEntity,
+      ProductVariantEntity,
       ProductCategoryEntity
     ])
   ],
   providers: [
     ProductModel, 
-    ProductCategoryModel
+    ProductCategoryModel,
+    ProductVariantModel
   ],
 })
 export class ProductModule {}

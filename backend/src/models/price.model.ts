@@ -112,7 +112,25 @@ export default class PriceModel {
       // The priceRepository's save method is used to save the brand entity.
       return await this.priceRepository.save(data);
     } catch (error) {
-      console.log(error);
+      // If there is an error saving the brand, throw a ModelException with the error message.
+      throw new ModelException(error);
+    }
+  }
+
+  /**
+   * Saves a single brand entity based on the provided data.
+   * Throws a ModelException if there is an error saving the brand.
+   *
+   * @param {any} data - The data used to save the brand.
+   * @return {Promise<any>} A promise that resolves to the saved brand.
+   * @throws {ModelException} Throws a ModelException if there is an error saving the brand.
+   */
+  async insert(data: any): Promise<any> {
+    try {
+      // Saves a single brand entity based on the provided data.
+      // The priceRepository's save method is used to save the brand entity.
+      return await this.priceRepository.insert(data);
+    } catch (error) {
       // If there is an error saving the brand, throw a ModelException with the error message.
       throw new ModelException(error);
     }

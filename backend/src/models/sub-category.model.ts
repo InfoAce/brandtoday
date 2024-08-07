@@ -137,25 +137,6 @@ export default class SubCategoryModel {
   }
 
   /**
-   * Saves multiple sub-category entities based on the provided data.
-   * Throws a ModelException if there is an error saving the sub-categories.
-   *
-   * @param {any[]} data - An array of data used to save the sub-categories.
-   * @return {Promise<any>} A promise that resolves to an array of saved sub-categories.
-   * @throws {ModelException} Throws a ModelException if there is an error saving the sub-categories.
-   */
-  async saveMany(data: any[]): Promise<any> {
-    try {
-      // Inserts multiple sub-category entities based on the provided data.
-      // The brandRepository's insert method is used to save the sub-category entities.
-      return await this.subCategoryRepository.insert(data);
-    } catch (error) {
-      // If there is an error saving the sub-categories, throw a ModelException with the error message.
-      throw new ModelException(error);
-    }
-  }
-
-  /**
    * Deletes a single sub-category entity based on the provided id.
    *
    * @param {string} id - The id of the sub-category entity to delete.

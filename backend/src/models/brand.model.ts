@@ -126,7 +126,7 @@ export default class BrandModel {
    * @return {Promise<any>} A promise that resolves to an array of saved brands.
    * @throws {ModelException} Throws a ModelException if there is an error saving the brands.
    */
-  async saveMany(data: any[]): Promise<any> {
+  async insert(data: any[]): Promise<any> {
     try {
       // Inserts multiple brand entities based on the provided data.
       // The brandRepository's insert method is used to save the brand entities.

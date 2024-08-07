@@ -1,4 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
+import { ProductVariantEntity } from './product-variant.entity';
+import { ProductEntity } from './product.entity';
+import { StockKeepingEntity } from './stock-keeping.entity';
 
 @Entity("stocks")
 export class StockEntity {
@@ -34,6 +37,13 @@ export class StockEntity {
 
   @Column()
   type: number;
+
+  @OneToOne(() => StockKeepingEntity,(product) => product.stock, { lazy: true } )
+  @JoinColumn({
+    name: 'product_id',
+    referencedColumnName: 'id'
+  })
+  stock_keeping: StockKeepingEntity[]
 
   @CreateDateColumn()
   created_at: Date; // Creation date

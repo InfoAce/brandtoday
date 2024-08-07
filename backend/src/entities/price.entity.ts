@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable } from 'typeorm';
-import { ProductEntity } from './product.entity';
+import { ProductVariantEntity } from './';
 
 @Entity("prices")
 export class PriceEntity {
@@ -12,20 +12,16 @@ export class PriceEntity {
 
   @Column()
   full_code: string
+  
+  @Column()
+  variant_id: string
 
-  @OneToOne(() => ProductEntity)
-  @JoinTable({
-    name: "product",
-    joinColumn:{
-      name: "full_code",
-      referencedColumnName: "full_code"
-    },
-    inverseJoinColumn:{
-      name: "full_code",
-      referencedColumnName: "full_code"
-    }
+  @OneToOne(() => ProductVariantEntity,(variant) => variant.price, { onDelete: 'CASCADE', onUpdate: 'CASCADE' } )
+  @JoinColumn({
+    name: 'variant_id',
+    referencedColumnName: 'id'
   })
-  product: ProductEntity
+  variant: ProductVariantEntity
 
   @Column()
   simple_code: string

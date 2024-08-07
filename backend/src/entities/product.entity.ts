@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
-import { CategoryEntity, PriceEntity, ProductCategoryEntity, SubCategoryEntity } from './index';
+import { ProductCategoryEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
 
 @Entity("products")
 export class ProductEntity {
@@ -73,13 +73,11 @@ export class ProductEntity {
   })
   images: string;
 
-  @OneToOne(() => PriceEntity)
-  price: PriceEntity;
+  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
+  stocks: StockKeepingEntity[];
 
-  @Column({
-    type: 'json'
-  })
-  variants: string;
+  @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { lazy: true })
+  variants: ProductVariantEntity;
 
   @CreateDateColumn()
   created_at: Date; // Creation date
