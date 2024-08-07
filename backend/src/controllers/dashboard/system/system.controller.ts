@@ -95,11 +95,9 @@ export class SystemController {
                         return await Promise.all([
                             children.map( async ({ categoryName, categoryCode, categoryPath, children: sub_children }) => {
                                 let { generatedMaps: [ sub_category ] } = await this.subCategoryModel.insert({ code: categoryCode, name: categoryName, path: categoryPath, category_id: category.id });
-                                return await Promise.all([
-                                    sub_children.map( async ({ categoryName, categoryCode, categoryPath }) => { 
-                                        return await this.childSubCategory.insert({ code: categoryCode, name: categoryName, path: categoryPath, sub_category_id: sub_category.id });
-                                    })
-                                ]);
+                                return await this.childSubCategory.insert(
+                                    sub_children.map( async ({ categoryName, categoryCode, categoryPath }) => ({ code: categoryCode, name: categoryName, path: categoryPath, sub_category_id: sub_category.id }))
+                                );
                             })
                         ])
                     }
