@@ -7,13 +7,13 @@ export class CategoryEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   code: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   path: string;
 
   @OneToMany(() => ProductCategoryEntity, (product) => product.category, { lazy: true })

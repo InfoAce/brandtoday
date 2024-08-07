@@ -84,33 +84,27 @@ export class SystemController {
             // Fetch amrod stock
             let stocks = await this.amrodService.getStock();
                        
-            brands = await this.brandModel.saveMany(brands.map( ({ code, image, name}) => ({ code, name, image })));
-            // brands = await Promise.all(
-            //     brands.map( async ({ code, image, name}, index) => {
-                    
-            //         await delay(index * 1000);
-            //     })
-            // );
+           await this.brandModel.saveMany(brands.map( ({ code, image, name}) => ({ code, name, image })));
 
-            this.logger.log(JSON.stringify(brands));
+        //    categories = (await this.categoryModel.saveMany( categories.map( ({ categoryName: name, categoryCode: code, categoryPath: path }) => ({ code, name, path }) ) )).genratedMaps.map( (category,index) => ({ category, ...categories[index] );
 
-            // await Promise.all([
-            //     categories.map( 
-            //         async ({ children, categoryName: name, categoryCode: code, categoryPath: path }) => {                
-            //             let category = await this.categoryModel.save({ code, name, path});
-            //             return await Promise.all([
-            //                 children.map( async ({ categoryName, categoryCode, categoryPath, children: sub_children }) => {
-            //                     let sub_category = await this.subCategoryModel.save({ code: categoryCode, name: categoryName, path: categoryPath, category_id: category.id });
-            //                     return await Promise.all([
-            //                         sub_children.map( async ({ categoryName, categoryCode, categoryPath }) => { 
-            //                             return await this.childSubCategory.save({ code: categoryCode, name: categoryName, path: categoryPath, sub_category_id: sub_category.id });
-            //                         })
-            //                     ]);
-            //                 })
-            //             ])
-            //         }
-            //     )
-            // ]);
+            await Promise.all([
+                categories.map( 
+                    async ({ children, categoryName: name, categoryCode: code, categoryPath: path }) => {                
+                        let { generatedMaps: [ category ] } = await this.categoryModel.insert({ code, name, path});
+                        return await Promise.all([
+                            children.map( async ({ categoryName, categoryCode, categoryPath, children: sub_children }) => {
+                                let { generatedMaps: [ sub_category ] } = await this.subCategoryModel.insert({ code: categoryCode, name: categoryName, path: categoryPath, category_id: category.id });
+                                return await Promise.all([
+                                    sub_children.map( async ({ categoryName, categoryCode, categoryPath }) => { 
+                                        return await this.childSubCategory.insert({ code: categoryCode, name: categoryName, path: categoryPath, sub_category_id: sub_category.id });
+                                    })
+                                ]);
+                            })
+                        ])
+                    }
+                )
+            ]);
 
             // await Promise.all([
             //     products.map( 

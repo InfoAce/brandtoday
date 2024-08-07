@@ -15,11 +15,11 @@ export default class ProductModel {
   /**
    * BrandModel constructor.
    * 
-   * @param productRepository - The brand repository.
+   * @param productRepository - The product repository.
    */
   constructor(
     /**
-     * The brand repository.
+     * The product repository.
      * This repository is injected by NestJS using the @InjectRepository decorator.
      * It is used to perform database operations related to the ProductEntity.
      */
@@ -28,106 +28,124 @@ export default class ProductModel {
   ) {}
   
   /**
-   * Finds multiple brand entities based on the provided data.
+   * Finds multiple product entities based on the provided data.
    *
-   * @param {any} data - The data used to find the brands.
-   * @return {Promise<ProductEntity[]>} A promise that resolves to an array of found brands.
-   * @throws {ModelException} Throws a ModelException if there is an error finding the brands.
+   * @param {any} data - The data used to find the products.
+   * @return {Promise<ProductEntity[]>} A promise that resolves to an array of found products.
+   * @throws {ModelException} Throws a ModelException if there is an error finding the products.
    */
   async find(data: any): Promise<ProductEntity[]> {
     try {
-      // Find multiple brand entities based on the provided data.
-      // The find method of the productRepository is used to find the brands.
+      // Find multiple product entities based on the provided data.
+      // The find method of the productRepository is used to find the products.
       return await this.productRepository.find(data);
     } catch (error) {
-      // If there is an error finding the brands, throw a ModelException with the error message.
+      // If there is an error finding the products, throw a ModelException with the error message.
       throw new ModelException(error);
     }
   }
 
   /**
-   * Finds a single brand entity based on the provided data.
-   * Throws a ModelException if the brand is not found.
+   * Finds a single product entity based on the provided data.
+   * Throws a ModelException if the product is not found.
    *
-   * @param {any} data - The data used to find the brand.
-   * @return {Promise<ProductEntity>} A promise that resolves to the found brand.
-   * @throws {ModelException} Throws a ModelException if the brand is not found.
+   * @param {any} data - The data used to find the product.
+   * @return {Promise<ProductEntity>} A promise that resolves to the found product.
+   * @throws {ModelException} Throws a ModelException if the product is not found.
    */
   async findOne(data: any): Promise<ProductEntity> {
     try {
-      // Finds a single brand entity based on the provided data and throws an exception if it is not found.
-      // The findOneOrFail method of the productRepository is used to find the brand entity.
+      // Finds a single product entity based on the provided data and throws an exception if it is not found.
+      // The findOneOrFail method of the productRepository is used to find the product entity.
       return await this.productRepository.findOneOrFail(data);
     } catch (error) {
-      // If the brand is not found, throw a ModelException with the error message.
+      // If the product is not found, throw a ModelException with the error message.
       throw new ModelException(error);
     }
   }
 
   /**
-   * Paginates the brand entities based on the provided pagination options.
+   * Paginates the product entities based on the provided pagination options.
    *
    * @param {IPaginationOptions} options - The pagination options.
-   * @return {Promise<Pagination<ProductEntity>>} A promise that resolves to the paginated brand entities.
+   * @return {Promise<Pagination<ProductEntity>>} A promise that resolves to the paginated product entities.
    */
   async paginate(
     options: IPaginationOptions,
   ): Promise<Pagination<ProductEntity>> {
-    // Paginates the brand entities using the paginate function from the 'nestjs-typeorm-paginate' library.
+    // Paginates the product entities using the paginate function from the 'nestjs-typeorm-paginate' library.
     // The productRepository is passed as the first argument, and the options are passed as the second argument.
     return paginate<ProductEntity>(this.productRepository, options);
   }
 
   /**
-   * Updates a single brand entity based on the provided id and data.
-   * Throws a ModelException if the brand is not found.
+   * Updates a single product entity based on the provided id and data.
+   * Throws a ModelException if the product is not found.
    *
-   * @param {string} id - The id of the brand entity to update.
-   * @param {any} data - The data used to update the brand entity.
-   * @return {Promise<any>} A promise that resolves to the updated brand entity.
-   * @throws {ModelException} Throws a ModelException if the brand entity is not found.
+   * @param {string} id - The id of the product entity to update.
+   * @param {any} data - The data used to update the product entity.
+   * @return {Promise<any>} A promise that resolves to the updated product entity.
+   * @throws {ModelException} Throws a ModelException if the product entity is not found.
    */
   async updateOne(id: string, data: any): Promise<any> {
     try {
-      // Updates a single brand entity based on the provided id and data.
-      // The productRepository's update method is used to update the brand entity.
+      // Updates a single product entity based on the provided id and data.
+      // The productRepository's update method is used to update the product entity.
       return await this.productRepository.update({id}, data);
     } catch (error) {
-      // If the brand entity is not found, throw a ModelException with the error message.
+      // If the product entity is not found, throw a ModelException with the error message.
       throw new ModelException(error);
     } 
   }
 
   /**
-   * Saves a single brand entity based on the provided data.
-   * Throws a ModelException if there is an error saving the brand.
+   * Saves a single product entity based on the provided data.
+   * Throws a ModelException if there is an error saving the product.
    *
-   * @param {any} data - The data used to save the brand.
-   * @return {Promise<any>} A promise that resolves to the saved brand.
-   * @throws {ModelException} Throws a ModelException if there is an error saving the brand.
+   * @param {any} data - The data used to save the product.
+   * @return {Promise<any>} A promise that resolves to the saved product.
+   * @throws {ModelException} Throws a ModelException if there is an error saving the product.
    */
   async save(data: any): Promise<any> {
     try {
-      // Saves a single brand entity based on the provided data.
-      // The productRepository's save method is used to save the brand entity.
+      // Saves a single product entity based on the provided data.
+      // The productRepository's save method is used to save the product entity.
       return await this.productRepository.save(data);
     } catch (error) {
-      // If there is an error saving the brand, throw a ModelException with the error message.
+      // If there is an error saving the product, throw a ModelException with the error message.
       throw new ModelException(error);
     }
   }
 
+/**
+ * Saves multiple product entities based on the provided data.
+ * Throws a ModelException if there is an error saving the products.
+ *
+ * @param {any[]} data - An array of data used to save the products.
+ * @return {Promise<any>} A promise that resolves to an array of saved products.
+ * @throws {ModelException} Throws a ModelException if there is an error saving the products.
+ */
+  async saveMany(data: any[]): Promise<any> {
+    try {
+      // Inserts multiple product entities based on the provided data.
+      // The brandRepository's insert method is used to save the product entities.
+      return await this.productRepository.insert(data);
+    } catch (error) {
+      // If there is an error saving the products, throw a ModelException with the error message.
+      throw new ModelException(error);
+    }
+  }
 
   /**
-   * Deletes a single brand entity based on the provided id.
+   * Deletes a single product entity based on the provided id.
    *
-   * @param {string} id - The id of the brand entity to delete.
+   * @param {string} id - The id of the product entity to delete.
    * @return {Promise<DeleteResult>} A promise that resolves to the DeleteResult object.
    * The DeleteResult object contains information about the affected rows and the generated identifier.
    */
   async remove(id: string): Promise<DeleteResult> {
-    // Deletes a single brand entity based on the provided id.
-    // The productRepository's delete method is used to delete the brand entity.
+    // Deletes a single product entity based on the provided id.
+    // The productRepository's delete method is used to delete the product entity.
     // The DeleteResult object contains information about the affected rows and the generated identifier.
     
     return await this.productRepository.delete(id);
