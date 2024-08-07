@@ -83,13 +83,14 @@ export class SystemController {
 
             // Fetch amrod stock
             let stocks = await this.amrodService.getStock();
-                        
-            brands = await Promise.all(
-                brands.map( async ({ code, image, name}, index) => {
-                    await this.brandModel.save({ code, image, name});
-                    await delay(index * 1000);
-                })
-            );
+                       
+            brands = await this.brandModel.saveMany(brands.map( ({ code, image, name}) => ({ code, name, image })));
+            // brands = await Promise.all(
+            //     brands.map( async ({ code, image, name}, index) => {
+                    
+            //         await delay(index * 1000);
+            //     })
+            // );
 
             this.logger.log(JSON.stringify(brands));
 

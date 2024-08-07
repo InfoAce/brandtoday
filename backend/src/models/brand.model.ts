@@ -63,6 +63,7 @@ export default class BrandModel {
       throw new ModelException(error);
     }
   }
+  
 
   /**
    * Paginates the brand entities based on the provided pagination options.
@@ -117,6 +118,24 @@ export default class BrandModel {
     }
   }
 
+  /**
+   * Saves multiple brand entities based on the provided data.
+   * Throws a ModelException if there is an error saving the brands.
+   *
+   * @param {any[]} data - An array of data used to save the brands.
+   * @return {Promise<any>} A promise that resolves to an array of saved brands.
+   * @throws {ModelException} Throws a ModelException if there is an error saving the brands.
+   */
+  async saveMany(data: any[]): Promise<any> {
+    try {
+      // Inserts multiple brand entities based on the provided data.
+      // The brandRepository's insert method is used to save the brand entities.
+      return await this.brandRepository.insert(data);
+    } catch (error) {
+      // If there is an error saving the brands, throw a ModelException with the error message.
+      throw new ModelException(error);
+    }
+  }
 
   /**
    * Deletes a single brand entity based on the provided id.
