@@ -6,7 +6,7 @@ import { RegisterValidation } from 'src/validation';
 import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductModel, RoleModel, StockKeepingModel, SubCategoryModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { isEmpty, isNull, keys, take } from 'lodash';
+import { chunk, isEmpty, isNull, has, keys, take } from 'lodash';
 import { sep } from 'path';
 import StockModel from 'src/models/stock.model';
 import { ILike } from 'typeorm';
@@ -134,12 +134,18 @@ export class SystemController {
                        
             await this.brandModel.insert(brands.map( ({ code, image, name}) => ({ code, name, image })));
 
-            await this.productModel.insert(
-                products.map( 
-                    ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                        ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
-                )
-            );
+            
+            await Promise.all(
+                chunk(products,1000).map( async (products) => {
+                    await this.productModel.insert(
+                        products.map( 
+                            ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                                ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                        )
+                    );
+                })
+            )
+
 
             await this.productCategoryModel.insert( product_categories.map( (product_category) => product_category ) );
 
@@ -201,11 +207,13 @@ export class SystemController {
 
         } catch(error) {
 
-            console.log(error);
+            if( has(error,'applicationRef') ){
+                let { response: { status, data } } = error.applicationRef;
 
-            this.logger.error(error);
-            // Return an error response if an error occurred
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                // Return an error response if an error occurred
+                return res.status(status).json(data);
+            }
+
         }
     }
 
