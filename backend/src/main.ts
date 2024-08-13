@@ -8,18 +8,23 @@ import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
+import  'winston-daily-rotate-file';
+
 // Directory separator
 const { sep } = require('path');
 
 async function bootstrap() {
-  const app  = await NestFactory.create<NestExpressApplication>(
-    AppModule,{ 
-      cors: true,  
+  const app          = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    { 
+      cors:     true,  
       logger: WinstonModule.createLogger({
         transports: [
           // let's log errors into its own file
-          new transports.File({
-            filename: `${process.cwd()}${sep}public${sep}logs${sep}error-${moment().format('YYYY-MM-DD')}.log`,
+          new transports.DailyRotateFile({
+            dirname: `${process.cwd()}${sep}public${sep}logs${sep}`,
+            filename: `error-%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
             level: 'error',
             format: format.combine(
               format.timestamp(), 
@@ -34,9 +39,12 @@ async function bootstrap() {
               }),
             ),
           }),
+
           // logging all level
-          new transports.File({
-            filename: `${process.cwd()}${sep}public${sep}logs${sep}info-${moment().format('YYYY-MM-DD')}.log`,
+          new transports.DailyRotateFile({
+            dirname: `${process.cwd()}${sep}public${sep}logs${sep}`,
+            filename: `info-%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
             level: 'info',
             format: format.combine(
               format.timestamp(), 
@@ -58,8 +66,8 @@ async function bootstrap() {
             ),
         }),
         ],
-      }),      
-      snapshot: true, 
+      }),     
+      snapshot: true
     }
   );
   const { APP_PORT } = process.env;
