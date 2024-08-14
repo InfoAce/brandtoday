@@ -212,17 +212,18 @@ export class SystemController {
                     let variant = variants.find( variant => variant.fullCode == full_code );
                     let product = products.find( product => product.fullCode == full_code );
                     if( !isEmpty(variant)){
-                        return  { stock_id: id, variant_id: variant.id };
+                        return  { stock_id: id, variant_id: variant.id, id: uuidv4() };
                     } else {
                         if( !isEmpty(product) ){
-                            return { stock_id: id, product_id: product.id }
+                            return { stock_id: id, product_id: product.id, id: uuidv4()}
                         }
                         return {}
                     }
                 }
-            );
+            ).filter( value => !isEmpty(value) );
             
             this.logger.log(JSON.stringify(stock_keeping));
+
             // await Promise.all(
             //     chunk(
             //         stocks.map( 
