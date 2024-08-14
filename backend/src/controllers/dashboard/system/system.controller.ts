@@ -207,32 +207,48 @@ export class SystemController {
                 })
             );
 
-            await Promise.all(
-                chunk(
-                    stocks.map( 
-                        ({fullCode: full_code, id}) => {
-                            let variant = variants.find( variant => variant.fullCode == full_code );
-                            let product = products.find( product => product.fullCode == full_code );
-                            if( !isEmpty(variant)){
-                                return  { stock_id: id, variant_id: variant.id };
-                            } else {
-                                if( !isEmpty(product) ){
-                                    return { stock_id: id, product_id: product.id }
-                                }
-                                return {}
+            console.log(
+                stocks.map( 
+                    ({fullCode: full_code, id}) => {
+                        let variant = variants.find( variant => variant.fullCode == full_code );
+                        let product = products.find( product => product.fullCode == full_code );
+                        if( !isEmpty(variant)){
+                            return  { stock_id: id, variant_id: variant.id };
+                        } else {
+                            if( !isEmpty(product) ){
+                                return { stock_id: id, product_id: product.id }
                             }
+                            return {}
                         }
-                    ),
-                    1000
-                ).map( async (stock_keeping) => {
-                    return new Promise( (resolve,reject) => {
-                        setTimeout( async () => {
-                            this.logger.log(stock_keeping);
-                        }, 2000)
-                    }) 
-                    // return await this.stockKeepingModel.insert(stock_keeping);
-                })
-            );
+                    }
+                )
+            )
+            // await Promise.all(
+            //     chunk(
+            //         stocks.map( 
+            //             ({fullCode: full_code, id}) => {
+            //                 let variant = variants.find( variant => variant.fullCode == full_code );
+            //                 let product = products.find( product => product.fullCode == full_code );
+            //                 if( !isEmpty(variant)){
+            //                     return  { stock_id: id, variant_id: variant.id };
+            //                 } else {
+            //                     if( !isEmpty(product) ){
+            //                         return { stock_id: id, product_id: product.id }
+            //                     }
+            //                     return {}
+            //                 }
+            //             }
+            //         ),
+            //         1000
+            //     ).map( async (stock_keeping) => {
+            //         return new Promise( (resolve,reject) => {
+            //             setTimeout( async () => {
+            //                 this.logger.log(stock_keeping);
+            //             }, 2000)
+            //         }) 
+            //         // return await this.stockKeepingModel.insert(stock_keeping);
+            //     })
+            // );
 
             // Return the updated configurations
             return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
