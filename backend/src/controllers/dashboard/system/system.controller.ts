@@ -203,7 +203,8 @@ export class SystemController {
                     ).filter( stock => !isEmpty(stock) ),
                     1000
                 ).map( async (stock_keeping) => {
-                    return await this.stockKeepingModel.insert(stock_keeping);
+                    this.logger.log(stock_keeping);
+                    // return await this.stockKeepingModel.insert(stock_keeping);
                 })
             );
 
