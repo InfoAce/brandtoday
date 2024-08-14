@@ -185,21 +185,26 @@ export class SystemController {
                 )
             );
 
-            await this.stockKeepingModel.insert( 
-                stocks.map( 
-                    ({fullCode: full_code, id}) => {
-                        let variant = variants.find( variant => variant.fullCode == full_code );
-                        let product = products.find( product => product.fullCode == full_code );
-                        if( !isEmpty(variant)){
-                            return  { stock_id: id, variant_id: variant.id };
-                        } else {
-                            if( !isEmpty(product) ){
-                                return { stock_id: id, product_id: product.id }
+            await Promise.all(
+                chunk(
+                    stocks.map( 
+                        ({fullCode: full_code, id}) => {
+                            let variant = variants.find( variant => variant.fullCode == full_code );
+                            let product = products.find( product => product.fullCode == full_code );
+                            if( !isEmpty(variant)){
+                                return  { stock_id: id, variant_id: variant.id };
+                            } else {
+                                if( !isEmpty(product) ){
+                                    return { stock_id: id, product_id: product.id }
+                                }
+                                return {}
                             }
-                            return {}
                         }
-                    }
-                ).filter( stock => !isEmpty(stock) )
+                    ).filter( stock => !isEmpty(stock) ),
+                    1000
+                ).map( async (stock_keeping) => {
+                    return await this.stockKeepingModel.insert(stock_keeping);
+                })
             );
 
             // Return the updated configurations
