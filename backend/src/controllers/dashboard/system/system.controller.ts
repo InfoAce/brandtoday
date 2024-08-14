@@ -148,41 +148,63 @@ export class SystemController {
 
 
             await this.productCategoryModel.insert( product_categories.map( (product_category) => product_category ) );
-
-            await this.productVariantModel.insert( 
-                variants.map( (variant, index) => { 
-                        return { 
-                            id:                      variant.id, 
-                            product_id:              variant.product_id, 
-                            simple_code:             variant.simpleCode, 
-                            full_code:               variant.fullCode, 
-                            code_colour:             variant.codeColour, 
-                            code_colour_name:        variant.codeColourName, 
-                            code_size:               variant.codeSize, 
-                            code_size_name:          variant.codeSizeName, 
-                            categorized_attribute:   variant.categorisedAttribute, 
-                            packaging_and_dimension: variant.packagingAndDimension, 
-                            product_dimension:       variant.productDimension, 
-                            is_logo_24:              variant.isLogo24, 
-                            components:              variant.components 
-                        }
-                    }
-                ) 
-            );
-
-            await this.priceModel.insert( 
-                prices.map( ({ fullCode: full_code, simplecode: simple_code, price: amount }) => {
-                    let variant = variants.find( variant => variant.fullCode == full_code );
-                    return { full_code, simple_code, amount, variant_id: variant.id };
+            
+            await Promise.all(
+                chunk(variants,1000).map( async (variants) => {
+                    return new Promise( (resolve,reject) => {
+                        setTimeout( async () => {
+                            await this.productVariantModel.insert( 
+                                variants.map( (variant, index) => { 
+                                        return { 
+                                            id:                      variant.id, 
+                                            product_id:              variant.product_id, 
+                                            simple_code:             variant.simpleCode, 
+                                            full_code:               variant.fullCode, 
+                                            code_colour:             variant.codeColour, 
+                                            code_colour_name:        variant.codeColourName, 
+                                            code_size:               variant.codeSize, 
+                                            code_size_name:          variant.codeSizeName, 
+                                            categorized_attribute:   variant.categorisedAttribute, 
+                                            packaging_and_dimension: variant.packagingAndDimension, 
+                                            product_dimension:       variant.productDimension, 
+                                            is_logo_24:              variant.isLogo24, 
+                                            components:              variant.components 
+                                        }
+                                    }
+                                ) 
+                            )
+                            resolve(true);
+                        }, 2000)
+                    }) 
                 })
             );
 
-            await this.stockModel.insert( 
-                stocks.map( 
-                    ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
-                        return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
-                    }
-                )
+            await Promise.all(
+                chunk(prices,1000).map( async (prices) => {
+                    return new Promise( (resolve,reject) => {
+                        setTimeout( async () => {
+                            await this.priceModel.insert( 
+                                prices.map( ({ fullCode: full_code, simplecode: simple_code, price: amount }) => {
+                                    let variant = variants.find( variant => variant.fullCode == full_code );
+                                    return { full_code, simple_code, amount, variant_id: variant.id };
+                                })
+                            );
+                            resolve(true);
+                        }, 2000)
+                    }) 
+                })
+            );
+
+            await Promise.all(
+                chunk(stocks,1000).map( async (stocks) => {
+                    return await this.stockModel.insert( 
+                        stocks.map( 
+                            ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
+                                return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
+                            }
+                        )
+                    )
+                })
             );
 
             await Promise.all(
@@ -203,7 +225,11 @@ export class SystemController {
                     ).filter( stock => !isEmpty(stock) ),
                     1000
                 ).map( async (stock_keeping) => {
-                    this.logger.log(stock_keeping);
+                    return new Promise( (resolve,reject) => {
+                        setTimeout( async () => {
+                            this.logger.log(stock_keeping);
+                        }, 2000)
+                    }) 
                     // return await this.stockKeepingModel.insert(stock_keeping);
                 })
             );
