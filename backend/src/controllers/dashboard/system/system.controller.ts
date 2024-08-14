@@ -222,7 +222,7 @@ export class SystemController {
                                 return {}
                             }
                         }
-                    ).filter( stock => !isEmpty(stock) ),
+                    ),
                     1000
                 ).map( async (stock_keeping) => {
                     return new Promise( (resolve,reject) => {
