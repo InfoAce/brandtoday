@@ -150,7 +150,7 @@ export class SystemController {
             await this.productCategoryModel.insert( product_categories.map( (product_category) => product_category ) );
             
             await Promise.all(
-                chunk(variants,1000).map( async (variants) => {
+                chunk(variants,500).map( async (variants) => {
                     return new Promise( (resolve,reject) => {
                         setTimeout( async () => {
                             await this.productVariantModel.insert( 
