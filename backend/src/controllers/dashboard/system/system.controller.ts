@@ -146,11 +146,20 @@ export class SystemController {
                 })
             )
 
+            await Promise.all(
+                chunk(product_categories,2000).map( async (variants) => {
+                    return new Promise( (resolve,reject) => {
+                        setTimeout( async (product_categories) => {
+                            await this.productCategoryModel.insert( product_categories );
+                            resolve(true);
+                        }, 5000)
+                    }) 
+                })
+            )
 
-            await this.productCategoryModel.insert( product_categories.map( (product_category) => product_category ) );
             
             await Promise.all(
-                chunk(variants,20).map( async (variants) => {
+                chunk(variants,1000).map( async (variants) => {
                     return new Promise( (resolve,reject) => {
                         setTimeout( async () => {
                             await this.productVariantModel.insert( 
