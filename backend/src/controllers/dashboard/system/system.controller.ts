@@ -126,31 +126,88 @@ export class SystemController {
 
             let variants = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
 
-            await this.categoryModel.insert(categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) ))
-
-            await this.subCategoryModel.insert(sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) ))
-
-            await this.childSubCategory.insert(child_sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) ))
-                       
-            await this.brandModel.insert(brands.map( ({ code, image, name}) => ({ code, name, image })));
-
-            
             await Promise.all(
-                chunk(products,1000).map( async (products) => {
-                    await this.productModel.insert(
-                        products.map( 
-                            ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                                ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
-                        )
-                    );
+                chunk(categories,1000).map( async (categories) => {
+                    return new Promise( async (resolve,reject) => {
+                        setTimeout( async (categories) => {
+                            await this.categoryModel.insert(
+                                categories.map( 
+                                    ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
+                                )
+                            )
+                            resolve(true);
+                        }, 2000);
+                    })
+                })
+            )
+
+
+            await Promise.all(
+                chunk(sub_categories,1000).map( async (sub_categories) => {
+                    return new Promise( async (resolve,reject) => {
+                        setTimeout( async (sub_categories) => {
+                            await this.subCategoryModel.insert(
+                                    sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
+                                )
+                            )
+                            resolve(true);
+                        }, 2000);
+                    })
+                })
+            )
+
+
+            await Promise.all(
+                chunk(child_sub_categories,1000).map( async (child_sub_categories) => {
+                    return new Promise( async (resolve,reject) => {
+                        setTimeout( async (child_sub_categories) => {
+                            await this.childSubCategory.insert(
+                                child_sub_categories.map( 
+                                    ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
+                                )
+                            )
+                            resolve(true);
+                        }, 2000);
+                    })
                 })
             )
 
             await Promise.all(
-                chunk(product_categories,2000).map( async (variants) => {
+                chunk(brands,1000).map( async (brands) => {
+                    return new Promise( async (resolve,reject) => {
+                        setTimeout( async (brands) => {
+                            await this.brandModel.insert(
+                                brands.map( 
+                                    ({ code, image, name}) => ({ code, name, image }) 
+                                )
+                            );
+                            resolve(true);
+                        }, 2000);
+                    })
+                })
+            )
+
+            await Promise.all(
+                chunk(products,1000).map( async (products) => {
+                    return new Promise( async (resolve,reject) => {
+                        setTimeout( async (products) => {
+                            await this.productModel.insert(
+                                products.map( 
+                                    ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                                        ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                                )
+                            );
+                            resolve(true);
+                        }, 2000);
+                    })
+                })
+            )
+
+            await Promise.all(
+                chunk(product_categories,2000).map( async (prod_categories) => {
                     return new Promise( (resolve,reject) => {
-                        setTimeout( async (product_categories) => {
-                            await this.productCategoryModel.insert( product_categories );
+                        setTimeout( async (prod_categories) => {
+                            await this.productCategoryModel.insert( prod_categories );
                             resolve(true);
                         }, 5000)
                     }) 
