@@ -32,7 +32,8 @@
                             <div class="page-main-content">
                                 <div class="collection-product-wrapper">
                                     <div class="product-wrapper-grid">
-                                        <div class="row margin-res" v-show="!isEmpty($data.sub_categories)">
+                                        <PlaceholderLoader v-if="isEmpty($data.sub_categories) && $data.loader || !isEmpty($data.sub_categories) && $data.loader" :count="10"/>
+                                        <div class="row margin-res" v-if="!isEmpty($data.sub_categories) && !$data.loader">
                                             <div class="col-xl-3 col-6 col-grid-box mb-4" v-for="(sub_category,index) in $data.sub_categories" :key="index">
                                                 <a href="#" @click.prevent="viewProducts(sub_category)">
                                                     <div class="product-box">
@@ -66,6 +67,7 @@ import { cloneDeep, isEmpty } from 'lodash';
 import { useRoute, useRouter } from 'vue-router';
 import { inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
+import { PlaceholderLoader } from '../../components';
 
 // Magic variables
 const $api    = inject('$api');
@@ -74,6 +76,7 @@ const $router = useRouter();
 const $store  = useStore();
 const $data   = reactive({
     category:       Object(),
+    loader:         Boolean(true),
     products_count: Number(),
     sub_categories: Array()
 });
@@ -81,7 +84,7 @@ const $data   = reactive({
 // Methods
 const fetch = () => {
     const { params: { category } } = $route;
-    $store.commit('loader',true);
+    $data.loader =  true;
     $api.put(`/categories/${category}/sub_categories`)
         .then( ({ data: { products_count, sub_categories, category } }) => {
             $data.sub_categories = cloneDeep(sub_categories).filter( sub => sub.products_count > 0 );
@@ -89,10 +92,10 @@ const fetch = () => {
             $data.category       = cloneDeep(category);
         })
         .catch( () => {
-            $store.commit('loader',false);            
+            $data.loader =  false           
         })
         .finally( () => {
-            $store.commit('loader',false);
+            $data.loader =  false           
         })
 }
 const viewProducts = (sub_category) => {
