@@ -125,8 +125,9 @@
                                         </div>
                                     </div>                                
                                     <div class="product-wrapper-grid">
-                                        <CardLoader v-if="!$isEmpty(products.data)" />
-                                        <div class="row margin-res p-2" v-show="$isEmpty(products) && loading">
+                                        <CardLoader v-if="!$isEmpty(products)" />
+                                        <PlaceholderLoader v-if="$isEmpty(products) && loading" :count="10"/>
+                                        <!-- <div class="row margin-res p-2" v-show="$isEmpty(products) && loading">
                                             <div class="col-xl-3 col-6 col-grid-box mt-4" >
                                                 <div class="ssc ssc-card">
                                                     <div class="ssc-wrapper">
@@ -297,7 +298,7 @@
                                                     </div>
                                                 </div>
                                             </div>                                                                                     
-                                        </div>
+                                        </div> -->
                                         <div class="row margin-res" v-show="!$isEmpty(products) && !loading">
                                             <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products" :key="index">
                                                 <div class="product-box">
@@ -332,7 +333,7 @@
                                                                 <h6>{{ product.name }}</h6>
                                                             </a>
                                                             <p v-html="product.description"></p>
-                                                            <h4>KSH {{ $get($first(product.variants),'price').amount }}</h4>
+                                                            <h4>KSH {{ product.price.amount }}</h4>
                                                             <ul class="color-variant p-0" v-if="!$isEmpty(product.colour_images) && !$isNull(product.colour_images)">
                                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                             </ul>
@@ -365,7 +366,7 @@
 <script>
 import { cloneDeep, first, get,isEmpty, isNull, has, times } from 'lodash';
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
-import { CardLoader } from '../../components';
+import { CardLoader, PlaceholderLoader } from '../../components';
 import VueSlider from "vue-3-slider-component";
 
 export default {
@@ -401,6 +402,7 @@ export default {
     },
     components:{
         CardLoader,
+        PlaceholderLoader,
         VueSlider
     },
 
@@ -504,7 +506,7 @@ export default {
                         }
 
                         if( !overwrite ){
-                            this.products.data = cloneDeep(this.products.data.concat(products.data));
+                            this.products = cloneDeep(this.products.concat(products));
                         }
 
                         this.products.currentPage = products.currentPage;

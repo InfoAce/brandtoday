@@ -2,7 +2,7 @@ import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable
 import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, sortBy, take, toPlainObject, uniqBy } from 'lodash';
+import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, set, sortBy, take, toPlainObject, uniqBy } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
@@ -13,25 +13,7 @@ import { ConfigService } from '@nestjs/config';
 @Controller('products')
 export class ProductsController {
 
-    private amrod = {
-      brands:     [],
-      categories: [],
-      products:   [],
-      prices:     [],
-      stock:      []
-    };
-
-    private readonly file_paths = {
-      brands:     `${process.cwd()}${sep}public${sep}amrod${sep}brands.json`,
-      categories: `${process.cwd()}${sep}public${sep}amrod${sep}categories.json`,
-      products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-      prices:     `${process.cwd()}${sep}public${sep}amrod${sep}prices.json`,
-      stock:      `${process.cwd()}${sep}public${sep}amrod${sep}stock.json`,
-    };
-
     private colors          = Object();
-
-    private jsonPlugin      = require('json-reader-writer');
 
     private logger          = new Logger(ProductsController.name);
 
@@ -49,28 +31,7 @@ export class ProductsController {
       private productCategoryModel:  ProductCategoryModel,
       private subCategoryModel:      SubCategoryModel
     ){
-
       this.colors = this.configService.get<any>('colors');
-      // Try to read JSON files and assign them to the 'amrod' object
-      try {
-        // Read categories JSON file
-        this.amrod.categories = this.jsonPlugin.readJSON(this.file_paths.categories);
-        // Read products JSON file
-        this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
-        // Read prices JSON file
-        this.amrod.prices     = this.jsonPlugin.readJSON(this.file_paths.prices);
-        // Read stock JSON file
-        this.amrod.stock      = this.jsonPlugin.readJSON(this.file_paths.stock);
-        // Read brands JSON file
-        this.amrod.brands      = this.jsonPlugin.readJSON(this.file_paths.brands);
-      } catch(error){
-        // If any error occurred during reading JSON files, clear 'amrod' object
-        this.amrod.brands     = [];
-        this.amrod.categories = [];
-        this.amrod.products   = [];
-        this.amrod.prices     = [];
-        this.amrod.stock      = [];
-      }
     }
 
     @Get(':category/:sub_category')
@@ -104,44 +65,43 @@ export class ProductsController {
         sub_category      = await this.subCategoryModel.findOne({ where: { id: sub_category } });
 
         // Define the where clause for filtering products based on category, sub category, and name (if provided)
-        let where: object = { category_id: category.id,  sub_category_id: sub_category }
+        let where: object = { category_id: category.id,  sub_category_id: sub_category.id }
 
         // If sub child category is provided, add it to the where clause
         if (!isEmpty(queryName)) {
-          where = { ...where, name: ILike(`%${queryName}%`) };
+          where = { ...where, product: { name: ILike(`%${queryName}%`) } };
         }
 
-        let products = await this.productModel.find();
-
-        console.log(await products[0].stocks);
-        
-        // console.log(await sub_category.product_categories);
-
         // Fetch products categories based on the where clause
-        // let [products_categories, count ]: any = await this.productCategoryModel.findCount({ where, take: queryPerPage, skip: queryPage });
-        // let product_categories: any = await this.productCategoryModel.find({});
-        
+        let [products_categories, count]: any = await this.productCategoryModel.findCount({ skip: (queryPage - 1) * (queryPerPage + 1), take: queryPerPage, where });
+    
         // List products fetched
-        // let products: any = await Promise.all(
-        //   products_categories.map( async product_category => await product_category.product )
-        //                      .map(async (product) => {
-        //     // If the product has colour images, add the hex code to each colour image
-        //     if (!isNull(product.colour_images)) {
-        //       product.colour_images = product.colour_images.map((color) => ({
-        //         ...color,
-        //         hex: this.colors[color.code].colour,
-        //       }));
-        //     }
-        //     return product;
-        //   })
-        // );
+        let products: any = await Promise.all(
+          products_categories.map( async product_category => product_category.product )
+                             .map(async (product) => {
+            // If the product has colour images, add the hex code to each colour image
+            product = await product;
+
+            if (!isNull(product.colour_images)) {
+              product.colour_images = product.colour_images.map((color) => ({
+                ...color,
+                hex: this.colors[color.code].colour,
+              }));
+            }
+
+            let variants = await product.variants;
+
+            product = set(product,'price',variants[0].price);
+
+            return omit(product,['__has_variants__','__variants__']);
+          })
+        );
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({ category, sub_category });
+        res.status(HttpStatus.OK).json({ category, sub_category, products, products_count: count });
         
       } catch(error){
 
-        console.log(error);
         // If any error occurred, send the error as a JSON response
         if( has(error,'applicationRef') ){
           // Send the error as a JSON response
@@ -173,50 +133,46 @@ export class ProductsController {
         // Get the user from the request object
         let user: any = get(req,'user');
         
-        // Clone the cached products and prices
-        let cached_products: any = cloneDeep(this.amrod.products);
-        let cached_prices: any   = cloneDeep(this.amrod.prices);
-        
         // Find the product with the given code
-        let product: any    = cached_products.find( product => product.fullCode == code );
+        // let product: any    = cached_products.find( product => product.fullCode == code );
 
-        // Find the price data for the given code
-        let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
+        // // Find the price data for the given code
+        // let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
 
-        let related_products: any = product.categories.map( 
-                                                        category => cached_products.find( 
-                                                          item => item.categories.find( val => {
-                                                            let subject = category.path.split('/');
+        // let related_products: any = product.categories.map( 
+        //                                                 category => cached_products.find( 
+        //                                                   item => item.categories.find( val => {
+        //                                                     let subject = category.path.split('/');
 
-                                                            if( subject.lenght == 1 || subject.length == 2 ){
-                                                              return val.path.includes(subject[0]);
-                                                            }
+        //                                                     if( subject.lenght == 1 || subject.length == 2 ){
+        //                                                       return val.path.includes(subject[0]);
+        //                                                     }
 
-                                                            subject.splice(subject.length - 1)
-                                                            return val.path.includes(subject.join('/'));
+        //                                                     subject.splice(subject.length - 1)
+        //                                                     return val.path.includes(subject.join('/'));
 
-                                                          }) 
-                                                        )
-                                                      )
-                                                      .filter( item => item.fullCode != product.fullCode )
-                                                      .map( item => { 
-                                                        let price = cached_prices.find( price => price.fullCode.includes(item.fullCode) );
-                                                        return { ...item, price: price.price };
-                                                      });
+        //                                                   }) 
+        //                                                 )
+        //                                               )
+        //                                               .filter( item => item.fullCode != product.fullCode )
+        //                                               .map( item => { 
+        //                                                 let price = cached_prices.find( price => price.fullCode.includes(item.fullCode) );
+        //                                                 return { ...item, price: price.price };
+        //                                               });
         
-        // Initialize the favourite object
-        let favourite: any = {};
+        // // Initialize the favourite object
+        // let favourite: any = {};
 
-        // If a user is logged in, find their favourite with the given product code
-        if( user ) {
-          favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
-        }
+        // // If a user is logged in, find their favourite with the given product code
+        // if( user ) {
+        //   favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
+        // }
 
-        // If price data is found, set the product price
-        if( data_price != undefined ){ product.price = data_price.price; }
+        // // If price data is found, set the product price
+        // if( data_price != undefined ){ product.price = data_price.price; }
 
-        // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        res.status(HttpStatus.OK).json({ product, favourite, related_products });
+        // // Send the product and favourite as a JSON response with a status code of 200 (OK)
+        // res.status(HttpStatus.OK).json({ product, favourite, related_products });
 
       } catch(error){
 
@@ -239,18 +195,18 @@ export class ProductsController {
       try {
         
         // Clone the cached stocks to avoid modifying the original data.
-        let cached_stocks: any = cloneDeep(this.amrod.stock);
+        // let cached_stocks: any = cloneDeep(this.amrod.stock);
         
-        // Search for the product in the cached stocks.
-        let stock: any = cached_stocks.find(val => val.fullCode == code);
+        // // Search for the product in the cached stocks.
+        // let stock: any = cached_stocks.find(val => val.fullCode == code);
 
-        // If the product is not found in the stocks, set the stock to 0.
-        if (stock == undefined) {
-          stock = { stock: 0 };
-        }
+        // // If the product is not found in the stocks, set the stock to 0.
+        // if (stock == undefined) {
+        //   stock = { stock: 0 };
+        // }
 
-        // Send the stock as a JSON response with a status code of 200 (OK).
-        res.status(HttpStatus.OK).json({ stock, code });
+        // // Send the stock as a JSON response with a status code of 200 (OK).
+        // res.status(HttpStatus.OK).json({ stock, code });
 
       } catch (error) {
         // Log any errors that occur.
