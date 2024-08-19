@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 import { ProductVariantEntity } from './';
 
 @Entity("prices")
@@ -12,7 +12,7 @@ export class PriceEntity {
 
   @Column()
   full_code: string
-  
+
   @Column()
   variant_id: string
 
