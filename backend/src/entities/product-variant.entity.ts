@@ -61,14 +61,18 @@ export class ProductVariantEntity {
   @Column()
   simple_code: string;
 
-  @ManyToOne(() => ProductEntity, (product) => product.variants, { eager: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @ManyToOne(() => ProductEntity, (product) => product.variants, { lazy: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinColumn({
     name:                 "product_id",
     referencedColumnName: "id",
   })
   product: ProductEntity;
 
-  @OneToOne( () => PriceEntity,{ eager: true })
+  @OneToOne( () => PriceEntity, (price) =>  price.variant, { eager: true })
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'variant_id'
+  })
   price: PriceEntity;
 
   @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.variant, { lazy: true })

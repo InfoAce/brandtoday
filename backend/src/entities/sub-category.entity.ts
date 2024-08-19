@@ -31,16 +31,9 @@ export class SubCategoryEntity {
   child_sub_categories: ChildSubCategoryEntity[];
   
   @OneToMany(() => ProductCategoryEntity, (product_category) => product_category.sub_category,{ lazy: true } )
-  @JoinTable({
-      name: "products", // table name for the junction table of this relation
-      joinColumn: {
-        name: "id",
-        referencedColumnName: "sub_category_id"
-      },
-      inverseJoinColumn: {
-        name: "sub_category_id",
-        referencedColumnName: "id"
-      }
+  @JoinColumn({
+    name: "id",
+    referencedColumnName: "sub_category_id"
   })
   product_categories: ProductCategoryEntity[];
 

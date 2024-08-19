@@ -34,7 +34,7 @@ constructor(
  * @return {Promise<ProductEntity[]>} A promise that resolves to an array of found products.
  * @throws {ModelException} Throws a ModelException if there is an error finding the products.
  */
-async find(data: any): Promise<ProductEntity[]> {
+async find(data: object = {}): Promise<ProductEntity[]> {
   try {
     // Find multiple product entities based on the provided data.
     // The find method of the productRepository is used to find the products.

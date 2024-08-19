@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne } from 'typeorm';
-import { CategoryEntity, ProductEntity, SubCategoryEntity } from './index';
+import { CategoryEntity, ProductCategoryEntity, ProductEntity, SubCategoryEntity } from './index';
 
 @Entity("child_sub_categories")
 export class ChildSubCategoryEntity {
@@ -22,6 +22,13 @@ export class ChildSubCategoryEntity {
 
   @Column()
   path: string;
+
+  // @OneToMany(() => ProductCategoryEntity, (product_category) => product_category.child_sub_category,{ lazy: true } )
+  // @JoinColumn({
+  //   name: "id",
+  //   referencedColumnName: "child_sub_category_id"
+  // })
+  // product_categories: ProductCategoryEntity[];
 
   // @OneToMany(() => ProductEntity, (product) => product.sub_category, { lazy: true })
   // @JoinColumn({

@@ -16,12 +16,9 @@ export class CategoryEntity {
   @Column({ type: 'varchar', length: 255 })
   path: string;
 
-  @OneToMany(() => ProductCategoryEntity, (product) => product.category, { lazy: true })
-  @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "category_id"
-  })
-  product_categories: ProductCategoryEntity[];
+  @OneToMany(() => ProductCategoryEntity, (product_categories) => product_categories.category, { lazy: true })
+  @JoinColumn()
+  product_categories: ProductCategoryEntity;
 
   @OneToMany(() => SubCategoryEntity, (product) => product.category, { lazy: true })
   @JoinColumn({

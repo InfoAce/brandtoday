@@ -16,11 +16,8 @@ export class ProductEntity {
   @Column()
   brand_id: string;
 
-  @OneToMany(() => ProductCategoryEntity, (category) => category.product, { lazy: true })
-  @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "product_id",
-  })
+  @OneToMany(() => ProductCategoryEntity, (category) => category.product,{ lazy: true })
+  @JoinColumn()
   categories: ProductCategoryEntity[];
 
   @Column({
@@ -74,10 +71,12 @@ export class ProductEntity {
   images: string;
 
   @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
+  @JoinColumn()
   stocks: StockKeepingEntity[];
 
   @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { lazy: true })
-  variants: ProductVariantEntity;
+  @JoinColumn()
+  variants: ProductVariantEntity[];
 
   @CreateDateColumn()
   created_at: Date; // Creation date

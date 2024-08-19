@@ -2,10 +2,10 @@ import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable
 import { AuthGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, sortBy, take, uniqBy } from 'lodash';
+import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, sortBy, take, toPlainObject, uniqBy } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
+import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
 import { ILike } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -45,6 +45,7 @@ export class ProductsController {
       private categoryModel:         CategoryModel,
       private configService:         ConfigService,
       private priceModel:            PriceModel,
+      private productModel:          ProductModel,
       private productCategoryModel:  ProductCategoryModel,
       private subCategoryModel:      SubCategoryModel
     ){
@@ -97,52 +98,57 @@ export class ProductsController {
       try {  
 
         // Find the category based on the provided category id
-        category = await this.categoryModel.findOne({ where: { id: category } });
+        category          = await this.categoryModel.findOne({ where: { id: category } });
 
         // Find the sub category based on the provided sub category id
-        sub_category = await this.subCategoryModel.findOne({ where: { id: sub_category } });
+        sub_category      = await this.subCategoryModel.findOne({ where: { id: sub_category } });
 
         // Define the where clause for filtering products based on category, sub category, and name (if provided)
-        let where: object = { category_id: category.id, sub_category_id: sub_category.id };
+        let where: object = { category_id: category.id,  sub_category_id: sub_category }
+
+        // If sub child category is provided, add it to the where clause
         if (!isEmpty(queryName)) {
           where = { ...where, name: ILike(`%${queryName}%`) };
         }
 
+        let products = await this.productModel.find();
+
+        console.log(await products[0].stocks);
+        
+        // console.log(await sub_category.product_categories);
+
         // Fetch products categories based on the where clause
-        let [products_categories, count ]: any = await this.productCategoryModel.findCount({ where, take: queryPerPage, skip: queryPage });
-
+        // let [products_categories, count ]: any = await this.productCategoryModel.findCount({ where, take: queryPerPage, skip: queryPage });
+        // let product_categories: any = await this.productCategoryModel.find({});
+        
         // List products fetched
-        let products: any = await Promise.all(
-          products_categories.map(async (product_category) => {
-            // Fetch the product for each product category
-            let product = await product_category.product;
-
-            try {
-            } catch(error){
-              product.price = { amount: 0 };
-            }
-
-            // If the product has colour images, add the hex code to each colour image
-            if (!isNull(product.colour_images)) {
-              product.colour_images = product.colour_images.map((color) => ({
-                ...color,
-                hex: this.colors[color.code].colour,
-              }));
-            }
-
-            product.variants = await Promise.all(product.variants.map( async variant => ({ ...variant, price: await this.priceModel.findOne({ where: { full_code: ILike(`%${variant.fullCode}%`) } }) }) ));
-
-            return product;
-          })
-        );
+        // let products: any = await Promise.all(
+        //   products_categories.map( async product_category => await product_category.product )
+        //                      .map(async (product) => {
+        //     // If the product has colour images, add the hex code to each colour image
+        //     if (!isNull(product.colour_images)) {
+        //       product.colour_images = product.colour_images.map((color) => ({
+        //         ...color,
+        //         hex: this.colors[color.code].colour,
+        //       }));
+        //     }
+        //     return product;
+        //   })
+        // );
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({ products, category, sub_category, products_count: count });
+        res.status(HttpStatus.OK).json({ category, sub_category });
         
       } catch(error){
 
-        // Log the error
-        this.logger.error(error);
+        console.log(error);
+        // If any error occurred, send the error as a JSON response
+        if( has(error,'applicationRef') ){
+          // Send the error as a JSON response
+          let { response: { status, data} } = error;
+          // Send the error as a JSON response
+          res.status(status).json(data);
+        }
 
       }
     } 

@@ -140,7 +140,7 @@ export class CategoryController {
         );
 
         // Return the subcategories as a JSON response
-        return res.status(HttpStatus.OK).json({ products_count, sub_categories, category });
+        return res.status(HttpStatus.OK).json({ products_count, category, sub_categories});
 
       } catch (error) {
         // Log any errors that occur during the process

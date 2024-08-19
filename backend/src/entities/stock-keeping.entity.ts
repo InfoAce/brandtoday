@@ -7,7 +7,7 @@ export class StockKeepingEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => ProductEntity,(product) => product.stocks, { eager: true, onUpdate: "CASCADE", onDelete: 'SET NULL' })
+  @ManyToOne(() => ProductEntity,(product) => product.stocks, {  onUpdate: "CASCADE", onDelete: 'SET NULL' })
   @JoinColumn({
     name:                 "product_id",
     referencedColumnName: "id",
@@ -19,7 +19,7 @@ export class StockKeepingEntity {
   })
   product_id: string;
 
-  @ManyToOne(() => ProductVariantEntity, (variant) => variant.stocks, { eager: true, onUpdate: "CASCADE", onDelete: 'SET NULL' })
+  @ManyToOne(() => ProductVariantEntity, (variant) => variant.stocks, { onUpdate: "CASCADE", onDelete: 'SET NULL' })
   @JoinColumn({
     name:                 "variant_id",
     referencedColumnName: "id",
