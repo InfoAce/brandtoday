@@ -70,11 +70,11 @@ export class ProductEntity {
   })
   images: string;
 
-  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
+  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { eager: true })
   @JoinColumn()
   stocks: StockKeepingEntity[];
 
-  @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { lazy: true })
+  @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { eager: true })
   @JoinColumn()
   variants: ProductVariantEntity[];
 

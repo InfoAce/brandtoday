@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany, Index } from 'typeorm';
 import { PriceEntity, ProductEntity, StockEntity, StockKeepingEntity } from './index';
 
 @Entity("product_variants")
@@ -53,6 +53,7 @@ export class ProductVariantEntity {
   components: string;
 
   @Column()
+  @Index()
   full_code: string;
 
   @Column()
@@ -68,12 +69,8 @@ export class ProductVariantEntity {
   })
   product: ProductEntity;
 
-  @OneToOne( () => PriceEntity, (price) =>  price.variant, { eager: true })
-  @JoinColumn({
-    name: 'id',
-    referencedColumnName: 'variant_id'
-  })
-  price: PriceEntity;
+  @OneToMany( () => PriceEntity, (price) =>  price.variant, { eager: true })
+  price: PriceEntity[];
 
   @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.variant, { lazy: true })
   stocks: StockKeepingEntity[];

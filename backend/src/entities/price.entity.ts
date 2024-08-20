@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, Index, ManyToOne} from 'typeorm';
 import { ProductVariantEntity } from './';
 
 @Entity("prices")
@@ -11,15 +11,13 @@ export class PriceEntity {
   amount: number;
 
   @Column()
+  @Index()
   full_code: string
 
-  @Column()
-  variant_id: string
-
-  @OneToOne(() => ProductVariantEntity,(variant) => variant.price, { onDelete: 'CASCADE', onUpdate: 'CASCADE' } )
+  @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({
-    name: 'variant_id',
-    referencedColumnName: 'id'
+    name: 'full_code',
+    referencedColumnName: 'full_code'
   })
   variant: ProductVariantEntity
 
