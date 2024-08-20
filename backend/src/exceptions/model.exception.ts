@@ -12,6 +12,6 @@ export class ModelException extends TypeORMError {
         super(error);
         // Log the error object as a stringified JSON.
         // This is useful for debugging purposes.
-        this.logger.error(JSON.stringify(error));
+        this.logger.error(JSON.stringify(error.message));
     }
 }
