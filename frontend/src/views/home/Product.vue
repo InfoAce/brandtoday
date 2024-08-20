@@ -2,11 +2,11 @@
     <div>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
-            <div class="container">
-                <div class="row">
+            <div class="container-fluid">
+                <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>{{ product.productName }}</h2>
+                            <h2>{{ product.name }}</h2>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -14,7 +14,7 @@
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#" @click="$router.push({ name: 'Home' })">Home</a></li>
                                 <li class="breadcrumb-item"><a href="#" @click="$router.go(-1)">Products</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ product.productName }}</li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
                             </ol>
                         </nav>
                     </div>
@@ -57,62 +57,115 @@
                         </div>
                         <div class="col-lg-6 rtl-text">
                             <div class="product-right">
-                                <h2>{{ product.productName }}</h2>
-                                <h3 class="price-detail">KSH {{ product.price }}</h3>
+                                <h2>{{ product.name }}</h2>
+                                <h3 class="price-detail">KSH {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
                                 <div class="border-product">
-                                    <ul class="color-variant p-0" v-show="!$isEmpty(product.colourImages)">
-                                        <template v-for="(colour,index) in product.colourImages">
-                                            <li   
-                                                v-if="colour.name == cartItem.colour"                                       
-                                                :key="`active_${index}`" 
-                                                class="active"
-                                                :ref="colour.code"                     
-                                                :style="`background-color: ${ $convertToHex(colour.name) }`"                       
-                                                @click="($event) => selectColour(colour,$event)"                        
-                                            ></li>
-                                            <li   
-                                                v-if="colour.name != cartItem.colour"                                
-                                                :key="`inactive_${index}`" 
-                                                :style="`background-color: ${ $convertToHex(colour.name) }`" 
-                                                :ref="colour.code"                   
-                                                @click="($event) => selectColour(colour,$event)"                        
-                                            ></li>
-                                        </template>
-                                    </ul>
-                                    <h6> 
+                                    <h5> 
                                         Selected colour: 
                                         <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
                                         <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
-                                    </h6>	
+                                    </h5>	
+                                    <ul class="color-variant p-0">
+                                        <template v-for="(hex,index) in colour_images">
+                                            <li   
+                                                v-if="selections.hex.includes(hex)"                                       
+                                                :key="`active_${index}`" 
+                                                class="active"
+                                                :ref="hex"                     
+                                                :style="`background-color: ${hex}`"                       
+                                                @click="($event) => selectColour(hex,$event)"                        
+                                            ></li>
+                                            <li   
+                                                v-if="!selections.hex.includes(hex)"                                
+                                                :key="`inactive_${index}`" 
+                                                :style="`background-color: ${hex}`"                       
+                                                :ref="hex"                   
+                                                @click="($event) => selectColour(hex,$event)"                        
+                                            ></li>
+                                        </template>
+                                    </ul>
                                 </div>
                                 <div id="selectSize" class="addeffect-section product-description border-product">
-                                    <template v-if="isVariant && !$isEmpty(groupedSizeVariants)">
+                                    <template v-if="isVariant">
                                         <div class="row pb-2">
-                                            <div class="col-12">
-                                                <h6>
-                                                    Selected size: 
-                                                    <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
-                                                    <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
-                                                </h6>
-                                            </div>                                            
-                                            <div class="col-md-6 py-2" v-for="(variant,sizeName) of groupedSizeVariants" :key="sizeName">
-                                                <div class="quantity-box">
-                                                    <div class="input-group">
-                                                        <span class="input-group-prepend">
-                                                            <button class="btn" @click="selectSize(variant,sizeName,$event)" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)">{{ sizeName }}</button>
-                                                        </span>
-                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)" v-if="!$has(sizeKeys,sizeName)" value="0"> 
-                                                        <input type="number" :name="`quantity_${sizeName}`" class="form-control input-number" :disabled="stock[sizeName] == 0 || $isEmpty(selections.colour)" v-if="$has(sizeKeys,sizeName)" v-model="form.sizes[sizeKeys[sizeName]].quantity" value="0"> 
+                                            <template v-if="!$isEmpty(selections.colour)">     
+                                                <div class="col-12">
+                                                    <h5>
+                                                        Selected size: 
+                                                        <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
+                                                        <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
+                                                    </h5>
+                                                </div>                                    
+                                                <div class="col-md-6 py-2" v-for="(variant,index) of variants" :key="index">
+                                                    <div class="quantity-box">
+                                                        <div class="input-group">
+                                                            <span class="input-group-prepend">
+                                                                <button 
+                                                                    class="btn" 
+                                                                    @click="selectSize(variant,$event)" 
+                                                                    :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
+                                                                >{{ variant.code_size_name }}</button>
+                                                            </span>
+                                                            <input 
+                                                                type="number" 
+                                                                :name="`quantity_${variant.full_code}`" 
+                                                                class="form-control input-number" 
+                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
+                                                                v-if="!$has(sizeKeys,sizeName)"
+                                                                value="0"
+                                                            > 
+                                                            <input 
+                                                                type="number" 
+                                                                :name="`quantity_${variant.full_code}`" 
+                                                                class="form-control input-number" 
+                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
+                                                                v-if="$has(sizeKeys,sizeName)" 
+                                                                v-model="form.sizes[sizeKeys[sizeName]].quantity" 
+                                                                value="0"
+                                                            > 
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <h6 class="mb-0">Stock Available: {{ $first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity }}</h6>
+                                                    </div>                                
+                                                </div>
+                                            </template>  
+                                            <template v-if="$isEmpty(selections.colour)"> 
+                                                <div class="col-12 quantity-box">
+                                                    <div class="ssc">
+                                                        <div class="ssc-wrapper">
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                            <div class="w-100 row">
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                                <div class="ssc-head-line w-50 mbs"></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="text-center">
-                                                    <h6 v-if="!$isEmpty(selections.colour)" class="mb-0">Stock Available: {{ stock[sizeName] }}</h6>
-                                                </div>                                
-                                            </div>
+                                            </template>
                                         </div>
                                     </template>
                                     <template v-if="!isVariant">
-                                        <h6 class="product-title">quantity</h6>
+                                        <h5 class="product-title">Quantity</h5>
                                         <div class="qty-box">
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
@@ -120,7 +173,7 @@
                                                         <i class="ti-angle-left"></i>
                                                     </button> 
                                                 </span>
-                                                <input type="text" :name="`quantity_${product.fullCode}`" class="form-control input-number" :value="form.quantity"> 
+                                                <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity"> 
                                                 <span class="input-group-prepend">
                                                     <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
                                                         <i class="ti-angle-right"></i>
@@ -133,21 +186,21 @@
                                 <div class="product-buttons">
                                     <div class="d-flex">
                                         <div>
-                                            <button class="btn btn-solid hover-solid btn-animation" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
+                                            <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
                                                 <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
-                                                <span v-show="!$isEmpty(cartItem) == false">add to cart</span>
-                                                <span v-show="!$isEmpty(cartItem) == true">already in cart</span> 
+                                                <span v-if="$isEmpty(cartItem)">add to cart</span>
+                                                <span v-if="!$isEmpty(cartItem)">already in cart</span> 
                                             </button>                                             
                                         </div>
                                         <div class="px-4">
                                             <template v-if="$isEmpty($store.getters.auth)">
-                                                <button class="btn btn-solid btn-animation" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
+                                                <button class="btn btn-solid btn-animation text-white" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
                                                     <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                                     wishlist
                                                 </button>    
                                             </template>
                                             <template v-else>
-                                                <button class="btn btn-solid btn-animation" :disabled="isDisabled || !$isEmpty(favourite)" @click="addToFavourites()">
+                                                <button class="btn btn-solid btn-animation text-white" :disabled="isDisabled || !$isEmpty(favourite)" @click="addToFavourites()">
                                                     <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                                     <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
                                                     <span v-show="$isEmpty(favourite)">Wishlist</span>
@@ -157,7 +210,6 @@
                                         </div>
                                     </div>
                                 </div>
-                               
                             </div>
                         </div>
                     </div>
@@ -165,7 +217,6 @@
             </div>
         </section>
         <!-- Section ends -->
-
 
         <!-- product-tab starts -->
         <section class="tab-product m-0">
@@ -286,7 +337,7 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, each, groupBy, isEmpty, isNull, keys, has, omit, set, min } from 'lodash';
+import { cloneDeep, debounce, each, first, get, groupBy, isEmpty, isNull, keys, has, omit, set, min, uniq } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import 'vue3-carousel/dist/carousel.css'
@@ -316,19 +367,24 @@ export default {
             }
         },
         cartItem(){
-            return this.cart.find( val => val.code == this.product.fullCode ) ?? {};
+            return this.cart.find( val => val.product_id == this.product.id ) ?? {};
         },
-        groupedSizeVariants(){
-            return groupBy(this.product.variants,'codeSizeName');
+        colour_images(){
+            return !isEmpty(this.product) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
+        },
+        variants(){
+            return !isEmpty(this.product) ? this.product.variants.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) : [];
         },
         isVariant(){
-            return !isEmpty(this.product) ? !isEmpty(this.product.variants.filter( val => !isNull(val.codeSizeName) )) : false
+            return !isEmpty(this.product) ? !isEmpty(this.product.variants.filter( val => !isNull(val.code_size) )) : false
         }
     },
     created(){
         this.$isEmpty      = isEmpty;
         this.$isNull       = isNull;
         this.$has          = has;
+        this.$first        = first;
+        this.$get          = get;
         this.$convertToHex = (colour) =>  convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
 
         /**
@@ -372,6 +428,7 @@ export default {
             sizeKeys:    Object(),
             selections:  {
                 colour: Object(),
+                hex:    String(),
                 size:   Object()
             },
             settings:{
@@ -386,18 +443,14 @@ export default {
         addToCart(){
             let { isVariant, product, selections } = this;
             let data     = cloneDeep(this.form);
-            let selected = product.variants.find( value => selections.colour.code == value.codeColour );
-
-            data.price = product.price;
-            data.name  = product.productName;
+            let selected = product.variants.find( variant => selections.colour.code == variant.code_colour );
 
             if( has(selections,'colour') && !isEmpty(selections.colour.images) ){
                 data.image = selections.colour.images[0].urls[0].url;
             }
 
             if( isEmpty(selections.colour.images) && !isEmpty(this.product.images) ){
-                let image  = this.product.images.find( val => val.name == selected.fullCode || `${this.$route.params.code}_default`)
-                console.log(image);
+                let image  = this.product.images.find( val => val.name == selected.full_code || `${product.full_code}_default`)
                 data.image = image.urls[0].url;
             }
 
@@ -427,15 +480,16 @@ export default {
             this.initView();
         },
         initView(product){
-            let isVariant = !isEmpty(product) ? !isEmpty(product.variants.filter( val => !isNull(val.codeSizeName) )) : false;
+            let isVariant = !isEmpty(product) ? !isEmpty(product.variants.filter( val => !isNull(val.code_size_name) )) : false;
             
             this.product  = cloneDeep(product);
 
-            $(`input[name="quantity_${product.fullCode}"]`).val(1);
+            $(`input[name="quantity_${product.full_code}"]`).val(1);
 
-            set(this.form,'code',String());
-            set(this.form,'price',String());
-            set(this.form,'colour',String());
+            set(this.form,'product_id', String());
+            set(this.form,'price',      String());
+            set(this.form,'colour',     String());
+            set(this.form,'name',       String(product.name));
 
             switch( isVariant ){   
                 case true: 
@@ -458,37 +512,39 @@ export default {
                 break;
             }
             
-            this.schemaShape.code     = yup.string().required("*Product code is required."); // validate product code   
-            this.schemaShape.colour   = yup.string().required("*Colour is required."); // validate product colour
-            this.schemaShape.price    = yup.number().required("*Price is required."); // validate product price
+            this.schemaShape.product_id = yup.string().required("*Product is required."); // validate product code   
+            this.schemaShape.colour     = yup.string().required("*Colour is required."); // validate product colour
+            this.schemaShape.price      = yup.number().required("*Price is required."); // validate product price
+            this.schemaShape.hex        = yup.string(); // validate product hex colour
+            this.schemaShape.name       = yup.string(); // validate product hex colour
 
             set(this.selections,'colour',Object()); // Initialize colour selection
             
             this.formSchema           = yup.object().shape(this.schemaShape);  // Initialize validation
-            this.form.code            = product.fullCode;
             this.form.price           = product.price;
+            this.form.product_id      = product.id;
 
             // this.fetchColourStock(product); // Fetch colour stock           
         },        
         descreaseQuantity(){
-            let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
+            let quantity = parseInt($(`input[name="quantity_${this.product.full_code}"]`).val());
             if( quantity != 1 ){
                 const total  = quantity -= 1;   
-                $(`input[name="quantity_${this.product.fullCode}"]`).val(total);
+                $(`input[name="quantity_${this.product.full_code}"]`).val(total);
                 this.form.quantity = total;
             }
         },
         increaseQuantity(){
-            let quantity = parseInt($(`input[name="quantity_${this.product.fullCode}"]`).val());
+            let quantity = parseInt($(`input[name="quantity_${this.product.full_code}"]`).val());
             const total  = quantity += 1;
-            $(`input[name="quantity_${this.product.fullCode}"]`).val(total);          
+            $(`input[name="quantity_${this.product.full_code}"]`).val(total);          
             this.form.quantity = total;
         },
         // Fetch colour stock
         // Requires product 
         fetchColourStock(product){
             // Promise call for all colour images
-            Promise.all( product.colourImages.map( colour => this.fetchStock(`${this.product.fullCode}-${colour.code}`)) )
+            Promise.all( product.colourImages.map( colour => this.fetchStock(`${this.product.full_code}-${colour.code}`)) )
                    .then( (colours) => {
                         colours.forEach( ({ data:{ stock }}) => {
                             this.stock[stock.colourCode] = stock.stock;
@@ -530,32 +586,42 @@ export default {
         fetchStock(code){
             return this.$api.put(`/products/stock/${code}`); // Fetch stock from an item full code
         },
-        selectColour(colour,event){
+        selectColour(hex,event){
             let variant = window.document.querySelector('.color-variant li.active');
+            let colour  = this.product.colour_images.find( colour => colour.hex.includes(hex) );
+
             if( !isNull(variant) ){ variant.classList.remove('active'); }
             event.target.classList.add('active');
+
             this.selections.colour = colour;      
+            this.selections.hex    = hex;      
+            this.form.hex          = hex;      
             this.form.colour       = colour.name;  
+
+            if( !this.isVariant ){
+                let variant     = this.product.variants.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
+                this.form.price = first(variant.price).amount;
+            }
         },
-        selectSize(variants, size, event){
+        selectSize(variant,event){
             // Check if colour has been selected
             if( has(this.errors,'colour') ){
                 this.$toast.warning('Select colour.');
             }
-
+            
             if( !has(this.errors,'colour') ){
-                let { selections: { colour } } = this;
-                let selectedVariant            = variants.find( variant => variant.codeColour == colour.code );
+                let { product, selections: { colour } } = this;
+                let selected_variant           = product.variants.find( variant => variant.code_size == colour.code );
                 
-                if( isEmpty( this.form.sizes.find( size => size.name == selectedVariant.codeSize) ) ){
+                if( !isEmpty( this.form.sizes.find( size => size.name == selected_variant.code_size) ) ){
                     this.form.sizes.push({
-                        name:     selectedVariant.codeSize,
+                        name:     selected_variant.code_size,
                         quantity: Number(1)
                     })
                     $(event.target).parent().addClass('active');
-                    this.sizeKeys[size] = (this.form.sizes.length - 1);
+                    this.sizeKeys[selected_variant.code_size] = (this.form.sizes.length - 1);
                 } else {
-                    this.form.sizes = this.form.sizes.filter( size => size.name != selectedVariant.codeSize );
+                    this.form.sizes = this.form.sizes.filter( size => size.name != selected_variant.code_size );
                     $(event.target).parent().removeClass('active');
                     this.sizeKeys = omit(this.sizeKeys,[size]);
                 }
@@ -599,6 +665,7 @@ export default {
     watch:{
         form:{
             handler(form){
+                console.log(form);
                 each(form,(value,key) => {
                     this.validateForm(key);
                 });                
@@ -621,32 +688,6 @@ export default {
             },
             deep: true
         },
-        "selections.colour": {
-            /**
-             * Watches for changes in the 'selections.colour' property and fetches stock for all variants of the selected colour.
-             *
-             * @param {Object} value - The selected colour object.
-             */
-            async handler(value){
-                // If a colour is selected, fetch stock for all variants of the selected colour
-                if( !isEmpty(value) && !isEmpty(this.groupedSizeVariants) ){         
-                    
-                    try {
-                        // Fetch stock for all variants of the selected colour
-                        let variants = await Promise.all(keys(this.groupedSizeVariants).map( async (variant) => await this.fetchStock(`${this.product.fullCode}-${value.code}-${variant}`) ));
-
-                        // Update the stock object with the fetched stock for each variant
-                        variants.forEach( ({ data: { code, stock }}) => {
-                            set(this.stock,code.replace(`${this.product.fullCode}-${value.code}-`,''),stock.stock);
-                        });
-
-                    } catch(error) {
-
-                    }
-                }
-            },
-            deep: true
-        }
     }
 }
 </script>

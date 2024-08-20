@@ -110,7 +110,7 @@ export class ProductsController {
     } 
 
     @UseGuards(OptionalGuard)
-    @Put(':code')
+    @Put(':product_id')
     /**
      * Show a product by its code.
      *
@@ -120,20 +120,24 @@ export class ProductsController {
      * @return {Promise<void>}
      */
     async show(
-      @Param('code') code: any, // The code of the product
+      @Param('product_id') product_id: string, // The code of the product
       @Req() req: Request,  // The request object
       @Res() res: Response // The response object
     ) {
       try {
 
         // Get the user from the request object
-        let user: any = get(req,'user');
+        let user: any   = get(req,'user');
         
         // Find the product with the given code
-        // let product: any    = cached_products.find( product => product.fullCode == code );
+        let product: any = await this.productModel.findOne({ where: { id: product_id }});
 
-        // // Find the price data for the given code
-        // let data_price: any = cached_prices.find( price => price.fullCode.includes(code) );
+        if (!isNull(product.colour_images)) {
+          product.colour_images = product.colour_images.map((color) => ({
+            ...color,
+            hex: this.colors[color.code].colour,
+          }));
+        }
 
         // let related_products: any = product.categories.map( 
         //                                                 category => cached_products.find( 
@@ -167,8 +171,8 @@ export class ProductsController {
         // // If price data is found, set the product price
         // if( data_price != undefined ){ product.price = data_price.price; }
 
-        // // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        // res.status(HttpStatus.OK).json({ product, favourite, related_products });
+        // Send the product and favourite as a JSON response with a status code of 200 (OK)
+        res.status(HttpStatus.OK).json({ product });
 
       } catch(error){
 

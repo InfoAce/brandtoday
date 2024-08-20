@@ -72,7 +72,7 @@ export class ProductVariantEntity {
   @OneToMany( () => PriceEntity, (price) =>  price.variant, { eager: true })
   price: PriceEntity[];
 
-  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.variant, { lazy: true })
+  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.variant, { eager: true })
   stocks: StockKeepingEntity[];
 
   @CreateDateColumn()

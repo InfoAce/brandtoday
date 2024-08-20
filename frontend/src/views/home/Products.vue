@@ -126,179 +126,7 @@
                                     </div>                                
                                     <div class="product-wrapper-grid">
                                         <CardLoader v-if="!$isEmpty(products)" />
-                                        <PlaceholderLoader v-if="$isEmpty(products) && loading" :count="10"/>
-                                        <!-- <div class="row margin-res p-2" v-show="$isEmpty(products) && loading">
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>  
-                                            
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>   
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> 
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> 
-                                            <div class="col-xl-3 col-6 col-grid-box mt-4" >
-                                                <div class="ssc ssc-card">
-                                                    <div class="ssc-wrapper">
-                                                        <div class="ssc-square mb"></div>
-                                                        <div class="flex align-center justify-between">
-                                                            <div class="w-40">
-                                                                <div class="ssc-line w-70 mbs"></div>
-                                                                <div class="ssc-line w-100 mbs"></div>
-                                                            </div>
-                                                            <div class="ssc-head-line w-50"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>                                                                                     
-                                        </div> -->
+                                        <PlaceholderLoader v-if="$isEmpty(products) && loading" :count="10"/>                                
                                         <div class="row margin-res" v-show="!$isEmpty(products) && !loading">
                                             <div class="col-xl-3 col-6 col-grid-box" v-for="(product,index) in products" :key="index">
                                                 <div class="product-box">
@@ -322,7 +150,7 @@
                                                             <a href="javascript:void(0)" title="Add to Wishlist">
                                                                 <i class="ti-heart" aria-hidden="true"></i>
                                                             </a> 
-                                                            <a href="#" data-bs-toggle="modal" :data-bs-target="`#${product.fullCode}`" title="Quick View">
+                                                            <a href="#" data-bs-toggle="modal" :data-bs-target="`#${product.full_code}`" title="Quick View">
                                                                 <i class="ti-search" aria-hidden="true"></i>
                                                             </a>
                                                         </div>
@@ -340,7 +168,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- <QuickView :data="product" /> -->
                                             </div>
                                         </div>
                                     </div>
