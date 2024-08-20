@@ -15,7 +15,6 @@ seeder({
     TypeOrmModule.forRootAsync({
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
-            console.log(configService.get<string>('app.DB_USERNAME'));
             return {
                 type:        "mysql",
                 host:        configService.get<string>('app.DB_HOST'),

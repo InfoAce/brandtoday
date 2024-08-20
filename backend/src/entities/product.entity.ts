@@ -13,9 +13,6 @@ export class ProductEntity {
   })
   branding_templates: string;
 
-  @Column()
-  brand_id: string;
-
   @OneToMany(() => ProductCategoryEntity, (category) => category.product,{ lazy: true })
   @JoinColumn()
   categories: ProductCategoryEntity[];
