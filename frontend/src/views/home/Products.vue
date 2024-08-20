@@ -333,7 +333,7 @@
                                                                 <h6>{{ product.name }}</h6>
                                                             </a>
                                                             <p v-html="product.description"></p>
-                                                            <h4>KSH {{ product.price.amount }}</h4>
+                                                            <h4>KSH {{ $first($get($first(product.variants),'price')).amount }}</h4>
                                                             <ul class="color-variant p-0" v-if="!$isEmpty(product.colour_images) && !$isNull(product.colour_images)">
                                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                             </ul>

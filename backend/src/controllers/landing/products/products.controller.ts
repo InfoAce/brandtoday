@@ -88,12 +88,8 @@ export class ProductsController {
                 hex: this.colors[color.code].colour,
               }));
             }
-
-            let variants = await product.variants;
-
-            product = set(product,'price',variants[0].price);
-
-            return omit(product,['__has_variants__','__variants__']);
+            
+            return product;
           })
         );
 
