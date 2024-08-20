@@ -58,7 +58,7 @@ export class AuthService {
             }
 
             // Check if expiry duration is set
-            if (!this.config['JWT_SESSION_KEY'].includes('s')) {
+            if (!this.config['JWT_EXPIRES_IN'].includes('s')) {
                 throw new PreconditionFailedException(
                     'JWT expiry time has not been set'
                 );
