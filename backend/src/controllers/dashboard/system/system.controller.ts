@@ -127,70 +127,70 @@ export class SystemController {
             let variants = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
 
             await Promise.all(
-                chunk(categories,1000).map( async (categories) => {
+                chunk(categories,500).map( async (categories) => {
                     return new Promise( async (resolve,reject) => {
-                        setTimeout( async (categories) => {
+                        // setTimeout( async (categories) => {
                             await this.categoryModel.insert(
                                 categories.map( 
                                     ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
                                 )
                             )
                             resolve(true);
-                        }, 2000);
+                        // }, 2000);
                     })
                 })
             )
 
 
             await Promise.all(
-                chunk(sub_categories,1000).map( async (sub_categories) => {
+                chunk(sub_categories,500).map( async (sub_categories) => {
                     return new Promise( async (resolve,reject) => {
-                        setTimeout( async (sub_categories) => {
+                        // setTimeout( async (sub_categories) => {
                             await this.subCategoryModel.insert(
                                     sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
                                 )
                             )
                             resolve(true);
-                        }, 2000);
+                        // }, 2000);
                     })
                 })
             )
 
 
             await Promise.all(
-                chunk(child_sub_categories,1000).map( async (child_sub_categories) => {
+                chunk(child_sub_categories,500).map( async (child_sub_categories) => {
                     return new Promise( async (resolve,reject) => {
-                        setTimeout( async (child_sub_categories) => {
+                        // setTimeout( async (child_sub_categories) => {
                             await this.childSubCategory.insert(
                                 child_sub_categories.map( 
                                     ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
                                 )
                             )
                             resolve(true);
-                        }, 2000);
+                        // }, 2000);
                     })
                 })
             )
 
             await Promise.all(
-                chunk(brands,1000).map( async (brands) => {
+                chunk(brands,500).map( async (brands) => {
                     return new Promise( async (resolve,reject) => {
-                        setTimeout( async (brands) => {
+                        // setTimeout( async (brands) => {
                             await this.brandModel.insert(
                                 brands.map( 
                                     ({ code, image, name}) => ({ code, name, image }) 
                                 )
                             );
                             resolve(true);
-                        }, 2000);
+                        // }, 2000);
                     })
                 })
             )
 
             await Promise.all(
-                chunk(products,1000).map( async (products) => {
+                chunk(products,500).map( async (products) => {
                     return new Promise( async (resolve,reject) => {
-                        setTimeout( async (products) => {
+                        // setTimeout( async (products) => {
                             await this.productModel.insert(
                                 products.map( 
                                     ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
@@ -198,27 +198,27 @@ export class SystemController {
                                 )
                             );
                             resolve(true);
-                        }, 2000);
+                        // }, 2000);
                     })
                 })
             )
 
             await Promise.all(
                 chunk(product_categories,2000).map( async (prod_categories) => {
-                    return new Promise( (resolve,reject) => {
-                        setTimeout( async (prod_categories) => {
+                    return new Promise( async (resolve,reject) => {
+                        // setTimeout( async (prod_categories) => {
                             await this.productCategoryModel.insert( prod_categories );
                             resolve(true);
-                        }, 5000)
+                        // }, 5000)
                     }) 
                 })
             )
 
             
             await Promise.all(
-                chunk(variants,1000).map( async (variants) => {
-                    return new Promise( (resolve,reject) => {
-                        setTimeout( async () => {
+                chunk(variants,500).map( async (variants) => {
+                    return new Promise( async (resolve,reject) => {
+                        // setTimeout( async () => {
                             await this.productVariantModel.insert( 
                                 variants.map( (variant, index) => { 
                                         return { 
@@ -240,36 +240,38 @@ export class SystemController {
                                 ) 
                             )
                             resolve(true);
-                        }, 2000)
+                        // }, 2000)
                     }) 
                 })
             );
 
             await Promise.all(
-                chunk(prices,1000).map( async (prices) => {
-                    return new Promise( (resolve,reject) => {
-                        setTimeout( async () => {
+                chunk(prices,500).map( async (prices) => {
+                    return new Promise( async (resolve,reject) => {
+                        // setTimeout( async () => {
                             await this.priceModel.insert( 
-                                prices.map( ({ fullCode: full_code, simplecode: simple_code, price: amount }) => {
-                                    let variant = variants.find( variant => variant.fullCode == full_code );
-                                    return { full_code, simple_code, amount, variant_id: variant.id };
-                                })
+                                prices.map( 
+                                    ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
+                                        ({ full_code, simple_code, amount }) )
                             );
                             resolve(true);
-                        }, 2000)
+                        // }, 2000)
                     }) 
                 })
             );
 
             await Promise.all(
-                chunk(stocks,1000).map( async (stocks) => {
-                    return await this.stockModel.insert( 
-                        stocks.map( 
-                            ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
-                                return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
-                            }
+                chunk(stocks,500).map( async (stocks) => {
+                    return new Promise( async (resolve,reject) => {
+                        await this.stockModel.insert( 
+                            stocks.map( 
+                                ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
+                                    return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
+                                }
+                            )
                         )
-                    )
+                        resolve(true);
+                    })
                 })
             );
 
@@ -289,12 +291,14 @@ export class SystemController {
                             }
                         }
                     ).filter( value => !isEmpty(value) ),
-                    1000
+                    500
                 ).map( async (stock_keeping) => {
-                    return new Promise( (resolve,reject) => {
-                        setTimeout( async () => {
+                    return new Promise( async (resolve,reject) => {
+                        // setTimeout( async () => {
                             await this.stockKeepingModel.insert(stock_keeping);
-                        }, 2000)
+                            resolve(true);
+
+                        // }, 2000)
                     }) 
                 })
             );
