@@ -29,7 +29,9 @@ export class ProductEntity {
   })
   companion_codes: string;
 
-  @Column()
+  @Column({
+    type: 'longtext'
+  })
   description: string;
 
   @Column({
