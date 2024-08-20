@@ -15,5 +15,6 @@ export { ProductVariantEntity as ProductVariantEntity } from './product-variant.
 export { StockKeepingEntity  as StockKeepingEntity } from './stock-keeping.entity';
 export { StockEntity  as StockEntity } from './stock.entity';
 export { SubCategoryEntity  as SubCategoryEntity } from './sub-category.entity';
+export { TimelineEntity as TimelineEntity } from './timeline.entity';
 export { TransactionEntity as TransactionEntity } from './transaction.entity';
 export { UserEntity as UserEntity } from './user.entity';
