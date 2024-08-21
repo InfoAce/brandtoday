@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { first, isEmpty, get, omit, shuffle, toPlainObject } from 'lodash';
-import { BrandModel, CategoryModel, CompanyModel } from 'src/models';
+import { BrandModel, CategoryModel, CompanyModel, ProductCategoryModel } from 'src/models';
 import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
 
@@ -17,6 +17,7 @@ export class HomeController {
       private brandModel:    BrandModel,
       private categoryModel: CategoryModel,
       private companyModel:  CompanyModel,
+      private productCategoryModel:  ProductCategoryModel,
     ){}
 
 
@@ -34,11 +35,11 @@ export class HomeController {
         categories = await (
           await Promise.all( 
             (await categories).map( async (category) => {
-              let product_categories = await category.product_categories;
+              let product_categories = await this.productCategoryModel.find({ take: 1, where: { category_id: category.id } });
               let product            = get(first(shuffle(product_categories)),'product');
               // Get the categories for the child category
               let images: any        = get(product,'images');          
-              return await { ...omit(toPlainObject(( await category)),['__product_categories__','__has_product_categories__']), image: first(first(shuffle(images)).urls).url };
+              return await { ...toPlainObject(( await category)), image: first(first(shuffle(images)).urls).url };
             })
           )
         );
