@@ -5,7 +5,7 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { cloneDeep, first, get, isEmpty, omit, shuffle, toPlainObject } from 'lodash';
 import { sep } from 'path';
-import { CategoryModel } from 'src/models';
+import { CategoryModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
 
 @Controller('categories')
 export class CategoryController {
@@ -30,8 +30,10 @@ export class CategoryController {
      * @param cacheManager - The instance of CacheManager
      */
     constructor(
-      private amrodService: AmrodService,
-      private categoryModel: CategoryModel,
+      private amrodService:         AmrodService,
+      private categoryModel:        CategoryModel,
+      private subCategoryModel:     SubCategoryModel,
+      private productCategoryModel: ProductCategoryModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache
     ){
       // Try to read JSON files and assign them to the 'amrod' object
@@ -115,17 +117,18 @@ export class CategoryController {
         let products_count: number = 0;
 
         // Find the category based on the provided path
-        let category = await this.categoryModel.findOne({ where: { id: categoryId } });
+        let category            = await this.categoryModel.findOne({ where: { id: categoryId } });
+        
+        let sub_categories: any = await this.subCategoryModel.find({ where: { category_id: categoryId } });
 
         // Map the subcategories to include an image from the products
-        let sub_categories: any = await (
+        sub_categories = await (
           await Promise.all( 
-            (await category.sub_categories).map( async (sub_category) => {
-              let product_categories = await sub_category.product_categories;
+            sub_categories.map( async (sub_category) => {
+              let [ product_categories, count] = await this.productCategoryModel.findCount({ where: { sub_category_id: sub_category.id } });
 
-              // Add products count
-              products_count += product_categories.length 
-    
+              products_count += count;
+              
               let product = get(first(shuffle(product_categories)),'product');
     
               // Get the categories for the child category
@@ -134,7 +137,7 @@ export class CategoryController {
               // Get the first image from the categories
               let image: any = first(shuffle(images));
             
-              return await { ...omit(toPlainObject(( await sub_category)),['__product_categories__','__has_product_categories__']), image, products_count: product_categories.length };
+              return await { ...toPlainObject(( await sub_category)), image, products_count: count };
             })
           )
         );
