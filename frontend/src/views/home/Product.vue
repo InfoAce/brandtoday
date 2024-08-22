@@ -88,80 +88,46 @@
                                 <div id="selectSize" class="addeffect-section product-description border-product">
                                     <template v-if="isVariant">
                                         <div class="row pb-2">
-                                            <template v-if="!$isEmpty(selections.colour)">     
-                                                <div class="col-12">
-                                                    <h5>
-                                                        Selected size: 
-                                                        <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
-                                                        <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
-                                                    </h5>
-                                                </div>                                    
-                                                <div class="col-md-6 py-2" v-for="(variant,index) of variants" :key="index">
-                                                    <div class="quantity-box">
-                                                        <div class="input-group">
-                                                            <span class="input-group-prepend">
-                                                                <button 
-                                                                    class="btn" 
-                                                                    @click="selectSize(variant,$event)" 
-                                                                    :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
-                                                                >{{ variant.code_size_name }}</button>
-                                                            </span>
-                                                            <input 
-                                                                type="number" 
-                                                                :name="`quantity_${variant.full_code}`" 
-                                                                class="form-control input-number" 
+                                            <div class="col-12">
+                                                <h5>
+                                                    Selected size: 
+                                                    <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
+                                                    <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
+                                                </h5>
+                                            </div>                                    
+                                            <div class="col-md-6 py-2" v-for="(variant,index) of variants" :key="index">
+                                                <div class="quantity-box">
+                                                    <div class="input-group">
+                                                        <span :class="$has(selections.sizes,variant.code_size) ? `input-group-prepend active` : `input-group-prepend` ">
+                                                            <button 
+                                                                class="btn" 
+                                                                @click="selectSize(variant,$event)" 
                                                                 :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
-                                                                v-if="!$has(sizeKeys,sizeName)"
-                                                                value="0"
-                                                            > 
-                                                            <input 
-                                                                type="number" 
-                                                                :name="`quantity_${variant.full_code}`" 
-                                                                class="form-control input-number" 
-                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
-                                                                v-if="$has(sizeKeys,sizeName)" 
-                                                                v-model="form.sizes[sizeKeys[sizeName]].quantity" 
-                                                                value="0"
-                                                            > 
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <h6 class="mb-0">Stock Available: {{ $first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity }}</h6>
-                                                    </div>                                
-                                                </div>
-                                            </template>  
-                                            <template v-if="$isEmpty(selections.colour)"> 
-                                                <div class="col-12 quantity-box">
-                                                    <div class="ssc">
-                                                        <div class="ssc-wrapper">
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                            <div class="w-100 row">
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                                <div class="ssc-head-line w-50 mbs"></div>
-                                                            </div>
-                                                        </div>
+                                                            >{{ variant.code_size_name }}</button>
+                                                        </span>
+                                                        <input 
+                                                            type="number" 
+                                                            :name="`quantity_${variant.full_code}`" 
+                                                            class="form-control input-number" 
+                                                            :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
+                                                            v-if="!$has(selections.sizes,variant.code_size)"
+                                                            value="0"
+                                                        > 
+                                                        <input 
+                                                            type="number" 
+                                                            :name="`quantity_${variant.full_code}`" 
+                                                            class="form-control input-number" 
+                                                            :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
+                                                            v-if="$has(selections.sizes,variant.code_size)" 
+                                                            v-model="form.sizes[selections.sizes[variant.code_size]].quantity" 
+                                                            value="0"
+                                                        > 
                                                     </div>
                                                 </div>
-                                            </template>
+                                                <div class="text-center">
+                                                    <h6 class="mb-0">Stock Available: {{ $first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity }}</h6>
+                                                </div>                                
+                                            </div>
                                         </div>
                                     </template>
                                     <template v-if="!isVariant">
@@ -200,7 +166,7 @@
                                                 </button>    
                                             </template>
                                             <template v-else>
-                                                <button class="btn btn-solid btn-animation text-white" :disabled="isDisabled || !$isEmpty(favourite)" @click="addToFavourites()">
+                                                <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
                                                     <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                                     <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
                                                     <span v-show="$isEmpty(favourite)">Wishlist</span>
@@ -337,7 +303,7 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, each, first, get, groupBy, isEmpty, isNull, keys, has, omit, set, min, uniq } from 'lodash';
+import { clone, cloneDeep, debounce, each, first, get, groupBy, isEmpty, isNull, keys, has, omit, set, min, uniq } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import 'vue3-carousel/dist/carousel.css'
@@ -373,7 +339,11 @@ export default {
             return !isEmpty(this.product) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
         },
         variants(){
-            return !isEmpty(this.product) ? this.product.variants.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) : [];
+            return !isEmpty(this.product) ? 
+                        !isEmpty(this.selections.colour) ? 
+                            this.product.variants.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) :
+                                this.product.variants.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) ): 
+                    [];
         },
         isVariant(){
             return !isEmpty(this.product) ? !isEmpty(this.product.variants.filter( val => !isNull(val.code_size) )) : false
@@ -425,11 +395,10 @@ export default {
             related_products: Array(),
             stock:       Object(),
             schemaShape: Object(),
-            sizeKeys:    Object(),
             selections:  {
                 colour: Object(),
                 hex:    String(),
-                size:   Object()
+                sizes:  Object()
             },
             settings:{
                 images:{
@@ -457,14 +426,13 @@ export default {
             this.cart.push(cloneDeep(data));
         },
         addQuantity(event){
-            this.form.sizes[this.sizeKeys[sizeName]].quantity = event.target.value;
+            this.form.sizes[this.selections.sizes[sizeName]].quantity = event.target.value;
         },
         addToFavourites(){
             this.loading.wishlist = true; // Set loader
-            let form = cloneDeep({ product_code: this.product.fullCode,content: this.form }); // Refactor form data
             // Add this product to wishlist
             this.$api
-                .post('favourites',form)
+                .put(`favourites/${this.$route.params.product}`)
                 .then( ({ data: { favourite } }) => {
                     this.favourite = cloneDeep(favourite);
                     this.$toast.info('This product has been added to your wishlist.');
@@ -502,8 +470,10 @@ export default {
                     )
                     .min(1)
                     .required("*Size is required");  
-                    set(this.selections,'size',Object());
+
+                    set(this.selections,'sizes',Object());
                     set(this.form,'sizes',Array());
+                    set(this.form,'price',first(first(product.variants).price).amount);
                 break;
                 case false:
                     // Check if product has variants and add validation of quantity if empty
@@ -521,9 +491,14 @@ export default {
             set(this.selections,'colour',Object()); // Initialize colour selection
             
             this.formSchema           = yup.object().shape(this.schemaShape);  // Initialize validation
-            this.form.price           = product.price;
             this.form.product_id      = product.id;
 
+            if( !isEmpty(this.cartItem) ){
+                this.form.sizes        = cloneDeep(this.cartItem.sizes);
+                this.selections.colour = this.product.colour_images.find( colour => colour.hex.includes(this.cartItem.hex) );
+                this.selections.sizes  = this.cartItem.sizes.reduce((a, v) => { a[v.name] = this.cartItem.sizes.findIndex( val => val.name == v.name) ; return a; }, {});
+                this.selections.hex    = clone(this.cartItem.hex);
+            }
             // this.fetchColourStock(product); // Fetch colour stock           
         },        
         descreaseQuantity(){
@@ -602,6 +577,15 @@ export default {
                 let variant     = this.product.variants.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
                 this.form.price = first(variant.price).amount;
             }
+
+            if( !isEmpty(this.selections.sizes) ){
+                this.selections.sizes = Object();
+            }
+
+            if( !isEmpty(this.form.sizes) ){
+                this.form.sizes.splice(0);
+            }
+
         },
         selectSize(variant,event){
             // Check if colour has been selected
@@ -610,21 +594,23 @@ export default {
             }
             
             if( !has(this.errors,'colour') ){
-                let { product, selections: { colour } } = this;
-                let selected_variant           = product.variants.find( variant => variant.code_size == colour.code );
-                
-                if( !isEmpty( this.form.sizes.find( size => size.name == selected_variant.code_size) ) ){
+
+                let { form, selections: { colour } } = this;
+                let select_variant                   = form.sizes.find( size => size.name == variant.code_size );
+
+                if( isEmpty(select_variant) ){
                     this.form.sizes.push({
-                        name:     selected_variant.code_size,
+                        name:     variant.code_size,
                         quantity: Number(1)
-                    })
-                    $(event.target).parent().addClass('active');
-                    this.sizeKeys[selected_variant.code_size] = (this.form.sizes.length - 1);
-                } else {
-                    this.form.sizes = this.form.sizes.filter( size => size.name != selected_variant.code_size );
-                    $(event.target).parent().removeClass('active');
-                    this.sizeKeys = omit(this.sizeKeys,[size]);
+                    });
+                    this.selections.sizes[variant.code_size] = (this.form.sizes.length - 1);
+                } 
+
+                if( !isEmpty(select_variant) ) {
+                    this.form.sizes = this.form.sizes.filter( size => size.name != variant.code_size );
+                    delete this.selections.sizes[variant.code_size];
                 }
+
             }
         },
         initScripts(){
@@ -665,7 +651,6 @@ export default {
     watch:{
         form:{
             handler(form){
-                console.log(form);
                 each(form,(value,key) => {
                     this.validateForm(key);
                 });                

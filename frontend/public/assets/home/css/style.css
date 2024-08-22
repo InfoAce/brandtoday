@@ -1537,8 +1537,9 @@ button {
 
 .btn-solid:hover {
     background-position: 100%;
-    color: #000;
+    color: var(--theme-color);
     background-color: #fff
+    border: 2px solid var(--theme-color);
 }
 
 .btn-solid.black-btn {
