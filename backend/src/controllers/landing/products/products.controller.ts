@@ -1,5 +1,5 @@
 import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, Logger, Param, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthGuard, OptionalGuard } from '../../../guards';
+import { AuthGuard, ClientGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, set, sortBy, take, toPlainObject, uniqBy } from 'lodash';
@@ -160,57 +160,23 @@ export class ProductsController {
         //                                                 return { ...item, price: price.price };
         //                                               });
         
-        // // Initialize the favourite object
-        // let favourite: any = {};
+        // Initialize the favourite object
+        let favourite: any = {};
 
-        // // If a user is logged in, find their favourite with the given product code
-        // if( user ) {
-        //   favourite = (await user.favourites).find( val => val.content.code == product.fullCode );
-        // }
+        // If a user is logged in, find their favourite with the given product code
+        if( !isEmpty(user) ) {
+          favourite = (await user.favourites).find( val => val.product.id == product.id ) ?? { };
+        }
 
-        // // If price data is found, set the product price
-        // if( data_price != undefined ){ product.price = data_price.price; }
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        res.status(HttpStatus.OK).json({ product });
+        res.status(HttpStatus.OK).json({ product, favourite });
 
       } catch(error){
 
         // Log any errors that occur
         this.logger.error(error);
 
-      }
-    }
-
-    @Put('stock/:code')
-    /**
-     * Fetch the stock of a product by its code.
-     *
-     * @param {string} code - The code of the product.
-     * @param {Request} req - The request object.
-     * @param {Response} res - The response object.
-     * @return {Promise<void>}
-     */
-    async fetchSize(@Param('code') code: any, @Req() req: Request,  @Res() res: Response) {
-      try {
-        
-        // Clone the cached stocks to avoid modifying the original data.
-        // let cached_stocks: any = cloneDeep(this.amrod.stock);
-        
-        // // Search for the product in the cached stocks.
-        // let stock: any = cached_stocks.find(val => val.fullCode == code);
-
-        // // If the product is not found in the stocks, set the stock to 0.
-        // if (stock == undefined) {
-        //   stock = { stock: 0 };
-        // }
-
-        // // Send the stock as a JSON response with a status code of 200 (OK).
-        // res.status(HttpStatus.OK).json({ stock, code });
-
-      } catch (error) {
-        // Log any errors that occur.
-        this.logger.error(error);
       }
     }
 }
