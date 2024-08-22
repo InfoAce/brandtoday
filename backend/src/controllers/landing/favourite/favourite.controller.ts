@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Inject, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ClientGuard } from 'src/guards';
 import { Request, Response } from 'express';
 import { FavouriteModel } from 'src/models';
@@ -10,28 +10,9 @@ import { sep } from 'path';
 @Controller('favourites')
 export class FavouriteController {
 
-    private amrod = {
-        products:   [],
-    };
-
-    private readonly file_paths = {
-        products:   `${process.cwd()}${sep}public${sep}amrod${sep}products.json`,
-    };
-
-    private jsonPlugin      = require('json-reader-writer');
-
     constructor(
         private readonly favouriteModel: FavouriteModel,
-    ){
-      // Try to read JSON files and assign them to the 'amrod' object
-      try {        
-            // Read products JSON file
-            this.amrod.products   = this.jsonPlugin.readJSON(this.file_paths.products);
-        } catch(error){
-            // If any error occurred during reading JSON files, clear 'amrod' object
-            this.amrod.products   = [];
-        }
-    }
+    ){}
 
     /**
      * Get the paginated list of favourite products for the authenticated user.
@@ -47,8 +28,8 @@ export class FavouriteController {
     @UseGuards(ClientGuard)
     @Get('')
     async get(
-        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) queryPage: number = 1,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) queryPerPage: number = 10,
         @Req() req: Request,  
         @Res() res: Response
     ) {
@@ -56,20 +37,8 @@ export class FavouriteController {
             // Get the authenticated user from the request
             let user: any = get(req,'user');
 
-            // Get the cached list of products
-            let products: any = cloneDeep(this.amrod.products);;
-
             // Get the list of favourite items for the authenticated user
-            let favourites    = await user.favourites;
-
-            // Map the favourite items to include the product details and paginate the results
-            favourites = paginate(
-                favourites.map( val => ({ 
-                    product: products.find( product => product.fullCode == val.content.code ), 
-                    ...val 
-                }) ),
-                { page: page, perPage: limit }
-            );
+            let favourites    = await this.favouriteModel.find({ where: { user_id: user.id }, skip: (queryPage - 1) * (queryPerPage + 1), take: queryPerPage,  });
 
             // Send the paginated list of favourite products as a JSON response
             return res.status(HttpStatus.OK).json({ favourites });
@@ -95,9 +64,9 @@ export class FavouriteController {
      * @returns {Promise<void>} Promise that resolves with a JSON response containing the stored favourite item.
      */
     @UseGuards(ClientGuard)
-    @Post('')    
+    @Put(':product_id')    
     async store(
-        @Body() body: WishlistValidation, // The wishlist validation object
+        @Param('product_id',new DefaultValuePipe(String())) product_id: any,
         @Req()  req: Request,  // The Express request object
         @Res()  res: Response // The Express response object
     ){
@@ -107,13 +76,17 @@ export class FavouriteController {
             let user = get(req,'user');
 
             // Save the new favourite item with the user ID set
-            let favourite = await this.favouriteModel.save(set(body,'user_id',user.id));
+            let favourite = await this.favouriteModel.save({user_id: user.id, product_id});
 
             // Return the newly created favourite item as a JSON response with a 200 status code
             return res.status(HttpStatus.OK).json({ favourite });
         
-        } catch (err) {
-            // Handle any errors that occur during the operation
+        } catch (error) {
+          
+            if( error.constructor.name == "ModelException" ){
+                throw new HttpException(error.message, error.status);
+            }
+            
         }
 
     }
