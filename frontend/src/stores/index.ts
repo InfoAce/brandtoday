@@ -36,7 +36,7 @@ export default createStore({
   },
   getters:{
     auth:              (state) => state.auth,
-    assetsUrl:         (state) => state.env.VITE_API_URL.replace('api/v1',''),
+    assetsUrl:         (state) => state.env.VITE_API_URL.replace('/api/v1',''),
     banner_height:      (state) => state.device_width * 0.3,
     cart:              (state) => state.cart,
     device_width:      (state) => state.device_width,
