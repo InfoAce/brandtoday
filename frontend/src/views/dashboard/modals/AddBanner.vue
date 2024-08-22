@@ -9,17 +9,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="form-group">
-                            <label>Title</label>
-                            <input type="text" name="title" class="form-control" v-model="$data.form.title" placeholder="Title">
-                            <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'title')">{{$data.errors.title}}</p>	
-                        </div>  
-                        <div class="form-group col-md-12 col-sm-12 col-xs-12">
-                            <label>Description</label>
-                            <input type="text" name="description" class="form-control" v-model="$data.form.description" placeholder="Description">
-                            <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'description')">{{$data.errors.description}}</p>	
-                        </div>                                              
+                    <div class="row">                                            
                         <div class="col-12">
                             <label>Image</label>
                             <input class="form-control" type="file" @change="onFileChange($event)" v-if="isEmpty($data.pickedImage) && isEmpty($data.form.path)" />
@@ -35,13 +25,13 @@
                                     :options="{
                                         viewMode: 1,
                                         dragMode: 'move',
-                                        aspectRatio: 1.78 / 1,
+                                        aspectRatio: 16 / 6,
                                         cropBoxResizable: false
                                     }"
                                     :presetMode="{
                                         mode: 'fixedSize',
-                                        width: 1920,
-                                        height: 1080,
+                                        width: 3840,
+                                        height: 2160,
                                     }"
                                 />   
                                 <div class="d-flex justify-content-between mt-2">
@@ -83,9 +73,7 @@ const $toast = inject('$toast');
 const $data = reactive({
     errors: {},
     form: {
-        description: String(),
         path:  String(),
-        title:       String(),
     },
     loader:     false,
     pickedImage: String(),

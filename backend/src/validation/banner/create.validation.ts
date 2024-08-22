@@ -4,13 +4,6 @@ export class CreateBannerValidation {
 
     @IsString()
     @IsNotEmpty()
-    description: string
-
-    @IsString()
-    path: string
-    
-    @IsString()
-    @IsNotEmpty()
-    title: string
+    path: string    
 
 }

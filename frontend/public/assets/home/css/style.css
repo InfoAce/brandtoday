@@ -3925,10 +3925,12 @@ button.btn.btn-outline:active {
     left: 0;
     -webkit-transition-delay: 0s;
     transition-delay: 0s
+    width: 100%;
 }
 
 .classic-effect:after {
     left: 25%;
+    width: 100%;
     -webkit-transition-delay: 0.025s;
     transition-delay: 0.025s
 }

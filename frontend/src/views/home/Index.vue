@@ -14,27 +14,12 @@
             </template>
             <carousel  
                 v-show="!isEmpty($data.categories) && !$data.loading" 
-                :transition="10000"
+                :autoplay="5000" :wrap-around="true"
                 class="p-0"
                 :settings="$data.settings.banners" 
             >
-                <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px;`">
-                    <img :src="image.path" alt="" class="bg-img blur-up lazyload" style="position:absolute !important;">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-12 px-0 d-flex align-items-center" :style="`height:${$store.getters.banner_height}px;`">
-                                <div class="slider-contain container">
-                                    <div class="row">
-                                        <div class="col-12 text-left d-flex flex-column align-items-start">
-                                            <h4 class="text-white">{{ image.description }}</h4>
-                                            <h1 class="text-white">{{ image.title }}</h1>
-                                            <a href="#" class="btn btn-solid">shop now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px;`"> 
+                    <img :src="image.path" class="" width="100%" :height="$store.getters.banner_height"/>
                 </slide>
                 <template #addons>
                     <pagination />
@@ -96,11 +81,9 @@
                     <carousel  
                         v-show="!isEmpty($data.categories) && !$data.loading" 
                         :settings="$data.settings.categories" 
-                        :itemsToShow="3" 
                         :wrapAround="true" 
-                        :transition="10000"
                         :breakpoints="$data.breakpoints.categories"
-                        :autoplay="2"
+                        :autoplay="4000"
                     >
                         <slide v-for="(category,index) in $data.categories" :key="index">
                             <div class="carousel__item">
@@ -119,7 +102,6 @@
                             </div>
                         </slide>
                         <template #addons>
-                            <navigation />
                             <pagination />
                         </template>
                     </carousel>
@@ -171,15 +153,13 @@
                     <carousel  
                         v-show="!isEmpty($data.brands) && !$data.loading"
                         :settings="$data.settings.brands" 
-                        :itemsToShow="3" 
                         :wrapAround="true" 
-                        :transition="5000"
                         :breakpoints="$data.breakpoints.brands"
-                        :autoplay="1"
+                        :autoplay="3000"
                     >
                         <slide v-for="(brand,index) in $data.brands" :key="index">
                             <div class="carousel__item">
-                                <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="450"></a>
+                                <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="100%"></a>
                             </div>
                         </slide>
                     </carousel>               
@@ -188,6 +168,103 @@
         </section>
         <!--  logo section end-->
 
+        <!-- Paragraph-->
+        <div class="title1 section-t-space">
+            <h2 class="title-inner1">Recommended For You</h2>
+        </div>
+        <!-- Paragraph end -->
+
+        <section class="section-b-space py-0">
+            <div class="container-fluid">
+                <div class="row px-2">
+                    <template v-if="isEmpty($data.recommended) && $data.loading">
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>         
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>                             
+                    </template>
+                    <carousel  
+                        v-show="!isEmpty($data.products) && !$data.loading"
+                        :settings="$data.settings.products" 
+                        :wrapAround="true"
+                        itemsToShow="4"
+                        :autoplay="5000"
+                    >
+                        <slide v-for="(product,index) in $data.products" :key="index" style="padding:0px !important;">
+                            <div class="carousel__item p-3 justify-content-start">
+                                <div class="product-box">
+                                    <div class="img-wrapper">
+                                        <div v-if="!isEmpty(product.images)">
+                                            <div class="front">
+                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" width="100%">
+                                                </a>
+                                            </div>
+                                            <div class="back" v-if="product.images.length > 1">
+                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                    <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="cart-info cart-wrap">
+                                            <button data-bs-toggle="modal" data-bs-target="#addtocart" title="Add to cart">
+                                                <i class="ti-shopping-cart"></i>
+                                            </button> 
+                                            <a href="javascript:void(0)" title="Add to Wishlist">
+                                                <i class="ti-heart" aria-hidden="true"></i>
+                                            </a> 
+                                            <a href="#" data-bs-toggle="modal" :data-bs-target="`#${product.full_code}`" title="Quick View">
+                                                <i class="ti-search" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="product-detail">
+                                        <div>
+                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
+                                                <h6>{{ product.name }}</h6>
+                                            </a>
+                                            <p v-html="product.description"></p>
+                                            <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
+                                            <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
+                                                <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </slide>
+                        <template #addons>
+                            <pagination />
+                        </template>
+                    </carousel>               
+                </div>
+            </div>
+        </section>
+        
         <!-- Paragraph-->
         <div class="title1 section-t-space">
             <h2 class="title-inner1">What Our Clients Say About Us</h2>
@@ -271,7 +348,7 @@
 </template>
 <script setup>
 import { computed, inject, nextTick, onBeforeMount, onMounted, reactive, watch } from 'vue';
-import { cloneDeep, debounce, isEmpty } from 'lodash';
+import { cloneDeep, debounce, isEmpty, isNull, first,get} from 'lodash';
 import { useStore } from 'vuex';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
@@ -283,6 +360,7 @@ const $data  = reactive({
     categories:   Array(), 
     brands:       Array(), 
     banners:      Array(),
+    products:     Array(),
     loading:      Boolean(true),
     testimonials: Array(),
     breakpoints: {
@@ -322,11 +400,15 @@ const $data  = reactive({
     },
     settings: {
         banners: {
-            itemsToShow: 2,
+            itemsToShow: 1,
             snapAlign: 'center',
         },
         brands: {
             itemsToShow: 1,
+            snapAlign: 'center',
+        },
+        products: {
+            itemsToShow: 5,
             snapAlign: 'center',
         },
         categories: {
@@ -395,12 +477,13 @@ const dummyTestimonials = computed( () => Array(
 const fetch = async () => {
     try {
         // Fetch data from API
-        const { data: { brands, categories, banners } } = await $api.get('/home');
+        const { data: { brands, categories, banners, products} } = await $api.get('/home');
 
         // Update component's data
         $data.brands     = cloneDeep(brands);
         $data.categories = cloneDeep(categories);
         $data.banners    = cloneDeep(banners);  
+        $data.products    = cloneDeep(products);  
 
     } catch (error) {
         // Handle error
@@ -447,3 +530,16 @@ onBeforeMount( () => fetch() );
 // )
 
 </script>
+<style>
+.slide_image {
+  min-height: 200px;
+  width: 100%;
+  background-color: var(--vc-clr-primary);
+  color: var(--vc-clr-white);
+  font-size: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

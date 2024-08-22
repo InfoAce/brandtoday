@@ -3,8 +3,8 @@ import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { first, isEmpty, get, omit, shuffle, toPlainObject } from 'lodash';
-import { BrandModel, CategoryModel, CompanyModel, ProductCategoryModel } from 'src/models';
+import { first, isEmpty, isNull, get, omit, shuffle, toPlainObject } from 'lodash';
+import { BrandModel, CategoryModel, CompanyModel, ProductCategoryModel, ProductModel } from 'src/models';
 import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,13 +12,18 @@ import { ConfigService } from '@nestjs/config';
 export class HomeController {
 
     private logger = new Logger(HomeController.name);
+    private colors = Object();
 
     constructor(
-      private brandModel:    BrandModel,
-      private categoryModel: CategoryModel,
-      private companyModel:  CompanyModel,
+      private brandModel:            BrandModel,
+      private categoryModel:         CategoryModel,
+      private companyModel:          CompanyModel,
+      private configService:         ConfigService,
       private productCategoryModel:  ProductCategoryModel,
-    ){}
+      private productModel:          ProductModel,
+    ){
+      this.colors = this.configService.get<any>('colors');
+    }
 
 
     @Get('')
@@ -30,7 +35,8 @@ export class HomeController {
       try {
 
         let brands: any      = await this.brandModel.find();
-        let categories: any  = await this.categoryModel.find();
+        let categories: any  = await this.categoryModel.find({ cache: true });
+        let products: any    = await this.productModel.find({ take: 10, orderBy: { created_at: 'RAND()' } })
 
         categories = await (
           await Promise.all( 
@@ -44,9 +50,19 @@ export class HomeController {
           )
         );
 
+        products = await Promise.all(products.map( (product) => {
+          if (!isNull(product.colour_images)) {
+            product.colour_images = product.colour_images.map((color) => ({
+              ...color,
+              hex: this.colors[color.code].colour,
+            }));
+          }
+          return product;
+        }))
+
         let company = await this.companyModel.first();
 
-        return res.status(HttpStatus.OK).json({ brands, categories, banners: company.banners });
+        return res.status(HttpStatus.OK).json({ brands, categories, banners: company.banners, products });
 
       } catch(err) {
 

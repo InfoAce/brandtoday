@@ -29,7 +29,7 @@
             <div class="collection-wrapper">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-6 col-xs-12">
+                        <div class="col-lg-7 col-xs-12">
                             <template v-if="$isEmpty(product) && loading.product">
                                 <div class="ssc">
                                     <div class="ssc-wrapper">
@@ -46,16 +46,31 @@
                                     :itemsToShow="1" 
                                     :wrapAround="true" 
                                 >
-                                    <Slide v-for="(image,index) in product.images" :key="index">
-                                        <img :src="image.urls[0].url" alt="" class="img-fluid blur-up lazyload">
+                                    <Slide v-for="(image,index) in product.images" :key="index" :style="`height:${$store.getters.banner_height}`">
+                                        <img :src="image.urls[0].url" alt="" width="100%" :height="$store.getters.banner_height">
                                     </Slide>
                                     <template #addons>
                                         <Navigation />
                                     </template>
+                                </Carousel>
+                                <Carousel
+                                    id="thumbnails"
+                                    :itemsToShow="4"
+                                    :wrap-around="true"
+                                    ref="carousel"
+                                >
+                                    <Slide v-for="(image,index) in product.images" :key="index">
+                                        <div class="carousel__item">
+                                            <img :src="image.urls[0].url" alt="" width="100%" height="200" />
+                                        </div>
+                                    </Slide>
+                                    <template #addons>
+                                        <pagination />
+                                    </template>
                                 </Carousel>   
                             </template>                        
                         </div>
-                        <div class="col-lg-6 rtl-text">
+                        <div class="col-lg-5 rtl-text">
                             <div class="product-right">
                                 <h2>{{ product.name }}</h2>
                                 <h3 class="price-detail">KSH {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
@@ -82,6 +97,9 @@
                                                 :ref="hex"                   
                                                 @click="($event) => selectColour(hex,$event)"                        
                                             ></li>
+                                        </template>
+                                        <template v-if="$isEmpty(colour_images)">
+                                            <h5 class="text-danger">No colour options found.</h5>
                                         </template>
                                     </ul>
                                 </div>
@@ -336,10 +354,10 @@ export default {
             return this.cart.find( val => val.product_id == this.product.id ) ?? {};
         },
         colour_images(){
-            return !isEmpty(this.product) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
+            return !isEmpty(this.product) && !isEmpty(this.product.colour_images) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
         },
         variants(){
-            return !isEmpty(this.product) ? 
+            return !isEmpty(this.product) && !isEmpty(this.product.colour_images)  ? 
                         !isEmpty(this.selections.colour) ? 
                             this.product.variants.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) :
                                 this.product.variants.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) ): 
@@ -483,7 +501,7 @@ export default {
             }
             
             this.schemaShape.product_id = yup.string().required("*Product is required."); // validate product code   
-            this.schemaShape.colour     = yup.string().required("*Colour is required."); // validate product colour
+            this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
             this.schemaShape.price      = yup.number().required("*Price is required."); // validate product price
             this.schemaShape.hex        = yup.string(); // validate product hex colour
             this.schemaShape.name       = yup.string(); // validate product hex colour
