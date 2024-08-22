@@ -35,7 +35,7 @@
                                     }"
                                 />   
                                 <div class="d-flex justify-content-between mt-2">
-                                    <button class="btn btn-primary ml-2" type="button" @click="selectCrop">Crop</button>
+                                    <button class="btn btn-primary ml-2" type="button" @click="selectCrop"><i class="fa fa-spin fa-spinner" v-if="$data.crop"></i>Crop</button>
                                     <button class="btn btn-primary ml-2" type="button" @click="$data.pickedImage = String()">Cancel</button>
                                 </div>
                             </div>    
@@ -76,6 +76,7 @@ const $data = reactive({
         path:  String(),
     },
     loader:     false,
+    crop:        false,
     pickedImage: String(),
     isDisabled: false,
 });
@@ -183,6 +184,9 @@ const onFileChange = async (event) => {
  */
 const selectCrop = async () => {
     try {
+
+        $data.crop = true;
+
         // Check if the cropper is available
         if (!cropper) return;
 
@@ -208,6 +212,8 @@ const selectCrop = async () => {
             }
         });
 
+        $data.crop = false;
+
         // Update the form with the path of the uploaded image
         $data.form.path = get(storedFile, 'filename');
 
@@ -215,6 +221,9 @@ const selectCrop = async () => {
         $data.pickedImage = String();
 
     } catch (error) {
+
+        $data.crop = false;
+
         // Handle any errors that occur during the process
     }
 }
