@@ -230,24 +230,12 @@
                                                 </a>
                                             </div>
                                         </div>
-                                        <div class="cart-info cart-wrap">
-                                            <button data-bs-toggle="modal" data-bs-target="#addtocart" title="Add to cart">
-                                                <i class="ti-shopping-cart"></i>
-                                            </button> 
-                                            <a href="javascript:void(0)" title="Add to Wishlist">
-                                                <i class="ti-heart" aria-hidden="true"></i>
-                                            </a> 
-                                            <a href="#" data-bs-toggle="modal" :data-bs-target="`#${product.full_code}`" title="Quick View">
-                                                <i class="ti-search" aria-hidden="true"></i>
-                                            </a>
-                                        </div>
                                     </div>
                                     <div class="product-detail">
                                         <div>
                                             <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
                                                 <h6>{{ product.name }}</h6>
                                             </a>
-                                            <p v-html="product.description"></p>
                                             <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
                                             <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
