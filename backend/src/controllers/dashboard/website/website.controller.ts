@@ -76,7 +76,7 @@ export class WebsiteController {
             let banners:any = Array();
 
             // Append the base URL to the banner path
-            data.path = `${this.configService.get('APP_FRONTEND')}/images/${data.path}`
+            data.path = `${this.configService.get('APP_FRONTEND_URL')}/images/${data.path}`
 
             // Get the existing banners for the company (if any)
             if( !isNull(company.banners) ){
