@@ -52,7 +52,7 @@
                             </li>
                         </ul>
                         <div class="tab-content" id="homeTabContent" v-if="$data.tab == 1">
-                            <HomeTab @fetch-company="fetch" :company.sync="$data.company" />
+                            <HomeTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
                         <div class="tab-content" id="privacyTabContent" v-if="$data.tab == 2">
                             <PrivacyTab @update-company="updateCompany" :company.sync="$data.company" />
@@ -125,6 +125,7 @@ const updateCompany = (data) => {
     // Check if data has banners
     if( has(data,'banners') ){
         // Update the banners in the company object
+        console.log(data)
         $data.company.banners = data.banners;
     }
     

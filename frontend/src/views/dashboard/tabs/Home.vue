@@ -1,5 +1,6 @@
 <template>
     <div class="tab-pane fade active show" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <CardLoader :loader="$data.loader" />
         <!-- Container-fluid starts-->
         <div class="container-fluid">
             <div class="col-12 d-flex justify-content-end">
@@ -13,7 +14,7 @@
                                 <div class="img-wrapper">
                                     <div class="front">
                                         <a href="javascript:void(0)">
-                                            <img :src="image.path" class="img-fluid blur-up lazyload bg-img" alt="">
+                                            <img :src="image.path" class="img-fluid blur-up lazyload" alt="">
                                         </a>
                                         <div class="product-hover">
                                             <ul>
@@ -27,16 +28,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="product-detail">    
-                                    <h4>{{ image.title }}</h4>
-                                    <h6>{{ image.description }}</h6>
-                                </div>
+                            
                             </div>
                         </div>
                     </div>    
                 </template>
                 <template v-else>
-                    <div class="col-12 text-center px-6 card card-body">
+                    <div class="col-12 text-center p-5">
                         <h4><i class="fa fa-exclamation-circle"></i> Nothing found here.</h4>
                     </div>
                 </template>
@@ -55,21 +53,28 @@ import { AddBanner } from '../modals';
 import { cloneDeep, isEmpty } from 'lodash';
 import { computed, inject, defineEmits, defineProps, reactive } from 'vue';
 import { useStore } from 'vuex';
-
+import { CardLoader } from '../../../components';
 
 // Magin variables
 const $api  = inject('$api');
 const $data = reactive({
+    loader: false,
     modal: {
         add:  Boolean(),
         edit: Boolean()
     }
 });
+
 // Define emitters 
-const $emit   = defineEmits(['fetch-company']);
+const $emit   = defineEmits(['updateCompany']);
 const $store  = useStore();
 const $swal   = inject('$swal');
-const banners = computed( () => $props.company.banners ?? []);
+
+// Computed values
+const banners = computed({
+    get: ()      => $props.company.banners,
+    set: (value) => $emit('updateCompany',{ banners: value })
+});
 
 // Component Props
 const $props  = defineProps({
@@ -99,6 +104,7 @@ const deleteBanner = (item) => {
         if( result.isConfirmed ) {
             // Call the function to remove the banner image
             removeBanner(item);
+            console.log('here');
         }
     });	
 }
@@ -106,27 +112,32 @@ const deleteBanner = (item) => {
 /**
  * Delete banner image
  *
+ * This function deletes a banner image from the company's banners array.
+ * It shows a loader to indicate that the request is being processed, and
+ * updates the company data with the deleted banner image when the request
+ * is complete.
+ *
  * @param {Object} item - The banner image to be deleted.
  * @returns {Promise} A promise that resolves when the banner has been deleted.
  */
 const removeBanner = async (item) => {
     // Show a loader to indicate that the request is being processed
-    $store.commit('loader',true);
-
+    $data.loader = true;
+    
     try {
-        // Send a PUT request to delete the banner image from the server
-        const { data: { company } } = await $api.put('/dashboard/website/banner',{
-            banners: $data.company.banners.filter( banner => banner.path != item.path )
+        // Delete the banner image from the company's banners array
+        const { data } = await $api.put('/dashboard/website/banner',{
+            banners: $props.company.banners.filter( banner => banner.path != item.path )
         });
-
+        
         // Update the company data with the deleted banner image
-        $data.company = cloneDeep(company);
+        $emit('update-company', data);
     } catch (error) {
-        // If an error occurs, show a loader to indicate that the request failed
-        $store.commit('loader',false);
+        $data.loader = false;
+        console.error(error);
     } finally {
         // Hide the loader
-        $store.commit('loader',false);
+        $data.loader = false;
     }
 }
 

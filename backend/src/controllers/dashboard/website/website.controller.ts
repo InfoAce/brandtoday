@@ -76,7 +76,7 @@ export class WebsiteController {
             let banners:any = Array();
 
             // Append the base URL to the banner path
-            data.path = `${this.configService.get('APP_URL')}/images/${data.path}`
+            data.path = `${this.configService.get('APP_FRONTEND')}/images/${data.path}`
 
             // Get the existing banners for the company (if any)
             if( !isNull(company.banners) ){
@@ -152,10 +152,10 @@ export class WebsiteController {
         
         try {    
             // Update the company's banner images and save the changes
-            let company = await this.companyModel.save({ id: get(req,'user').company_idd, banners: get(data,'banners') });
+            let company = await this.companyModel.save({ id: get(req,'user').company_id, banners: get(data,'banners') });
 
             // Return the updated company object
-            return res.status(HttpStatus.OK).json({ company });
+            return res.status(HttpStatus.OK).json({ banners: company.banners });
 
         } catch(error) {
 
