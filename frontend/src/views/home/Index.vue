@@ -18,8 +18,8 @@
                 class="p-0"
                 :settings="$data.settings.banners" 
             >
-                <slide v-for="(image,index) in $data.banners" :key="index" :style="`height:${$store.getters.banner_height}px;`"> 
-                    <img :src="image.path" class="" width="100%" :height="$store.getters.banner_height"/>
+                <slide v-for="(image,index) in $data.banners" :key="index" > 
+                    <img :src="image.path" class="" width="100%"/>
                 </slide>
                 <template #addons>
                     <pagination />
@@ -154,6 +154,7 @@
                         v-show="!isEmpty($data.brands) && !$data.loading"
                         :settings="$data.settings.brands" 
                         :wrapAround="true" 
+                        :itemsToShow="4"
                         :breakpoints="$data.breakpoints.brands"
                         :autoplay="3000"
                     >
@@ -209,9 +210,8 @@
                     </template>
                     <carousel  
                         v-show="!isEmpty($data.products) && !$data.loading"
-                        :settings="$data.settings.products" 
                         :wrapAround="true"
-                        itemsToShow="4"
+                        :itemsToShow="4"
                         :autoplay="5000"
                     >
                         <slide v-for="(product,index) in $data.products" :key="index" style="padding:0px !important;">
@@ -253,10 +253,12 @@
             </div>
         </section>
         
+        
         <!-- Paragraph-->
         <div class="title1 section-t-space">
             <h2 class="title-inner1">What Our Clients Say About Us</h2>
         </div>
+
         <section class="section-b-space py-0">
             <div class="container">
                 <div class="row">
@@ -393,10 +395,6 @@ const $data  = reactive({
         },
         brands: {
             itemsToShow: 1,
-            snapAlign: 'center',
-        },
-        products: {
-            itemsToShow: 5,
             snapAlign: 'center',
         },
         categories: {

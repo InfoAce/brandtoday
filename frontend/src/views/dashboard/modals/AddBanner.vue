@@ -35,7 +35,7 @@
                                     }"
                                 />   
                                 <div class="d-flex justify-content-between mt-2">
-                                    <button class="btn btn-primary ml-2" type="button" @click="selectCrop"><i class="fa fa-spin fa-spinner" v-if="$data.crop"></i>Crop</button>
+                                    <button class="btn btn-primary ml-2" type="button" @click="selectCrop"><i class="fa fa-spin fa-spinner" v-if="$data.crop"></i><span v-if="!$data.crop">Crop</span></button>
                                     <button class="btn btn-primary ml-2" type="button" @click="$data.pickedImage = String()">Cancel</button>
                                 </div>
                             </div>    
@@ -92,10 +92,8 @@ const env            = computed( () => $store.getters.env );
 
 
 // Banner Schema
-const formSchema = yup.object().shape({
-    description: yup.string().required("*Description is required"),                      
+const formSchema = yup.object().shape({                   
     path:        yup.string().required("*Image Path is required"),                      
-    title:       yup.string().required("*Title is required"),                      
 });
 
 /**
@@ -255,9 +253,7 @@ const getImageFile = (target) => {
 const resetForm = () => {
     // Reset the form data
     $data.form = {
-        description: String(), // Reset description to an empty string
         path:        String(), // Reset path to an empty string
-        title:       String(), // Reset title to an empty string
     };
 
     // Emit an event to update the modal

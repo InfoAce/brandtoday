@@ -43,7 +43,7 @@
         <AddBanner 
             :show="$data.modal.add" 
             @update-modal="updateModal" 
-            @fetch="$emit('fetch-company')"
+            @fetch="$emit('fetchCompany')"
         />
         <!-- Container-fluid Ends-->
     </div>    
@@ -66,7 +66,7 @@ const $data = reactive({
 });
 
 // Define emitters 
-const $emit   = defineEmits(['updateCompany']);
+const $emit   = defineEmits(['fetchCompany','updateCompany']);
 const $store  = useStore();
 const $swal   = inject('$swal');
 
@@ -104,7 +104,6 @@ const deleteBanner = (item) => {
         if( result.isConfirmed ) {
             // Call the function to remove the banner image
             removeBanner(item);
-            console.log('here');
         }
     });	
 }
@@ -134,7 +133,6 @@ const removeBanner = async (item) => {
         $emit('update-company', data);
     } catch (error) {
         $data.loader = false;
-        console.error(error);
     } finally {
         // Hide the loader
         $data.loader = false;
