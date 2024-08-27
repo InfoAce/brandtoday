@@ -14,6 +14,8 @@ export default defineConfig( ({command,mode}) => {
       vue(),
       {
         name: 'import-scripts',
+        enforce: 'pre',
+        apply: 'build',
         async transformIndexHtml (html: string, app: any){
           console.log(Object.keys(app));
           if( Object.keys(app).includes('originalUrl') && app.originalUrl.includes('/home') ){
