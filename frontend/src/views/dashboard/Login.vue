@@ -21,12 +21,13 @@
 										<p class="text-danger mb-0" v-show="has(data.errors,'password')">{{data.errors.password}}</p>								
 									</div>
 									<div class="form-terms my-4">
-										<div class="form-check mesm-2">
-											<a href="javascript:void(0)" class="forgot-pass">Forgot Password!</a>
+										<div class="form-check mesm-2 d-flex justify-content-between px-0">
+											<a href="javascript:void(0)" class="text-theme">Forgot Password!</a>
+											<a href="#" class="text-theme" @click.prevent="redirectToHome">Go Home</a>
 										</div>
 									</div>
-									<div class="form-button">
-										<button class="btn btn-dark" :disabled="data.isDisabled || data.loading.login" type="submit">
+									<div class="form-button d-flex justify-content-between">
+										<button class="btn btn-solid hover-solid" :disabled="data.isDisabled || data.loading.login" type="submit">
 											<i class="fa fa-spinner fa-spin" v-if="data.loading.login"></i>
 											Login
 										</button>
@@ -160,6 +161,10 @@ const login = () => {
 			data.loading.login = false;
 		});
 }
+
+const redirectToHome = () => {
+	window.location.href = router.resolve({ name: 'Home' }).href;
+};
 
 onBeforeMount( debounce(() => {
 	$('.single-item').slick({

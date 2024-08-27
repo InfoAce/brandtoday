@@ -7,7 +7,10 @@ const router = createRouter({
   routes: [
     {
       path: '',
-      redirect: '/home'
+      component: RouterView,
+      beforeEnter(){
+        window.location.href = '/home';
+      }
     },
     {
       path: '/home',
@@ -589,151 +592,151 @@ const checkRole = (to:any,next: any) => {
 
 }
 
-/**
- * Function to add the dashboard theme.
- * 
- * This function adds the necessary CSS and JS files to the dashboard theme.
- * 
- * @return {void} This function does not return anything.
- */
-const addDashbordTheme = async (next) => {
+// /**
+//  * Function to add the dashboard theme.
+//  * 
+//  * This function adds the necessary CSS and JS files to the dashboard theme.
+//  * 
+//  * @return {void} This function does not return anything.
+//  */
+// const addDashbordTheme = async (next) => {
 
-  // Define the array of CSS and JS files needed for the dashboard theme
-  const scripts = [
-    '/assets/dashboard/js/sidebar-menu.js',
-    '/assets/dashboard/js/lazysizes.min.js',
-    '/assets/dashboard/js/admin-customizer.js',
-    '/assets/dashboard/js/jquery.dataTables.min.js',
-    '/assets/dashboard/js/admin-script.js'	
-  ].map( 
-    // Map over the array of URLs and create a promise for each URL
-    async (url) => new Promise( 
-      // Resolve the promise after a delay of 0 milliseconds
-      resolve => setTimeout( async() => resolve(addScript(url)),0)
-    ) 
-  );
+//   // Define the array of CSS and JS files needed for the dashboard theme
+//   const scripts = [
+//     '/assets/dashboard/js/sidebar-menu.js',
+//     '/assets/dashboard/js/lazysizes.min.js',
+//     '/assets/dashboard/js/admin-customizer.js',
+//     '/assets/dashboard/js/jquery.dataTables.min.js',
+//     '/assets/dashboard/js/admin-script.js'	
+//   ].map( 
+//     // Map over the array of URLs and create a promise for each URL
+//     async (url) => new Promise( 
+//       // Resolve the promise after a delay of 0 milliseconds
+//       resolve => setTimeout( async() => resolve(addScript(url)),0)
+//     ) 
+//   );
 
-  // Define the array of CSS files needed for the dashboard theme
-  const cssFiles = [
-    '/assets/dashboard/css/vendors/themify-icons.css',
-    '/assets/dashboard/css/vendors/flag-icon.css',
-    '/assets/dashboard/css/vendors/prism.css',
-    '/assets/dashboard/css/vendors/bootstrap.css',
-    '/assets/dashboard/css/style.css',
-  ];
+//   // Define the array of CSS files needed for the dashboard theme
+//   const cssFiles = [
+//     '/assets/dashboard/css/vendors/themify-icons.css',
+//     '/assets/dashboard/css/vendors/flag-icon.css',
+//     '/assets/dashboard/css/vendors/prism.css',
+//     '/assets/dashboard/css/vendors/bootstrap.css',
+//     '/assets/dashboard/css/style.css',
+//   ];
 
-  // Add each CSS file to the head of the document
-  cssFiles.forEach( (url) => {
-    let link   = document.createElement('link');
-    link.rel   = 'stylesheet';
-    link.href  = url;
-    document.head.appendChild(link);
-  });
+//   // Add each CSS file to the head of the document
+//   cssFiles.forEach( (url) => {
+//     let link   = document.createElement('link');
+//     link.rel   = 'stylesheet';
+//     link.href  = url;
+//     document.head.appendChild(link);
+//   });
 
-  /**
-   * Function to add a script tag to the document.
-   * 
-   * This function creates a new script element and appends it to the document body.
-   * The script element's source is set to the provided URL.
-   * 
-   * @param {string} url - The URL of the script file.
-   * @return {void} This function does not return anything.
-   */
-  const addScript = (url:string) => {
-    // Create a new script element
-    let script    = document.createElement('script');
+//   /**
+//    * Function to add a script tag to the document.
+//    * 
+//    * This function creates a new script element and appends it to the document body.
+//    * The script element's source is set to the provided URL.
+//    * 
+//    * @param {string} url - The URL of the script file.
+//    * @return {void} This function does not return anything.
+//    */
+//   const addScript = (url:string) => {
+//     // Create a new script element
+//     let script    = document.createElement('script');
 
-    // Set the type attribute of the script element to 'text/javascript'
-    script.type   = 'text/javascript';
+//     // Set the type attribute of the script element to 'text/javascript'
+//     script.type   = 'text/javascript';
 
-    // Set the src attribute of the script element to the provided URL
-    script.src    = url;
+//     // Set the src attribute of the script element to the provided URL
+//     script.src    = url;
 
-    // Append the script element to the document body
-    document.body.appendChild(script);
-  }
+//     // Append the script element to the document body
+//     document.body.appendChild(script);
+//   }
 
-  // Wait for all the promises to resolve before continuing
-  await Promise.all(scripts);
+//   // Wait for all the promises to resolve before continuing
+//   await Promise.all(scripts);
 
-  next();
+//   next();
 
-}
+// }
 
-/**
- * Function to add the home theme.
- * 
- * This function adds the necessary CSS and JS files to the home theme.
- * 
- * @return {void} This function does not return anything.
- */
-const addHomeTheme = async (next: any) => {
+// /**
+//  * Function to add the home theme.
+//  * 
+//  * This function adds the necessary CSS and JS files to the home theme.
+//  * 
+//  * @return {void} This function does not return anything.
+//  */
+// const addHomeTheme = async (next: any) => {
 
-  // Define the array of CSS and JS files needed for the home theme
-  const scripts = [
-    '/assets/home/js/jquery.exitintent.js',
-    '/assets/home/js/fly-cart.js',
-    // '/assets/home/js/menu.js',
-    '/assets/home/js/lazysizes.min.js',
-    '/assets/home/js/addtocart.js',
-  ].map( 
-    // Map over the array of URLs and create a promise for each URL
-    async (url) => new Promise( 
-      // Resolve the promise after a delay of 150 milliseconds
-      resolve => setTimeout( async() => resolve(addScript(url)),150)
-    ) 
-  );
+//   // Define the array of CSS and JS files needed for the home theme
+//   const scripts = [
+//     '/assets/home/js/jquery.exitintent.js',
+//     '/assets/home/js/fly-cart.js',
+//     // '/assets/home/js/menu.js',
+//     '/assets/home/js/lazysizes.min.js',
+//     '/assets/home/js/addtocart.js',
+//   ].map( 
+//     // Map over the array of URLs and create a promise for each URL
+//     async (url) => new Promise( 
+//       // Resolve the promise after a delay of 150 milliseconds
+//       resolve => setTimeout( async() => resolve(addScript(url)),150)
+//     ) 
+//   );
 
-  // Define the array of CSS files needed for the home theme
-  const cssFiles = [
-    '/assets/home/css/vendors/themify-icons.css',
-    '/assets/home/css/style.css',
-  ];
+//   // Define the array of CSS files needed for the home theme
+//   const cssFiles = [
+//     '/assets/home/css/vendors/themify-icons.css',
+//     '/assets/home/css/style.css',
+//   ];
 
-  // Add each CSS file to the head of the document
-  cssFiles.forEach( (url) => {
-    let link   = document.createElement('link');
-    link.rel   = 'stylesheet';
-    link.href  = url;
-    document.head.appendChild(link);
-  });
+//   // Add each CSS file to the head of the document
+//   cssFiles.forEach( (url) => {
+//     let link   = document.createElement('link');
+//     link.rel   = 'stylesheet';
+//     link.href  = url;
+//     document.head.appendChild(link);
+//   });
 
-  // Wait for all the promises to resolve before continuing
-  await Promise.all(scripts);
+//   // Wait for all the promises to resolve before continuing
+//   await Promise.all(scripts);
 
-  if( !isEmpty(store.getters.auth) ){
-    const { user: { role } } = store.getters.auth;
-    if( role.state > 0 ){ next({ name: 'Overview'}) }
-    if( role.state == 0 ){ next() }
-  }
+//   if( !isEmpty(store.getters.auth) ){
+//     const { user: { role } } = store.getters.auth;
+//     if( role.state > 0 ){ next({ name: 'Overview'}) }
+//     if( role.state == 0 ){ next() }
+//   }
 
-  if( isEmpty(store.getters.auth) ){
-    next();
-  }
+//   if( isEmpty(store.getters.auth) ){
+//     next();
+//   }
 
-}
+// }
 
-/**
- * Function to add a script tag to the document.
- *
- * Creates a new script element and appends it to the document body.
- * The script element's source is set to the provided URL.
- *
- * @param {string} url - The URL of the script file.
- * @return {void} This function does not return anything.
- */
-const addScript = (url:string) => {
-  // Create a new script element
-  let script    = document.createElement('script');
+// /**
+//  * Function to add a script tag to the document.
+//  *
+//  * Creates a new script element and appends it to the document body.
+//  * The script element's source is set to the provided URL.
+//  *
+//  * @param {string} url - The URL of the script file.
+//  * @return {void} This function does not return anything.
+//  */
+// const addScript = (url:string) => {
+//   // Create a new script element
+//   let script    = document.createElement('script');
 
-  // Set the type attribute of the script element to 'text/javascript'
-  script.type   = 'text/javascript';
+//   // Set the type attribute of the script element to 'text/javascript'
+//   script.type   = 'text/javascript';
 
-  // Set the src attribute of the script element to the provided URL
-  script.src    = url;
+//   // Set the src attribute of the script element to the provided URL
+//   script.src    = url;
 
-  // Append the script element to the document body
-  document.body.appendChild(script);
-}
+//   // Append the script element to the document body
+//   document.body.appendChild(script);
+// }
 
 export default router

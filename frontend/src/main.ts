@@ -30,5 +30,5 @@ app.use(router)
 app.use(api);
 app.use(VueSweetalert2);
 app.use(VueReCaptcha, { siteKey: '6LfUKLkpAAAAAMFo0iomiilG1QUpAkw8Xph5tz-Y' })
-app.use(themes,{ router });
+// app.use(themes,{ router });
 app.mount('#app')

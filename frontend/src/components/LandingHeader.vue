@@ -50,7 +50,7 @@
                             </li>
                             <template v-if="isEmpty(auth)">
                                 <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
-                                <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Overview'})">Dashboard</a></li>
+                                <li class="p-3"><a href="#" @click.prevent="redirectToDashboard">Dashboard</a></li>
                                 <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
                             </template>
                             <template v-if="!isEmpty(auth)">
@@ -283,6 +283,20 @@ const searchProduct = () => {
         query: { name: data.search }
     });
     closeSearch();
+}
+
+/**
+ * Redirects the user to the dashboard.
+ *
+ * This function is responsible for redirecting the user to the
+ * dashboard. It is triggered when the user clicks on the
+ * "Dashboard" link in the header.
+ *
+ * @return {void} This function does not return anything.
+ */
+const redirectToDashboard = () => {
+    // Redirect the user to the dashboard
+    window.location.href = $router.resolve({ name: 'Overview' }).href;
 }
 
 onBeforeMount( () => fetchMenus() );
