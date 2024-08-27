@@ -20,7 +20,7 @@ export default defineConfig( ({command,mode}) => {
         name: 'import-scripts',
         async transformIndexHtml (html: string, app: any){
 
-          if( has(app,'originalUrl') && app.originalUrl.includes('/home') ){
+          if( Object.keys(app).includes('originalUrl') && app.originalUrl.includes('/home') ){
 
             const cssFiles = [
               '/assets/global/css/custom.css',
@@ -62,7 +62,7 @@ export default defineConfig( ({command,mode}) => {
 
           }
 
-          if( has(app,'originalUrl') && app.originalUrl.includes('/dashboard') ){
+          if( Object.keys(app).includes('originalUrl') && app.originalUrl.includes('/dashboard') ){
 
             const cssFiles = [
               '/assets/global/css/custom.css',
