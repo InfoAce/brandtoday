@@ -147,6 +147,7 @@ export class MailService {
 
       // Calculate the total amount of the order.
       let total = sum(order.items.map(item => item.price * item.quantity)).toFixed();
+      
       // Get the base URL of the application.
       let url = this.configService.get<string>('APP_URL');
 

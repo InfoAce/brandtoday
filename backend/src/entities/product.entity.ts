@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
-import { FavouriteEntity, ProductCategoryEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
+import { FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
 
 @Entity("products")
 export class ProductEntity {
@@ -72,6 +72,10 @@ export class ProductEntity {
   @OneToMany( () => FavouriteEntity,(entity) => entity.product, { lazy: true })
   @JoinColumn()
   favourites: FavouriteEntity[];
+
+  @OneToMany( () => OrderItemEntity,(entity) => entity.product, { lazy: true })
+  @JoinColumn()
+  order_items: OrderItemEntity[];
 
   @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { eager: true })
   @JoinColumn()

@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { AddressBookEntity, OrderReviewEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
+import { AddressBookEntity, OrderItemEntity, OrderReviewEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
 import { Seed } from 'nestjs-class-seeder';
 import { TimelineEntity } from './timeline.entity';
 
@@ -31,12 +31,6 @@ export class OrderEntity {
   address_id: string;
 
   @Column({
-    nullable: false,
-    type: 'json'
-  })
-  items: any;
-
-  @Column({
     nullable: false
   })
   num_id: string;
@@ -55,6 +49,10 @@ export class OrderEntity {
     referencedColumnName: "order_id",
   })
   timelines: TimelineEntity[];
+
+  @OneToMany(() => OrderItemEntity, entity => entity.order, { eager: true })
+  @JoinColumn()
+  items: OrderItemEntity[];
 
   @OneToOne(() => TransactionEntity,transaction => transaction.order,{ eager: true })
   transaction: TransactionEntity

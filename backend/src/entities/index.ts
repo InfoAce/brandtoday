@@ -7,6 +7,7 @@ export { FavouriteEntity as FavouriteEntity } from './favourite.entity';
 export { RoleEntity as RoleEntity } from './role.entity';
 export { OrderEntity as OrderEntity } from './order.entity';
 export { OrderReviewEntity as OrderReviewEntity } from './order-review.entity';
+export { OrderItemEntity as OrderItemEntity } from './order-item.entity';
 export { PriceEntity as PriceEntity } from './price.entity';
 export { ProductEntity as ProductEntity } from './product.entity';
 export { ProductCategoryEntity as ProductCategoryEntity } from './product-category.entity';
