@@ -25,4 +25,6 @@ dist-ssr
 *.sln
 *.sw?
 
+dist
+
 vite.config.ts.*
