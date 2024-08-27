@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, resolve, URL } from "url";
 import ViteAddScripts from 'vite-plugin-add-scripts'
 import { sep } from 'path';
+import { has } from 'lodash';
 import * as fs from 'fs';
 
 export default defineConfig( ({command,mode}) => {
@@ -19,7 +20,7 @@ export default defineConfig( ({command,mode}) => {
         name: 'import-scripts',
         async transformIndexHtml (html: string, app: any){
 
-          if( app.originalUrl.includes('/home') ){
+          if( has(app,'originalUrl') && app.originalUrl.includes('/home') ){
 
             const cssFiles = [
               '/assets/global/css/custom.css',
@@ -61,7 +62,7 @@ export default defineConfig( ({command,mode}) => {
 
           }
 
-          if( app.originalUrl.includes('/dashboard') ){
+          if( has(app,'originalUrl') && app.originalUrl.includes('/dashboard') ){
 
             const cssFiles = [
               '/assets/global/css/custom.css',
