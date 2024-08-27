@@ -1,10 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, resolve, URL } from "url";
-import ViteAddScripts from 'vite-plugin-add-scripts'
-import { sep } from 'path';
-import { has } from 'lodash';
-import * as fs from 'fs';
 
 export default defineConfig( ({command,mode}) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -19,7 +15,7 @@ export default defineConfig( ({command,mode}) => {
       {
         name: 'import-scripts',
         async transformIndexHtml (html: string, app: any){
-
+          console.log(Object.keys(app));
           if( Object.keys(app).includes('originalUrl') && app.originalUrl.includes('/home') ){
 
             const cssFiles = [
