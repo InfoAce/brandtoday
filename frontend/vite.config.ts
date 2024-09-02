@@ -7,15 +7,15 @@ import multipleHtml from '@beta-lib/vite-multiple-html';
 export default defineConfig( ({command,mode}) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
-    build:{
-      emptyOutDir: true,
-      rollupOptions: {
-        input: {
-          main:      resolve(__dirname,'index.html'),
-          dashboard: resolve(__dirname,'dashboard.html')
-        }
-      }
-    },
+    // build:{
+    //   emptyOutDir: true,
+    //   rollupOptions: {
+    //     input: {
+    //       main:      resolve(__dirname,'index.html'),
+    //       dashboard: resolve(__dirname,'dashboard.html')
+    //     }
+    //   }
+    // },
     server: {
       proxy: {
         '/images': env.VITE_API_URL.replace('/api/v1', '')
@@ -32,7 +32,7 @@ export default defineConfig( ({command,mode}) => {
               /**
                * you will not need to add script tags in `index.html`, the original tags need to be deleted
                */
-              entry: 'src/main.ts',
+              entry: './src/main.ts',
               /**
                * filename is your html file's name. When you run your project, this will be your Access Name, and it will also be used as the file name of the packaged output HTML
                */
@@ -46,7 +46,7 @@ export default defineConfig( ({command,mode}) => {
             /**
              * you will not need to add script tags in `index.html`, the original tags need to be deleted
              */
-            entry: 'src/main.ts',
+            entry: './src/main.ts',
             /**
              * filename is your html file's name. When you run your project, this will be your Access Name, and it will also be used as the file name of the packaged output HTML
              */
