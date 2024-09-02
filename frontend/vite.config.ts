@@ -4,9 +4,6 @@ import { fileURLToPath, URL } from "url";
 import { resolve } from 'path';
 import Pages from 'vite-plugin-pages'
 
-const root   = resolve(__dirname,'src');
-const outdir = resolve(__dirname,'dist');
-
 export default defineConfig( ({command,mode}) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
@@ -14,8 +11,8 @@ export default defineConfig( ({command,mode}) => {
       emptyOutDir: true,
       rollupOptions: {
         input: {
-          home:      resolve(root,'home','index.html'),
-          dashboard: resolve(root,'dashboard','index.html')
+          home:      resolve(__dirname,'home','index.html'),
+          dashboard: resolve(__dirname,'dashboard','index.html')
         }
       }
     },
