@@ -102,4 +102,4 @@ watch(
 .text-theme {
 	color: #7e1414 !important;
 }
-</style>
+</style>../src/components

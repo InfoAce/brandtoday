@@ -85,18 +85,19 @@
                         <div class="primary-box card-body">
                             <div class="media static-top-widget align-items-center">
                                 <div class="icons-widgets">
-                                    <div class="align-self-center text-center"><i data-feather="message-square"
-                                            class="font-primary"></i></div>
+                                    <div class="align-self-center text-center"> <i data-feather="box" class="font-secondary"></i></div>
                                 </div>
-                                <div class="media-body media-doller"><span class="m-0">Messages</span>
-                                    <h3 class="mb-0">$ <span class="counter">893</span><small> This
-                                            Month</small></h3>
+                                <div class="media-body media-doller"><span class="m-0"></span>
+                                    <span class="m-0">Pending Orders</span>
+                                    <h3 class="mb-0">
+                                        {{  $data.summary.pending_orders }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 xl-50">
+                <!-- <div class="col-xl-3 col-md-6 xl-50">
                     <div class="card order-graph sales-carousel">
                         <div class="card-header b-header">
                             <h6>Total Sales</h6>
@@ -252,7 +253,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-sm-12">
                     <div class="card">
                         <div class="card-header">

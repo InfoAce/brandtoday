@@ -106,6 +106,44 @@
                             <p class="text-danger col col-12 mb-0" v-show="$has(errors,'logo')">{{errors.logo}}</p>								
                         </div>
                         <div class="col-12">
+                            <label>Company White Logo</label>
+                            <template v-if="!$isEmpty(company.white_logo) && !edit.white_logo && $isEmpty(form.white_logo)">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <img :src="company.white_logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
+                                </div>
+                            </template>
+                            <template v-if="!$isEmpty(form.white_logo) && !edit.white_logo">
+                                <div class="col-12 d-flex flex-column align-items-center">
+                                    <div class="bg-theme p-4 col-12 d-flex flex-column">
+                                        <img :src="form.white_logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    </div>
+                                    <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
+                                </div>
+                            </template>                                 
+                            <template v-if="edit.white_logo && !$isEmpty(images.white_logo) && $isEmpty(form.white_logo)">
+                                <div class="col-12">
+                                    <VuePictureCropper                                
+                                        :boxStyle="cropBorderStyle"
+                                        :img="images.white_logo"
+                                        :options="logoCroppingOption"
+                                        :presetMode="logoPresetMode"
+                                    />          
+                                    <div class="d-flex justify-content-between mt-2 col-12">                         
+                                        <button class="btn btn-primary ml-2" type="button" @click="selectCrop('white_logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>
+                                        <button class="btn btn-primary ml-2" type="button" @click="images.white_logo = String()">Cancel</button>
+                                    </div> 
+                                </div>
+                            </template>
+                            <template v-if="edit.white_logo && $isEmpty(images.white_logo) && $isEmpty(form.white_logo) || $isNull(company.white_logo) && $isEmpty(images.white_logo) && $isEmpty(form.white_logo)">
+                                <div class="col-12 d-flex justify-content-center p-4" style="border: 3px solid #ededed;">
+                                    <h1><i class="fa fa-building fa-lg"></i></h1>
+                                </div>
+                                <input class="form-control mt-2" type="file" @change="onFileChange($event,'white_logo')" />
+                            </template> 
+                            <p class="text-danger col col-12 mb-0" v-show="$has(errors,'white_logo')">{{errors.white_logo}}</p>								
+                        </div>
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="first_name">Name</label>
                                 <input class="form-control" id="name" type="text" v-model="company.name" >
@@ -203,7 +241,7 @@ export default {
         logoCroppingOption: () => ({
             viewMode: 1,
             dragMode: 'move',
-            aspectRatio: 21 / 9,
+            aspectRatio: 16 / 8,
             cropBoxResizable: false
         }),
         cropBorderStyle: () => ({
@@ -227,7 +265,8 @@ export default {
         return {
             edit: {
                 icon: false,
-                logo: false
+                logo: false,
+                white_logo: false
             },
             errors: {},
             company: {
@@ -236,19 +275,23 @@ export default {
                 email:        String(),
                 icon:         String(),
                 logo:         String(),
+                white_logo:   String(),
                 phone_number: String(),
             },
             images: {
                 icon: false,
-                logo: false
+                logo: false,
+                white_logo: false
             },
             form:{
                 logo: String(),
+                white_logo: String(),
                 icon: String()
             },
             loading:{
                 icon:     Boolean(),
                 logo:     Boolean(),
+                white_logo: Boolean(),
                 updating: Boolean()
             },      
             isDisabled: true
@@ -265,6 +308,9 @@ export default {
                                 .required("*Address is required"),
             name:             yup.string()
                                  .required("*Name is required"),  
+            logo:             yup.string()
+                                 .required("*Logo is required")
+                                 .test( val => isNull(val)),  
             logo:             yup.string()
                                  .required("*Logo is required")
                                  .test( val => isNull(val)),  
@@ -295,6 +341,11 @@ export default {
                 this.images.logo = await this.getImageFile(event.target);
                 this.edit.logo   = true;
             }
+            if( type == 'white_logo'){
+                // Get the selected file and retrieve its data URL using the getImageFile function
+                this.images.white_logo = await this.getImageFile(event.target);
+                this.edit.white_logo   = true;
+            }
             if( type == 'icon'){
                 // Get the selected file and retrieve its data URL using the getImageFile function
                 this.images.icon = await this.getImageFile(event.target);
@@ -315,6 +366,9 @@ export default {
                 
                 // Activate icon loading
                 if( category == 'icon'){ this.loading.icon = Boolean(true) }
+
+                // Activate icon loading
+                if( category == 'white_logo'){ this.loading.white_logo = Boolean(true) }
                 
                 // Check if the cropper is available
                 if (!cropper) return;
@@ -351,6 +405,15 @@ export default {
                     this.images.icon  = String();
                     this.edit.icon    = Boolean();
                     this.loading.icon = Boolean();
+                }
+
+                if( category == 'white_logo'){
+                    // Update the form with the path of the uploaded image
+                    this.form.white_logo    = location;
+                    // Reset the picked image
+                    this.images.white_logo  = String();
+                    this.edit.white_logo    = Boolean();
+                    this.loading.white_logo = Boolean();
                 }
             } catch (error) {
                 // Handle any errors that occur during the process

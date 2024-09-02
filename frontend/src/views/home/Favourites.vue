@@ -132,4 +132,4 @@ const moveToCart = (favourite: any) => {
 }
 
 onBeforeMount( () => fetch() );
-</script>
+</script>../../src/components

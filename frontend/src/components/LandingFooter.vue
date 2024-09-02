@@ -11,7 +11,7 @@
                             </div>
                             <div class="footer-contant">
                                 <div class="footer-logo" v-show="!isEmpty(home.company)">
-                                    <img v-if="isNull(home.company.logo)" src="/assets/home/images/icon/logo.png" :alt="home.company.name">
+                                    <img v-if="isNull(home.company.logo)" src="../../public/assets/home/images/icon/logo.png" :alt="home.company.name">
                                     <img v-else :src="home.company.logo" width="200" :alt="home.company.name">
                                 </div>
                             </div>
@@ -157,7 +157,7 @@
                                     <div class="modal-bg">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <div class="offer-content"> <img src="/assets/home/images/Offer-banner.png"
+                                        <div class="offer-content"> <img src="../../public/assets/home/images/Offer-banner.png"
                                                 class="img-fluid blur-up lazyload" alt="">
                                             <h2>newsletter</h2>
                                             <form

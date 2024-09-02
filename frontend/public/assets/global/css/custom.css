@@ -2,3 +2,7 @@
 .text-end {
     text-align: end !important;
 }
+
+.bg-theme {
+    background-color: #7e1414 !important;
+}

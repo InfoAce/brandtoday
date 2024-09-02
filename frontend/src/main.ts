@@ -19,7 +19,7 @@ import { VueReCaptcha } from 'vue-recaptcha-v3';
 import storage from './storage';
 
 import "skeleton-screen-css";
-import themes from './theme';
+// import themes from './theme';
 
 const app = createApp(App)
 

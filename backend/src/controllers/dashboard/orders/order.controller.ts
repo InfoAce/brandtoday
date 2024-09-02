@@ -29,8 +29,8 @@ export class DashboardOrderController {
   @UseGuards(AdminGuard)
   @Get('')  
   async index(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) queryPage: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) queryPerPage: number = 10,
     @Req() req: Request,  
     @Res() res: Response
   ) {
@@ -38,7 +38,7 @@ export class DashboardOrderController {
     try {
 
       // Paginate orders based on the provided query parameters
-      let orders = await this.orderModel.paginate({ page, limit });
+      let orders = await this.orderModel.find({ skip: (queryPage - 1) * (queryPerPage + 1), take: queryPerPage, relations: ['user'] });
 
       // Send the paginated list of orders as a JSON response
       return res.status(HttpStatus.OK).json({ orders });

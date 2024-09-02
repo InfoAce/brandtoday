@@ -55,11 +55,11 @@
                                       </tr>
                                   </thead>
                                   <tbody>
-                                    <template v-if="!isEmpty($data.orders.items)">
-                                        <tr v-for="(order,index) in $data.orders.items" :key="index">
+                                    <template v-if="!isEmpty($data.orders)">
+                                        <tr v-for="(order,index) in $data.orders" :key="index">
                                           <td>{{ index + 1 }}</td>
                                           <td> {{ order.num_id }}</td>
-                                          <td></td>
+                                          <td>{{ order.__user__.first_name }} {{ order.__user__.last_name }}</td>
                                           <td>{{ order.items.length }}</td>
                                           <td>KSH {{ order.total }}</td>
                                           <td>{{ order.status }}</td>
@@ -83,7 +83,7 @@
                           </div>
                           <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.orders)">
                               <paginate
-                                  :page-count="$data.orders.meta.totalPages"
+                                  :page-count="$data.page"
                                   :click-handler="fetchPaginate"
                                   :prev-text="'Prev'"
                                   :next-text="'Next'"
@@ -126,6 +126,8 @@ const $isNull  = isNull;
 const $data    = reactive({
     orders: Object(),
     errors: Object(),
+    page:    1,
+    perPage: 10,
     form:{ 
         first_name: String(), 
         last_name:  String(), 
@@ -179,13 +181,12 @@ const validateForm = (field) => {
  * @param field 
  * @returns {void}
  */
-const fetch = (params = { page: 1, limit: 10}) => {
+const fetchOrders = () => {
     $store.commit('loader',true);
-    let { page, limit } = params,url = `/dashboard/orders?page=${page}&limit=${limit}`;
-    $api.get(url)
+    $api.get(`/dashboard/orders?page=${$data.page}&limit=${$data.perPage}`)
         .then( ({ data:{ orders } }) => {
-            $data.orders       = cloneDeep(orders)
-            $data.orders.items = $data.orders.items.map( order => {
+            $data.orders = cloneDeep(orders)
+            $data.orders = orders.map( order => {
                 order.total = sum(order.items.map( item => item.price * item.quantity ));
                 return order;
             });
@@ -237,10 +238,10 @@ const updateEditModal = () => {
 }
 
 const fetchPaginate = () => {
-    console.log(arguments);
+    fetchOrders()
 }
 
-onBeforeMount(() => fetch());
+onBeforeMount(() => fetchOrders());
 </script>
 
 <style scoped>

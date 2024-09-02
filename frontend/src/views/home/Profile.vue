@@ -31,7 +31,7 @@
                     <div class="dashboard-sidebar">
                         <div class="profile-top">
                             <div class="profile-image">
-                                <img src="/assets/home/images/avtar.jpg" alt="" class="img-fluid">
+                                <img src="../../../public/assets/home/images/avtar.jpg" alt="" class="img-fluid">
                             </div>
                             <div class="profile-detail">
                                 <h5>{{ user.first_name }} {{ user.last_name }}</h5>

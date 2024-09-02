@@ -1538,7 +1538,7 @@ button {
 .btn-solid:hover {
     background-position: 100%;
     color: var(--theme-color);
-    background-color: #fff
+    background-color: #fff;
     border: 2px solid var(--theme-color);
 }
 
@@ -3924,7 +3924,7 @@ button.btn.btn-outline:active {
 .classic-effect:before {
     left: 0;
     -webkit-transition-delay: 0s;
-    transition-delay: 0s
+    transition-delay: 0s;
     width: 100%;
 }
 

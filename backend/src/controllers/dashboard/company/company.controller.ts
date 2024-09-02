@@ -19,7 +19,7 @@ export class CompanyController {
 
             let company = await this.companyModel.findOne({ id: get(req,'user').company_id });
 
-            res.status(HttpStatus.OK).json({ company: pick(company,['id','name','address','logo','icon','email','phone_number']) });
+            res.status(HttpStatus.OK).json({ company: pick(company,['id','name','address','logo','white_logo','icon','email','phone_number']) });
 
         } catch(error) {
 

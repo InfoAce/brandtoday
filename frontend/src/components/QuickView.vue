@@ -11,7 +11,7 @@
                         <div class="col-lg-6 col-xs-12">
                             <div class="quick-view-img" v-show="$isEmpty(selections.colour)">                                          
                                 <img :src="product.images[0].urls[0].url" v-if="!$isEmpty(product.images)" alt="" class="img-fluid blur-up lazyload">
-                                <img src="/assets/home/images/pro3/1.jpg" v-else alt="" class="img-fluid blur-up lazyload">
+                                <img src="../../public/assets/home/images/pro3/1.jpg" v-else alt="" class="img-fluid blur-up lazyload">
                             </div>
                             <div class="quick-view-img"  v-if="$has(selections,'colour') && !$isEmpty(selections.colour)">                                          
                                 <img :src="selections.colour.images[0].urls[0].url" alt="" class="img-fluid blur-up lazyload">

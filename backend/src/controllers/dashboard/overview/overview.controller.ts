@@ -10,6 +10,8 @@ import { MailService } from 'src/services';
 import { PesapalService } from 'src/services/pesapal/pesapal.service';
 import { stat } from 'fs';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
+import { OrderRepository } from 'src/repositories';
+import { OrderEntity } from 'src/entities';
 
 @Controller('dashboard/overview')
 export class OverviewController {
@@ -18,7 +20,7 @@ export class OverviewController {
 
   constructor(
     private orderModel: OrderModel,
-    private userModel: UserModel
+    private userModel: UserModel,
   ){}
 
   @UseGuards(AdminGuard)
@@ -33,9 +35,11 @@ export class OverviewController {
       let [ clients, clientsCount ] = await this.userModel.findAndCount({ where: { role: { name: 'client' } } });
       let [ staff,   staffCount   ] = await this.userModel.findAndCount({ where: { role: { name: 'staff' } } });
       let [ orders,  ordersCount  ] = await this.orderModel.findAndCount();
+      
+      let pending_orders: number    = orders.filter(order => order.status == 'pending').length 
 
       return res.status(HttpStatus.OK).json({ 
-        summary: { clients: clientsCount, staff: staffCount, orders: ordersCount } 
+        summary: { clients: clientsCount, staff: staffCount, orders: ordersCount, pending_orders}, 
       });
 
     } catch (error) {

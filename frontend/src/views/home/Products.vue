@@ -188,7 +188,7 @@
     </div>
 </template>
 <style scoped>
-@import '/assets/home/css/vendors/price-range.css';
+@import '../../../public/assets/home/css/vendors/price-range.css';
 </style>
 <script>
 import { cloneDeep, first, get,isEmpty, isNull, has, times } from 'lodash';
@@ -434,4 +434,4 @@ export default {
         },
     }
 }
-</script>
+</script>../../src/components
