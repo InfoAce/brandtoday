@@ -10,6 +10,7 @@
     "start": "vite --port=8080 --host"
   },
   "dependencies": {
+    "@beta-lib/vite-multiple-html": "^1.0.1",
     "@jaxtheprime/vue3-dropzone": "^2.6.0",
     "@techie04/vue3-phonenumber-input": "^0.0.7",
     "@unhead/vue": "^1.8.10",
