@@ -47,7 +47,8 @@ export class CompanyEntity {
   logo: string;
 
   @Column({
-    nullable: true
+    nullable: true,
+    type: 'text'
   })
   white_logo: string;
 
