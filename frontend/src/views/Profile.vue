@@ -30,8 +30,8 @@
                 <div class="col-lg-3">
                     <div class="dashboard-sidebar">
                         <div class="profile-top">
-                            <div class="profile-image">
-                                <img src="../../../public/assets/home/images/avtar.jpg" alt="" class="img-fluid">
+                            <div class="profile-image text-center">
+                                <i class="fa fa-user-circle fa-8x"></i>
                             </div>
                             <div class="profile-detail">
                                 <h5>{{ user.first_name }} {{ user.last_name }}</h5>

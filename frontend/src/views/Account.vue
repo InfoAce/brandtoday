@@ -3,30 +3,21 @@
     <div class="counter-section">
         <div class="row">
             <div class="col-md-4">
-                <div class="counter-box">
-                    <img src="../../../public/assets/home/images/icon/dashboard/sale.png" class="img-fluid">
-                    <div>
-                        <h3>{{ user.order_count }}</h3>
-                        <h5>Total Order</h5>
-                    </div>
+                <div class="counter-box text-theme">
+                    <h3>{{ user.order_count }}</h3>
+                    <h5><span class="fa fa-box fa-lg m-2"></span>Total Order</h5>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="counter-box">
-                    <img src="../../../public/assets/home/images/icon/dashboard/homework.png" class="img-fluid">
-                    <div>
-                        <h3>{{ user.pending_order_count }}</h3>
-                        <h5>Pending Orders</h5>
-                    </div>
+                    <h3>{{ user.pending_order_count }}</h3>
+                    <h5><span class="fa fa-cart-arrow-down fa-lg m-2"></span>Pending Order</h5>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="counter-box">
-                    <img src="../../../public/assets/home/images/icon/dashboard/order.png" class="img-fluid">
-                    <div>
-                        <h3>{{ user.favourite_count }}</h3>
-                        <h5>Wishlist</h5>
-                    </div>
+                    <h3>{{ user.favourite_count }}</h3>
+                    <h5><span class="fa fa-heart fa-lg m-2"></span>Whislist</h5>
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@
                             </li>
                             <li class="onhover-div mobile-search p-3">
                                 <div>
-                                    <a href="#" @click.prevent="openSearch"><i class="ti-search"></i></a>
+                                    <a href="#" @click.prevent="openSearch"><i class="fa fa-magnifying-glass"></i></a>
                                 </div>
                                 <div id="search-overlay" class="search-overlay">
                                     <div> 
@@ -44,7 +44,7 @@
                             </li>
                             <li class="mobile-cart p-3" style="position: relative;">
                                 <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
-                                    <i class="ti-shopping-cart"></i>
+                                    <i class="fa fa-shopping-cart"></i>
                                     <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span>
                                 </a>
                             </li>
@@ -56,7 +56,7 @@
                             <template v-if="!isEmpty(auth)">
                                 <li class="p-3">
                                     <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
-                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
                                         <span>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
                                     </a>
                                 </li>
