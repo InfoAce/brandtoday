@@ -136,53 +136,13 @@
 
 
         <!-- cookie bar start -->
-        <!-- <div class="cookie-bar">
+        <div class="cookie-bar">
             <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you accept
                 our cookie policy.</p>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">accept</a>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">decline</a>
-        </div> -->
-        <!-- cookie bar end -->
-
-
-        <!--modal popup start-->
-        <div class="modal fade bd-example-modal-lg theme-modal" id="exampleModal" tabindex="-1" role="dialog"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body modal1">
-                        <div class="container-fluid p-0">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="modal-bg">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <div class="offer-content"> <img src="../../public/assets/home/images/Offer-banner.png"
-                                                class="img-fluid blur-up lazyload" alt="">
-                                            <h2>newsletter</h2>
-                                            <form
-                                                action="https://pixelstrap.us19.list-manage.com/subscribe/post?u=5a128856334b598b395f1fc9b&amp;id=082f74cbda"
-                                                class="auth-form needs-validation" method="post"
-                                                id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form"
-                                                target="_blank">
-                                                <div class="form-group mx-sm-3">
-                                                    <input type="email" class="form-control" name="EMAIL" id="mce-EMAIL"
-                                                        placeholder="Enter your email" required="required">
-                                                    <button type="submit" class="btn btn-solid"
-                                                        id="mc-submit">subscribe</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <!--modal popup end-->
-
+        <!-- cookie bar end -->
 
         <!-- theme setting -->
         <div class="theme-settings">
@@ -193,29 +153,6 @@
             </ul>
         </div>
         <!-- theme setting -->
-
-
-
-        <!-- facebook chat section start -->
-        <!-- <div id="fb-root"></div>
-        <script>
-            (function (d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s);
-                js.id = id;
-                js.src =
-                    'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1';
-                fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-        </script> -->
-        <!-- Your customer chat code -->
-        <!-- <div class="fb-customerchat" attribution=setup_tool page_id="2123438804574660" theme_color="#0084ff"
-            logged_in_greeting="Hi! Welcome to PixelStrap Themes  How can we help you?"
-            logged_out_greeting="Hi! Welcome to PixelStrap Themes  How can we help you?">
-        </div> -->
-        <!-- facebook chat section end -->
-
 
         <!-- tap to top -->
         <div class="tap-top top-cls">
