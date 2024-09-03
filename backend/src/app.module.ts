@@ -59,11 +59,11 @@ import { TimelineEntity } from './entities/timeline.entity';
         console.log(configService.get<string>('app'))
         return {
           type:        "mysql",
-          host:        configService.get<string>('DB_HOST'),
-          port:        parseInt(configService.get<string>('DB_PORT')),
-          database:    configService.get<string>('DB_DATABASE'),
-          username:    configService.get<string>('DB_USERNAME'),
-          password:    configService.get<string>('DB_PASSWORD'),
+          host:        configService.get<string>('app.DB_HOST'),
+          port:        parseInt(configService.get<string>('app.DB_PORT')),
+          database:    configService.get<string>('app.DB_DATABASE'),
+          username:    configService.get<string>('app.DB_USERNAME'),
+          password:    configService.get<string>('app.DB_PASSWORD'),
           entities:    [
             AddressBookEntity,
             BrandEntity,
