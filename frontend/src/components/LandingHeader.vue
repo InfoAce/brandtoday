@@ -104,9 +104,10 @@
                     <div class="col-12 px-0" >
                             <div id="main-menu" class="d-flex w-100 justify-content-between align-items-center">
                                 <div class="menu-left">
-                                    <div class="brand-logo">
+                                    <div class="brand-logo text-center">
                                         <a @click.prevent="$router.push({ name: 'Home' })">
-                                            <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
+                                            <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
+                                            <img v-else :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
                                         </a>
                                     </div>
                                 </div>                                     
