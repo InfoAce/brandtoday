@@ -163,7 +163,7 @@ const login = () => {
 }
 
 const redirectToHome = () => {
-	window.location.href = router.resolve({ name: 'Home' }).href;
+	window.location.href = store.getters.env.VITE_HOME_URL;
 };
 
 watch(

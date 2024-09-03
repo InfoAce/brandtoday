@@ -19,7 +19,8 @@
 			</div>
 			
 			<a href="#" class="brand-logo">
-				<img src="/assets/img/logo.png" alt="" height="20" />
+				<i class="fa fa-laptop"></i>
+				<!-- <img src="/assets/img/logo.png" alt="" height="20" /> -->
 			</a>
 		</div>
 		<!-- END brand -->
@@ -67,7 +68,7 @@
 			<div class="menu-item dropdown">
 				<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
 					<div class="menu-img online">
-						<img src="/assets/img/user/user.jpg" alt="" class="ms-100 mh-100 rounded-circle" />
+						<i class="fa fa-user"></i>
 					</div>
 					<div class="menu-text">johnsmith@vuestudio.com</div>
 				</a>

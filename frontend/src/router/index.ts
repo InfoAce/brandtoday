@@ -6,20 +6,115 @@ const router = createRouter({
   history: createWebHistory(get(store,'BASE_URL')),
   routes: [
     {
-      path: '',
-      component: () => import('@/views/layouts/Landing.vue'),
+      path: '/',
+      name: "Home",
+      meta: {
+        title: 'Home',
+        auth: false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/Index.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: "Error404",
+      meta: {
+        title: 'Not Found',
+        auth: false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/Error404.vue')
+    }, 
+    {
+      path: '/login',
+      name: "Login",
+      meta: {
+        title: 'Login',
+        auth:   false,
+        redirectIfAuth: true,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/Login.vue')
+    },
+    {
+      path: '/about-us',
+      name: "AboutUs",
+      meta: {
+        title: 'Get to Know Us',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/AboutUs.vue')
+    },
+    {
+      path: '/privacy-policy',
+      name: "PrivacyPolicy",
+      meta: {
+        title: 'Privacy Policy',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/PrivacyPolicy.vue')
+    },
+    {
+      path: '/return-refunds',
+      name: "ReturnRefunds",
+      meta: {
+        title: 'Return Refunds',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/ReturnRefunds.vue')
+    }, 
+    {
+      path: '/terms-conditions',
+      name: "TermsAndConditions",
+      meta: {
+        title: 'Terms & Conditions',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/TermsAndConditions.vue')
+    }, 
+    {
+      path: '/brands',
+      name: "Brands",
+      meta: {
+        title: 'Our Brands',
+        auth:  false,
+        redirectIfAuth: false,
+        state: 0,
+        admin: false
+      },
+      component: () => import('@/views/Brands.vue')
+    },  
+    {
+      path: '/category',
       children: [
         {
-          path: '',
-          name: "Home",
+          path: ':category',
+          name: "Category",
           meta: {
-            title: 'Home',
-            auth: false,
+            title: 'Product Category',
+            auth:  false,
             redirectIfAuth: false,
-            state:  0,
+            state: 0,
             admin: false
           },
-          component: () => import('@/views/home/Index.vue')
+          component: () => import('@/views/Category.vue')
         },
         {
           path: ':pathMatch(.*)*',
@@ -31,473 +126,190 @@ const router = createRouter({
             state:  0,
             admin: false
           },
-          component: () => import('@/views/home/Error404.vue')
+          component: () => import('@/views/Error404.vue')
         }, 
-        {
-          path: 'login',
-          name: "Login",
-          meta: {
-            title: 'Login',
-            auth:   false,
-            redirectIfAuth: true,
-            state:  0,
-            admin: false
-          },
-          component: () => import('@/views/home/Login.vue')
-        },
-        {
-          path: 'about-us',
-          name: "AboutUs",
-          meta: {
-            title: 'Get to Know Us',
-            auth:   false,
-            redirectIfAuth: false,
-            state:  0,
-            admin: false
-          },
-          component: () => import('@/views/home/AboutUs.vue')
-        },
-        {
-          path: 'privacy-policy',
-          name: "PrivacyPolicy",
-          meta: {
-            title: 'Privacy Policy',
-            auth:   false,
-            redirectIfAuth: false,
-            state:  0,
-            admin: false
-          },
-          component: () => import('@/views/home/PrivacyPolicy.vue')
-        },
-        {
-          path: 'return-refunds',
-          name: "ReturnRefunds",
-          meta: {
-            title: 'Return Refunds',
-            auth:   false,
-            redirectIfAuth: false,
-            state:  0,
-            admin: false
-          },
-          component: () => import('@/views/home/ReturnRefunds.vue')
-        }, 
-        {
-          path: 'terms-conditions',
-          name: "TermsAndConditions",
-          meta: {
-            title: 'Terms & Conditions',
-            auth:   false,
-            redirectIfAuth: false,
-            state:  0,
-            admin: false
-          },
-          component: () => import('@/views/home/TermsAndConditions.vue')
-        }, 
-        {
-          path: 'brands',
-          name: "Brands",
-          meta: {
-            title: 'Our Brands',
-            auth:  false,
-            redirectIfAuth: false,
-            state: 0,
-            admin: false
-          },
-          component: () => import('@/views/home/Brands.vue')
-        },  
-        {
-          path: 'category',
-          children: [
-            {
-              // beforeEnter(to,from,next){
-              //   // window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
-              //   next();
-              // },
-              path: ':category',
-              name: "Category",
-              meta: {
-                title: 'Product Category',
-                auth:  false,
-                redirectIfAuth: false,
-                state: 0,
-                admin: false
-              },
-              component: () => import('@/views/home/Category.vue')
-            },
-            {
-              path: ':pathMatch(.*)*',
-              name: "Error404",
-              meta: {
-                title: 'Not Found',
-                auth: false,
-                redirectIfAuth: false,
-                state:  0,
-                admin: false
-              },
-              component: () => import('@/views/home/Error404.vue')
-            }, 
-          ],
-          component: RouterView
-        },          
-        {
-          path: 'shopping',
-          children: [
-            {
-              path: 'cart',
-              name: "Cart",
-              meta: {
-                title: 'Cart',
-                auth:   false,
-                redirectIfAuth: false,
-                state:  0,
-                admin: false
-              },
-              component: () => import('@/views/home/Cart.vue')
-            },  
-            {
-              path:'checkout',
-              children: [
-                {
-                  path: '',
-                  name: "Checkout",
-                  meta: {
-                    title: 'Checkout',
-                    auth:   false,
-                    redirectIfAuth: false,
-                    state:  0,
-                    admin:  false
-                  },
-                  component: () => import('@/views/home/Checkout.vue')
-                },
-                {
-                  path: ':order/success',
-                  name: "OrderSuccess",
-                  meta: {
-                    title: 'Order Success',
-                    auth:   false,
-                    redirectIfAuth: false,
-                    state:  0,
-                    admin:  false
-                  },
-                  component: () => import('@/views/home/OrderSuccess.vue')
-                },
-              ],
-              component: RouterView
-            }               
-          ],
-          component: RouterView
-        },         
-        {
-          path: 'products',
-          children: [
-            {
-              path: ':category',
-              children:[
-                {
-                  path: ':sub_category',
-                  name: "Products",
-                  meta: {
-                    title: 'Products',
-                    auth: false,
-                    redirectIfAuth: false,
-                    state:  0,
-                    admin: false
-                  },
-                  component: () => import('@/views/home/Products.vue')
-                }
-              ],
-              component: RouterView
-            },
-            {
-              path: 'view/:product',
-              name: "Product",
-              meta: {
-                title: 'Product',
-                auth:   false,
-                state:  0,
-                redirectIfAuth: false,
-                admin: false
-              },
-              component: () => import('@/views/home/Product.vue')
-            },
-          ]
-        },   
-        {
-          path: 'signup',
-          name: "Signup",
-          meta: {
-            title: 'Signup',
-            auth: false,
-            state:  0,
-            redirectIfAuth: true,
-            admin: false
-          },
-          component: () => import('@/views/home/Signup.vue')
-        },  
-        {
-          path: 'verify',
-          children: [
-            {
-              path: 'email/:token',
-              name: "VerifyEmail",
-              meta: {
-                title: 'Email Verification',
-                auth: false,
-                state:  0,
-                redirectIfAuth: false,
-                admin: false
-              },
-              component: () => import('@/views/home/Verify.vue')
-            }
-          ],
-          component: RouterView
-        },  
-        {
-          path: 'account',
-          children: [
-            {
-              path: 'profile',
-              name: "AccountProfile",
-              meta: {
-                title: 'Account Profile',
-                auth: true,
-                state:  0,
-                redirectIfAuth: false,
-                admin: false
-              },
-              component: () => import('@/views/home/Account.vue')
-            },
-            {
-              path: 'orders',
-              name: "AccountOrders",
-              meta: {
-                title: 'Client Orders',
-                auth: true,
-                state:  0,
-                redirectIfAuth: false,
-                admin: false
-              },
-              component: () => import('@/views/home/Orders.vue')
-            },
-            {
-              path: 'addresses',
-              name: "AddressBook",
-              meta: {
-                title: 'Address Book',
-                auth:   true,
-                state:  0,
-                redirectIfAuth: false,
-                admin:  false
-              },
-              component: () => import('@/views/home/AddressBook.vue')
-            },
-            {
-              path: 'favourites',
-              name: "AccountFavourites",
-              meta: {
-                title: 'Favourites',
-                auth: true,
-                state:  0,
-                redirectIfAuth: false,
-                admin: false
-              },
-              component: () => import('@/views/home/Favourites.vue')
-            },
-            {
-              path: 'security',
-              name: "AccountSecurity",
-              meta: {
-                title: 'Client Security',
-                auth: true,
-                redirectIfAuth: false,
-                state:  0,
-                admin: false
-              },
-              component: () => import('@/views/home/Security.vue')
-            }
-          ],
-          component: () => import('@/views/home/Profile.vue')
-        },  
-      ]
-    },
-    {
-      path: '/dashboard',
-      // async beforeEnter(to,from,next){
-      //   await new Promise((resolve) => resolve(addDashbordTheme(next)));
-      // },
-      children:[
-        {
-          beforeEnter(to,from,next){
-            if( !isEmpty(store.getters.auth) ){
-              next({ name: 'Overview' });
-            }
-
-            if( isEmpty(store.getters.auth) ){
-              next();
-            }
-          },
-          path: 'login',
-          name: "AdminLogin",
-          meta: {
-            title: 'Dashboard Login',
-            state: 1,
-            auth:  false,
-            redirectIfAuth: true,
-            admin: true
-          },
-          component: () => import('@/views/dashboard/Login.vue')
-        }, 
-        {
-          path: 'verify',
-          children:[
-            {
-              path: '',
-              redirect: '/dashboard/verify/error'
-            },
-            {
-              path: ':token',
-              name: 'VerifyAccount',
-              meta: {
-                title: 'Verify Account',
-                auth:  false,
-                state: 0,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/VerifyAccount.vue')
-            },
-            {
-              path: 'error',
-              name: "VerifyError404",
-              meta: {
-                title: 'Not Found',
-                auth:  false,
-                redirectIfAuth: false,
-                state: 0,
-                admin: false
-              },
-              component: () => import('@/views/dashboard/VerifyError.vue')
-            },
-          ],
-          component: RouterView
-        },      
-        {
-          beforeEnter(to,from,next){
-            if( !isEmpty(store.getters.auth) ){
-              next();
-            }
-
-            if( isEmpty(store.getters.auth) ){
-              next({ name: 'AdminLogin'});
-            }
-          },
-          path:'',
-          children: [
-            {
-              beforeEnter(to,from,next){
-                next();
-              },
-              path: '',
-              name: "Overview",
-              meta: {
-                title:     'Overview',
-                auth:  true,
-                redirectIfAuth: false,
-                state: 1,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Overview.vue')
-            },      
-            {
-              path: 'clients',
-              name: "Clients",
-              meta: {
-                title: 'Clients',
-                auth:  true,
-                state: 1,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Clients.vue')
-            },
-            {
-              path: 'orders',
-              name: "Orders",
-              meta: {
-                title: 'Orders',
-                auth:  true,
-                redirectIfAuth: false,
-                state: 1,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Orders.vue')
-            },
-            {
-              path: 'staff',
-              name: "Staff",
-              meta: {
-                title: 'Staff Members',
-                auth:  true,
-                state: 2,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Staff.vue')
-            },
-            {
-              path: 'company',
-              name: "Company",
-              meta: {
-                title: 'Company',
-                auth:  true,
-                state: 2,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Company.vue')
-            },
-            {
-              path: 'website',
-              name: "Website",
-              meta: {
-                title: 'Website Setup',
-                auth:  true,
-                state: 2,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Website.vue')
-            },        
-            {
-              path: 'profile',
-              name: "Profile",
-              meta: {
-                title: 'Profile',
-                auth:  true,
-                state: 1,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/Profile.vue')
-            },       
-            {
-              path: 'system',
-              name: "System",
-              meta: {
-                title: 'System',
-                auth:  true,
-                state: 3,
-                redirectIfAuth: false,
-                admin: true
-              },
-              component: () => import('@/views/dashboard/System.vue')
-            },
-          ],
-          component: () => import('@/views/layouts/Dashboard.vue')
-        },                                  
       ],
       component: RouterView
-    }
+    },          
+    {
+      path: '/shopping',
+      children: [
+        {
+          path: 'cart',
+          name: "Cart",
+          meta: {
+            title: 'Cart',
+            auth:   false,
+            redirectIfAuth: false,
+            state:  0,
+            admin: false
+          },
+          component: () => import('@/views/Cart.vue')
+        },  
+        {
+          path:'checkout',
+          children: [
+            {
+              path: '',
+              name: "Checkout",
+              meta: {
+                title: 'Checkout',
+                auth:   false,
+                redirectIfAuth: false,
+                state:  0,
+                admin:  false
+              },
+              component: () => import('@/views/Checkout.vue')
+            },
+            {
+              path: ':order/success',
+              name: "OrderSuccess",
+              meta: {
+                title: 'Order Success',
+                auth:   false,
+                redirectIfAuth: false,
+                state:  0,
+                admin:  false
+              },
+              component: () => import('@/views/OrderSuccess.vue')
+            },
+          ],
+          component: RouterView
+        }               
+      ],
+      component: RouterView
+    },         
+    {
+      path: '/products',
+      children: [
+        {
+          path: ':category',
+          children:[
+            {
+              path: ':sub_category',
+              name: "Products",
+              meta: {
+                title: 'Products',
+                auth: false,
+                redirectIfAuth: false,
+                state:  0,
+                admin: false
+              },
+              component: () => import('@/views/Products.vue')
+            }
+          ],
+          component: RouterView
+        },
+        {
+          path: 'view/:product',
+          name: "Product",
+          meta: {
+            title: 'Product',
+            auth:   false,
+            state:  0,
+            redirectIfAuth: false,
+            admin: false
+          },
+          component: () => import('@/views/Product.vue')
+        },
+      ]
+    },   
+    {
+      path: '/signup',
+      name: "Signup",
+      meta: {
+        title: 'Signup',
+        auth: false,
+        state:  0,
+        redirectIfAuth: true,
+        admin: false
+      },
+      component: () => import('@/views/Signup.vue')
+    },  
+    {
+      path: '/verify',
+      children: [
+        {
+          path: 'email/:token',
+          name: "VerifyEmail",
+          meta: {
+            title: 'Email Verification',
+            auth: false,
+            state:  0,
+            redirectIfAuth: false,
+            admin: false
+          },
+          component: () => import('@/views/Verify.vue')
+        }
+      ],
+      component: RouterView
+    },  
+    {
+      path: '/account',
+      children: [
+        {
+          path: 'profile',
+          name: "AccountProfile",
+          meta: {
+            title: 'Account Profile',
+            auth: true,
+            state:  0,
+            redirectIfAuth: false,
+            admin: false
+          },
+          component: () => import('@/views/Account.vue')
+        },
+        {
+          path: 'orders',
+          name: "AccountOrders",
+          meta: {
+            title: 'Client Orders',
+            auth: true,
+            state:  0,
+            redirectIfAuth: false,
+            admin: false
+          },
+          component: () => import('@/views/Orders.vue')
+        },
+        {
+          path: 'addresses',
+          name: "AddressBook",
+          meta: {
+            title: 'Address Book',
+            auth:   true,
+            state:  0,
+            redirectIfAuth: false,
+            admin:  false
+          },
+          component: () => import('@/views/AddressBook.vue')
+        },
+        {
+          path: 'favourites',
+          name: "AccountFavourites",
+          meta: {
+            title: 'Favourites',
+            auth: true,
+            state:  0,
+            redirectIfAuth: false,
+            admin: false
+          },
+          component: () => import('@/views/Favourites.vue')
+        },
+        {
+          path: 'security',
+          name: "AccountSecurity",
+          meta: {
+            title: 'Client Security',
+            auth: true,
+            redirectIfAuth: false,
+            state:  0,
+            admin: false
+          },
+          component: () => import('@/views/Security.vue')
+        }
+      ],
+      component: () => import('@/views/Profile.vue')
+    },  
   ]
 });
 

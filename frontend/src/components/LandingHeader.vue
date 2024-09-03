@@ -296,7 +296,7 @@ const searchProduct = () => {
  */
 const redirectToDashboard = () => {
     // Redirect the user to the dashboard
-    window.location.href = $router.resolve({ name: 'Overview' }).href;
+    window.location.href = $store.getters.env.VITE_DASHBOARD_URL;
 }
 
 onBeforeMount( () => fetchMenus() );

@@ -5,7 +5,6 @@ import api from './api'
 
 import { createApp } from 'vue'
 
-import App from '..vue'
 import router from './router'
 
 import VueSweetalert2 from 'vue-sweetalert2';
@@ -20,9 +19,9 @@ import storage from './storage';
 
 import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
-// import themes from './theme';
+import App from './App.vue';
 
-const app = createApp(RouterView)
+const app = createApp(App)
 
 app.use(toast);
 app.use(appStore)
