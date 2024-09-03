@@ -7,4 +7,3 @@ export { default as Navbar } from './Navbar.vue';
 export { default as PlaceholderLoader } from './PlaceholderLoader.vue';
 export { default as ProductRatingForm } from './ProductRatingForm.vue';
 export { default as RelatedProduct } from './RelatedProduct.vue';
-export { default as QuickView } from './QuickView.vue';
