@@ -55,42 +55,45 @@ import { TimelineEntity } from './entities/timeline.entity';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type:        "mysql",
-        host:        configService.get<string>('DB_HOST'),
-        port:        parseInt(configService.get<string>('DB_PORT')),
-        database:    configService.get<string>('DB_DATABASE'),
-        username:    configService.get<string>('DB_USERNAME'),
-        password:    configService.get<string>('DB_PASSWORD'),
-        entities:    [
-          AddressBookEntity,
-          BrandEntity,
-          CategoryEntity,
-          CompanyEntity,
-          ChildSubCategoryEntity,
-          FavouriteEntity,
-          OrderEntity,
-          OrderItemEntity,
-          OrderReviewEntity,
-          PriceEntity,
-          ProductEntity,
-          ProductCategoryEntity,
-          ProductReviewEntity,
-          ProductVariantEntity,
-          RoleEntity,
-          StockEntity,
-          StockKeepingEntity,
-          SubCategoryEntity,
-          TimelineEntity,
-          TransactionEntity,
-          UserEntity
-        ],
-        synchronize: true,
-        subscribers: [
-          OrderSubscriber,
-          UserSubscriber
-        ]
-      }),
+      useFactory: (configService: ConfigService) => {
+        console.log(configService.get<string>('app'))
+        return {
+          type:        "mysql",
+          host:        configService.get<string>('DB_HOST'),
+          port:        parseInt(configService.get<string>('DB_PORT')),
+          database:    configService.get<string>('DB_DATABASE'),
+          username:    configService.get<string>('DB_USERNAME'),
+          password:    configService.get<string>('DB_PASSWORD'),
+          entities:    [
+            AddressBookEntity,
+            BrandEntity,
+            CategoryEntity,
+            CompanyEntity,
+            ChildSubCategoryEntity,
+            FavouriteEntity,
+            OrderEntity,
+            OrderItemEntity,
+            OrderReviewEntity,
+            PriceEntity,
+            ProductEntity,
+            ProductCategoryEntity,
+            ProductReviewEntity,
+            ProductVariantEntity,
+            RoleEntity,
+            StockEntity,
+            StockKeepingEntity,
+            SubCategoryEntity,
+            TimelineEntity,
+            TransactionEntity,
+            UserEntity
+          ],
+          synchronize: true,
+          subscribers: [
+            OrderSubscriber,
+            UserSubscriber
+          ]
+        }
+      },
       inject:[ConfigService]
     }),
     PassportModule.register({
