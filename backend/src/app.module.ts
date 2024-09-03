@@ -56,7 +56,7 @@ import { TimelineEntity } from './entities/timeline.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        console.log(configService.get<string>('app'))
+        console.log(configService.get<string>('app.DB_HOST'))
         return {
           type:        "mysql",
           host:        configService.get<string>('app.DB_HOST'),
