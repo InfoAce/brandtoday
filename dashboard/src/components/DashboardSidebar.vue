@@ -29,7 +29,7 @@
 					</template>
 					<template v-if="!$has(menu,'children')">
 						<a class="sidebar-header" :data-route-name="menu.to" href="#" @click.prevent="$router.push({ name: menu.to })">
-							<i :data-feather="menu.icon"></i>
+							<span :class="`${menu.icon} m-2`"></span>
 							<span>{{ menu.name }}</span>
 						</a>
 					</template>
@@ -37,7 +37,7 @@
 				<template v-if="$has(menu,'children')">
 					<li class="sidebar-item" v-for="(child,child_index) in menu.children" :key="child_index">						
 						<a class="sidebar-header" href="#" @click.prevent="$router.push({ name: child.to })" :data-route-name="child.to">
-							<i :data-feather="child.icon"></i>
+							<span :class="`${child.icon} m-2`"></span>
 							<span>{{ child.name }}</span>
 						</a>
 					</li>					
@@ -74,7 +74,7 @@ const addIcon    = (icon) => {
 }
 onMounted(
 	debounce( async() => {
-		window?.feather.replace();
+		// window?.feather.replace();
 		$(`a[data-route-name="${$route.name}"]`).addClass('active');	
 		try {
             let { data:{ company } } = await $api.get('dashboard/sidebar');
@@ -85,43 +85,6 @@ onMounted(
         }
 	},500)
 );
-
-onBeforeMount( () =>{ 
-  const scripts = [
-    '/assets/dashboard/js/feather.min.js',
-	'/assets/dashboard/js/sidebar-menu.js'
-  ].map( 
-    async (url) => new Promise( 
-      resolve => setTimeout( async() => resolve(addScript(url)),0)
-    ) 
-  );
-  
-  /**
-   * Function to add a script tag to the document.
-   *
-   * This function creates a new script element and appends it to the document body.
-   * The script element's source is set to the provided URL.
-   *
-   * @param {string} url - The URL of the script file.
-   * @return {void} This function does not return anything.
-   */
-  const addScript = (url:string) => {
-    // Create a new script element
-    let script    = document.createElement('script');
-
-    // Set the type attribute of the script element to 'text/javascript'
-    script.type   = 'text/javascript';
-
-    // Set the src attribute of the script element to the provided URL
-    script.src    = url;
-
-    // Append the script element to the document body
-    document.body.appendChild(script);
-  }
-
-  Promise.all(scripts);
-
-});
 
 // Watch Routes
 watch( 

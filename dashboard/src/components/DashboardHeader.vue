@@ -4,8 +4,8 @@
     <div class="main-header-right row">
         <div class="main-header-left d-lg-none w-auto">
             <div class="logo-wrapper">
-                <a href="index.html">
-                    <i data-feather="bar-chart" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
+                <a href="#" @click.prevent="$router.push({ name: 'Overview' })">
+                    <i class="fa fa-bars" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
                     <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="blur-up lazyloaded d-block d-lg-none" :src="authUser.image"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                 </a>
             </div>
@@ -14,7 +14,7 @@
             <div class="media-body text-end switch-sm">
                 <label class="switch">
                     <a href="javascript:void(0)">
-                        <i id="sidebar-toggle" data-feather="align-left"></i>
+                        <i id="sidebar-toggle" class="fa fa-bars fa-2x"></i>
                     </a>
                 </label>
             </div>
@@ -28,7 +28,7 @@
                 </li>
                 <li class="onhover-dropdown">
                     <div class="media align-items-center">
-                        <i data-feather="user" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
+                        <i class="fa fa-user" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
                         <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="align-self-center pull-right img-50 blur-up lazyloaded" :src="authUser.image"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                         <div class="dotted-animation">
                             <span class="animate-circle"></span>
@@ -38,12 +38,12 @@
                     <ul class="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
                         <li>
                             <a href="javascript:void(0)">
-                                <i data-feather="user"></i>Edit Profile
+                                <i class="fa fa-user"></i>Edit Profile
                             </a>
                         </li>
                         <li>
                             <a href="#" @click.prevent="logout">
-                                <i data-feather="log-out"></i>Logout
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>Logout
                             </a>
                         </li>
                     </ul>

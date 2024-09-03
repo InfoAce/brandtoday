@@ -1,109 +1,113 @@
 <template>
 <div>
-<!-- Container-fluid starts-->
-<div class="container-fluid">
-    <div class="page-header">
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="page-header-left">
+                        <h3>
+                            System Profile          
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <ol class="breadcrumb pull-right">
+                        <li class="breadcrumb-item">
+                            <a href="#" @click.prevent="router.push({ name: 'Overview' })">
+                                <i data-feather="home"></i>
+                                Overview                        
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">Settings</li>
+                        <li class="breadcrumb-item active">System</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->    
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6">
-                <div class="page-header-left">
-                    <h3>
-                        System Profile
-                        <small>Multikart Admin panel</small>                
-                    </h3>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <ol class="breadcrumb pull-right">
-                    <li class="breadcrumb-item">
-                        <a href="#" @click.prevent="router.push({ name: 'Overview' })">
-                            <i data-feather="home"></i>
-                            Overview                        
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">Settings</li>
-                    <li class="breadcrumb-item active">System</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Container-fluid Ends-->    
-<!-- Container-fluid starts-->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-5 col-lg-5 col-md-6">
-            <div class="card">
-                <div class="card-body">     
-                    <div class="row">
-                        <form @submit.prevent="updateConfigurations">
-                            <div class="col-12">
-                                <h4><strong>Amrod API Settings</strong></h4><hr>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="vendor_uri">Vendor URI</label>
-                                    <input class="form-control" id="vendor_uri" type="text" v-model="configurations.amrod.vendor_uri">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'vendor_uri')">{{errors.vendor_uri}}</p>								
-                                </div>                            
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="auth_uri">Auth URI</label>
-                                    <input class="form-control" id="auth_uri" type="text" v-model="configurations.amrod.auth_uri">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'auth_uri')">{{errors.auth_uri}}</p>								
-                                </div>                            
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="account_number">Account Number</label>
-                                    <input class="form-control" id="account_number" type="text" v-model="configurations.amrod.account_number">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'account_number')">{{errors.account_number}}</p>                            </div>                            
-                            </div>                        
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="username">Username</label>
-                                    <input class="form-control" id="username" type="text" v-model="configurations.amrod.username" >
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'username')">{{errors.username}}</p>								
-                                </div>                            
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input class="form-control" id="password" type="password" v-model="configurations.amrod.password">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'password')">{{errors.password}}</p>								
-                                </div>                            
-                            </div>
-                            <div class="col-12">
-                                <h4><strong>Pesapal API Settings</strong></h4><hr>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="consumer_key">Consumer Key</label>
-                                    <input class="form-control" id="consumer_key" type="text" v-model="configurations.pesapal.consumer_key">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_key')">{{errors.consumer_key}}</p>								
-                                </div>                            
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="consumer_secret">Consumer Secret</label>
-                                    <input class="form-control" id="consumer_secret" type="password" v-model="configurations.pesapal.consumer_secret">
-                                    <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_secret')">{{errors.consumer_secret}}</p>								
-                                </div>                            
-                            </div>     
-                            <div class="col-12">
-                                <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
-                                    <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
-                                    Save Changes
-                                </button>
-                            </div>               
-                        </form>                            
-                    </div>            
+            <div class="col-xl-5 col-lg-5 col-md-6">
+                <div class="card">
+                    <div class="card-body">     
+                        <div class="row">
+                            <form @submit.prevent="updateConfigurations">
+                                <div class="col-12 d-flex justify-content-between align-items-center">
+                                    <h4><strong>Amrod API Settings</strong></h4>
+                                    <button class="btn btn-solid hover-solid btn-sm" :disabled="loading.syncing" type="button" @click="syncAmrod">
+                                        <i class="fa fa-spinner fa-spin" v-if="loading.syncing"></i>
+                                        Synchronize Amrod
+                                    </button>
+                                </div>
+                                <hr>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="vendor_uri">Vendor URI</label>
+                                        <input class="form-control" id="vendor_uri" type="text" v-model="configurations.amrod.vendor_uri">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'vendor_uri')">{{errors.vendor_uri}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="auth_uri">Auth URI</label>
+                                        <input class="form-control" id="auth_uri" type="text" v-model="configurations.amrod.auth_uri">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'auth_uri')">{{errors.auth_uri}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="account_number">Account Number</label>
+                                        <input class="form-control" id="account_number" type="text" v-model="configurations.amrod.account_number">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'account_number')">{{errors.account_number}}</p>                            </div>                            
+                                </div>                        
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input class="form-control" id="username" type="text" v-model="configurations.amrod.username" >
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'username')">{{errors.username}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input class="form-control" id="password" type="password" v-model="configurations.amrod.password">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'password')">{{errors.password}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <h4><strong>Pesapal API Settings</strong></h4><hr>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="consumer_key">Consumer Key</label>
+                                        <input class="form-control" id="consumer_key" type="text" v-model="configurations.pesapal.consumer_key">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_key')">{{errors.consumer_key}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="consumer_secret">Consumer Secret</label>
+                                        <input class="form-control" id="consumer_secret" type="password" v-model="configurations.pesapal.consumer_secret">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_secret')">{{errors.consumer_secret}}</p>								
+                                    </div>                            
+                                </div>     
+                                <div class="col-12">
+                                    <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
+                                        <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
+                                        Save Changes
+                                    </button>
+                                </div>               
+                            </form>                            
+                        </div>            
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Container-fluid Ends-->   
+    <!-- Container-fluid Ends-->   
 </div>         
 </template>
 <script>
@@ -178,6 +182,7 @@ export default {
                 }
             },
             loading: {
+                syncing: false,
                 updating: false
             },
             isDisabled: true
@@ -223,6 +228,19 @@ export default {
                     this.$store.commit('loader',false);
                 });
         },
+        async syncAmrod() {
+            try {
+                this.loading.syncing = true;
+                const{ data: { message } } = await this.$api.put('/dashboard/system/synchronize');
+                this.$toast.success('Data has been synced successfully');
+            } catch(error) {
+                this.loading.syncing = false;
+                console.log(error);
+                this.$toast.error('Oops!! Looks like something went wrong.');
+            } finally{
+                this.loading.syncing = false;
+            }
+        },
         // Update configurations
         updateConfigurations(){
             this.loading.updating = true;
@@ -233,9 +251,10 @@ export default {
                     this.configurations 
                 )
                 .then( ({ data:{ company } }) => {
-
+                    this.$toast.success('The system configurations have been updated.');
                 })
                 .catch( ({ response }) => {
+                    this.$toast.success('Oops!! Looks like something went wrong.');
                 })
                 .finally( () => {
                     this.loading.updating = false;

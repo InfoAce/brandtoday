@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Logger, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { AdminGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -13,6 +13,7 @@ import { ILike } from 'typeorm';
 import { delay } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import ProductVairantModel from 'src/models/product-variant.model';
+import { Http } from 'winston/lib/winston/transports';
 
 @Controller('dashboard/system')
 export class SystemController {
@@ -69,6 +70,28 @@ export class SystemController {
             
             // Write the configurations to the file
             fs.writeFileSync(this.file_path,JSON.stringify(body));
+
+            // Return the updated configurations
+            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
+
+        } catch(error) {
+
+            if( has(error,'applicationRef') ){
+                let { response: { status, data } } = error.applicationRef;
+
+                // Return an error response if an error occurred
+                return res.status(status).json(data);
+            }
+
+        }
+    }
+
+    @UseGuards(AdminGuard)
+    @Put('synchronize')
+    async synchronize(@Req() req: Request,  @Res() res: Response) {
+        try {
+            // Get amrod credentials from the configuration service
+            let { credentials } = this.configService.get<any>('services.amrod');
 
             // Login to amrod
             await this.amrodService.login(credentials);
@@ -303,21 +326,15 @@ export class SystemController {
                 })
             );
 
-            // Return the updated configurations
-            return res.status(HttpStatus.OK).json({ configurations: this.jsonPlugin.readJSON(this.file_path) });
+            return res.status(HttpStatus.OK).json({});
 
         } catch(error) {
 
-            if( has(error,'applicationRef') ){
-                let { response: { status, data } } = error.applicationRef;
-
-                // Return an error response if an error occurred
-                return res.status(status).json(data);
-            }
-
+            return res.status(error.status).json({ message: error.message });
+        
         }
     }
-
+    
     @UseGuards(AdminGuard)
     @Post('logout')
     async logout(@Req() req: Request,  @Res() res: Response) {

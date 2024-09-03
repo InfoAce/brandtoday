@@ -8,6 +8,7 @@ import { UpdateCompanyValidation } from 'src/validation';
 @Controller('dashboard/company')
 export class CompanyController {
 
+
     constructor(
         private readonly companyModel: CompanyModel
     ){}

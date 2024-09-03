@@ -1,0 +1,21 @@
+body{
+    background: #ededed;
+}
+.page-body {
+    background: #ededed !important;
+}
+.review-table thead tr th,
+.review-table tbody tr td {
+    text-align: left !important;
+}
+.table th {
+    color: #313131;
+    font-weight: 600;
+    font-size: 14px
+}
+.table td {
+    font-size: 12px
+}
+.table th,.table td {
+    padding: .4rem
+}

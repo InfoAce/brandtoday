@@ -1,6 +1,6 @@
 export default [
   {
-    icon: "bar-chart",
+    icon: "fa fa-bar-chart",
     name: "Overview",
     to:   "Overview"
   },
@@ -9,24 +9,29 @@ export default [
     icon: "box",
     children: [
       {
-        icon: "users",
+        icon: "fa fa-users",
         name: "Clients",
         to:   "Clients"
       },
       {
-        icon: "user-plus",
+        icon: "fa fa-users-line",
+        name: "Categories",
+        to:   "Categories"
+      },
+      {
+        icon: "fa fa-user-plus",
         name: "Staff",
         to:   "Staff"
       },
       {
-        icon: "archive",
+        icon: "fa fa-box",
         name: "Orders",
         to:   "Orders"
       },
     ]
   },
   {
-    icon: "home",
+    icon: "fa fa-globe",
     name: "Website",
     to:   "Website"
   },
@@ -35,17 +40,17 @@ export default [
     name: "Settings",
     children: [
       {
-        icon: "user",
+        icon: "fa fa-user",
         name: "Profile",
         to:   "Profile"
       },
       {
-        icon: "chrome",
+        icon: "fa fa-building",
         name: "Company",
         to:   "Company"
       },
       {
-        icon: "lock",
+        icon: "fa fa-cog",
         name: "System",
         to:   "System"
       }

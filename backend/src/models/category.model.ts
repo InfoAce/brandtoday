@@ -46,6 +46,24 @@ export default class CategoryModel {
   }
 
   /**
+   * Finds multiple category entities based on the provided data.
+   *
+   * @param {any} data - The data used to find the categories.
+   * @return {Promise<CategoryEntity[]>} A promise that resolves to an array of found categories.
+   * @throws {ModelException} Throws a ModelException if there is an error finding the categories.
+   */
+  async findAndCount(data: any = {}): Promise<any> {
+    try {
+      // Find multiple category entities based on the provided data.
+      // The find method of the categoryRepository is used to find the categories.
+      return await this.categoryRepository.findAndCount(data);
+    } catch (error) {
+      // If there is an error finding the categories, throw a ModelException with the error message.
+      throw new ModelException(error);
+    }
+  }
+
+  /**
    * Finds a single category entity based on the provided data.
    * Throws a ModelException if the category is not found.
    *
