@@ -65,7 +65,8 @@ export class ProductEntity {
   gender: string;
 
   @Column({
-    type: 'json'
+    type: 'json',
+    nullable: true
   })
   images: string;
 
