@@ -12,6 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ControllerException } from 'src/exceptions/controller.exception';
+import { Express } from 'express'
 
 @Controller('auth')
 export class AuthController {
