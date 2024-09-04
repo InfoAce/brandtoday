@@ -8,7 +8,7 @@ import { diskStorage } from 'multer';
 import { SecurityValidation } from 'src/validation';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-
+import { Express } from 'express'
 @Controller('account')
 export class AccountController {
 
