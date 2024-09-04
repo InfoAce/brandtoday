@@ -53,7 +53,7 @@ import { AddBanner } from '../modals';
 import { cloneDeep, isEmpty } from 'lodash';
 import { computed, inject, defineEmits, defineProps, reactive } from 'vue';
 import { useStore } from 'vuex';
-import { CardLoader } from '../components';
+import { CardLoader } from '../../components';
 
 // Magin variables
 const $api  = inject('$api');
