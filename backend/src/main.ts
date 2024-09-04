@@ -61,7 +61,11 @@ async function bootstrap() {
              format.splat(),
              format.timestamp(),
              format.printf((info) => {
-               return `${info.timestamp} ${info.level}: ${info.message}`;
+              if ( !isEmpty(info.stack) ) {
+                // print log trace 
+                return `${info.timestamp} ${info.level}: ${info.message} - ${info.context} - ${info.stack.map( val => JSON.stringify(val)).join(',')}`;
+              }
+              return `${info.timestamp} ${info.level}: ${info.message}`;
              }),
             ),
         }),

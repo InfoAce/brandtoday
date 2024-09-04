@@ -2,13 +2,13 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, LoginController, OrderController, OverviewController, ProductsController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, OrderController, OverviewController, ProductsController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
-import { AmrodService, AuthService, MailService, PesapalService, RedisService } from './services';
+import { AmrodService, AuthService, MailService, PesapalService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule } from './modules';
 import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -56,7 +56,6 @@ import { TimelineEntity } from './entities/timeline.entity';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        console.log(configService.get<string>('app.DB_HOST'))
         return {
           type:        "mysql",
           host:        configService.get<string>('app.DB_HOST'),
@@ -136,7 +135,6 @@ import { TimelineEntity } from './entities/timeline.entity';
     HeaderController, 
     HomeController, 
     HomeWebsiteController,
-    LoginController,
     ProductsController,
     OrderController,
     OverviewController,
