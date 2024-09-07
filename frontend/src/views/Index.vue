@@ -14,7 +14,7 @@
             </template>
             <carousel  
                 v-show="!isEmpty($data.categories) && !$data.loading" 
-                :autoplay="5000" :wrap-around="true"
+                :autoplay="5000" :wrap-around="false"
                 class="p-0"
                 :settings="$data.settings.banners" 
             >
@@ -119,7 +119,7 @@
         <!--  logo section -->
         <section class="section-b-space py-0">
             <div class="container-fluid">
-                <div class="row px-2">
+                <div class="row">
                     <template v-if="isEmpty($data.brands) && $data.loading">
                         <div class="col-xl-3 col-6">
                             <div class="ssc">
@@ -151,18 +151,17 @@
                         </div>                             
                     </template>
                     <carousel  
-                        v-show="!isEmpty($data.brands) && !$data.loading"
-                        :settings="$data.settings.brands" 
-                        :wrapAround="true" 
-                        :itemsToShow="4"
-                        :breakpoints="$data.breakpoints.brands"
-                        :autoplay="3000"
+                        v-show="!isEmpty($data.brands) && !$data.loading" 
+                        :autoplay="5000" :wrap-around="false"
+                        class="p-0"
+                        :settings="$data.settings.banners" 
                     >
-                        <slide v-for="(brand,index) in $data.brands" :key="index">
-                            <div class="carousel__item">
-                                <a href="javascript::void"><img :src="brand.image" :alt="brand.name" width="100%"></a>
-                            </div>
+                        <slide v-for="(image,index) in $data.brands" :key="index" > 
+                            <img :src="image.path" class="" width="100%"/>
                         </slide>
+                        <template #addons>
+                            <pagination />
+                        </template>
                     </carousel>               
                 </div>
             </div>
@@ -172,11 +171,12 @@
         <!-- Paragraph-->
         <div class="title1 section-t-space">
             <h2 class="title-inner1">Recommended For You</h2>
+            <h5>Looking for the latest trends in clothing, shoes and accessories? <br> Welcome to our 'Latest Drops' edit, bringing you all the latest styles from all your favourite brands.</h5>
         </div>
         <!-- Paragraph end -->
 
         <section class="section-b-space py-0">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row px-2">
                     <template v-if="isEmpty($data.recommended) && $data.loading">
                         <div class="col-xl-3 col-6">
@@ -210,44 +210,39 @@
                     </template>
                     <carousel  
                         v-show="!isEmpty($data.products) && !$data.loading"
-                        :wrapAround="true"
-                        :itemsToShow="4"
+                        :wrapAround="false"
+                        :itemsToShow="3.0"
                         :autoplay="5000"
                     >
                         <slide v-for="(product,index) in $data.products" :key="index" style="padding:0px !important;">
-                            <div class="carousel__item p-3 justify-content-start">
+                            <div class="carousel__item m-3">
                                 <div class="product-box">
                                     <div class="img-wrapper">
                                         <div v-if="!isEmpty(product.images)">
                                             <div class="front">
-                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                <a href="#">
                                                     <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" width="100%">
                                                 </a>
                                             </div>
                                             <div class="back" v-if="product.images.length > 1">
-                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                <a href="#">
                                                     <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="product-detail">
-                                        <div>
-                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
-                                                <h6>{{ product.name }}</h6>
-                                            </a>
-                                            <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
-                                            <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
-                                                <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
-                                            </ul>
-                                        </div>
+                                    <div class="product-detail" style="text-align: left;">
+                                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
+                                            <h6>{{ product.name }}</h6>
+                                        </a>
+                                        <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
+                                        <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
+                                            <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </slide>
-                        <template #addons>
-                            <pagination />
-                        </template>
                     </carousel>               
                 </div>
             </div>

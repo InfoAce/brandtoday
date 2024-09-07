@@ -34,7 +34,6 @@ export class HomeController {
 
       try {
 
-        let brands: any      = await this.brandModel.find();
         let categories: any  = await this.categoryModel.find({ cache: true });
         let products: any    = await this.productModel.find({ take: 10, orderBy: { created_at: 'RAND()' } })
 
@@ -62,7 +61,7 @@ export class HomeController {
 
         let company = await this.companyModel.first();
 
-        return res.status(HttpStatus.OK).json({ brands, categories, banners: company.banners, products });
+        return res.status(HttpStatus.OK).json({ brands: company.brands, categories, banners: company.banners, products });
 
       } catch(err) {
 

@@ -86,7 +86,7 @@ import { TimelineEntity } from './entities/timeline.entity';
             TransactionEntity,
             UserEntity
           ],
-          synchronize: false,
+          synchronize: true,
           subscribers: [
             OrderSubscriber,
             UserSubscriber

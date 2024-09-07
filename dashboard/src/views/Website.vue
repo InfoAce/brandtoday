@@ -33,40 +33,46 @@
                     <div class="card-body" style="height: 100%">                    
                         <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a :class="$data.tab == 1 ? `nav-link active show` : `nav-link` " id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" data-original-title="Banners" title="Banners" @click="$data.tab = 1">Banners</a>
+                                <a :class="$data.tab == 1 ? `nav-link active show` : `nav-link` " id="banners-tab" data-bs-toggle="tab" href="#banners" role="tab" aria-controls="home" aria-selected="true" data-original-title="Banners" title="Banners" @click="$data.tab = 1">Banners</a>
                             </li>
                             <li class="nav-item">
-                                <a :class="$data.tab == 2 ? `nav-link active show` : `nav-link` " id="privacy-tab" data-bs-toggle="tab" href="#privacy" role="tab" aria-controls="privacy" aria-selected="false" data-original-title="Privacy Policy" title="Privacy Policy" @click="$data.tab = 2">Privacy Policy</a>
+                                <a :class="$data.tab == 2 ? `nav-link active show` : `nav-link` " id="banners-tab" data-bs-toggle="tab" href="#brands" role="tab" aria-controls="home" aria-selected="true" data-original-title="Brands" title="Brands" @click="$data.tab = 2">Brands</a>
                             </li>
                             <li class="nav-item">
-                                <a :class="$data.tab == 3 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#termsandconditions" role="tab" aria-controls="termsandconditions " aria-selected="false" data-original-title="Terms and Conditions" title="Terms and Conditions" @click="$data.tab = 3">Terms and Conditions</a>
+                                <a :class="$data.tab == 3 ? `nav-link active show` : `nav-link` " id="privacy-tab" data-bs-toggle="tab" href="#privacy" role="tab" aria-controls="privacy" aria-selected="false" data-original-title="Privacy Policy" title="Privacy Policy" @click="$data.tab = 3">Privacy Policy</a>
                             </li>
                             <li class="nav-item">
-                                <a :class="$data.tab == 4 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#aboutus" role="tab" aria-controls="aboutus " aria-selected="false" data-original-title="About Us" title="About Us" @click="$data.tab = 4">About Us</a>
+                                <a :class="$data.tab == 4 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#termsandconditions" role="tab" aria-controls="termsandconditions " aria-selected="false" data-original-title="Terms and Conditions" title="Terms and Conditions" @click="$data.tab = 4">Terms and Conditions</a>
                             </li>
                             <li class="nav-item">
-                                <a :class="$data.tab == 5 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#faq" role="tab" aria-controls="faq " aria-selected="false" data-original-title="Faq" title="Faqs" @click="$data.tab = 5">Faqs</a>
+                                <a :class="$data.tab == 5 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#aboutus" role="tab" aria-controls="aboutus " aria-selected="false" data-original-title="About Us" title="About Us" @click="$data.tab = 5">About Us</a>
                             </li>
                             <li class="nav-item">
-                                <a :class="$data.tab == 6 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#returnrefunds" role="tab" aria-controls="returnrefunds " aria-selected="false" data-original-title="Return & Refunds" title="Return & Refunds" @click="$data.tab = 6">Return & Refunds</a>
+                                <a :class="$data.tab == 6 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#faq" role="tab" aria-controls="faq " aria-selected="false" data-original-title="Faq" title="Faqs" @click="$data.tab = 6">Faqs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a :class="$data.tab == 7 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#returnrefunds" role="tab" aria-controls="returnrefunds " aria-selected="false" data-original-title="Return & Refunds" title="Return & Refunds" @click="$data.tab = 7">Return & Refunds</a>
                             </li>
                         </ul>
                         <div class="tab-content" id="homeTabContent" v-if="$data.tab == 1">
-                            <HomeTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company" />
+                            <BannersTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
-                        <div class="tab-content" id="privacyTabContent" v-if="$data.tab == 2">
+                        <div class="tab-content" id="brandsTabContent" v-if="$data.tab == 2">
+                            <BrandsTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company" />
+                        </div>
+                        <div class="tab-content" id="privacyTabContent" v-if="$data.tab == 3">
                             <PrivacyTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
-                        <div class="tab-content" id="termsandconditionsTabContent" v-if="$data.tab == 3">
+                        <div class="tab-content" id="termsandconditionsTabContent" v-if="$data.tab == 4">
                             <TermsAndConditionsTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
-                        <div class="tab-content" id="aboutusTabContent" v-if="$data.tab == 4">
+                        <div class="tab-content" id="aboutusTabContent" v-if="$data.tab == 5">
                             <AboutUsTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
-                        <div class="tab-content" id="faqTabContent" v-if="$data.tab == 5">
+                        <div class="tab-content" id="faqTabContent" v-if="$data.tab == 6">
                             <FaqTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
-                        <div class="tab-content" id="returnrefundTabContent" v-if="$data.tab == 6">
+                        <div class="tab-content" id="returnrefundTabContent" v-if="$data.tab == 7">
                             <ReturnRefundsTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
                     </div>
@@ -81,7 +87,7 @@
 <script setup>
 import { cloneDeep, has } from 'lodash';
 import { inject, onBeforeMount, reactive } from 'vue';
-import { AboutUsTab, FaqTab, HomeTab, PrivacyTab, TermsAndConditionsTab, ReturnRefundsTab } from './tabs';
+import { AboutUsTab, FaqTab, BannersTab, BrandsTab, PrivacyTab, TermsAndConditionsTab, ReturnRefundsTab } from './tabs';
 
 // Magin variables
 const $api  = inject('$api');
@@ -125,8 +131,13 @@ const updateCompany = (data) => {
     // Check if data has banners
     if( has(data,'banners') ){
         // Update the banners in the company object
-        console.log(data)
         $data.company.banners = data.banners;
+    }
+    
+    // Check if data has brands
+    if( has(data,'brands') ){
+        // Update the brands in the company object
+        $data.company.brands = data.brands;
     }
     
     // Check if data has privacy policy

@@ -216,7 +216,7 @@ const logout = () => {
         // If the user confirms the logout
         if(result.isConfirmed) {
             // Clear the user's authentication data from local storage
-            localStorage.setItem(get($store.getters.env, 'VITE_APP_ID'), JSON.stringify({}));
+            // localStorage.setItem(get($store.getters.env, 'VITE_APP_ID'), JSON.stringify({}));
             // Redirect the user to the login page
             $router.push({ name: "Login" });
         }

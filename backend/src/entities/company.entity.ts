@@ -25,6 +25,12 @@ export class CompanyEntity {
   })
   banners: string;
 
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  brands: string;
+
   @Seed('Test Company')
   @Column()
   name: string;

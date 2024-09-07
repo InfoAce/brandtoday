@@ -17,6 +17,10 @@ export { WishlistValidation as WishlistValidation } from './wishlist.validation'
 export { CreateBannerValidation as CreateBannerValidation } from './banner/create.validation';
 export { UpdateBannerValidation as UpdateBannerValidation } from './banner/update.validation';
 
+// Company Brand
+export { CreateBrandValidation as CreateBrandValidation } from './brand/create.validation';
+export { UpdateBrandValidation as UpdateBrandValidation } from './brand/update.validation';
+
 // Auth
 export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth.validation';
 

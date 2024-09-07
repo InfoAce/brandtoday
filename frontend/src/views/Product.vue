@@ -154,13 +154,13 @@
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
                                                     <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
-                                                        <i class="ti-angle-left"></i>
+                                                        <i class="fa fa-angle-left"></i>
                                                     </button> 
                                                 </span>
                                                 <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity"> 
                                                 <span class="input-group-prepend">
                                                     <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
-                                                        <i class="ti-angle-right"></i>
+                                                        <i class="fa fa-angle-right"></i>
                                                     </button>
                                                 </span>
                                             </div>

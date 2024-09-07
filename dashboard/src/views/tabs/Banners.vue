@@ -14,15 +14,15 @@
                                 <div class="img-wrapper">
                                     <div class="front">
                                         <a href="javascript:void(0)">
-                                            <img :src="image.path" class="img-fluid blur-up lazyload" alt="">
+                                            <img :src="image.path" class="img-fluid lazyload" alt="">
                                         </a>
                                         <div class="product-hover">
                                             <ul>
                                                 <li>
-                                                    <button class="btn" type="button"><i class="ti-pencil-alt"></i></button>
+                                                    <button class="btn" type="button"><i class="fa fa-pencil"></i></button>
                                                 </li>
                                                 <li>
-                                                    <button class="btn" type="button" @click="deleteBanner(image)"><i class="ti-trash"></i></button>
+                                                    <button class="btn" type="button" @click="deleteBanner(image)"><i class="fa fa-trash text-danger"></i></button>
                                                 </li>
                                             </ul>
                                         </div>

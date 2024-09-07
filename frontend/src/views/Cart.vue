@@ -65,7 +65,7 @@
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
-                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
                                                             </h2>
                                                         </div>
                                                     </div>
@@ -84,7 +84,7 @@
                                                     <h2 class="td-color">KSH {{ (item.price * size.quantity).toFixed(0) }}</h2>
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="icon" @click.prevent="removeSizeItem({ item, key, index})"><i class="ti-close"></i></a>
+                                                    <a href="#" class="icon" @click.prevent="removeSizeItem({ item, key, index})"><i class="fa fa-trash"></i></a>
                                                 </td>
                                             </tr>
                                         </template>
@@ -110,7 +110,7 @@
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
-                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
                                                             </h2>
                                                         </div>
                                                     </div>
@@ -135,7 +135,7 @@
                                                     <h2 class="td-color" v-if="!has(item,'sizes')">KSH {{ (item.quantity * item.price).toFixed(0) }}</h2>
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="ti-close"></i></a>
+                                                    <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
                                                 </td>
                                             </tr>                                            
                                         </template>

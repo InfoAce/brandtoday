@@ -11,8 +11,8 @@
                             </div>
                             <div class="footer-contant">
                                 <div class="footer-logo" v-show="!isEmpty(home.company)">
-                                    <i v-if="isNull(home.company.logo)" class="fa fa-image fa-10x"></i>
-                                    <img v-else :src="home.company.logo" width="200" :alt="home.company.name">
+                                    <i v-if="isNull(home.company.white_logo)" class="fa fa-image fa-10x"></i>
+                                    <img v-else :src="home.company.white_logo" width="200" :alt="home.company.name">
                                 </div>
                             </div>
                         </div>

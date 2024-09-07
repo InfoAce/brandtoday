@@ -73,7 +73,7 @@
                             <label>Company Logo</label>
                             <template v-if="!$isEmpty(company.logo) && !edit.logo && $isEmpty(form.logo)">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="company.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <img :src="company.logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
                                 </div>
                             </template>
@@ -109,14 +109,16 @@
                             <label>Company White Logo</label>
                             <template v-if="!$isEmpty(company.white_logo) && !edit.white_logo && $isEmpty(form.white_logo)">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="company.white_logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <div class="bg-theme p-4 col-12 d-flex flex-column" style="background-color: #1d1d1d">
+                                        <img :src="company.white_logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
+                                    </div>    
                                     <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
                                 </div>
                             </template>
                             <template v-if="!$isEmpty(form.white_logo) && !edit.white_logo">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <div class="bg-theme p-4 col-12 d-flex flex-column">
-                                        <img :src="form.white_logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <div class="bg-theme p-4 col-12 d-flex flex-column" style="background-color: #1d1d1d">
+                                        <img :src="form.white_logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
                                     </div>
                                     <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
                                 </div>
@@ -124,10 +126,19 @@
                             <template v-if="edit.white_logo && !$isEmpty(images.white_logo) && $isEmpty(form.white_logo)">
                                 <div class="col-12">
                                     <VuePictureCropper                                
-                                        :boxStyle="cropBorderStyle"
+                                        :boxStyle="{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: '#f8f8f8',
+                                            margin: 'auto',
+                                        }"
                                         :img="images.white_logo"
-                                        :options="logoCroppingOption"
-                                        :presetMode="logoPresetMode"
+                                        :options="{
+                                            viewMode: 1,
+                                            dragMode: 'move',
+                                            aspectRatio: 9 / 3,
+                                            cropBoxResizable: false
+                                        }"
                                     />          
                                     <div class="d-flex justify-content-between mt-2 col-12">                         
                                         <button class="btn btn-primary ml-2" type="button" @click="selectCrop('white_logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>
@@ -499,6 +510,9 @@ export default {
         },
         "form.logo"(value){
             this.company.logo = String(value);
+        },
+        "form.white_logo"(value){
+            this.company.white_logo = String(value);
         },
         company: {
             handler(company){

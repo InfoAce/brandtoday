@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { AdminGuard, AuthGuard } from "src/guards";
 import { CompanyModel, RoleModel, UserModel } from "src/models";
 import { cloneDeep, get, isEmpty, isNull, has, set } from 'lodash';
-import { CreateBannerValidation, StaffValidation, UpdateBannerValidation, UpdatePrivacyPolicyValidation, UpdateTermsAndConditionsValidation } from "src/validation";
+import { CreateBannerValidation, CreateBrandValidation, StaffValidation, UpdateBannerValidation, UpdateBrandValidation, UpdatePrivacyPolicyValidation, UpdateTermsAndConditionsValidation } from "src/validation";
 import { ConfigService } from "@nestjs/config";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
@@ -11,6 +11,7 @@ import { UpdateReturnRefundsValidation } from "src/validation/website/update.ret
 import { UpdateFaqsValidation } from "src/validation/website/update.faqs.validation";
 import { UpdateContactUsValidation,UpdateAboutUsValidation } from "src/validation";
 import { Express } from 'express'
+
 @Injectable()
 @Controller('dashboard/website')
 export class WebsiteController {
@@ -64,7 +65,7 @@ export class WebsiteController {
      */
     @UseGuards(AdminGuard)
     @Post('banner')
-    async store(
+    async storeBannerImage(
         @Body() data: CreateBannerValidation,
         @Req()  req:  Request,
         @Res()  res:  Response,
@@ -76,7 +77,7 @@ export class WebsiteController {
             let banners:any = Array();
 
             // Append the base URL to the banner path
-            data.path = `${this.configService.get('APP_FRONTEND_URL')}/images/${data.path}`
+            data.path = `/images/${data.path}`
 
             // Get the existing banners for the company (if any)
             if( !isNull(company.banners) ){
@@ -88,6 +89,50 @@ export class WebsiteController {
 
             // Save the updated list of banners for the company
             await this.companyModel.save({ id: company.id, banners });
+
+            // Return the response with a status code of 200
+            return res.status(HttpStatus.OK).json();
+
+        } catch(error) {
+            // Log any errors that occur
+            this.logger.error(error);
+        }
+    }
+
+    /**
+     * Store a brand for the company
+     *
+     * @param data - The banner data containing the path and title
+     * @param req - The request object
+     * @param res - The response object
+     * @returns The response with a status code of 200 if successful
+     */
+    @UseGuards(AdminGuard)
+    @Post('brand')
+    async storeBrandImage(
+        @Body() data: CreateBrandValidation,
+        @Req()  req:  Request,
+        @Res()  res:  Response,
+    ) {
+        try{   
+            // Get the authenticated user from the request
+            let user        = get(req,'user');
+            let company     = await this.companyModel.findOne({ id: user.company_id });
+            let brands:any = Array();
+
+            // Append the base URL to the banner path
+            data.path = `/images/${data.path}`
+
+            // Get the existing banners for the company (if any)
+            if( !isNull(company.brands) ){
+                brands = company.brands;
+            }
+            
+            // Add the new banner to the list of banners
+            brands.push(data);
+
+            // Save the updated list of banners for the company
+            await this.companyModel.save({ id: company.id, brands });
 
             // Return the response with a status code of 200
             return res.status(HttpStatus.OK).json();
@@ -115,6 +160,7 @@ export class WebsiteController {
             }
         )
     )
+
     /**
      * Uploads an icon file for the company
      * @param file - The uploaded file
@@ -144,7 +190,7 @@ export class WebsiteController {
      */
     @UseGuards(AdminGuard)
     @Put('banner')
-    async delete(
+    async deleteBannerImage(
         @Body() data: UpdateBannerValidation,
         @Req()  req:  Request,
         @Res()  res:  Response,
@@ -156,6 +202,36 @@ export class WebsiteController {
 
             // Return the updated company object
             return res.status(HttpStatus.OK).json({ banners: company.banners });
+
+        } catch(error) {
+
+            // Log any errors that occur
+            this.logger.error(error);
+
+        }
+    }
+
+    /**
+     * Update company brand images
+     * @param data - The updated banner images for the company
+     * @param req - The request object
+     * @param res - The response object
+     * @returns A Promise that resolves to the updated company object
+     */
+    @UseGuards(AdminGuard)
+    @Put('brand')
+    async deleteBrandImage(
+        @Body() data: UpdateBrandValidation,
+        @Req()  req:  Request,
+        @Res()  res:  Response,
+    ) { 
+        
+        try {    
+            // Update the company's banner images and save the changes
+            let company = await this.companyModel.save({ id: get(req,'user').company_id, brands: get(data,'brands') });
+
+            // Return the updated company object
+            return res.status(HttpStatus.OK).json({ brands: company.brands });
 
         } catch(error) {
 
@@ -300,13 +376,6 @@ export class WebsiteController {
         }
     }    
 
-    /**
-     * Update company terms and conditions
-     * @param req 
-     * @param res 
-     */
-    @UseGuards(AdminGuard)
-    @Put('terms')
     /**
      * Update company terms and conditions
      * @param req - The request object
