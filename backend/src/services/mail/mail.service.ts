@@ -34,7 +34,7 @@ export class MailService {
         subject: `${this.configService.get<string>('APP_NAME') } Account Registration`,  // The subject of the email.
         template: 'user/client-welcome',  // The name of the handlebars template to use.
         context: { // The data to pass to the template.
-          verify_link: `${this.configService.get('app.APP_FRONTEND_URL')}/home/verify/email/${user.token}`, // The URL for the email verification link.
+          verify_link: `${this.configService.get('app.APP_FRONTEND_URL')}/verify/email/${user.token}`, // The URL for the email verification link.
         },
       });
 
@@ -60,10 +60,20 @@ export class MailService {
       let user = await order.user;
 
       // Send the email.
-      return await this.mailerService.sendMail({
+      await this.mailerService.sendMail({
         to: user.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
         template: 'order/create',  // The name of the handlebars template to use.
+        context: { // The data to pass to the template.
+          items:        order.items,
+          order_number: order.num_id
+        },
+      });
+
+      await this.mailerService.sendMail({
+        to: user.company.email,  // The recipient's email address.
+        subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
+        template: 'company/new-order',  // The name of the handlebars template to use.
         context: { // The data to pass to the template.
           items:        order.items,
           order_number: order.num_id
@@ -76,6 +86,33 @@ export class MailService {
       return false;
     }
   }
+
+    /**
+   * Sends a confirmation email to a user.
+   * 
+   * @param user - The user to send the email to.
+   * @returns A Promise that resolves when the email is sent.
+   */
+    async resetPassword({ token, email, role: { name: roleName } }: UserEntity) {
+
+      try{
+        let app_url = roleName == 'client' ? this.configService.get('app.APP_FRONTEND_URL') : this.configService.get('app.APP_DASHBOARD_URL');
+
+        // Send the email.
+        return await this.mailerService.sendMail({
+          to: email,  // The recipient's email address.
+          // from: '"Support Team" <support@example.com>', // override default from
+          subject: `${this.configService.get<string>('APP_NAME') } Reset Account Password`,  // The subject of the email.
+          template: 'user/reset-password',  // The name of the handlebars template to use.
+          context: { // The data to pass to the template.
+            reset_link: `${app_url}/auth/password/${token}/reset`, // The URL for the email verification link.
+          },
+        });
+  
+      } catch (error) {
+        throw new MailException(error)
+      }
+    }
 
 
   async payment(order: OrderEntity) {

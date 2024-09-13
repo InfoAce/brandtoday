@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger, NotFoundException } from "@nestjs/common";
 import { TypeORMError } from "typeorm";
 
 export class ModelException extends TypeORMError {

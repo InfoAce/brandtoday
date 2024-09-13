@@ -20,6 +20,7 @@ import { resolve } from 'path';
 import { SessionSerialize } from './utils';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TimelineEntity } from './entities/timeline.entity';
+import { OrderCreatedListener } from './listeners';
 
 @Module({
   imports: [
@@ -37,12 +38,20 @@ import { TimelineEntity } from './entities/timeline.entity';
       inject: [ConfigService],
     }),
     EventEmitterModule.forRoot({
+      // set this to `true` to use wildcards
+      wildcard: false,
+      // the delimiter used to segment namespaces
+      delimiter: '.',
+      // set this to `true` if you want to emit the newListener event
+      newListener: false,
+      // set this to `true` if you want to emit the removeListener event
+      removeListener: false,
       // the maximum amount of listeners that can be assigned to an event
-      maxListeners: 1,
+      maxListeners: 10,
       // show event name in memory leak message when more than maximum amount of listeners is assigned
-      verboseMemoryLeak: true,
+      verboseMemoryLeak: false,
       // disable throwing uncaughtException if an error event is emitted and it has no listeners
-      ignoreErrors: true,
+      ignoreErrors: false,
     }),
     HttpModule.register({
       timeout: 5000,
@@ -155,6 +164,7 @@ import { TimelineEntity } from './entities/timeline.entity';
     JwtStrategy,
     LocalStrategy,
     PesapalService,
+    OrderCreatedListener,
     SessionSerialize
   ],
 })

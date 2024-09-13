@@ -112,47 +112,14 @@
         </footer>
         <!-- footer end -->
 
-        <!-- Modal start -->
-        <div class="modal logout-modal fade" id="logout" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Logging Out</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Do you want to log out?
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn btn-dark btn-custom" data-bs-dismiss="modal">no</a>
-                        <a href="index.html" class="btn btn-solid btn-custom">yes</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- modal end -->
-
-
         <!-- cookie bar start -->
-        <div class="cookie-bar">
+        <!-- <div class="cookie-bar">
             <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you accept
                 our cookie policy.</p>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">accept</a>
             <a href="javascript:void(0)" class="btn btn-solid btn-xs">decline</a>
-        </div>
+        </div> -->
         <!-- cookie bar end -->
-
-        <!-- theme setting -->
-        <div class="theme-settings">
-            <ul>
-                <li>
-                    <div class="dark-btn">Dark</div>
-                </li>
-            </ul>
-        </div>
-        <!-- theme setting -->
 
         <!-- tap to top -->
         <div class="tap-top top-cls">

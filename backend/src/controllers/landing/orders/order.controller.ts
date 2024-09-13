@@ -11,6 +11,8 @@ import { PesapalService } from 'src/services/pesapal/pesapal.service';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
 import * as moment from 'moment';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { OrderCreatedEvent } from 'src/events';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('orders')
 export class OrderController {
@@ -37,6 +39,7 @@ export class OrderController {
     private addressBookModel: AddressBookModel, // The address book model instance.
     private companyModel: CompanyModel, // The company model instance.
     private configService: ConfigService, // The config service instance.
+    private eventEmitter: EventEmitter2, // The event emitter instance.
     private roleModel: RoleModel, // The role model instance.
     private mailService: MailService, // The mail service instance.
     private orderModel: OrderModel, // The order model instance.
@@ -99,6 +102,8 @@ export class OrderController {
     @Res()  res:  Response
   ) {
     try {
+      // Create an instance of OrderCreatedEvent
+      let orderCreatedEvent = new OrderCreatedEvent();
 
       // Check if the order type is new or existing
       if (form.type == "new") {
@@ -149,9 +154,9 @@ export class OrderController {
           })
         )
         
-        order      = await this.orderModel.findOneBy({ id: order.id });
-
-        await this.mailService.createOrder(order);
+        order                 = await this.orderModel.findOneBy({ id: order.id });
+        orderCreatedEvent.id  = order.id;
+        this.eventEmitter.emit('order.created', orderCreatedEvent);
 
         // Send response with stored order
         return res.status(HttpStatus.OK).json({ order });

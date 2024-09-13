@@ -53,6 +53,9 @@
                             <li class="nav-item">
                                 <a :class="$data.tab == 7 ? `nav-link active show` : `nav-link` " id="termsandconditions-tab" data-bs-toggle="tab" href="#returnrefunds" role="tab" aria-controls="returnrefunds " aria-selected="false" data-original-title="Return & Refunds" title="Return & Refunds" @click="$data.tab = 7">Return & Refunds</a>
                             </li>
+                            <li class="nav-item">
+                                <a :class="$data.tab == 8 ? `nav-link active show` : `nav-link` " id="servicecost-tab" data-bs-toggle="tab" href="#servicecost" role="tab" aria-controls="servicecost" aria-selected="false" data-original-title="Service Cost" title="Service Cost" @click="$data.tab = 8">Order Service Fees</a>
+                            </li>
                         </ul>
                         <div class="tab-content" id="homeTabContent" v-if="$data.tab == 1">
                             <BannersTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company" />
@@ -75,6 +78,9 @@
                         <div class="tab-content" id="returnrefundTabContent" v-if="$data.tab == 7">
                             <ReturnRefundsTab @update-company="updateCompany" :company.sync="$data.company" />
                         </div>
+                        <div class="tab-content" id="serviceCostTabcontent" v-if="$data.tab == 8">
+                            <OrderServiceFeeTab @fetch-company="fetch" @update-company="updateCompany" :company.sync="$data.company"/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,7 +93,7 @@
 <script setup>
 import { cloneDeep, has } from 'lodash';
 import { inject, onBeforeMount, reactive } from 'vue';
-import { AboutUsTab, FaqTab, BannersTab, BrandsTab, PrivacyTab, TermsAndConditionsTab, ReturnRefundsTab } from './tabs';
+import { AboutUsTab, FaqTab, BannersTab, BrandsTab, PrivacyTab, TermsAndConditionsTab, ReturnRefundsTab, OrderServiceFeeTab } from './tabs';
 
 // Magin variables
 const $api  = inject('$api');
@@ -138,6 +144,12 @@ const updateCompany = (data) => {
     if( has(data,'brands') ){
         // Update the brands in the company object
         $data.company.brands = data.brands;
+    }
+
+    // Check if data has service fees
+    if( has(data,'service_fees') ){
+        // Update the service fees in the company object
+        $data.company.service_fees = data.service_fees;
     }
     
     // Check if data has privacy policy

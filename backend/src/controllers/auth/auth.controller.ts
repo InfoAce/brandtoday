@@ -2,19 +2,19 @@ import { Body, Controller, Get, HttpException, HttpStatus, InternalServerErrorEx
 import { AuthGuard } from '../../guards';
 import { Request, Response } from 'express';
 import { AuthService, MailService } from 'src/services';
-import { LoginValidation, RegisterValidation, UpdateAuthValidation } from 'src/validation';
+import { LoginValidation, RegisterValidation, ResetAuthValidation, SePasswordValidation, UpdateAuthValidation } from 'src/validation';
 import { CompanyModel, RoleModel, UserModel } from 'src/models';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { get, isEmpty, isNull, pick, omit, set } from 'lodash';
-import * as path from 'path';
+import { get, has, isEmpty, isNull, pick, omit, set } from 'lodash';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ControllerException } from 'src/exceptions/controller.exception';
 import { Express } from 'express'
+import { NotFoundInterceptor } from 'src/interceptors';
 
 @Controller('auth')
+@UseInterceptors(NotFoundInterceptor)
 export class AuthController {
 
     private readonly logger = new Logger(AuthController.name);
@@ -126,20 +126,25 @@ export class AuthController {
     }
 
     @Put('user/:token')
-    async fetchToken(@Param('token') token: string, @Res() res: Response){
-        try{
+    async fetchToken(
+        @Param('token') token: string, 
+        @Res()          res:   Response
+    ){
+        // try{
+            // Find user by token
             let user = await this.userModel.findOneBy({ token });
-            
-            return res.status(HttpStatus.OK).json({ user });
+            console.log(user);
+            // Return user profile
+            return res.status(HttpStatus.OK).json({});
 
-        } catch(err) {
+        // } catch(error) {
+        //     console.log(error);
+        //     if( error.constructor.name == "EntityNotFoundError"){
+        //         throw new NotFoundException();
+        //     }
 
-            if( err.constructor.name == "EntityNotFoundError"){
-                throw new NotFoundException();
-            }
-
-            throw new InternalServerErrorException(); 
-        }
+        //     throw new InternalServerErrorException(); 
+        // }
     }
 
     @UseGuards(AuthGuard)
@@ -230,6 +235,57 @@ export class AuthController {
     getCompany(@Req() req: Request,  @Res() res: Response) {
         let { company } = get(req,'user');
         res.status(HttpStatus.OK).json({company});
+    } 
+
+    @Post('reset')
+    async reset(
+        @Body() body: ResetAuthValidation,
+        @Req()  req:  Request, 
+        @Res()  res:  Response
+    ) {
+        
+        try {
+            // Generate random string for token
+            let randomstring = require("randomstring");
+
+            await this.userModel.updateOne({ email: body.email },{ token: randomstring.generate(100) });
+            
+            let user = await this.userModel.findOne({ where: { email: body.email } });
+
+            if( !isNull(user) ){
+                await this.mailService.resetPassword(user);
+            }
+
+            res.status(HttpStatus.OK).json({});
+        
+        } catch(error){
+            throw new InternalServerErrorException();
+        }
+    } 
+
+    @Post(':code/password')
+    async setPassword(
+        @Param('code') code: String,
+        @Body()  body: SePasswordValidation,
+        @Req()   req:  Request, 
+        @Res()   res:  Response
+    ) {
+        
+        try {
+            // Generate random string for token
+            let randomstring = require("randomstring");
+
+            // Hash password
+            let password     = await bcrypt.hashSync(body.new_password, parseInt(this.configService.get('app.SALT_LENGTH')));
+
+            // Update token and password
+            await this.userModel.updateOne({ token: code },{ password, token: randomstring.generate(100) });
+            
+            res.status(HttpStatus.OK).json({});
+        
+        } catch(error){
+            throw new InternalServerErrorException();
+        }
     } 
 
     @UseGuards(AuthGuard)

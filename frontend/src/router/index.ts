@@ -28,18 +28,66 @@ const router = createRouter({
         admin: false
       },
       component: () => import('@/views/Error404.vue')
-    }, 
+    },
     {
-      path: '/login',
-      name: "Login",
-      meta: {
-        title: 'Login',
-        auth:   false,
-        redirectIfAuth: true,
-        state:  0,
-        admin: false
-      },
-      component: () => import('@/views/Login.vue')
+      path: '/auth',
+      component: () => RouterView,
+      children: [
+        {
+          path: 'login',
+          name: "Login",
+          meta: {
+            title: 'Login',
+            auth:   false,
+            redirectIfAuth: true,
+            state:  0,
+            admin: false
+          },
+          component: () => import('@/views/Login.vue')
+        },
+        {
+          path: 'password',
+          children: [
+            {
+              path: 'forgot',
+              name: "ForgotPassword",
+              meta: {
+                title: 'Forgot Password',
+                auth:   false,
+                redirectIfAuth: true,
+                state:  0,
+                admin: false
+              },
+              component: () => import('@/views/Forgot.vue')
+            },
+            {
+              path: ':code/reset',
+              name: "Reset Password",
+              meta: {
+                title: 'Reset Password',
+                auth:   false,
+                redirectIfAuth: true,
+                state:  0,
+                admin: false
+              },
+              component: () => import('@/views/Reset.vue')
+            },
+            // {
+            //   path: ':pathMatch(.*)*',
+            //   name: "TokenNotFound",
+            //   meta: {
+            //     title: 'Token Not Found',
+            //     auth: false,
+            //     redirectIfAuth: false,
+            //     state:  0,
+            //     admin: false
+            //   },
+            //   component: () => import('@/views/Error404.vue')
+            // },
+          ],
+          component: () => RouterView
+        }
+      ],
     },
     {
       path: '/about-us',

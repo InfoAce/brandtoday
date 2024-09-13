@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite --port=8080 --host"
+    "start": "vite --port=8081 --host"
   },
   "dependencies": {
     "@beta-lib/vite-multiple-html": "^1.0.1",

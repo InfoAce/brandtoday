@@ -1,4 +1,4 @@
-import { Catch, Injectable, Logger } from '@nestjs/common';
+import { Catch, Injectable, Logger, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
@@ -11,6 +11,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { ModelException } from 'src/exceptions/model.exception';
+import { NotFoundInterceptor } from 'src/interceptors';
 
 class UserModelException extends ExceptionsHandler {}
 
@@ -65,18 +66,10 @@ export default class UserModel {
     }
   }
 
-  async findOne(data: object): Promise<UserEntity | null> {
-    try {
-
-      return await this.usersRepository.findOneOrFail(data);
-
-    } catch(error){
-      
-      this.logger.error(error);
-
-    }
+  @UseInterceptors(NotFoundInterceptor)
+  async findOne(data: object): Promise<UserEntity> {
+    return await this.usersRepository.findOne(data);
   }
-
 
   /**
    * Find a single user by the provided data.
@@ -85,17 +78,8 @@ export default class UserModel {
    * @returns {Promise<UserEntity>} A promise that resolves to the found user.
    * @throws {ModelException} Throws a ModelException if the user is not found.
    */
-  async findOneBy(data: object): Promise<UserEntity> {
-    try {
-
-      return await this.usersRepository.findOneByOrFail(data);
-
-    } catch(error){
-        
-      this.logger.error(error);
-      
-      throw new ModelException(error);
-    }
+  async findOneBy(data: object): Promise<UserEntity | null> {
+    return await this.usersRepository.findOneByOrFail(data);
   }
 
 

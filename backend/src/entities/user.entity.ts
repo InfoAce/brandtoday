@@ -124,9 +124,7 @@ export class UserEntity {
   role_id: string;
 
   @Seed((faker: Faker, ctx: SeederContext) => require("randomstring").generate(100))
-  @Column({ 
-    select: false 
-  })
+  @Column()
   token: string;
 
   @CreateDateColumn()

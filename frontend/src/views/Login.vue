@@ -6,14 +6,14 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="page-title">
-						<h2>customer's login</h2>
+						<h2>Login</h2>
 					</div>
 				</div>
 				<div class="col-sm-6">
 					<nav aria-label="breadcrumb" class="theme-breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-							<li class="breadcrumb-item active">login</li>
+							<li class="breadcrumb-item active">Login</li>
 						</ol>
 					</nav>
 				</div>
@@ -41,7 +41,10 @@
 								<input type="password" class="form-control mb-2" id="password" v-model="data.form.password" placeholder="Enter your password" required="">
 								<p class="text-danger col col-12 mt-0" v-show="has(data.errors,'password')">{{data.errors.password}}</p>								
 							</div>
-							<button type="submit" class="btn btn-solid" :disabled="data.isDisabled">Login</button>
+							<div class="col-12 d-flex justify-content-between align-items-center">
+								<button type="submit" class="btn btn-solid" :disabled="data.isDisabled">Login</button>
+								<router-link :to="router.resolve({ name: 'ForgotPassword' }).path">Forgot Password</router-link>
+							</div>
 						</form>
 					</div>
 				</div>

@@ -6,14 +6,14 @@
                 <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>Forgot Password</h2>
+                            <h2>Reset Password</h2>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-                                <li class="breadcrumb-item active">Forgot Password</li>
+                                <li class="breadcrumb-item active">Reset Password</li>
                             </ol>
                         </nav>
                     </div>
@@ -22,19 +22,25 @@
         </div>
         <!-- breadcrumb End -->
     
+    
         <!--section start-->
         <section class="login-page section-b-space">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 mx-auto">
                         <div class="theme-card">
-                            <form class="theme-form" @submit.prevent="forgot">
+                            <form class="theme-form" @submit.prevent="reset">
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="text" class="form-control mb-2" id="email" placeholder="Email Address" v-model="data.form.email" required="">
-                                    <p class="text-danger col col-12 mt-0" v-show="has(data.errors,'email')">{{data.errors.email}}</p>								
+                                    <label for="new_password">New Password</label>
+                                    <input type="password" class="form-control mb-2" id="new_password" placeholder="New Password" v-model="data.form.new_password" autocomplete="off">
+                                    <p class="text-danger col col-12 mt-0" v-show="has(data.errors,'new_password')">{{data.errors.new_password}}</p>								
                                 </div>
-                                <button type="submit" class="btn btn-solid" :disabled="data.isDisabled || data.loading.forgot"><i class="fa fa-spinner fa-spin mr-2" v-if="data.loading.forgot"></i>Send</button>
+                                <div class="form-group">
+                                    <label for="confirm_new_password">Confirm New Password</label>
+                                    <input type="password" class="form-control mb-2" id="confirm_new_password" placeholder="Confirm New Password" v-model="data.form.confirm_new_password" autocomplete="off">
+                                    <p class="text-danger col col-12 mt-0" v-show="has(data.errors,'confirm_new_password')">{{data.errors.confirm_new_password}}</p>								
+                                </div>
+                                <button type="submit" class="btn btn-solid" :disabled="data.isDisabled || data.loading.reset"><i class="fa fa-spinner fa-spin ml-2" v-if="data.loading.reset"></i>Reset</button>
                             </form>
                         </div>
                     </div>
@@ -44,22 +50,26 @@
         <!--Section ends-->
             
     </div>	
-    </template>
+</template>
     
-    <script setup>
-    import { inject, reactive, watch } from 'vue';
+<script setup>
+    import { inject, onBeforeMount, reactive, watch } from 'vue';
     import { each, isEmpty, has } from 'lodash';
     import * as yup from "yup";
     import { toast  } from "vue3-toastify";
+    import { useRoute, useRouter } from 'vue-router';
     
-    const $toast = inject('$toast');
-    const $api   = inject('$api');
-    const swal   = inject('$swal');
+    const $route  = useRoute();
+    const $router = useRouter();
+    const $toast  = inject('$toast');
+    const $api    = inject('$api');
+    const swal    = inject('$swal');
     
     const data   = reactive({
         errors: {},
         form: {
-            email: String(),
+            confirm_new_password: String(),
+            new_password:         String(),
         },
         loading: {
             reset: Boolean()
@@ -68,9 +78,8 @@
     });
     
     const formSchema = yup.object().shape({
-        email:            yup.string()
-                             .email("*Enter a valid email address")
-                             .required("*Email address is required"),
+        confirm_new_password: yup.string().required("*Confirmation new password is required").oneOf([yup.ref('new_password'), null], 'Password mismatch'),
+        new_password:         yup.string().required("*New Password is required"),                             
     });
     
     /**
@@ -101,20 +110,25 @@
      * 
      * @returns {void}
      */
-    const forgot = async () => {
+    const reset = async () => {
         
         // Set the loading state to true
-        data.loading.forgot = true;
+        data.loading.reset = true;
         
         try {
+            // Retrieve the route parameters
+            let { code } = $route.params;
+
             // Send a POST request to the login endpoint
-            await $api.post('/auth/reset', data.form);
+            await $api.post(`/auth/${code}/password`,data.form);
             
             // Display a success message
             $toast.success('Password reset link has been sent to your email address');
     
-            // Reset the form data to its initial state
+            // Reset the form
             resetForm();
+
+            $router.push({ name: 'Login'});
     
         } catch (error){
 
@@ -152,9 +166,24 @@
             }
         } finally {
             // Set the loading state to false
-            data.loading.forgot = false;        
+            data.loading.reset = false;        
         }
     
+    }
+
+    const fetchUser = async() => {
+        try {
+            
+            let { code } = $route.params;
+            
+            await $api.put(`/auth/user/${code}`);
+
+        } catch(error) {
+            console.log(error);
+            // $router.push({ name: 'TokenNotFound' });
+        } finally{
+
+        }
     }
     
     /**
@@ -165,9 +194,12 @@
     const resetForm = () => {
         // Reset the form data to its initial state
         data.form = {
-            email: String()
+            new_password: String(),
+            confirm_new_password: String()
         };
     }
+
+    onBeforeMount( () => fetchUser() )
     
     watch(
         () => data.form, 

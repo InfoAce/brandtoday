@@ -2,8 +2,8 @@
     <div>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
-            <div class="container">
-                <div class="row">
+            <div class="container-fluid">
+                <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
                             <h2>Checkout</h2>
@@ -26,7 +26,7 @@
         <section class="section-b-space">
             <div class="container">
                 <div class="checkout-page">
-                    <div class="checkout-form">
+                    <div class="checkout-form pb-6">
                         <form>
                             <div class="row">
                                 <div class="col-12">
@@ -34,7 +34,7 @@
                                         <h3>Billing Details</h3>
                                     </div>                                            
                                 </div>
-                                <div class="col-12">
+                                <div class="col-lg-8">
                                     <div class="row">
                                         <div class="col-12" v-show="isEmpty(authUser)">
                                             <div class="row check-out">
@@ -168,7 +168,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-lg-4">
                                     <div class="checkout-details">
 								        <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'items')">{{$data.errors.items}}</p>								
                                         <div class="order-box">
@@ -180,7 +180,7 @@
                                                     <template v-if="has(item,'sizes')">
                                                         <li v-for="(size,key) in item.sizes" :key="`${index}_${key}`" class="d-flex align-items-center justify-content-between">
                                                             <div>
-                                                                <img :src="item.image" width="100" class="img-thumbnail"/>
+                                                                <img :src="item.image" width="50" class="img-thumbnail"/>
                                                                 {{ item.name }} - {{ size.name }} × {{ size.quantity }} 
                                                             </div>
                                                             <span class="text-end">KSH {{ (size.quantity * item.price).toFixed(0) }}</span>
@@ -189,7 +189,7 @@
                                                     <template v-else>
                                                         <li :key="index" class="d-flex align-items-center justify-content-between">
                                                             <div>
-                                                                <img :src="item.image" width="100" class="img-thumbnail"/>
+                                                                <img :src="item.image" width="50" class="img-thumbnail"/>
                                                                 {{ item.name }} × {{ item.quantity }} 
                                                             </div>
                                                             <span class="text-end">KSH {{ (item.quantity * item.price).toFixed(0) }}</span>
@@ -203,16 +203,14 @@
                                             <ul class="total">
                                                 <li>Total <span class="count text-end">KSH {{ total.toFixed(0) }}</span></li>
                                             </ul>
-                                        </div>
-                                        <div class="payment-box">
-                                            <div class="text-center">
-                                                <button class="btn-solid btnb hover-solid" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
-                                                    <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
-                                                    Place Order
-                                                </button>
-                                            </div>
-                                        </div>                                        
+                                        </div>                                     
                                     </div>
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button class="btn-solid btn-xl hover-solid" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
+                                        <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
+                                        Place Order
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -400,13 +398,14 @@ const placeOrder = async () => {
         let { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
         $data.order             = cloneDeep(orderData);
         openPesapal();
-    } catch ({ response: { data } }) {
-        $data.loader.order = true;
-        if( data.statusCode == 400 ){
-            data.message.forEach( (value:string) => {
-                $toast.error(value);
-            })
-        }
+    } catch (error) {
+        console.log(error);
+        // $data.loader.order = true;
+        // if( data.statusCode == 400 ){
+        //     data.message.forEach( (value:string) => {
+        //         $toast.error(value);
+        //     })
+        // }
     }
 }
 
@@ -483,7 +482,6 @@ onBeforeMount( async() => {
 onMounted( 
     debounce(
         () => {
-            console.log('herer');
             $data.form.items = cloneDeep(cart.value);
             watch(
                 () => $data.form, 

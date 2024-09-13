@@ -93,6 +93,12 @@ export class CompanyEntity {
   })
   terms_conditions: string;
 
+  @Column({
+    nullable: true,
+    type: 'json'
+  })
+  service_fees: string;
+
   @OneToMany(() => RoleEntity, (roles) => roles.company)
   @JoinColumn({
     name:                 "id",

@@ -1,5 +1,9 @@
 export { ValidationPipeOptions as ValidationPipeOptions } from './init';
 
+// Auth 
+export { ResetAuthValidation as ResetAuthValidation } from './auth/reset.validation';
+export { SePasswordValidation as SePasswordValidation } from './auth/new-password.validation';
+
 // List of validation
 export { AddressValidation as AddressValidation } from './create.address.validation';
 export { CreateOrderValidation as CreateOrderValidation } from './create.order.validation';
@@ -20,6 +24,10 @@ export { UpdateBannerValidation as UpdateBannerValidation } from './banner/updat
 // Company Brand
 export { CreateBrandValidation as CreateBrandValidation } from './brand/create.validation';
 export { UpdateBrandValidation as UpdateBrandValidation } from './brand/update.validation';
+
+// Service Fees
+export { CreateServiceFeeValidation as CreateServiceFeeValidation } from './service-fees/create.validation';
+export { UpdateServiceFeeValidation as UpdateServiceFeeValidation } from './service-fees/update.validation';
 
 // Auth
 export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth.validation';
