@@ -9,6 +9,7 @@ import { transports, format } from 'winston';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
 import  'winston-daily-rotate-file';
+import { TimeoutInterceptor } from './interceptors';
 
 // Directory separator
 const { sep } = require('path');
@@ -79,6 +80,7 @@ async function bootstrap() {
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
+  app.useGlobalInterceptors(new TimeoutInterceptor());
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api/v1');
   app.useStaticAssets(resolve('/public'));
