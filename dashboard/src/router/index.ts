@@ -139,13 +139,25 @@ const router = createRouter({
               path: 'company',
               name: "Company",
               meta: {
-              title: 'Company',
-              auth:  true,
-              state: 2,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Company',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/Company.vue')
+          },
+          {
+              path: 'queues',
+              name: "Queues",
+              meta: {
+                title: 'Queues',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
+              },
+              component: () => import('@/views/Queues.vue')
           },
           {
               path: 'website',

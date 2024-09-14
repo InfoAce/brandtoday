@@ -5,6 +5,7 @@ export { default as ChildSubCategoryModel } from './child-sub-category.model';
 export { default as CompanyModel } from './company.model';
 export { default as FavouriteModel } from './favourite.model';
 export { default as RoleModel } from './role.model';
+export { default as QueueModel } from './queue.model';
 export { default as OrderModel } from './order.model';
 export { default as OrderItemModel } from './order-item.model';
 export { default as OrderReviewModel } from './order-review.model';

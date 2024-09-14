@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Logger, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Logger, Post, Put, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AdminGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -14,6 +14,7 @@ import { delay } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import ProductVairantModel from 'src/models/product-variant.model';
 import { Http } from 'winston/lib/winston/transports';
+import { TimeoutInterceptor } from 'src/interceptors';
 
 @Controller('dashboard/system')
 export class SystemController {
@@ -87,6 +88,7 @@ export class SystemController {
     }
 
     @UseGuards(AdminGuard)
+    @UseInterceptors(TimeoutInterceptor)
     @Put('synchronize')
     async synchronize(@Req() req: Request,  @Res() res: Response) {
         try {
@@ -109,7 +111,7 @@ export class SystemController {
             let products = (await this.amrodService.getProducts()).map( product => ({ ...product, id: uuidv4() }));    
 
             // // Fetch amrod stock
-            let stocks = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));  ;
+            let stocks = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));
 
             let sub_categories      = categories.map( category => category.children.map( sub_category => ({ ...sub_category, id: uuidv4(), category_id: category.id, children: sub_category.children }) ) ).flat();
 
@@ -314,7 +316,7 @@ export class SystemController {
                             }
                         }
                     ).filter( value => !isEmpty(value) ),
-                    500
+                    1000
                 ).map( async (stock_keeping) => {
                     return new Promise( async (resolve,reject) => {
                         // setTimeout( async () => {

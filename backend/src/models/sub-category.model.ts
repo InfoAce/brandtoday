@@ -34,7 +34,7 @@ export default class SubCategoryModel {
    * @return {Promise<SubCategoryEntity[]>} A promise that resolves to an array of found sub-categories.
    * @throws {ModelException} Throws a ModelException if there is an error finding the sub-categories.
    */
-  async find(data: any): Promise<SubCategoryEntity[]> {
+  async find(data: any = {}): Promise<SubCategoryEntity[]> {
     try {
       // Find multiple sub-category entities based on the provided data.
       // The find method of the subCategoryRepository is used to find the sub-categories.
@@ -53,7 +53,7 @@ export default class SubCategoryModel {
    * @return {Promise<SubCategoryEntity>} A promise that resolves to the found sub-category.
    * @throws {ModelException} Throws a ModelException if the sub-category is not found.
    */
-  async findOne(data: any): Promise<SubCategoryEntity> {
+  async findOne(data: any = {}): Promise<SubCategoryEntity> {
     try {
       // Finds a single sub-category entity based on the provided data and throws an exception if it is not found.
       // The findOneOrFail method of the subCategoryRepository is used to find the sub-category entity.
@@ -106,7 +106,7 @@ export default class SubCategoryModel {
    * @return {Promise<any>} A promise that resolves to the saved sub-category.
    * @throws {ModelException} Throws a ModelException if there is an error saving the sub-category.
    */
-  async insert(data: any): Promise<any> {
+  async insert(data: any = {}): Promise<any> {
     try {
       // Saves a single sub-category entity based on the provided data.
       // The subCategoryRepository's save method is used to save the sub-category entity.
@@ -125,7 +125,7 @@ export default class SubCategoryModel {
    * @return {Promise<any>} A promise that resolves to the saved sub-category.
    * @throws {ModelException} Throws a ModelException if there is an error saving the sub-category.
    */
-  async save(data: any): Promise<any> {
+  async save(data: any = {}): Promise<any> {
     try {
       // Saves a single sub-category entity based on the provided data.
       // The subCategoryRepository's save method is used to save the sub-category entity.

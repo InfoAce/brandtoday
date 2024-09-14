@@ -28,6 +28,11 @@ export default [
         name: "Orders",
         to:   "Orders"
       },
+      {
+        icon: "fa fa-sync",
+        name: "Queues",
+        to:   "Queues"
+      },
     ]
   },
   {

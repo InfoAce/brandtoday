@@ -3,7 +3,7 @@ import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { first, isEmpty, isNull, get, omit, shuffle, toPlainObject } from 'lodash';
+import { first, isEmpty, isNull, get, has,  omit, shuffle, toPlainObject } from 'lodash';
 import { BrandModel, CategoryModel, CompanyModel, ProductCategoryModel, ProductModel } from 'src/models';
 import { sep } from 'path';
 import { ConfigService } from '@nestjs/config';
@@ -43,8 +43,8 @@ export class HomeController {
               let product_categories = await this.productCategoryModel.find({ take: 1, where: { category_id: category.id } });
               let product            = get(first(shuffle(product_categories)),'product');
               // Get the categories for the child category
-              let images: any        = get(product,'images');          
-              return await { ...toPlainObject(( await category)), image: first(first(shuffle(images)).urls).url };
+              let images: any        = get(product,'images');   
+              return await { ...toPlainObject(( await category)), image: get(first(get(first(shuffle(images)),'urls')),'url') };
             })
           )
         );

@@ -8,6 +8,7 @@ export { RoleModule as RoleModule } from './role.module';
 export { OrderModule as OrderModule } from './order.module';
 export { PriceModule as PriceModule } from './price.module';
 export { ProductModule as ProductModule } from './product.module';
+export { QueueModule as QueueModule } from './queue.module';
 export { StockModule as StockModule } from './stock.module';
 export { TransactionModule as TransactionModule } from './transaction.module';
 export { UserModule as UserModule } from './user.module';

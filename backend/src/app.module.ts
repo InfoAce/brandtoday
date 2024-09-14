@@ -2,15 +2,15 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, OrderController, OverviewController, ProductsController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, OrderController, OverviewController, ProductsController, QueueController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService } from './services';
-import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule } from './modules';
-import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrderSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -87,6 +87,7 @@ import { OrderCreatedListener } from './listeners';
             ProductCategoryEntity,
             ProductReviewEntity,
             ProductVariantEntity,
+            QueueEntity,
             RoleEntity,
             StockEntity,
             StockKeepingEntity,
@@ -95,7 +96,7 @@ import { OrderCreatedListener } from './listeners';
             TransactionEntity,
             UserEntity
           ],
-          synchronize: false,
+          synchronize: true,
           subscribers: [
             OrderSubscriber,
             UserSubscriber
@@ -127,6 +128,7 @@ import { OrderCreatedListener } from './listeners';
     OrderModule,
     PriceModule,
     ProductModule,
+    QueueModule,
     RoleModule,
     StockModule,
     TransactionModule,
@@ -147,6 +149,7 @@ import { OrderCreatedListener } from './listeners';
     ProductsController,
     OrderController,
     OverviewController,
+    QueueController,
     SidebarController,
     SignupController,
     SystemController,

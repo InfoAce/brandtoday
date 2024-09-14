@@ -34,7 +34,7 @@ export default class ProductVariantModel {
    * @return {Promise<ProductVariantEntity[]>} A promise that resolves to an array of found product-categories.
    * @throws {ModelException} Throws a ModelException if there is an error finding the product-categories.
    */
-  async find(data: any): Promise<ProductVariantEntity[]> {
+  async find(data: any = {}): Promise<ProductVariantEntity[]> {
     try {
       // Find multiple product-category entities based on the provided data.
       // The find method of the productVariantRepository is used to find the product-categories.
@@ -52,7 +52,7 @@ export default class ProductVariantModel {
    * @return {Promise<ProductVariantEntity[]>} A promise that resolves to an array of found product-categories.
    * @throws {ModelException} Throws a ModelException if there is an error finding the product-categories.
    */
-    async findCount(data: any): Promise<Array<any>> {
+    async findCount(data: any = {}): Promise<Array<any>> {
       try {
         // Find multiple product-category entities based on the provided data.
         // The find method of the productVariantRepository is used to find the product-categories.
@@ -71,7 +71,7 @@ export default class ProductVariantModel {
    * @return {Promise<ProductVariantEntity>} A promise that resolves to the found product-category.
    * @throws {ModelException} Throws a ModelException if the product-category is not found.
    */
-  async findOne(data: any): Promise<ProductVariantEntity> {
+  async findOne(data: any = {}): Promise<ProductVariantEntity> {
     try {
       // Finds a single product-category entity based on the provided data and throws an exception if it is not found.
       // The findOneOrFail method of the productVariantRepository is used to find the product-category entity.
@@ -124,7 +124,7 @@ export default class ProductVariantModel {
    * @return {Promise<any>} A promise that resolves to the saved product-category.
    * @throws {ModelException} Throws a ModelException if there is an error saving the product-category.
    */
-  async save(data: any): Promise<any> {
+  async save(data: any = {}): Promise<any> {
     try {
       // Saves a single product-category entity based on the provided data.
       // The productVariantRepository's save method is used to save the product-category entity.
@@ -143,7 +143,7 @@ export default class ProductVariantModel {
    * @return {Promise<any>} A promise that resolves to an array of saved product-categories.
    * @throws {ModelException} Throws a ModelException if there is an error saving the product-categories.
    */
-  async insert(data: any): Promise<any> {
+  async insert(data: any = {}): Promise<any> {
     try {
       // Inserts multiple product-category entities based on the provided data.
       // The brandRepository's insert method is used to save the product-category entities.

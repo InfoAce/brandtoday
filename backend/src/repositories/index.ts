@@ -9,6 +9,7 @@ export { RoleRepository as RoleRepository } from './role.repository';
 export { OrderRepository as OrderRepository } from './order.repository';
 export { OrderItemRepository as OrderItemRepository } from './order-item.repository';
 export { OrderReviewRepository as OrderReviewRepository } from './order-review.repository';
+export { QueueRepository as QueueRepository } from './queue.repository';
 export { PriceRepository as PriceRepository } from './price.repository';
 export { ProductRepository as ProductRepository } from './product.repository';
 export { ProductCategorytRepository as ProductCategorytRepository } from './product-category.repository';

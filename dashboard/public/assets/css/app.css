@@ -11,11 +11,11 @@ body{
 .table th {
     color: #313131;
     font-weight: 600;
-    font-size: 14px
+    font-size: 16px
 }
 .table td {
-    font-size: 12px
+    font-size: 14px
 }
 .table th,.table td {
-    padding: .4rem
+    padding: .6rem
 }

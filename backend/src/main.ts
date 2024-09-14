@@ -80,9 +80,9 @@ async function bootstrap() {
   app.use(bodyParser.json({limit: '50mb'}));
   app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-  app.useGlobalInterceptors(new TimeoutInterceptor());
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api/v1');
+  // app.useGlobalInterceptors(new TimeoutInterceptor());
   app.useStaticAssets(resolve('/public'));
 
   await app.listen(APP_PORT);
