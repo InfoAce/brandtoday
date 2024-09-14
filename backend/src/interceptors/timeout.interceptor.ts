@@ -5,8 +5,6 @@ import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
-
-  private env = process.env;
   
   /**
    * Intercept the request and timeout after 2 minutes.
@@ -16,8 +14,9 @@ export class TimeoutInterceptor implements NestInterceptor {
    * @returns An Observable of the request result value.
    */
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const { REQUEST_TIMEOUT } = process.env;
     return next.handle().pipe(
-      timeout(parseInt(this.env.REQUEST_TIMEOUT) || 120000),
+      timeout(parseInt(REQUEST_TIMEOUT)),
       catchError(err => {
         // if the error is a timeout error, throw a RequestTimeoutException
         if (err instanceof TimeoutError) {
