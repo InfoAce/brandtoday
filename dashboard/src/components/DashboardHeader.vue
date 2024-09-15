@@ -21,15 +21,10 @@
         </div>
         <div class="nav-right col">
             <ul class="nav-menus">
-                <li>
-                    <a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()">
-                        <i data-feather="maximize-2"></i>
-                    </a>
-                </li>
                 <li class="onhover-dropdown">
-                    <div class="media align-items-center">
+                    <div class="media align-items-center justify-content-end">
                         <i class="fa fa-user" v-if="!isEmpty(authUser) && isNull(authUser.image)"></i>
-                        <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="align-self-center pull-right img-50 blur-up lazyloaded" :src="authUser.image"  :alt="`${authUser.first_name} ${authUser.last_name}`">
+                        <img v-if="!isEmpty(authUser) && !isNull(authUser.image)" class="align-self-center pull-right img-50 blur-up lazyloaded" :src="`${$store.getters.assetsUrl}${authUser.image}`"  :alt="`${authUser.first_name} ${authUser.last_name}`">
                         <div class="dotted-animation">
                             <span class="animate-circle"></span>
                             <span class="main-circle"></span>
@@ -37,13 +32,15 @@
                     </div>
                     <ul class="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
                         <li>
-                            <a href="javascript:void(0)">
-                                <i class="fa fa-user"></i>Edit Profile
+                            <a href="javascript:void(0)" @click="$router.push({name:'Profile'})">
+                                <i class="fa fa-user"></i>
+                                <span class="mx-2">Edit Profile</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" @click.prevent="logout">
-                                <i class="fa fa-sign-out" aria-hidden="true"></i>Logout
+                                <i class="fa fa-sign-out " aria-hidden="true"></i>
+                                <span class="mx-2">Logout</span>
                             </a>
                         </li>
                     </ul>

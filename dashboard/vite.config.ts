@@ -3,13 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from "url";
 
 export default defineConfig( ({command,mode}) => {
-  const env = loadEnv(mode, process.cwd(), '');
   return {
-    server: {
-      proxy: {
-        '/images': env.VITE_API_URL.replace('/api/v1', '')
-      },
-    },
     plugins: [
       vue()
     ],

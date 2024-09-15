@@ -5,7 +5,7 @@
 		<div class="logo-wrapper m-2 p-0">
 			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
 				<i data-feather="bar-chart" v-if="!isEmpty($data.company) && isNull($data.company.logo)"></i>
-				<img v-if="!isEmpty($data.company) && !isNull($data.company.logo)" class="d-none d-lg-block blur-up lazyloaded w-100" :src="$data.company.logo"  :alt="`${$data.company.name}`">
+				<img v-if="!isEmpty($data.company) && !isNull($data.company.logo)" class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${$store.getters.assetsUrl}${$data.company.logo}`"  :alt="`${$data.company.name}`">
 			</a>
 		</div>
 	</div>

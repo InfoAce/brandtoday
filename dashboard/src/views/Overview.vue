@@ -33,7 +33,7 @@
                             <div class="media static-top-widget align-items-center">
                                 <div class="icons-widgets">
                                     <div class="align-self-center text-center">
-                                        <i data-feather="users" class="font-warning"></i>
+                                        <i class="fa fa-users text-white fa-lg"></i>
                                     </div>
                                 </div>
                                 <div class="media-body media-doller">
@@ -50,7 +50,7 @@
                             <div class="media static-top-widget align-items-center">
                                 <div class="icons-widgets">
                                     <div class="align-self-center text-center">
-                                        <i data-feather="users" class="font-warning"></i>
+                                        <i class="fa fa-users-line text-white fa-lg"></i>
                                     </div>
                                 </div>
                                 <div class="media-body media-doller">
@@ -67,7 +67,7 @@
                             <div class="media static-top-widget align-items-center">
                                 <div class="icons-widgets">
                                     <div class="align-self-center text-center">
-                                        <i data-feather="box" class="font-secondary"></i>
+                                        <i class="fa fa-box text-white fa-lg"></i>                                
                                     </div>
                                 </div>
                                 <div class="media-body media-doller">
@@ -85,7 +85,9 @@
                         <div class="primary-box card-body">
                             <div class="media static-top-widget align-items-center">
                                 <div class="icons-widgets">
-                                    <div class="align-self-center text-center"> <i data-feather="box" class="font-secondary"></i></div>
+                                    <div class="align-self-center text-center"> 
+                                        <i class="fa fa-box text-white fa-lg"></i>
+                                    </div>
                                 </div>
                                 <div class="media-body media-doller"><span class="m-0"></span>
                                     <span class="m-0">Pending Orders</span>

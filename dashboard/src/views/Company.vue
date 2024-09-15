@@ -37,13 +37,13 @@
                             <label>Company Icon</label>
                             <template v-if="!$isEmpty(company.icon) && !edit.icon && $isEmpty(form.icon)">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="company.icon" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
+                                    <img :src="`${$store.getters.assetsUrl}${form.icon}`" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.icon = true">Edit</button>
                                 </div>
                             </template>
                             <template v-if="!$isEmpty(form.icon) && !edit.icon">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="form.icon" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
+                                    <img :src="`${$store.getters.assetsUrl}${form.icon}`" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.icon = true">Edit</button>
                                 </div>
                             </template>                                 
@@ -73,13 +73,13 @@
                             <label>Company Logo</label>
                             <template v-if="!$isEmpty(company.logo) && !edit.logo && $isEmpty(form.logo)">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="company.logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
+                                    <img :src="`${$store.getters.assetsUrl}${company.logo}`" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
                                 </div>
                             </template>
                             <template v-if="!$isEmpty(form.logo) && !edit.logo">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="form.logo" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                    <img :src="`${$store.getters.assetsUrl}${form.logo}`" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.logo = true">Edit</button>
                                 </div>
                             </template>                                 
@@ -110,7 +110,7 @@
                             <template v-if="!$isEmpty(company.white_logo) && !edit.white_logo && $isEmpty(form.white_logo)">
                                 <div class="col-12 d-flex flex-column align-items-center">
                                     <div class="bg-theme p-4 col-12 d-flex flex-column" style="background-color: #1d1d1d">
-                                        <img :src="company.white_logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
+                                        <img :src="`${$store.getters.assetsUrl}${company.white_logo}`" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
                                     </div>    
                                     <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
                                 </div>
@@ -118,7 +118,7 @@
                             <template v-if="!$isEmpty(form.white_logo) && !edit.white_logo">
                                 <div class="col-12 d-flex flex-column align-items-center">
                                     <div class="bg-theme p-4 col-12 d-flex flex-column" style="background-color: #1d1d1d">
-                                        <img :src="form.white_logo" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
+                                        <img :src="`${$store.getters.assetsUrl}${company.white_logo}`" alt="" width="100%" height="350" class="img-fluid blur-up lazyloaded">
                                     </div>
                                     <button class="btn btn-primary mt-2" @click="edit.white_logo = true">Edit</button>
                                 </div>
@@ -371,7 +371,6 @@ export default {
          */
         this.selectCrop = async (category) => {
             try {
-                console.log(category);
                 // Activate logo loading
                 if( category == 'logo'){ this.loading.logo = Boolean(true) }
                 

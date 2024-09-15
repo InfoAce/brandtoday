@@ -38,13 +38,13 @@
                             <div class="col-12">
                                 <template v-if="!$isEmpty(user.image) && !edit.image && $isEmpty(form.path)">
                                     <div class="col-12 d-flex flex-column align-items-center">
-                                        <img :src="user.image" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                        <img :src="`${$store.getters.assetsUrl}${user.image}`" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
                                         <button class="btn btn-primary mt-2" @click="edit.image = true">Edit</button>
                                     </div>
                                 </template>
                                 <template v-if="!$isEmpty(form.path) && !edit.image">
                                     <div class="col-12 d-flex flex-column align-items-center">
-                                        <img :src="form.path" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
+                                        <img :src="`${$store.getters.assetsUrl}${form.path}`" alt="" width="200" height="350" class="img-fluid blur-up lazyloaded">
                                         <button class="btn btn-primary mt-2" @click="edit.image = true">Edit</button>
                                     </div>
                                 </template>                                 
