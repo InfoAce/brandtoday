@@ -86,10 +86,19 @@
                             <template v-if="edit.logo && !$isEmpty(images.logo) && $isEmpty(form.logo)">
                                 <div class="col-12">
                                     <VuePictureCropper                                
-                                        :boxStyle="cropBorderStyle"
+                                        :boxStyle="{
+                                            width: '100%',
+                                            height: '100%',
+                                            backgroundColor: '#f8f8f8',
+                                            margin: 'auto',
+                                        }"
                                         :img="images.logo"
-                                        :options="logoCroppingOption"
-                                        :presetMode="logoPresetMode"
+                                        :options="{
+                                            viewMode: 1,
+                                            dragMode: 'move',
+                                            aspectRatio: 15 / 4,
+                                            cropBoxResizable: false
+                                        }"
                                     />          
                                     <div class="d-flex justify-content-between mt-2 col-12">                         
                                         <button class="btn btn-primary ml-2" type="button" @click="selectCrop('logo')"><i v-if="loading.icon" class="fa fa-spinner fa-spin"></i>Crop</button>

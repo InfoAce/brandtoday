@@ -166,28 +166,74 @@ const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace(
 const auth       = computed( () => $store.getters.auth);
 const cart       = computed( () => $store.getters.cart);
 const home       = computed({ get: () => $store.getters.home, set(val) { $store.commit('home',val); } });
+
+/**
+ * @description
+ * This function will update the favicon of the website dynamically.
+ * It will search for the first link with rel="icon" and set its href attribute
+ * to the provided icon URL.
+ * @param {String} icon - The URL of the favicon.
+ */
 const addIcon    = (icon) => {
-	document.querySelector('link[rel="icon"]')?.setAttribute('type','image/x-icon');
-	document.querySelector('link[rel="icon"]')?.setAttribute('href',icon);
+	// Get the first <link> element with rel="icon"
+	const favicon = document.querySelector('link[rel="icon"]');
+	
+	// Check if the favicon exists
+	if (favicon) {
+		// Set the type attribute
+		favicon.setAttribute('type', 'image/x-icon');
+		
+		// Set the href attribute
+		favicon.setAttribute('href', icon);
+	}
 }
+
+/**
+ * @description
+ * This function fetches the header menus from the server and updates the
+ * home state with the fetched data.
+ */
 const fetchMenus = () => {
-    $api.get('header')
+    /**
+     * @description
+     * The API endpoint to fetch the header menu from.
+     */
+    const url = 'header';
+
+    $api.get(url)
         .then( ({ data: { categories, company } }) => {
+            /**
+             * @description
+             * Update the categories state with the fetched categories.
+             */
             home.value.categories = cloneDeep(categories);
+
+            /**
+             * @description
+             * Update the company state with the fetched company.
+             */
             home.value.company    = cloneDeep(company);
+
+            /**
+             * @description
+             * Set the favicon of the website to the company's icon.
+             */
             addIcon(company.icon)
         })
-        .catch( () => {
-
+        .catch( error => {
+            /**
+             * @description
+             * Catch any errors that occur while fetching the menu.
+             */
+            console.error('Error fetching menu:', error);
         })
         .finally( () => {
-
+            /**
+             * @description
+             * Code to run after the promise is resolved or rejected.
+             */
         })
 }
-
-const btoa = (data) => {
-    return window.btoa(data);
-};
 
 const initMenus = debounce( () => {
     $(function () {

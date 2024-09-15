@@ -18,11 +18,11 @@ const router = createRouter({
           path: '/login',
           name: "AdminLogin",
           meta: {
-          title: 'Dashboard Login',
-          state: 1,
-          auth:  false,
-          redirectIfAuth: true,
-          admin: true
+            title: 'Login',
+            state: 1,
+            auth:  false,
+            redirectIfAuth: true,
+            admin: true
           },
           component: () => import('@/views/Login.vue')
       }, 
@@ -37,11 +37,11 @@ const router = createRouter({
               path: ':token',
               name: 'VerifyAccount',
               meta: {
-              title: 'Verify Account',
-              auth:  false,
-              state: 0,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Verify Account',
+                auth:  false,
+                state: 0,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/VerifyAccount.vue')
           },
@@ -49,11 +49,11 @@ const router = createRouter({
               path: 'error',
               name: "VerifyError404",
               meta: {
-              title: 'Not Found',
-              auth:  false,
-              redirectIfAuth: false,
-              state: 0,
-              admin: false
+                title: 'Not Found',
+                auth:  false,
+                redirectIfAuth: false,
+                state: 0,
+                admin: false
               },
               component: () => import('@/views/VerifyError.vue')
           },
@@ -79,11 +79,11 @@ const router = createRouter({
               path: '',
               name: "Overview",
               meta: {
-              title:     'Overview',
-              auth:  true,
-              redirectIfAuth: false,
-              state: 1,
-              admin: true
+                title:     'Overview',
+                auth:  true,
+                redirectIfAuth: false,
+                state: 1,
+                admin: true
               },
               component: () => import('@/views/Overview.vue')
           },      
@@ -91,11 +91,11 @@ const router = createRouter({
               path: 'clients',
               name: "Clients",
               meta: {
-              title: 'Clients',
-              auth:  true,
-              state: 1,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Clients',
+                auth:  true,
+                state: 1,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/Clients.vue')
           },
@@ -103,11 +103,11 @@ const router = createRouter({
               path: 'orders',
               name: "Orders",
               meta: {
-              title: 'Orders',
-              auth:  true,
-              redirectIfAuth: false,
-              state: 1,
-              admin: true
+                title: 'Orders',
+                auth:  true,
+                redirectIfAuth: false,
+                state: 1,
+                admin: true
               },
               component: () => import('@/views/Orders.vue')
           },
@@ -127,11 +127,11 @@ const router = createRouter({
               path: 'staff',
               name: "Staff",
               meta: {
-              title: 'Staff Members',
-              auth:  true,
-              state: 2,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Staff Members',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/Staff.vue')
           },
@@ -163,11 +163,11 @@ const router = createRouter({
               path: 'website',
               name: "Website",
               meta: {
-              title: 'Website Setup',
-              auth:  true,
-              state: 2,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Website Setup',
+                auth:  true,
+                state: 2,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/Website.vue')
           },        
@@ -175,11 +175,11 @@ const router = createRouter({
               path: 'profile',
               name: "Profile",
               meta: {
-              title: 'Profile',
-              auth:  true,
-              state: 1,
-              redirectIfAuth: false,
-              admin: true
+                title: 'Profile',
+                auth:  true,
+                state: 1,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/Profile.vue')
           },       
@@ -187,11 +187,11 @@ const router = createRouter({
               path: 'system',
               name: "System",
               meta: {
-              title: 'System',
-              auth:  true,
-              state: 3,
-              redirectIfAuth: false,
-              admin: true
+                title: 'System',
+                auth:  true,
+                state: 3,
+                redirectIfAuth: false,
+                admin: true
               },
               component: () => import('@/views/System.vue')
           },
@@ -209,7 +209,7 @@ router.beforeEach(
       window.document.getElementById("mySidenav").classList.remove('open-side')
     }
     
-    // window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+    window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
         
     if( !auth && admin ){
       if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Overview'}) }

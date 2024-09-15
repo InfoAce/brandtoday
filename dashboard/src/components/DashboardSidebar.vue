@@ -65,12 +65,25 @@ const $data   = reactive({
 	company: Object()
 });
 
-// Computed 
-const auth       = computed( () => $store.getters.auth );
-const backendUri = computed( () => get($store.getters.env,'VITE_API_URL').replace('api/v1','') );
-const addIcon    = (icon) => {
-	document.querySelector('link[rel="icon"]')?.setAttribute('type','image/x-icon');
-	document.querySelector('link[rel="icon"]')?.setAttribute('href',icon);
+/**
+ * @description
+ * This function will update the favicon of the website dynamically.
+ * It will search for the first link with rel="icon" and set its href attribute
+ * to the provided icon URL.
+ * @param {String} icon - The URL of the favicon.
+ */
+const addIcon    = (icon:string) => {
+	// Get the first <link> element with rel="icon"
+	const favicon = document.querySelector('link[rel="icon"]');
+	
+	// Check if the favicon exists
+	if (favicon) {
+		// Set the type attribute
+		favicon.setAttribute('type', 'image/x-icon');
+		
+		// Set the href attribute
+		favicon.setAttribute('href', `${$store.getters.assetsUrl}${icon}`);
+	}
 }
 onMounted(
 	debounce( async() => {
