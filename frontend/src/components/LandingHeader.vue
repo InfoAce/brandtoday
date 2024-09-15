@@ -107,7 +107,7 @@
                                     <div class="brand-logo text-center">
                                         <a @click.prevent="$router.push({ name: 'Home' })">
                                             <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
-                                            <img v-else :src="home.company.logo" class="img-fluid blur-up lazyload" width="200" alt="">
+                                            <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" alt="">
                                         </a>
                                     </div>
                                 </div>                                     
