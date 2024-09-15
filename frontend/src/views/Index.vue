@@ -157,7 +157,7 @@
                         :settings="$data.settings.banners" 
                     >
                         <slide v-for="(image,index) in $data.brands" :key="index" > 
-                            <img :src="image.path" class="" width="100%"/>
+                            <img :src="`${$store.getters.assetsUrl}${image.path}`" class="" width="100%"/>
                         </slide>
                         <template #addons>
                             <pagination />
