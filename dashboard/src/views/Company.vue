@@ -37,7 +37,7 @@
                             <label>Company Icon</label>
                             <template v-if="!$isEmpty(company.icon) && !edit.icon && $isEmpty(form.icon)">
                                 <div class="col-12 d-flex flex-column align-items-center">
-                                    <img :src="`${$store.getters.assetsUrl}${form.icon}`" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
+                                    <img :src="`${$store.getters.assetsUrl}${company.icon}`" alt="" width="100" height="150" class="img-fluid blur-up lazyloaded">
                                     <button class="btn btn-primary mt-2" @click="edit.icon = true">Edit</button>
                                 </div>
                             </template>

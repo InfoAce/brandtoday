@@ -14,7 +14,7 @@
                                 <div class="img-wrapper">
                                     <div class="front">
                                         <a href="javascript:void(0)">
-                                            <img :src="image.path" class="img-fluid lazyload" alt="">
+                                            <img :src="`${$store.getters.assetsUrl}${image.path}`" :alt="image.path" class="img-fluid lazyload" >
                                         </a>
                                         <div class="product-hover">
                                             <ul>

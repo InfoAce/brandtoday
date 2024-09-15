@@ -37,10 +37,6 @@
                             <form @submit.prevent="updateConfigurations">
                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                     <h4><strong>Amrod API Settings</strong></h4>
-                                    <button class="btn btn-solid hover-solid btn-sm" :disabled="loading.syncing" type="button" @click="syncAmrod">
-                                        <i class="fa fa-spinner fa-spin" v-if="loading.syncing"></i>
-                                        Synchronize Amrod
-                                    </button>
                                 </div>
                                 <hr>
                                 <div class="col-12">
