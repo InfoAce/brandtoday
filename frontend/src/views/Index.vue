@@ -19,7 +19,7 @@
                 :settings="$data.settings.banners" 
             >
                 <slide v-for="(image,index) in $data.banners" :key="index" > 
-                    <img :src="image.path" class="" width="100%"/>
+                    <img :src="`${$store.getters.assetsUrl}${image.path}`" class="" width="100%"/>
                 </slide>
                 <template #addons>
                     <pagination />
@@ -221,7 +221,7 @@
                                         <div v-if="!isEmpty(product.images)">
                                             <div class="front">
                                                 <a href="#">
-                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" width="100%">
+                                                    <img class="img-fluid blur-up lazyload bg-img" :src="`${$store.getters.assetsUrl}${product.images[0].urls[0].url}`" width="100%">
                                                 </a>
                                             </div>
                                             <div class="back" v-if="product.images.length > 1">
