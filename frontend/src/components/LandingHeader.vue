@@ -184,7 +184,7 @@ const addIcon    = (icon) => {
 		favicon.setAttribute('type', 'image/x-icon');
 		
 		// Set the href attribute
-		favicon.setAttribute('href', icon);
+		favicon.setAttribute('href', `${$store.getters.assetsUrl}${icon}`);
 	}
 }
 
