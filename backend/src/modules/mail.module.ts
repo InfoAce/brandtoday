@@ -18,6 +18,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
                   user: config.get('MAIL_USER'),
                   pass: config.get('MAIL_PASSWORD')
               },
+              secure: true,
               port: config.get('MAIL_PORT'),
               host: config.get('MAIL_HOST')
           },
