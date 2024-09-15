@@ -221,7 +221,7 @@
                                         <div v-if="!isEmpty(product.images)">
                                             <div class="front">
                                                 <a href="#">
-                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url`" width="100%">
+                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" width="100%">
                                                 </a>
                                             </div>
                                             <div class="back" v-if="product.images.length > 1">
