@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateCompanyValidation {
 
@@ -14,13 +14,17 @@ export class UpdateCompanyValidation {
     @IsString()
     email:string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     icon:string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     logo: string
+
+    @IsOptional()
+    @IsString()
+    white_logo: string
 
     @IsNotEmpty()
     @IsString()

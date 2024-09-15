@@ -223,7 +223,7 @@ export class AuthController {
     uploadImage(@UploadedFile() file: Express.Multer.File, @Req() req: Request,  @Res() res: Response) {
         try {
             // Return the uploaded file as a JSON response with a status code of 200
-            return res.status(HttpStatus.OK).json({ location:`${this.configService.get<string>('app.APP_FRONTEND_URL')}/images/${file.filename}`});
+            return res.status(HttpStatus.OK).json({ location:`/images/${file.filename}`});
         } catch(error) {
             // Log any errors that occur
             this.logger.error(error);
