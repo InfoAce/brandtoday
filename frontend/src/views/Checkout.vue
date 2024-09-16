@@ -423,9 +423,9 @@ const recaptcha = async () => {
 
         placeOrder();
         
-    } catch(err) {
+    } catch(error) {
 
-        
+        console.log(error);
     }
 }
 
