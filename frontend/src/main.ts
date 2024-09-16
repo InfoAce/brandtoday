@@ -12,7 +12,6 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 import toast from './toast';
 
-window.document.querySelector('title').innerHTML = `${import.meta.env.VITE_APP_NAME}`;
 
 import { VueReCaptcha } from 'vue-recaptcha-v3';
 import storage from './storage';
@@ -21,7 +20,8 @@ import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
 import App from './App.vue';
 
-const app = createApp(App)
+const app                    = createApp(App)
+const { RECAPTCHA_SITE_KEY } = import.meta.env;
 
 app.use(toast);
 app.use(appStore)
@@ -29,6 +29,7 @@ app.use(storage);
 app.use(router)
 app.use(api);
 app.use(VueSweetalert2);
-app.use(VueReCaptcha, { siteKey: '6LfUKLkpAAAAAMFo0iomiilG1QUpAkw8Xph5tz-Y' })
+app.use(VueReCaptcha, { siteKey: RECAPTCHA_SITE_KEY });
 // app.use(themes,{ router });
 app.mount('#app')
+
