@@ -1,5 +1,4 @@
 import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Global, Module } from '@nestjs/common';
 import { MailService } from 'src/services';
 import { sep } from 'path';
@@ -13,14 +12,15 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
       // imports: [ConfigModule], // import module if not enabled globally
       useFactory: async (config: ConfigService) => {
         return {
-          transport: {              
-              auth: {
-                  user: config.get('MAIL_USER'),
-                  pass: config.get('MAIL_PASSWORD')
-              },
-              secure: true,
-              port: config.get('MAIL_PORT'),
-              host: config.get('MAIL_HOST')
+          transport: {   
+            name: config.get('MAILER_TYPE'),           
+            auth: {
+              user: config.get('MAIL_USER'),
+              pass: config.get('MAIL_PASSWORD')
+            },
+            secure: true,
+            port: parseInt(config.get('MAIL_PORT')),
+            host: config.get('MAIL_HOST')
           },
           defaults: {
             from: `"No Reply" <${config.get('MAIL_FROM')}>`,
