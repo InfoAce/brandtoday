@@ -20,8 +20,8 @@ import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
 import App from './App.vue';
 
-const app                    = createApp(App)
-const { RECAPTCHA_SITE_KEY } = import.meta.env;
+const app                         = createApp(App)
+const { VITE_RECAPTCHA_SITE_KEY } = import.meta.env;
 
 app.use(toast);
 app.use(appStore)
@@ -29,7 +29,6 @@ app.use(storage);
 app.use(router)
 app.use(api);
 app.use(VueSweetalert2);
-app.use(VueReCaptcha, { siteKey: RECAPTCHA_SITE_KEY });
-// app.use(themes,{ router });
+app.use(VueReCaptcha, { siteKey: VITE_RECAPTCHA_SITE_KEY });
 app.mount('#app')
 
