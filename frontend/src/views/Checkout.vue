@@ -34,7 +34,7 @@
                                         <h3>Billing Details</h3>
                                     </div>                                            
                                 </div>
-                                <div class="col-lg-8">
+                                <div class="col-lg-7">
                                     <div class="row">
                                         <div class="col-12" v-show="isEmpty(authUser)">
                                             <div class="row check-out">
@@ -168,7 +168,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-5">
                                     <div class="checkout-details">
 								        <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'items')">{{$data.errors.items}}</p>								
                                         <div class="order-box">
@@ -176,32 +176,39 @@
                                                 <div>Product <span class="text-end">Total</span></div>
                                             </div>
                                             <ul class="qty">
-                                                <template  v-for="(item,index) in cart">
-                                                    <template v-if="has(item,'sizes')">
-                                                        <li v-for="(size,key) in item.sizes" :key="`${index}_${key}`" class="d-flex align-items-center justify-content-between">
+                                                <template  v-for="(item,index) in cart_items">
+                                                    <template v-if="has(item,'size')">
+                                                        <li :key="`${index}`" class="d-flex align-items-center justify-content-between">
                                                             <div>
-                                                                <img :src="item.image" width="50" class="img-thumbnail"/>
-                                                                {{ item.name }} - {{ size.name }} × {{ size.quantity }} 
+                                                                <img :src="item.image" width="70" class="img-thumbnail"/>
                                                             </div>
-                                                            <span class="text-end">KSH {{ (size.quantity * item.price).toFixed(0) }}</span>
+                                                            <p class="px-2 mb-0">{{ item.name }} <br> {{ item.size.name }} <br> Quantity: {{ item.size.quantity }} </p>
+                                                            <span class="text-end">{{ home.company.currency }} {{ (item.size.quantity * item.price).toFixed(2) }}</span>
                                                         </li>
                                                     </template>
                                                     <template v-else>
                                                         <li :key="index" class="d-flex align-items-center justify-content-between">
                                                             <div>
-                                                                <img :src="item.image" width="50" class="img-thumbnail"/>
-                                                                {{ item.name }} × {{ item.quantity }} 
+                                                                <img :src="item.image" width="70" class="img-thumbnail"/>
                                                             </div>
-                                                            <span class="text-end">KSH {{ (item.quantity * item.price).toFixed(0) }}</span>
+                                                            <p class="px-2 mb-0">{{ item.name }} <br> Quantity: {{ item.quantity }} </p>
+                                                            <span class="text-end">{{ home.company.currency }} {{ (item.quantity * item.price).toFixed(2) }}</span>
                                                         </li>
                                                     </template>
                                                 </template>
                                             </ul>
                                             <ul class="sub-total">
-                                                <li>Subtotal <span class="count text-end">KSH {{ total.toFixed(0) }}</span></li>
+                                                <li>Subtotal <span class="count text-end">{{ home.company.currency }} {{ sub_total.toFixed(2) }}</span></li>
+                                                <template v-if="!isEmpty($data.service_fees)">
+                                                    <li v-for="(fee,key) in $data.service_fees" :key="key">
+                                                        {{ fee.name }}
+                                                        <span class="count text-end" v-if="fee.type == 'fixed'">{{ home.company.currency }} {{ fee.amount.toFixed(2) }}</span>
+                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ) }}</span>
+                                                    </li>
+                                                </template>
                                             </ul>
                                             <ul class="total">
-                                                <li>Total <span class="count text-end">KSH {{ total.toFixed(0) }}</span></li>
+                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(2) }}</span></li>
                                             </ul>
                                         </div>                                     
                                     </div>
@@ -227,7 +234,7 @@
 import { computed, inject, onBeforeMount, onMounted, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import * as yup from "yup";
-import { cloneDeep, debounce, each, first, isEmpty, has, set, sum, values } from 'lodash';
+import { cloneDeep, debounce, each, first, isEmpty, has, omit, set, sum, values } from 'lodash';
 import { VueTelInput } from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css'
 import { countries } from 'countries-list';
@@ -248,19 +255,20 @@ const $data   = reactive({
         addresses: Boolean(),
         order:     Boolean(),
     },
-    isDisabled:       Boolean(true),
-    order: {}
+    isDisabled:   Boolean(true),
+    order:        Object(),
+    service_fees: Array()
 });
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 // Computed
-const authUser = computed( () => $store.getters.auth.user );
-const cart     = computed( () => $store.getters.cart );
-const total    = computed( () => { 
-    return sum(cart.value.map( (val:any) => { 
-        return has(val,'sizes') ? (val.price * sum(val.sizes.map( (size: any) => size.quantity))) : (val.price * val.quantity)
-    }));
-});
+const authUser   = computed( () => $store.getters.auth.user );
+const cart       = computed( () => $store.getters.cart );
+const cart_items = computed( () => $store.getters.cart.map( item => has(item,'sizes') ? item.sizes.map( (size:any) => ({...omit(item,['sizes']),size})): item ).flat() );
+const home       = computed( () => $store.getters.home);
+const sub_total  = computed( () => cart_items.value.map( item => has(item,'size') ? item.price * item.size.quantity : item.price * item.quantity ).reduce( (a,c) => a + c, 0) );
+const total      = computed( () => $data.service_fees.map( (fee) => fee.type == 'percentage' ? ((fee.amount * sub_total.value ) / 100) : fee.amount ).reduce( (a,c) => a + c, 0) + sub_total.value );
+
 let formSchema       = yup.object().shape({
     items:            yup.array().min(1).required("*Cart Items is required"),                      
     first_name:       yup.string()
@@ -338,6 +346,7 @@ const validateForm = (field) => {
 const checkTransactionStatus = (statusInterval: number, order_id: string) => {
     $api.get(`/orders/${order_id}/status`)
         .then( ({ data: { transaction }}) => {
+            console.log(transaction);
             // If the transaction is paid, stop the interval and redirect the user to the order success page.
             if (transaction.status_code === 1) {
                 $data.loader.order = false;
@@ -434,11 +443,12 @@ onBeforeMount( async() => {
     
     if( !isEmpty(authUser.value) ){
         try {
-            $data.loader.addresses = Boolean(true);
+            $store.commit('loader',true);
             
-            const { data: { addresses } } = await $api.get('/addresses');
+            const { data: { addresses, service_fees } } = await $api.get('/orders/checkout');
 
-            $data.addresses = cloneDeep(addresses);
+            $data.addresses    = cloneDeep(addresses);
+            $data.service_fees = cloneDeep(service_fees);
 
             $data.form      = {
                 address_id: String(),
@@ -451,9 +461,9 @@ onBeforeMount( async() => {
             });
             
         } catch (error) {
-            $data.loader.addresses = Boolean();
+            $store.commit('loader',false);
         } finally {
-            $data.loader.addresses = Boolean();
+            $store.commit('loader',false);
         }
     }
 

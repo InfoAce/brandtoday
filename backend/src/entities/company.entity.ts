@@ -31,6 +31,12 @@ export class CompanyEntity {
   })
   brands: string;
 
+  @Column({
+    nullable: true,
+    default:  'KES'
+  })
+  currency: string;
+
   @Seed('Test Company')
   @Column()
   name: string;
@@ -97,7 +103,7 @@ export class CompanyEntity {
     nullable: true,
     type: 'json'
   })
-  service_fees: string;
+  service_fees: any;
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)
   @JoinColumn({

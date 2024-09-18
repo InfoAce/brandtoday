@@ -9,18 +9,19 @@ import {
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
 import { OrderRepository } from 'src/repositories';
-
-class OrderModelException extends ExceptionsHandler {}
+import { ModelException } from 'src/exceptions';
 
 @Injectable()
-export default class OrderModel {
+export default class OrderModel extends OrderRepository {
 
   private readonly logger = new Logger(OrderModel.name);
 
   constructor(
     @InjectRepository(OrderEntity)
     private orderRepository: OrderRepository,
-  ) {}
+  ) {
+    super(orderRepository.target, orderRepository.manager, orderRepository.queryRunner) 
+  }
   
   async find(data:any): Promise<OrderEntity[]>{
     try{
@@ -35,15 +36,15 @@ export default class OrderModel {
    *
    * @param {object} data - The data used to find the order.
    * @returns {Promise<OrderEntity>} A promise that resolves to the found order.
-   * @throws {OrderModelException} Throws an OrderModelException if the order is not found.
+   * @throws {ModelException} Throws an ModelException if the order is not found.
    */
   async findOne(data: any): Promise<OrderEntity> {
     try {
       // Finds a single order entity based on the provided data and throws an exception if it is not found.
       return await this.orderRepository.findOneOrFail(data);
     } catch (err) {
-      // If the order is not found, throw an OrderModelException.
-      throw new OrderModelException(err);  
+      // If the order is not found, throw an ModelException.
+      throw new ModelException(err);  
     }
   }
 
@@ -52,7 +53,7 @@ export default class OrderModel {
    *
    * @param {object} data - The data used to find the order.
    * @returns {Promise<OrderEntity>} A promise that resolves to the found order.
-   * @throws {OrderModelException} Throws an OrderModelException if the order is not found.
+   * @throws {ModelException} Throws an ModelException if the order is not found.
    */
   async findOneBy(data: any): Promise<OrderEntity> {
     try {
@@ -60,8 +61,8 @@ export default class OrderModel {
       // This method uses the findOneByOrFail method of the OrderRepository to find the order entity.
       return await this.orderRepository.findOneByOrFail(data);
     } catch (err) {
-      // If the order is not found, throw an OrderModelException.
-      throw new OrderModelException(err);
+      // If the order is not found, throw an ModelException.
+      throw new ModelException(err);
     }
   }
 
@@ -97,11 +98,7 @@ export default class OrderModel {
     try {
       return await this.orderRepository.save(data);
     } catch(err){
-      throw new OrderModelException(err);   
+      throw new ModelException(err);   
     }
-  }
-
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.orderRepository.delete(id);
   }
 }

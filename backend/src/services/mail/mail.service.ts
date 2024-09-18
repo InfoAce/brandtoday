@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { OrderEntity, UserEntity } from 'src/entities';
 import { sum } from 'lodash';
 import { MailException } from 'src/exceptions/mail.exception';
+import * as moment from 'moment';
+import { isNull } from 'lodash';
+
 const { sep } = require('path'); 
 const fs      = require('fs');
 
@@ -57,27 +60,46 @@ export class MailService {
     try{
       
       // Get the user associated with the order.
-      let user = await order.user;
+      let user    = await order.user;
+
+      let context = {
+        address:         order.address,
+        company_logo:    `${this.configService.get<string>('APP_URL')}${user.company.logo}`,
+        company_name:    user.company.name,
+        company_address: user.company.address,
+        company_email:   user.company.email,
+        company_phone:   user.company.phone_number,
+        created_at:      moment(order.created_at).format('Do MMMM YYYY'),
+        customer:        {
+          email:           user.email,
+          first_name:      user.first_name,
+          last_name:       user.last_name,
+          phone_number:    user.phone_number
+        },
+        currency:        user.company.currency,
+        extra_charges:   Array(),
+        items:           order.items,
+        order_number:    order.num_id,
+        total:           order.items.map( item => item.quantity * item.price ).reduce( (a,c) => a + c, 0)
+      }
+      
+      if( !isNull(user.company.service_fees) ){
+        context.extra_charges = user.company.service_fees.map( service => ({ name: service.name, amount: service.type == 'percentage' ? (context.total * service.amount) / 100 : service.amount }) );
+      }
 
       // Send the email.
       await this.mailerService.sendMail({
         to: user.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
         template: 'order/create',  // The name of the handlebars template to use.
-        context: { // The data to pass to the template.
-          items:        order.items,
-          order_number: order.num_id
-        },
+        context,
       });
 
       await this.mailerService.sendMail({
         to: user.company.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
         template: 'company/new-order',  // The name of the handlebars template to use.
-        context: { // The data to pass to the template.
-          items:        order.items,
-          order_number: order.num_id
-        },
+        context,
       });
 
     } catch (error) {
@@ -128,7 +150,9 @@ export class MailService {
         subject: `${this.configService.get<string>('APP_NAME') } Payment Successful for Order #${order.num_id}`,  // The subject of the email.
         template: 'order/payment',  // The name of the handlebars template to use.
         context: { // The data to pass to the template.
-          items:        order.items,
+          company_name: user.company.name,
+          company_logo: user.company.logo,
+          currency:     user.company.currency,
           order_number: order.num_id,
           transaction:  order.transaction
         },

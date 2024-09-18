@@ -1,0 +1,8 @@
+.dashboard-section .dashboard-table .table th,
+.dashboard-section .dashboard-table .table td {
+    text-align: left !important;
+}
+
+.img-wrapper > image:hover {
+    transform: scale(1.5);
+}

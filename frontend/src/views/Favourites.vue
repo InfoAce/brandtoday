@@ -16,7 +16,7 @@
                                         <div class="select-box active mx-2">
                                             <div class="address-box row">
                                                 <div class="top mb-6 col-12">
-                                                    <h6><span>KSH {{ get(first(get(first(favourite.product.variants),'price')),'amount') }}</span></h6>
+                                                    <h6><span>{{ home.company.currency }} {{ get(first(get(first(favourite.product.variants),'price')),'amount') }}</span></h6>
                                                 </div>
                                                 <div class="middle col-12">
                                                     <div class="row">
@@ -74,6 +74,8 @@ const cart   = computed({
         $store.commit('cart',value);
     }
 });
+const home   = computed( () => $store.getters.home);
+
 
 /**
  * Fetches the favourites from the backend API and updates the local store.

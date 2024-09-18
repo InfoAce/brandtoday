@@ -2,8 +2,8 @@
     <div>
 	<!-- breadcrumb start -->
 	<div class="breadcrumb-section">
-		<div class="container">
-			<div class="row">
+		<div class="container-fluid">
+			<div class="row px-4">
 				<div class="col-sm-6">
 					<div class="page-title">
 						<h2>Return Refunds</h2>
@@ -27,9 +27,10 @@
 	<section class="login-page section-b-space">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col-12" v-if="!$data.loader">
                     <div v-html="$data.return_refunds"></div>
                 </div>          
+                <PlaceholderText :count="20" v-if="$data.loader"/>
 			</div>
 		</div>
 	</section>
@@ -39,26 +40,28 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
-import { clone, debounce, each, isEmpty, has } from 'lodash';
+import { inject, onBeforeMount, reactive } from 'vue';
+import { clone } from 'lodash';
+import { PlaceholderText } from '../components';
 
 const $api  = inject('$api');
-const $data = reactive({ return_refunds: String() });
+const $data = reactive({ loader: Boolean(), return_refunds: String() });
 
-onBeforeMount(
-    debounce( async () => {
+onBeforeMount( 
+    async () => {
         try {
+            $data.loader         = Boolean(true);
+            
             let { data:{ return_refunds } } = await $api.get('website/return-refunds');
-
-            $data.return_refunds = clone(return_refunds);
+            
+            $data.loader          = Boolean();
+            $data.return_refunds  = clone(return_refunds);
 
         } catch(error) {
-
-            if( has(error,'response') ){
-
-            }
-
+            $data.loader         = Boolean();
+        } finally {
+            $data.loader         = Boolean();
         }
-    },500) 
+    }
 )
 </script>

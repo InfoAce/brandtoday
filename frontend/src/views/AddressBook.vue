@@ -4,6 +4,7 @@
             <div class="col-12">
                 <div class="card mt-0">
                     <div class="card-body">
+                        <CardLoader :loader="$data.loader.fetch" />
                         <div class="row">
                             <div class="top-sec col-12">
                                 <h3>Address Book</h3>
@@ -124,6 +125,7 @@ import { cloneDeep, each, isEmpty, has, add} from 'lodash';
 import { inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import * as yup from "yup";
+import { CardLoader } from '../components';
 
 // Data variables
 const $api   = inject('$api');
@@ -141,7 +143,8 @@ const $data  = reactive({
         category:       String()
     },
     loader: {
-        save: false
+        fetch: Boolean(),
+        save:  false
     },
     isDisabled: true,
     modals: {
@@ -174,16 +177,16 @@ const validateForm = (field) => {
 }
 
 const fetch = () => {
-	$store.commit('loader',true);
+	$data.loader.fetch = Boolean(true);
 	$api.get('/addresses')
 		.then( ({ data:{ addresses }}) => {
             $data.addresses = cloneDeep(addresses);
 		})
 		.catch( () => {
-            $store.commit('loader',false);
+            $data.loader.fetch = Boolean();
 		})
 		.finally( () => {
-            $store.commit('loader',false);
+            $data.loader.fetch = Boolean();
 		});
 }
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ClientGuard } from '../../../guards';
 import { Request, Response } from 'express';
-import { UserModel } from 'src/models';
+import { FavouriteModel, OrderModel, UserModel } from 'src/models';
 import { get, set } from 'lodash';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -14,6 +14,8 @@ export class AccountController {
 
     constructor(
         private readonly configService: ConfigService,
+        private favouriteModel: FavouriteModel,
+        private orderModel: OrderModel,
         private userModel: UserModel
     ){}
 
@@ -22,17 +24,16 @@ export class AccountController {
     async getProfile(@Req() req: Request,  @Res() res: Response) {
         try {
             
-            let user = await this.userModel.findOneBy({id: get(req,'user').id});
+            let user                = await this.userModel.findOneBy({id: get(req,'user').id});
+            let order_count         = await this.orderModel.countBy({ user_id: user.id })
+            let pending_order_count = await this.orderModel.countBy({ user_id: user.id, status: 'pending'})
+            let favourite_count     = await this.favouriteModel.countBy({ user_id: user.id });
 
-            set(user,'order_count',(await user.orders).length)
-            set(user,'pending_order_count',(await user.orders).filter(val => val.status == 'pending').length )
-            set(user,'favourite_count',(await user.favourites).length)
-
-            res.status(HttpStatus.OK).json({ user  });
+            res.status(HttpStatus.OK).json({ favourite_count, pending_order_count, order_count, user });
         
-        } catch (err) {
-
-
+        } catch (error) {
+            console.log(error);
+            return res.status(error.status).json({ message: error.message });
         }
     } 
 

@@ -114,6 +114,30 @@ const router = createRouter({
       component: () => import('@/views/PrivacyPolicy.vue')
     },
     {
+      path: '/faqs',
+      name: "Faqs",
+      meta: {
+        title: 'FAQs',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/Faqs.vue')
+    },
+    {
+      path: '/brands',
+      name: "Brands",
+      meta: {
+        title: 'Brands',
+        auth:   false,
+        redirectIfAuth: false,
+        state:  0,
+        admin: false
+      },
+      component: () => import('@/views/Brands.vue')
+    },
+    {
       path: '/return-refunds',
       name: "ReturnRefunds",
       meta: {

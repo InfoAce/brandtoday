@@ -1,7 +1,7 @@
 import { Controller, Get, HttpException, HttpStatus, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { get } from 'lodash';
-import { CompanyModel } from 'src/models';
+import { BrandModel, CompanyModel } from 'src/models';
 
 @Controller('website')
 export class WebsiteController {
@@ -11,6 +11,7 @@ export class WebsiteController {
      * @param {CompanyModel} companyModel - The company model to interact with the database.
      */
     constructor(
+        private readonly brandModel: BrandModel, // The company model to interact with the database
         private readonly companyModel: CompanyModel // The company model to interact with the database
     ){}
 
@@ -89,6 +90,31 @@ export class WebsiteController {
         }
     }    
     
+    /**
+     * This function handles the GET request to the FAQs page.
+     * It fetches the FAQs from the company model and returns them.
+     * @param req - The request object.
+     * @param res - The response object.
+     * @returns A Promise that resolves when the FAQs are returned in the response.
+     * @throws HttpException if there is an error fetching the FAQs.
+     */
+    @Get('brands')
+    async brands(@Req() req: Request,  @Res() res: Response) {
+        try{
+            // Fetch the FAQs from the company model
+            let brands = await this.brandModel.find();
+
+            // Return the FAQs in the response
+            return res.status(HttpStatus.OK).json({ brands });
+
+        } catch(error) {
+            // Throw an HttpException with the error message and status
+            throw new HttpException(error.message, error.status);
+            
+        }
+    }    
+    
+
     /**
      * This function handles the GET request to the terms and conditions page.
      * It fetches the terms and conditions from the company model and returns them.

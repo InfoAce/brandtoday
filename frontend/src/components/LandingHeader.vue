@@ -101,7 +101,7 @@
                     </div>
                 </template>
                 <template v-if="!isEmpty(home.categories)" >
-                    <div class="col-12 px-0" >
+                    <div class="col-12 px-0 py-3" >
                             <div id="main-menu" class="d-flex w-100 justify-content-between align-items-center">
                                 <div class="menu-left">
                                     <div class="brand-logo text-center">

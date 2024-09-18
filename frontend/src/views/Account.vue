@@ -1,22 +1,23 @@
 <template>
 <div class="tab-pane fade show active" id="info">
+    <CardLoader :loader="loader" />
     <div class="counter-section">
         <div class="row">
             <div class="col-md-4">
                 <div class="counter-box text-theme">
-                    <h3>{{ user.order_count }}</h3>
+                    <h3>{{ summary.order_count }}</h3>
                     <h5><span class="fa fa-box fa-lg m-2"></span>Total Order</h5>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="counter-box">
-                    <h3>{{ user.pending_order_count }}</h3>
+                    <h3>{{ summary.pending_order_count }}</h3>
                     <h5><span class="fa fa-cart-arrow-down fa-lg m-2"></span>Pending Order</h5>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="counter-box">
-                    <h3>{{ user.favourite_count }}</h3>
+                    <h3>{{ summary.favourite_count }}</h3>
                     <h5><span class="fa fa-heart fa-lg m-2"></span>Whislist</h5>
                 </div>
             </div>
@@ -69,6 +70,8 @@ import { each, isEmpty, has } from 'lodash';
 import * as yup from "yup";
 import { VueTelInput } from 'vue3-tel-input'
 import 'vue3-tel-input/dist/vue3-tel-input.css'
+import { CardLoader } from '../components';
+
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -77,24 +80,34 @@ export default {
         });
     },
     components:{
+        CardLoader,
         VueTelInput
     },
     data(){
         return{
-            errors: {},
-            user: {},
-            isDisabled: true            
+            errors: Object(),
+            loader: Boolean(),
+            user:   Object(),
+            summary: {
+                favourite_count:     0,
+                pending_order_count: 0,
+                order_count:         0,
+            },
+            isDisabled: Boolean(true)            
         }
     },
     methods:{
         fetchUser(){
-            this.$store.commit('loader',true);
-            this.$api.get('/auth/user')
-                .then( ({ data:{ user }}) => {
-                    this.user = user;
+            this.loader = Boolean(true);
+            this.$api.get('/account')
+                .then( ({ data:{ favourite_count, pending_order_count, order_count, user}}) => {
+                    this.summary.favourite_count     = favourite_count;
+                    this.summary.pending_order_count = pending_order_count;
+                    this.summary.order_count         = order_count;
+                    this.user                        = user;
                 })
                 .catch( ({ response }) => {
-                    this.$store.commit('loader',false);
+                    this.loader = Boolean();
                     if( !isEmpty(response.data) && response.data.statusCode == 400 ){
                         response.data.message.forEach( (value) => {
                             toast.info(value);
@@ -102,7 +115,7 @@ export default {
                     }
                 })
                 .finally( () => {
-                    this.$store.commit('loader',false);
+                    this.loader = Boolean();
                 });            
         },
         getPhoneNumber($event) {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity, OrderItemEntity } from 'src/entities';
-import { OrderCreatedListener } from 'src/listeners';
+import { OrderCreatedListener, OrderPaidListener } from 'src/listeners';
 import { OrderItemModel, OrderModel } from 'src/models';
 
 @Module({
@@ -15,7 +15,8 @@ import { OrderItemModel, OrderModel } from 'src/models';
   providers:   [
     OrderModel,
     OrderItemModel,
-    OrderCreatedListener
+    OrderCreatedListener,
+    OrderPaidListener
   ]
 })
 

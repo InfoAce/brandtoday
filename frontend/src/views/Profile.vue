@@ -2,8 +2,8 @@
 <div>
     <!-- breadcrumb start -->
     <div class="breadcrumb-section">
-        <div class="container">
-            <div class="row">
+        <div class="container-fluid">
+            <div class="row px-4">
                 <div class="col-sm-6">
                     <div class="page-title">
                         <h2>Profile</h2>

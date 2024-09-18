@@ -5,7 +5,7 @@ import { OrderModel } from 'src/models';
 import { MailService } from 'src/services';
 
 @Injectable()
-export class OrderCreatedListener {
+export class OrderPaidListener {
 
   /**
    * Constructor
@@ -17,7 +17,7 @@ export class OrderCreatedListener {
     private readonly orderModel: OrderModel
   ) {}
 
-  @OnEvent('order.created',{ async: true })
+  @OnEvent('order.paid',{ async: true })
   /**
    * Handles the "OrderCreatedEvent" event
    *
@@ -26,12 +26,8 @@ export class OrderCreatedListener {
    * @returns {void}
    */
   async handleOrderCreatedEvent({ id }: OrderCreatedEvent) {
-    try {
-      let order  = await this.orderModel.findOneBy({ id });
-      await this.mailService.createOrder(order);
-    } catch(error) {
-      console.log(error);
-    }
+    let order  = await this.orderModel.findOneBy({ id });
+    await this.mailService.payment(order);
   }
 
 }

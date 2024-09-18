@@ -1,5 +1,6 @@
 <template>
 <div class="tab-pane fade show active" id="orders">
+    <CardLoader :loader="$data.loader" />
     <div class="row">
         <div class="col-12">
             <div class="card dashboard-table mt-0">
@@ -26,14 +27,14 @@
                                         <td>{{ index + 1 }}</td>
                                         <td> # {{ order.num_id }}</td>
                                         <td>{{ order.items.length }}</td>
-                                        <td>KSH {{ sum(order.items.map( item => item.price * item.quantity)).toFixed() }}</td>
+                                        <td>{{ home.company.currency }} {{ sum(order.items.map( item => item.price * item.quantity)).toFixed() }}</td>
                                         <td>
-                                            <template v-if="order.status == 'pending'"><i class="text-warning">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'paid'"><i class="text-info">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'confirmed'"><i class="text-success">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'in_transit'"><i class="text-success">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'delivered'"><i class="text-success">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'cencelled'"><i class="text-danger">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'pending'"><i class="badge badge-warning">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'paid'"><p class="badge">{{ order.status }}</p></template>
+                                            <template v-if="order.status == 'confirmed'"><i class="badge badge-success">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'in_transit'"><i class="badge badge-success">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'delivered'"><i class="badge badge-success">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'cencelled'"><i class="badge badge-danger">{{ order.status }}</i></template>
                                         </td>
                                         <td>{{ moment(order.created_at).format('Do MMMM, Y') }}</td>   
                                         <td></td>                                     
@@ -41,8 +42,8 @@
                                 </template>
                                 <template v-else>
                                     <tr>
-                                        <td colspan="8" class="text-center">
-                                            <h4 class="mb-0 p-3"><i class="fa fa-exclamation-triangle"></i> No orders Found.</h4>
+                                        <td colspan="8">
+                                            <h4 class="mb-0 p-3 text-center"><i class="fa fa-exclamation-triangle"></i> No orders Found.</h4>
                                         </td>
                                     </tr>
                                 </template>
@@ -57,28 +58,31 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, reactive } from 'vue';
+import { computed, inject, onBeforeMount, reactive } from 'vue';
 import { useStore } from 'vuex';
 import  moment from 'moment';
 import { isEmpty, sum } from 'lodash';
+import { CardLoader } from '../components';
 
 const $api  = inject('$api'); 
 const $data = reactive({
+    loader: Boolean(),
     orders: Object()
 });
 const $store = useStore();
+const home   = computed( () => $store.getters.home);
 
 const fetch = () => {
-    $store.commit('loader',true);
+    $data.loader = Boolean(true);
     $api.get(`/orders`)
         .then( ({ data: { orders } }) => {
             $data.orders = orders
         })
         .catch( () => {
-            $store.commit('loader',false);
+            $data.loader = Boolean();
         })
         .finally( () => {
-            $store.commit('loader',false);
+            $data.loader = Boolean();
         });
 }
 

@@ -11,7 +11,7 @@ import { PesapalService } from 'src/services/pesapal/pesapal.service';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
 import * as moment from 'moment';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { OrderCreatedEvent } from 'src/events';
+import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('orders')
@@ -49,8 +49,6 @@ export class OrderController {
     private userModel: UserModel // The user model instance.
   ) {}
 
-  @UseGuards(ClientGuard)
-  @Get('')
   /**
    * Retrieves paginated list of orders for a logged-in user.
    *
@@ -153,7 +151,7 @@ export class OrderController {
             }
           })
         )
-        
+  
         order                 = await this.orderModel.findOneBy({ id: order.id });
         orderCreatedEvent.id  = order.id;
         this.eventEmitter.emit('order.created', orderCreatedEvent);
@@ -163,7 +161,6 @@ export class OrderController {
       }
 
     } catch(error) {
-
       // If a PesapalServiceException occurs, log the status
       if( error instanceof PesapalServiceException ) {
         this.logger.error(error);
@@ -199,6 +196,36 @@ export class OrderController {
 
   }  
 
+  @UseGuards(OptionalGuard)
+  @Get('checkout')
+  async checkout(
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ) {
+
+    try{
+
+      let addresses    = Array();
+      let service_fees = Array();
+
+      if( has(req,'user') ){
+        let user     = get(req,'user');
+        addresses    = await user.address_book;
+        service_fees = user.company.service_fees;
+      }
+
+      if( !has(req,'user') ){
+        let company  = await this.companyModel.first();
+        service_fees = company.service_fees;
+      }
+
+      return res.status(HttpStatus.OK).json({ addresses, service_fees });
+
+    } catch (error) {
+
+    }
+
+  }
   /**
    * Send an order to the user's email address.
    *
@@ -266,28 +293,34 @@ export class OrderController {
       let transaction = await order.transaction; 
 
       // Authenticate with Pesapal to retrieve the transaction status
-      let pesapal_auth = await this.pesapalService.auth(); 
+      let pesapal_auth       = await this.pesapalService.auth(); 
       let transaction_status = await this.pesapalService.transactionStatus(transaction.tracking_id,pesapal_auth.token); 
 
-      // Update the transaction status in the database
-      await this.transactionModel.updateOne(transaction.id,{
+      // If the transaction is paid, update the order status
+      if( transaction_status.status_code === 1 ){
+      
+        // Update the transaction status in the database
+        await this.transactionModel.updateOne(transaction.id,{
           confirmation_code: transaction_status.confirmation_code,
           payment_method:    transaction_status.payment_method,
           status:            transaction_status.status,
           status_code:       transaction_status.status_code,
-        }
-      );
-
-      // If the transaction is paid, update the order status
-      if( transaction_status.status_code === 1 ){
+        });
         await this.orderModel.updateOne(order.id,{ status: 'paid' }); 
+
+        // Create an instance of OrderPaidEvent
+        let orderPaidEvent = new OrderPaidEvent();
+        orderPaidEvent.id  = order.id;
+
+        // Emit the order paid
+        this.eventEmitter.emit('order.paid', orderPaidEvent);
       }
 
       // Retrieve the updated transaction
       transaction = await order.transaction; 
 
       // Return the transaction status as a JSON response
-      return res.status(HttpStatus.OK).json({ transaction });     
+      return res.status(HttpStatus.OK).json({ transaction, transaction_status });     
     
     } catch(err){
       // Handle any errors that occur during the process
@@ -349,7 +382,7 @@ export class OrderController {
 
       // Create the order transaction
       await this.transactionModel.save({
-        ammount:     totalAmount,
+        amount:      totalAmount,
         tracking_id: pesapal_order.order_tracking_id,
         order_id:    order.id
       });

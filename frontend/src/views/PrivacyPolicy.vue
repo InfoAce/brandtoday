@@ -2,8 +2,8 @@
     <div>
 	<!-- breadcrumb start -->
 	<div class="breadcrumb-section">
-		<div class="container">
-			<div class="row">
+		<div class="container-fluid">
+			<div class="row px-4">
 				<div class="col-sm-6">
 					<div class="page-title">
 						<h2>Privacy Policy</h2>
@@ -30,34 +30,7 @@
 				<div class="col-12" v-if="!$data.loader">
                     <div v-html="$data.privacy_policy"></div>
                 </div>
-                <div class="ph-item" v-if="$data.loader">
-                    <div class="ph-col-12">
-                        <div class="ph-picture"></div>
-                        <div class="ph-row">
-                            <div class="ph-col-6 big"></div>
-                            <div class="ph-col-4 empty big"></div>
-                            <div class="ph-col-2 big"></div>
-                            <div class="ph-col-4"></div>
-                            <div class="ph-col-8 empty"></div>
-                            <div class="ph-col-6"></div>
-                            <div class="ph-col-6 empty"></div>
-                            <div class="ph-col-12"></div>
-                        </div>
-                    </div>
-                    <div class="ph-col-12">
-                        <div class="ph-picture"></div>
-                        <div class="ph-row">
-                            <div class="ph-col-6 big"></div>
-                            <div class="ph-col-4 empty big"></div>
-                            <div class="ph-col-2 big"></div>
-                            <div class="ph-col-4"></div>
-                            <div class="ph-col-8 empty"></div>
-                            <div class="ph-col-6"></div>
-                            <div class="ph-col-6 empty"></div>
-                            <div class="ph-col-12"></div>
-                        </div>
-                    </div>
-                </div>  
+                <PlaceholderText :count="20" v-if="$data.loader"/>
 			</div>
 		</div>
 	</section>
@@ -67,17 +40,17 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
-import { clone, debounce, each, isEmpty, has } from 'lodash';
+import { inject, onBeforeMount, reactive } from 'vue';
+import { clone } from 'lodash';
+import { PlaceholderText } from '../components';
 
 const $api = inject('$api');
-const $data = reactive({ loader: Boolean(), privacy_policy: String() });
+const $data = reactive({ loader: Boolean(true), privacy_policy: String() });
 
-onBeforeMount(() => $data.loader = Boolean(true) )
-
-onMounted( 
-    debounce( async () => {
+onBeforeMount( 
+    async () => {
         try {
+            $data.loader         = Boolean(true);
             
             let { data:{ privacy_policy} } = await $api.get('website/privacy-policy');
             
@@ -85,12 +58,10 @@ onMounted(
             $data.privacy_policy = clone(privacy_policy);
 
         } catch(error) {
-
-            if( has(error,'response') ){
-
-            }
-
+            $data.loader         = Boolean();
+        } finally {
+            $data.loader         = Boolean();
         }
-    },500) 
+    }
 )
 </script>

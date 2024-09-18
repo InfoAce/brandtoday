@@ -5,5 +5,6 @@ export { default as LandingHeader } from './LandingHeader.vue';
 export { default as LandingLoader } from './LandingLoader.vue';
 export { default as Navbar } from './Navbar.vue';
 export { default as PlaceholderLoader } from './PlaceholderLoader.vue';
+export { default as PlaceholderText } from './PlaceholderText.vue';
 export { default as ProductRatingForm } from './ProductRatingForm.vue';
 export { default as RelatedProduct } from './RelatedProduct.vue';

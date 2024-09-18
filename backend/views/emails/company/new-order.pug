@@ -25,106 +25,82 @@ table.backgroundTable.main-temp(width='100%' cellpadding='0' cellspacing='0' bor
                   tbody
                     tr
                       td(style='padding-bottom: 10px;')
-                        a(href='https://htmlcodex.com')
-                          img(src='images/logo.png' alt='PapaChina')
+                        img(src=logo alt=company_name)
                     tr
                       td(style='font-size: 14px; line-height: 18px; color: #666666;')
-                        | 3828 Mall Road
+                        span=company_address
                     tr
                       td(style='font-size: 14px; line-height: 18px; color: #666666;')
-                        | Los Angeles, California, 90017
+                        strong Phone:
+                          span=company_phone 
+                        strong  | Email: 
+                          span=company_email
                     tr
                       td(style='font-size: 14px; line-height: 18px; color: #666666;')
-                        | Phone: 310-807-6672 | Email: info@example.com
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 25px;')
-                        strong Order Number:
-                        |  001 | 
+                        strong Order Number: #
+                          span=order_number
                         strong Order Date:
-                        |  21-Nov-19
+                          span=created_at
+                    tr
+                      td(style='font-size: 14px; line-height: 18px; color: #666666; border-top: 2px solid #ededed; margin-top: 25px;')
+                        span
+                          strong Customer
+                    tr
+                      td(style='font-size: 14px; line-height: 18px; color: #666666;')
+                        span Name:
+                        span=customer.first_name 
+                        span=customer.last_name 
+                    tr
+                      td(style='font-size: 14px; line-height: 18px; color: #666666;')
+                        span | Email: 
+                        span=customer.email
+                        span | Phone Number: 
+                        span=customer.phone_number
+                    tr
+                      td(style='font-size: 14px; line-height: 18px; color: #666666;')
+                        span=address.address_line_1
+                        span(style='margin-right: 2px;') ,
+                        span=address.city_town
+                        span(style='margin-right: 2px;') ,
+                        span=address.county_state
+                        span(style='margin-right: 2px;') ,
+                        span=address.country
             // End header Section
-            // Start address Section
-            tr
-              td(style='padding-top: 0;')
-                table.devicewidthinner(width='560' align='center' cellpadding='0' cellspacing='0' border='0' style='border-bottom: 1px solid #bbbbbb;')
-                  tbody
-                    tr
-                      td(style='width: 55%; font-size: 16px; font-weight: bold; color: #666666; padding-bottom: 5px;')
-                        | Delivery Adderss
-                      td(style='width: 45%; font-size: 16px; font-weight: bold; color: #666666; padding-bottom: 5px;')
-                        | Billing Address
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | James C Painter
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | James C Painter
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | 3939  Charles Street, Farmington Hills
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | 3939  Charles Street, Farmington Hills
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;')
-                        | Michigan, 48335
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;')
-                        | Michigan, 48335
-            // End address Section
             // Start product Section
             each item, key in items
-            tr
-              td(style='padding-top: 0;')
-                table.devicewidthinner(width='560' align='center' cellpadding='0' cellspacing='0' border='0' style='border-bottom: 1px solid #eeeeee;')
-                  tbody
-                    tr
-                      td(rowspan='4' style='padding-right: 10px; padding-bottom: 10px;')
-                        img(style='height: 80px;' src=item.item alt=item.name)
-                      td(colspan='2' style='font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;')
-                        span=item.name
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; width: 440px;')
-                        | Quantity: 
-                        span=item.quantity
-                      td(style='width: 130px;')
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575;')
-                        | Color:
-                        span=item.colour
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right;')
-                        span=item.price
-                        span='Per Unit'
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;')
-                        if item.size 
-                            span='Size:'
-                            span=item.size
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;')
-                        b(style='color: #666666;')=item.quantity * item.price
-                        |  Total
-
-              td(style='padding-top: 0;')
-                table.devicewidthinner(width='560' align='center' cellpadding='0' cellspacing='0' border='0' style='border-bottom: 1px solid #eeeeee;')
-                  tbody
-                    tr
-                      td(rowspan='4' style='padding-right: 10px; padding-bottom: 10px;')
-                        img(style='height: 80px;' src='images/product-3.jpg' alt='Product Image')
-                      td(colspan='2' style='font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;')
-                        | Phasellus vitae pharetra arcu
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; width: 440px;')
-                        | Quantity: 100
-                      td(style='width: 130px;')
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575;')
-                        | Color: White &amp; Blue
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right;')
-                        | $1.23 Per Unit
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;')
-                        | Size: XL
-                      td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;')
-                        b(style='color: #666666;') $1,234.50
-                        |  Total
-            // End product Section
+              tr
+                td(style='padding-top: 0;')
+                  table.devicewidthinner(width='560' align='center' cellpadding='0' cellspacing='0' border='0' style='border-bottom: 1px solid #eeeeee;')
+                    tbody
+                      tr
+                        td(rowspan='4' style='padding-right: 10px; padding-bottom: 10px;')
+                          img(style='height: 80px;' src=item.image alt=item.name)
+                        td(colspan='2' style='font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;')
+                          span=item.name
+                      tr
+                        td(style='font-size: 14px; line-height: 18px; color: #757575; width: 440px;')
+                          | Quantity: 
+                          span=item.quantity
+                        td(style='width: 130px;')
+                      tr
+                        td(style='font-size: 14px; line-height: 18px; color: #757575;')
+                          | Color:
+                          span=item.colour
+                        td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right;')
+                          span KSH
+                          span=item.price
+                          span(style='margin-right: 2px;') Per Unit
+                      tr
+                        td(style='font-size: 14px; line-height: 18px; color: #757575; padding-bottom: 10px;')
+                          if item.size 
+                              span Size:
+                              span=item.size
+                        td(style='font-size: 14px; line-height: 18px; color: #757575; text-align: right; padding-bottom: 10px;')
+                          b(style='color: #666666;')
+                            span KSH
+                            span=item.quantity * item.price
+                          |  Total
+              // End product Section
             // Start calculation Section
             tr
               td(style='padding-top: 0;')
@@ -135,53 +111,19 @@ table.backgroundTable.main-temp(width='100%' cellpadding='0' cellspacing='0' bor
                       td(style='font-size: 14px; line-height: 18px; color: #666666;')
                         | Sub-Total:
                       td(style='font-size: 14px; line-height: 18px; color: #666666; width: 130px; text-align: right;')
-                        | $1,234.50
-                    tr
-                      td(style='font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee;')
-                        | Shipping Fee:
-                      td(style='font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee; text-align: right;')
-                        | $10.20
+                        span KSH 
+                        span=total
+                    each charge, key in extra_charges
+                      tr
+                          td(style='font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee;')
+                            span=charge.name
+                          td(style='font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px; border-bottom: 1px solid #eeeeee; text-align: right;')
+                            span KSH
+                            span=charge.amount
                     tr
                       td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-top: 10px;')
                         | Order Total
                       td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-top: 10px; text-align: right;')
-                        | $1,234.50
-                    tr
-                      td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666;')
-                        | Payment Term:
-                      td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; text-align: right;')
-                        | 100%
-                    tr
-                      td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; padding-bottom: 10px;')
-                        | Deposit Amount
-                      td(style='font-size: 14px; font-weight: bold; line-height: 18px; color: #666666; text-align: right; padding-bottom: 10px;')
-                        | $1,234.50
+                        span KSH 
+                        span=(extra_charges.map( charge => charge.amount).reduce( (a,c) => a + c,  0) + total)
             // End calculation Section
-            // Start payment method Section
-            tr
-              td(style='padding: 0 10px;')
-                table.devicewidthinner(width='560' align='center' cellpadding='0' cellspacing='0' border='0')
-                  tbody
-                    tr
-                      td(colspan='2' style='font-size: 16px; font-weight: bold; color: #666666; padding-bottom: 5px;')
-                        | Payment Method (Bank Transfer)
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | Bank Name:
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | Account Name:
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | Bank Address:
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666;')
-                        | Account Number:
-                    tr
-                      td(style='width: 55%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;')
-                        | Bank Code:
-                      td(style='width: 45%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;')
-                        | SWIFT Code:
-                    tr
-                      td(colspan='2' style='width: 100%; text-align: center; font-style: italic; font-size: 13px; font-weight: 600; color: #666666; padding: 15px 0; border-top: 1px solid #eeeeee;')
-                        b(style='font-size: 14px;') Note:
-                        |  Lorem ipsum dolor sit amet, consectetur adipiscing elit
-            // End payment method Section

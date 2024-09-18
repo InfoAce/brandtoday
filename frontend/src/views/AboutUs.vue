@@ -2,18 +2,18 @@
     <div>
 	<!-- breadcrumb start -->
 	<div class="breadcrumb-section">
-		<div class="container">
-			<div class="row">
+		<div class="container-fluid">
+			<div class="row px-4">
 				<div class="col-sm-6">
 					<div class="page-title">
-						<h2>Terms & Conditions</h2>
+						<h2>Get To Know Us</h2>
 					</div>
 				</div>
 				<div class="col-sm-6">
 					<nav aria-label="breadcrumb" class="theme-breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-							<li class="breadcrumb-item active">Terms & Conditions</li>
+							<li class="breadcrumb-item active">Get To Know Us</li>
 						</ol>
 					</nav>
 				</div>
@@ -27,9 +27,10 @@
 	<section class="login-page section-b-space">
 		<div class="container">
 			<div class="row">
-				<div class="col-12">
+				<div class="col-12" v-if="!$data.loader">
                     <div v-html="$data.about_us"></div>
                 </div>
+                <PlaceholderText :count="20" v-if="$data.loader"/>
 			</div>
 		</div>
 	</section>
@@ -39,27 +40,28 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, reactive, ref, watch } from 'vue';
-import { clone, debounce, each, isEmpty, has } from 'lodash';
+import { inject, onBeforeMount, reactive } from 'vue';
+import { clone } from 'lodash';
+import { PlaceholderText } from '../components';
 
-const $api  = inject('$api');
-const $data = reactive({ about_us: String() });
+const $api = inject('$api');
+const $data = reactive({ loader: Boolean(true), about_us: String() });
 
 onBeforeMount( 
-    debounce( async () => {
+    async () => {
         try {
+            $data.loader         = Boolean(true);
             
-            let { data:{ about_us } } = await $api.get('website/about-us');
-
-            $data.about_us = clone(about_us);
+            let { data:{ about_us} } = await $api.get('website/about-us');
+            
+            $data.loader         = Boolean();
+            $data.about_us       = clone(about_us);
 
         } catch(error) {
-
-            if( has(error,'response') ){
-
-            }
-
+            $data.loader         = Boolean();
+        } finally {
+            $data.loader         = Boolean();
         }
-    },500) 
+    }
 )
 </script>
