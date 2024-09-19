@@ -60,7 +60,7 @@
                                 <!-- price filter start here -->
                                 <div class="collection-collapse-block border-0 open">
                                     <h3 class="collapse-block-title">price</h3>
-                                    <!-- <VueSlider v-model="$data.price" min="0" max="10000" tooltip="hover" tooltipPlacement="left" :enableCross="true" :processStyle="processStyle" :tooltipStyle="tooltipStyle"/> -->
+                                    <VueSlider v-model="$data.price" min="0" max="10000" tooltip="hover" tooltipPlacement="left" :enableCross="true" :processStyle="processStyle" :tooltipStyle="tooltipStyle"/>
                                 </div>
                             </div>
                             <!-- silde-bar colleps block end here -->
@@ -70,7 +70,7 @@
                                 <CardLoader v-if="!isEmpty($data.products)" />
                                 <PlaceholderLoader v-if="isEmpty($data.products) && $data.loading" :count="10"/>                        
                                 <div class="row" >
-                                    <div class="col-xl-3 col-6" v-for="(product,index) in $data.products" :key="index">
+                                    <div class="col-xl-3 col-6 mb-4" v-for="(product,index) in $data.products" :key="index">
                                         <div class="product-box">
                                             <div class="img-wrapper">
                                                 <div v-if="!isEmpty(product.images)">
@@ -115,11 +115,8 @@
 </script>
 <script setup >
 import { cloneDeep, debounce, first, get,isEmpty, isNull, has, times, toPlainObject } from 'lodash';
-import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import { CardLoader, PlaceholderLoader } from '../components';
 import VueSlider from "vue-3-slider-component";
-import { vInfiniteScroll } from '@vueuse/components'
-import { useInfiniteScroll } from '@vueuse/core';
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
@@ -128,7 +125,6 @@ const $api    = inject('$api');
 const $toast  = inject('$toast');
 const $store  = useStore();
 const $route  = useRoute();
-const $router = useRouter();
 const $data   = reactive({
     category:         Object(),
     filter:{
