@@ -133,14 +133,14 @@ export class AppService {
      await Promise.all(
          chunk(categories,500).map( async (categories) => {
              return new Promise( async (resolve,reject) => {
-                 // setTimeout( async (categories) => {
-                     await this.categoryModel.insert(
-                         categories.map( 
-                             ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
-                         )
-                     )
-                     resolve(true);
-                 // }, 2000);
+                 setTimeout( async (categories) => {
+                    await this.categoryModel.insert(
+                        categories.map( 
+                            ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
+                        )
+                    )
+                    resolve(true);
+                 }, 2000);
              })
          })
      )
@@ -149,13 +149,13 @@ export class AppService {
      await Promise.all(
          chunk(sub_categories,500).map( async (sub_categories) => {
              return new Promise( async (resolve,reject) => {
-                 // setTimeout( async (sub_categories) => {
-                     await this.subCategoryModel.insert(
-                             sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
-                         )
-                     )
-                     resolve(true);
-                 // }, 2000);
+                 setTimeout( async (sub_categories) => {
+                    await this.subCategoryModel.insert(
+                            sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
+                        )
+                    )
+                    resolve(true);
+                 }, 2000);
              })
          })
      )
@@ -164,14 +164,14 @@ export class AppService {
      await Promise.all(
          chunk(child_sub_categories,500).map( async (child_sub_categories) => {
              return new Promise( async (resolve,reject) => {
-                 // setTimeout( async (child_sub_categories) => {
-                     await this.childSubCategory.insert(
-                         child_sub_categories.map( 
-                             ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
-                         )
-                     )
-                     resolve(true);
-                 // }, 2000);
+                 setTimeout( async (child_sub_categories) => {
+                    await this.childSubCategory.insert(
+                        child_sub_categories.map( 
+                            ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
+                        )
+                    )
+                    resolve(true);
+                 }, 2000);
              })
          })
      )

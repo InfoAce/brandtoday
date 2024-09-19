@@ -19,10 +19,12 @@ import storage from './storage';
 import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
 import App from './App.vue';
+import InfiniteScroll from "@kurtliao/vue-infinite-scroll";
 
 const app                         = createApp(App)
 const { VITE_RECAPTCHA_SITE_KEY } = import.meta.env;
 
+app.directive("InfiniteScroll", InfiniteScroll);
 app.use(toast);
 app.use(appStore)
 app.use(storage);

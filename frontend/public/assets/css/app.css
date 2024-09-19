@@ -6,3 +6,10 @@
 .img-wrapper > image:hover {
     transform: scale(1.5);
 }
+.collection-product-wrapper .product-wrapper-grid .product-box {
+    margin-top: 0px;
+}
+
+.infinite-scroll {
+    display: block !important;
+}

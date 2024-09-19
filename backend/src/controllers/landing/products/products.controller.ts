@@ -2,10 +2,10 @@ import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable
 import { AuthGuard, ClientGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
-import { cloneDeep, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, set, sortBy, take, toPlainObject, uniqBy } from 'lodash';
+import { cloneDeep, flatMap, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, set, sortBy, take, toPlainObject, uniqBy, uniq } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
+import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
 import { ILike } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -24,6 +24,7 @@ export class ProductsController {
      * @param cacheManager - The instance of CacheManager
      */
     constructor(
+      private brandModel:            BrandModel,
       private categoryModel:         CategoryModel,
       private configService:         ConfigService,
       private priceModel:            PriceModel,
@@ -50,8 +51,8 @@ export class ProductsController {
       @Query('name',new DefaultValuePipe(String())) queryName: string,
       @Param('category',new DefaultValuePipe(String())) category: any,
       @Param('sub_category',new DefaultValuePipe(String())) sub_category: any,
-      @Query('page',new DefaultValuePipe(1)) queryPage: number,
-      @Query('perPage',new DefaultValuePipe(10)) queryPerPage: number,
+      @Query('page',new DefaultValuePipe(1)) queryPage: string,
+      @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
       @Req() req: Request,  
       @Res() res: Response
@@ -73,7 +74,7 @@ export class ProductsController {
         }
 
         // Fetch products categories based on the where clause
-        let [products_categories, count]: any = await this.productCategoryModel.findCount({ skip: (queryPage - 1) * (queryPerPage + 1), take: queryPerPage, where });
+        let [products_categories, count]: any = await this.productCategoryModel.findCount({ skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), where });
     
         // List products fetched
         let products: any = await Promise.all(
@@ -94,7 +95,7 @@ export class ProductsController {
         );
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({ category, sub_category, products, products_count: count });
+        res.status(HttpStatus.OK).json({category, sub_category, products, products_count: count });
         
       } catch(error){
 
@@ -108,6 +109,64 @@ export class ProductsController {
 
       }
     } 
+
+    @Get('brands')
+    /**
+     * Show a product by its code.
+     *
+     * @param {string} code - The code of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
+    async brands(
+      @Req() req: Request,  // The request object
+      @Res() res: Response // The response object
+    ) {
+      try {
+        // Fetch brands
+        let brands = await this.brandModel.find();
+
+        // Send the product and favourite as a JSON response with a status code of 200 (OK)
+        res.status(HttpStatus.OK).json({ brands });
+
+      } catch(error){
+
+        // Log any errors that occur
+        this.logger.error(error);
+
+      }
+    }
+
+    @Get('colours')
+    /**
+     * Show a product by its code.
+     *
+     * @param {string} code - The code of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
+    async colours(
+      @Req() req: Request,  // The request object
+      @Res() res: Response // The response object
+    ) {
+      try {
+        // Fetch brands
+        let colours = this.configService.get<any>('colors');
+
+        colours     = uniq(flatMap(colours,(item) => item.colour ));
+
+        // Send the product and favourite as a JSON response with a status code of 200 (OK)
+        res.status(HttpStatus.OK).json({ colours });
+
+      } catch(error){
+
+        // Log any errors that occur
+        this.logger.error(error);
+
+      }
+    }
 
     @UseGuards(OptionalGuard)
     @Put(':product_id')

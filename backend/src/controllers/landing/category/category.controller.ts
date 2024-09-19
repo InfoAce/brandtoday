@@ -138,6 +138,7 @@ export class CategoryController {
               let image: any = first(shuffle(images));
             
               return await { ...toPlainObject(( await sub_category)), image, products_count: count };
+              // return await sub_category;
             })
           )
         );
