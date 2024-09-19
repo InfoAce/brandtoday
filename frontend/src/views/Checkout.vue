@@ -440,51 +440,51 @@ const recaptcha = async () => {
 
 
 onBeforeMount( async() => {
-    
-    if( !isEmpty(authUser.value) ){
-        try {
-            $store.commit('loader',true);
-            
-            const { data: { addresses, service_fees } } = await $api.get('/orders/checkout');
+    try {
+        $store.commit('loader',true);
+        
+        const { data: { addresses, service_fees } } = await $api.get('/orders/checkout');
 
-            $data.addresses    = cloneDeep(addresses);
-            $data.service_fees = cloneDeep(service_fees);
+        $data.addresses    = cloneDeep(addresses);
+        $data.service_fees = cloneDeep(service_fees);
 
-            $data.form      = {
-                address_id: String(),
-                items:   Array() 
-            }
-            
+        $data.form      = {
+            address_id: String(),
+            items:   Array() 
+        }
+        
+        
+        if( isEmpty(authUser.value) ){
+            $data.form = {
+                items:            Array(),
+                address_line_1:   String(),
+                address_line_2:   String(),
+                confirm_password: String(),
+                country:          String(),
+                currency:         String(),
+                first_name:       String(),
+                last_name:        String(),
+                email:            String(),
+                password:         String(),
+                phone_number:     String(),
+                postal_code:      String(),
+                county_state:     String(),
+                city_town:        String(),
+                type:             String('existing')
+            };
+        }
+
+        if( !isEmpty(authUser.value) ){
             formSchema = yup.object().shape({
                 items:      yup.array().min(1).required("*Cart Items is required"),                      
                 address_id: yup.string().required("*Select an address"),                     
             });
-            
-        } catch (error) {
-            $store.commit('loader',false);
-        } finally {
-            $store.commit('loader',false);
         }
-    }
-
-    if( isEmpty(authUser.value) ){
-        $data.form = {
-            items:            Array(),
-            address_line_1:   String(),
-            address_line_2:   String(),
-            confirm_password: String(),
-            country:          String(),
-            currency:         String(),
-            first_name:       String(),
-            last_name:        String(),
-            email:            String(),
-            password:         String(),
-            phone_number:     String(),
-            postal_code:      String(),
-            county_state:     String(),
-            city_town:        String(),
-            type:             String('existing')
-        };
+        
+    } catch (error) {
+        $store.commit('loader',false);
+    } finally {
+        $store.commit('loader',false);
     }
 });
 
