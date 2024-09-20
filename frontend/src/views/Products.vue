@@ -318,6 +318,7 @@ watch(
     () => $data.filter.name,
     debounce(() => {
         $store.commit('card_loader',true);
+        $data.filter.page = 1;
         fetchProducts();
     },500)
 )
@@ -326,6 +327,7 @@ watch(
     () => $data.filter.price,
     debounce(() => {
         $store.commit('card_loader',true);
+        $data.filter.page = 1;
         fetchProducts();
     },500),
     {
