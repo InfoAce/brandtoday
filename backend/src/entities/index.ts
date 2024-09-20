@@ -13,6 +13,7 @@ export { PriceEntity as PriceEntity } from './price.entity';
 export { ProductEntity as ProductEntity } from './product.entity';
 export { ProductCategoryEntity as ProductCategoryEntity } from './product-category.entity';
 export { ProductReviewEntity  as ProductReviewEntity } from './product-review.entity';
+export { ProductColourEntity as ProductColourEntity } from './product-colour.entity';
 export { ProductVariantEntity as ProductVariantEntity } from './product-variant.entity';
 export { StockKeepingEntity  as StockKeepingEntity } from './stock-keeping.entity';
 export { StockEntity  as StockEntity } from './stock.entity';

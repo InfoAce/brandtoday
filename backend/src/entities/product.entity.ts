@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
-import { FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
+import { FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductColourEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
 
 @Entity("products")
 export class ProductEntity {
@@ -17,11 +17,9 @@ export class ProductEntity {
   @JoinColumn()
   categories: ProductCategoryEntity[];
 
-  @Column({
-    nullable: true,
-    type:'json'
-  })
-  colour_images: string;
+  @OneToMany(() => ProductColourEntity, (entity) => entity.product,{ eager: true })
+  @JoinColumn()
+  colour_images: ProductColourEntity[];
 
   @Column({
     nullable: true,

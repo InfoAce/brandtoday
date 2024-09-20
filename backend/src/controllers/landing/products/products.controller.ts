@@ -7,8 +7,9 @@ import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
-import { ILike } from 'typeorm';
+import { Any, Equal, ILike, Or } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 
 @Controller('products')
 export class ProductsController {
@@ -53,6 +54,7 @@ export class ProductsController {
       @Param('sub_category',new DefaultValuePipe(String())) sub_category: any,
       @Query('page',new DefaultValuePipe(1)) queryPage: string,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
+      @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
       @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
       @Req() req: Request,  
       @Res() res: Response
@@ -65,39 +67,41 @@ export class ProductsController {
         // Find the sub category based on the provided sub category id
         sub_category      = await this.subCategoryModel.findOne({ where: { id: sub_category } });
 
-        // Define the where clause for filtering products based on category, sub category, and name (if provided)
-        let where: object = { category_id: category.id,  sub_category_id: sub_category.id }
+        let query = this.productModel.createQueryBuilder("products")
+                        .leftJoinAndSelect("products.categories", "categories")
+                        .leftJoinAndSelect("products.colour_images", "colour_images")
 
         // If sub child category is provided, add it to the where clause
         if (!isEmpty(queryName)) {
-          where = { ...where, product: { name: ILike(`%${queryName}%`) } };
+          query = query.andWhere("products.name LIKE :name", {name: `%${queryName}%`});
+        }
+        
+        if (!isEmpty(queryPriceRange)) {
+          query = query.leftJoinAndSelect("products.variants", "variants").leftJoinAndSelect("variants.price", "variants_prices")
+          query = query.andWhere("variants_prices.amount >= :min AND variants_prices.amount <= :max", {min: queryPriceRange.split('~')[0], max: queryPriceRange.split('~')[1]})
+                       .orderBy("variants_prices.amount",querySortPricing == 'descending' ? 'DESC' : 'ASC')
         }
 
-        // Fetch products categories based on the where clause
-        let [products_categories, count]: any = await this.productCategoryModel.findCount({ skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), where });
-    
-        // List products fetched
-        let products: any = await Promise.all(
-          products_categories.map( async product_category => product_category.product )
-                             .map(async (product) => {
-            // If the product has colour images, add the hex code to each colour image
-            product = await product;
-
-            if (!isNull(product.colour_images)) {
-              product.colour_images = product.colour_images.map((color) => ({
-                ...color,
-                hex: this.colors[color.code].colour,
-              }));
-            }
-            
-            return product;
-          })
-        );
+        let [ products, count ] = await query.andWhere("categories.category_id = :category_id", {category_id: category.id})
+                                             .andWhere("categories.sub_category_id = :sub_category_id", {sub_category_id: sub_category.id})
+                                             .skip((parseInt(queryPage) - 1) * (parseInt(queryPerPage))).take(parseInt(queryPerPage))
+                                             .setFindOptions({ loadEagerRelations: true})
+                                             .getManyAndCount();
+                                             
+        let getProducts = products.map( (product) => {
+          if (!isNull(product.colour_images)) {
+            product.colour_images = product.colour_images.map((color) => ({
+              ...color,
+              hex: this.colors[color.code].colour,
+            }));
+          }
+          return product;
+        })
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({category, sub_category, products, products_count: count });
+        res.status(HttpStatus.OK).json({category, sub_category, products: getProducts, products_count: count});
         
-      } catch(error){
+      } catch(error){ 
 
         // If any error occurred, send the error as a JSON response
         if( has(error,'applicationRef') ){
@@ -154,8 +158,13 @@ export class ProductsController {
       try {
         // Fetch brands
         let colours = this.configService.get<any>('colors');
-
         colours     = uniq(flatMap(colours,(item) => item.colour ));
+        
+        // hexs.map( 
+        //   (hex) => {
+        //     console.log(flatMap(colours,(item,key) => ({ colours: item.colour, code: key}) ).filter( colour => colour.colours.includes(hex) ));
+        //   }
+        // )
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
         res.status(HttpStatus.OK).json({ colours });

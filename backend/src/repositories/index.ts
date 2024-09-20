@@ -12,7 +12,8 @@ export { OrderReviewRepository as OrderReviewRepository } from './order-review.r
 export { QueueRepository as QueueRepository } from './queue.repository';
 export { PriceRepository as PriceRepository } from './price.repository';
 export { ProductRepository as ProductRepository } from './product.repository';
-export { ProductCategorytRepository as ProductCategorytRepository } from './product-category.repository';
+export { ProductCategoryRepository as ProductCategoryRepository } from './product-category.repository';
+export { ProductColourRepository as ProductColourRepository } from './product-colour.repository';
 export { ProductReviewRepository as ProductReviewRepository } from './product-review.repository';
 export { ProductVariantRepository as ProductVariantRepository } from './product-variant.repository';
 export { TransactionRepository as TransactionRepository } from './transaction.repository';

@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable } from 'typeorm';
-import { CategoryEntity, ChildSubCategoryEntity, ProductEntity, SubCategoryEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { CategoryEntity, ChildSubCategoryEntity, ProductColourEntity, ProductEntity, SubCategoryEntity } from './index';
 
 @Entity("product_categories")
 export class ProductCategoryEntity {

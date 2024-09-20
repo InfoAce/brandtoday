@@ -11,7 +11,7 @@ import {
 import { ModelException } from 'src/exceptions/model.exception';
 
 @Injectable()
-export default class ProductModel {
+export default class ProductModel extends ProductRepository {
 /**
  * BrandModel constructor.
  * 
@@ -25,7 +25,9 @@ constructor(
    */
   @InjectRepository(ProductEntity)
   private productRepository: ProductRepository,
-) {}
+) {
+  super(productRepository.target, productRepository.manager, productRepository.queryRunner) 
+}
 
 /**
  * Finds multiple product entities based on the provided data.
@@ -155,18 +157,4 @@ async insert(data: any): Promise<any> {
     }
   }
 
-  /**
-   * Deletes a single product entity based on the provided id.
-   *
-   * @param {string} id - The id of the product entity to delete.
-   * @return {Promise<DeleteResult>} A promise that resolves to the DeleteResult object.
-   * The DeleteResult object contains information about the affected rows and the generated identifier.
-   */
-  async remove(id: string): Promise<DeleteResult> {
-    // Deletes a single product entity based on the provided id.
-    // The productRepository's delete method is used to delete the product entity.
-    // The DeleteResult object contains information about the affected rows and the generated identifier.
-    
-    return await this.productRepository.delete(id);
-  }
 }

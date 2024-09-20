@@ -1,8 +1,8 @@
 <template>
-    <div class="row margin-res p-2" >
-        <div class="col-12 col-grid-box mt-4" >
+    <div class="row margin-res" >
+        <div class="col-12 mt-3" >
             <div class="ssc">
-                <div class="ssc-wrapper py-0" v-for="(i,index) in $props.count" :key="index">
+                <div class="ssc-wrapper py-0 px-0" v-for="(i,index) in $props.count" :key="index">
                     <div class="ssc-line w-100 mbs"></div>
                     <div class="ssc-line w-80 mbs"></div>
                     <div class="ssc-line w-70 mbs"></div>

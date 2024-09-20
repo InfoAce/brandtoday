@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductCategoryEntity } from '../entities';
-import { ProductCategorytRepository } from '../repositories';
+import { ProductCategoryRepository } from '../repositories';
 import { DeleteResult } from 'typeorm';
 import {
     paginate,
@@ -24,7 +24,7 @@ export default class ProductCategoryModel {
      * It is used to perform database operations related to the ProductCategoryEntity.
      */
     @InjectRepository(ProductCategoryEntity)
-    private productCategorytRepository: ProductCategorytRepository,
+    private productCategorytRepository: ProductCategoryRepository,
   ) {}
   
   /**

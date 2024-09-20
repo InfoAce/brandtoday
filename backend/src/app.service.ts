@@ -4,8 +4,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, take } from 'lodash';
-import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
+import { cloneDeep, chunk, isEmpty, isNull, take } from 'lodash';
+import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
 import { queue } from 'rxjs';
 
@@ -37,6 +37,7 @@ export class AppService {
     private childSubCategory:     ChildSubCategoryModel,
     private priceModel:           PriceModel,
     private productModel:         ProductModel,
+    private productColourModel:   ProductColourModel,
     private productCategoryModel: ProductCategoryModel,
     private productVariantModel:  ProductVariantModel,
     private stockModel:           StockModel,
@@ -94,7 +95,7 @@ export class AppService {
   async synchronizeBrands(queue) {
     
     // Logging
-    this.logger.log(`Synchornizing brands`);
+    this.logger.log(`Synchronizing brands`);
 
     // Fetch amrod brands
     let brands = await this.amrodService.getBrands(); 
@@ -115,7 +116,7 @@ export class AppService {
     )
 
     // Logging
-    this.logger.log(`Done Synchornizing brands`);
+    this.logger.log(`Done Synchronizing brands`);
 
     // Update queue status
     await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
@@ -123,7 +124,7 @@ export class AppService {
 
   async synchronizeCategories(queue) {
      // Logging
-     this.logger.log(`Synchornizing categories`);
+     this.logger.log(`Synchronizing categories`);
 
      // Fetch amrod product categories
      let categories           = (await this.amrodService.getCategories()).map( category => ({ ...category, id: uuidv4() }));  
@@ -133,14 +134,14 @@ export class AppService {
      await Promise.all(
          chunk(categories,500).map( async (categories) => {
              return new Promise( async (resolve,reject) => {
-                 setTimeout( async (categories) => {
+                //  setTimeout( async (categories) => {
                     await this.categoryModel.insert(
                         categories.map( 
                             ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
                         )
                     )
                     resolve(true);
-                 }, 2000);
+                //  }, 2000);
              })
          })
      )
@@ -149,13 +150,13 @@ export class AppService {
      await Promise.all(
          chunk(sub_categories,500).map( async (sub_categories) => {
              return new Promise( async (resolve,reject) => {
-                 setTimeout( async (sub_categories) => {
+                //  setTimeout( async (sub_categories) => {
                     await this.subCategoryModel.insert(
                             sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
                         )
                     )
                     resolve(true);
-                 }, 2000);
+                //  }, 2000);
              })
          })
      )
@@ -164,20 +165,20 @@ export class AppService {
      await Promise.all(
          chunk(child_sub_categories,500).map( async (child_sub_categories) => {
              return new Promise( async (resolve,reject) => {
-                 setTimeout( async (child_sub_categories) => {
+                //  setTimeout( async (child_sub_categories) => {
                     await this.childSubCategory.insert(
                         child_sub_categories.map( 
                             ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
                         )
                     )
                     resolve(true);
-                 }, 2000);
+                //  }, 2000);
              })
          })
      )
 
      // Logging
-     this.logger.log(`Done Synchornizing categories`);
+     this.logger.log(`Done Synchronizing categories`);
 
      // Update queue status
      await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
@@ -185,7 +186,7 @@ export class AppService {
 
   async synchronizeProducts(queue) {
     // Logging
-    this.logger.log(`Synchornizing products`);
+    this.logger.log(`Synchronizing products`);
 
     // Fetch amrod products
     let products             = (await this.amrodService.getProducts()).map( product => ({ ...product, id: uuidv4() }));    
@@ -225,7 +226,9 @@ export class AppService {
         ) 
     ).flat();
 
-    let variants = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
+    let colour_images = products.filter( product => !isNull(product.colourImages) ).map( product => product.colourImages.map( images => ({...images, product_id: product.id })) ).flat().map( colour => ({ ...colour, id: uuidv4() }) );
+
+    let variants      = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
 
     await Promise.all(
         chunk(products,500).map( async (products) => {
@@ -235,6 +238,24 @@ export class AppService {
                         products.map( 
                             ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
                                 ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                        )
+                    );
+                    resolve(true);
+                // }, 2000);
+            })
+        })
+    )
+
+    await Promise.all(
+        chunk(
+            colour_images,
+            500
+        ).map( async (colour) => {
+            return new Promise( async (resolve,reject) => {
+                // setTimeout( async (products) => {
+                    await this.productColourModel.insert(
+                        colour.map( 
+                            ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
                         )
                     );
                     resolve(true);
@@ -286,7 +307,7 @@ export class AppService {
     )
 
     // Logging
-    this.logger.log(`Done Synchornizing products`);
+    this.logger.log(`Done Synchronizing products`);
 
     // Update queue status
     await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
@@ -294,7 +315,7 @@ export class AppService {
 
   async synchronizePrices(queue) {
     // Logging
-    this.logger.log(`Synchornizing prices`);
+    this.logger.log(`Synchronizing prices`);
 
     // Fetch amrod prices
     let prices = await this.amrodService.getPrices();   
@@ -315,7 +336,7 @@ export class AppService {
     );
 
     // Logging
-    this.logger.log(`Done Synchornizing prices`);
+    this.logger.log(`Done Synchronizing prices`);
 
     // Update queue status
     await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
@@ -323,7 +344,7 @@ export class AppService {
 
   async synchronizeStocks(queue) {
     // Logging
-    this.logger.log(`Synchornizing stocks`);
+    this.logger.log(`Synchronizing stocks`);
 
     // Fetch amrod stock
     let stocks   = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));
@@ -374,7 +395,7 @@ export class AppService {
     );
 
     // Logging
-    this.logger.log(`Done Synchornizing stocks`);
+    this.logger.log(`Done Synchronizing stocks`);
 
     // Update queue status
     await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });

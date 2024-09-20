@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="container-fluid">
-            <div class="row px-4">
+            <div class="row px-2">
                 <template v-if="isEmpty(home.categories)" >
                     <div class="ssc">
                         <div class="ssc-wrapper px-0"> 

@@ -31,36 +31,26 @@
                     <div class="row px-4">     
                         <div class="col-sm-3 collection-filter">
                             <!-- side-bar colleps block stat -->
-                            <div class="collection-filter-block">
+                            <div class="collection-filter-block" style="position: sticky; top:0;">
                                 <!-- brand filter start -->
-                                <div class="collection-mobile-back"><span class="filter-back"><i class="fa fa-angle-left"
-                                            aria-hidden="true"></i> back</span></div>
-                                <div class="collection-collapse-block open">
-                                    <h3 class="collapse-block-title">brand</h3>
-                                    <div class="collection-collapse-block-content">
-                                        <div class="collection-brand-filter">
-                                            <div class="form-check collection-filter-checkbox" v-for="(brand,index) in $data.brands" :key="index">
-                                                <input type="checkbox" class="form-check-input" :id="brand.name.toLowerCase()">
-                                                <label class="form-check-label" for="zara">{{brand.name}}</label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="collection-mobile-back">
+                                    <span class="filter-back">
+                                        <i class="fa fa-angle-left" aria-hidden="true"></i> 
+                                        back
+                                    </span>
                                 </div>
-                                <!-- color filter start here -->
-                                <div class="collection-collapse-block open">
-                                    <h3 class="collapse-block-title">colors</h3>
-                                    <div class="collection-collapse-block-content">
-                                        <div class="color-selector">
-                                            <ul>
-                                                <li v-for="(colour,index) in $data.colours" :key="index" :style="`background-color:${colour}`"></li>
-                                            </ul>
-                                        </div>
+                                <div class="collection-collapse-block border-0 mb-0 pb-0">
+                                    <h3 class="collapse-block-title">Search By Name</h3>
+                                    <div class="form-group mt-2">
+                                        <input type="text" class="form-control" id="name" placeholder="Name" v-model="$data.filter.name" required="">
                                     </div>
                                 </div>
                                 <!-- price filter start here -->
                                 <div class="collection-collapse-block border-0 open">
-                                    <h3 class="collapse-block-title">price</h3>
-                                    <VueSlider v-model="$data.price" min="0" max="10000" tooltip="hover" tooltipPlacement="left" :enableCross="true" :processStyle="processStyle" :tooltipStyle="tooltipStyle"/>
+                                    <h3 class="collapse-block-title">Price Range ( in {{ currency }} )</h3>
+                                    <div class="col-12 px-2">
+                                        <VueSlider v-model="$data.filter.price" min="0" max="5000" tooltip="hover" tooltipPlacement="left" :enableCross="true" :processStyle="processStyle" :tooltipStyle="tooltipStyle"/>
+                                    </div>
                                 </div>
                             </div>
                             <!-- silde-bar colleps block end here -->
@@ -68,7 +58,7 @@
                         <div class="col collection-product-wrapper">
                             <div class="product-wrapper-grid">
                                 <CardLoader v-if="!isEmpty($data.products)" />
-                                <PlaceholderLoader v-if="isEmpty($data.products) && $data.loading" :count="10"/>                        
+                                <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
                                 <div class="row" >
                                     <div class="col-xl-3 col-6 mb-4" v-for="(product,index) in $data.products" :key="index">
                                         <div class="product-box">
@@ -92,7 +82,7 @@
                                                         <h6>{{ product.name }}</h6>
                                                     </a>
                                                     <p v-html="product.description"></p>
-                                                    <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
+                                                    <h4>{{ currency }} {{ first(get(first(product.variants),'price')).amount }}</h4>
                                                     <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                         <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                     </ul>
@@ -115,7 +105,7 @@
 </script>
 <script setup >
 import { cloneDeep, debounce, first, get,isEmpty, isNull, has, times, toPlainObject } from 'lodash';
-import { CardLoader, PlaceholderLoader } from '../components';
+import { CardLoader, PlaceholderLoader, PlaceholderText } from '../components';
 import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -130,43 +120,46 @@ const $data   = reactive({
     filter:{
         page:         Number(1),
         per_page:     Number(10),
-        sort_pricing: String('descending')
+        price:        Array(0,500),
+        sort_pricing: String('descending'),
+        colour:       String()
     },
     products:           Array(),
     loading:            Boolean(),
-    price:              Array(0,1000),
     product_count:      Number(),
     brands:             Array(),
     colours:            Array(),
-    offset:             Number(-1),
-    products_div:       Object(),
     sub_category:       Object(),
     sub_child_category: String()
 });
+const currency = computed( () => $store.getters.home.company.currency );
 
 const fetchFilters = async() =>{
     try {
+        $data.loading = Boolean(true);
 
         // Make API call to get brands
-        const { data: { brands } }  = await  $api.get('/products/brands');
+        const { data: { brands } }  = await $api.get('/products/brands');
         const { data: { colours } } = await $api.get('/products/colours');
 
         /**
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
          */
-        $data.brands       = cloneDeep(brands);
+        $data.brands   = cloneDeep(brands);
 
         /**
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
          */
-        $data.colours       = cloneDeep(colours);                
+        $data.colours  = cloneDeep(colours);                
+        $data.loading  = Boolean();
         
     } catch(error) {
+        $data.loading        = Boolean();
         $toast.error('Something went wrong with fetching brands.')
     } finally {
-
+        $data.loading        = Boolean();
     }
 };
 
@@ -174,25 +167,26 @@ const fetchFilters = async() =>{
  * Fetch products based on the provided data
  * @peram {Object} data - Object containing page, perPage, sub_category, and overwrite options
  */
-const fetchProducts = async () => {
+const fetchProducts = async (append = false) => {
 
     // Destructuring assignment for easier access
-    let { query, params } = $route;
-    let url               = `/products/${params.category}/${params.sub_category}`;
+    let { params } = $route;
+    let { filter: { sort_pricing , per_page, page, price, name } } = $data;
+    let url        = `/products/${params.category}/${params.sub_category}?page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`;
 
-    let { filter: { sort_pricing , per_page, page } } = $data;
-
-    // Check if query contains name and append to URL
-    if( !isEmpty(query) && has(query,'name') && !isEmpty(query.name) ){
-        url += `?${url}?name=${query.name}&page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`;
-    } else {
-        // Append page and perPage to URL
-        url += `?page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`;
+    if( !isEmpty(name) ){
+        url += `&name=${name}`;
     }
+
+    if( price[0] != 0 || price[1] != 500 ){
+        url += `&price_range=${price.join('~')}`;
+    }
+
+    $store.commit('card_loader',true);
     
     try {
         // Make API call to get products
-        const { data:{ products, brands, category, sub_category, products_count } } = await $api.get(url);
+        const { data:{ products, category, sub_category, products_count } } = await $api.get(url);
         /**
          * Clones the category object and assigns it to the this.category property.
          * @type {Object}
@@ -205,27 +199,22 @@ const fetchProducts = async () => {
          */
         $data.sub_category   = cloneDeep(sub_category);
 
-        if( !isEmpty($data.products) ){
+        if( append ){
             $data.products = $data.products.concat(products);
         }
-        if( isEmpty($data.products) ){
+        if( !append ){
             $data.products = cloneDeep(products);
         }
 
         $data.products_count = products_count;
-    } catch(error){
-        console.log(error);
-        // $data.loading = false;
-        // if( !isEmpty(response.data) && response.data.statusCode == 400 ){
-        //     response.data.message.forEach( (value) => {
-        //         toast.info(value);
-        //     });
-        // }
-    } finally{
-        if( !isEmpty($data.products_div) ) {
-            $data.products_div = toPlainObject(document.querySelector('.collection-wrapper').getBoundingClientRect() );
-            $data.offset       = (window.scrollY + ($data.products_div.top - $data.products_div.height));
+    } catch({ response }){
+        $store.commit('card_loader',false);
+        if( !isEmpty(response.data) && response.data.statusCode == 400 ){
+            response.data.message.forEach( (value) => {
+                toast.info(value);
+            });
         }
+    } finally{
         setTimeout(() => {
             $store.commit('card_loader',false); 
         },1000);
@@ -233,6 +222,10 @@ const fetchProducts = async () => {
     }            
 
 };
+
+const selectColour = (colour) => {
+    $data.filter.colour = colour;
+}
 
 /**
  * Handles the click event of the load more button.
@@ -249,7 +242,7 @@ const loadMore = (event) => {
     $store.commit('card_loader',true);
 
     // Fetch the products
-    fetchProducts();
+    fetchProducts(true);
 
 };
 
@@ -277,7 +270,7 @@ const openFilter = () => {
     $(".filter-bottom-content").slideToggle("");
 }
 
-onBeforeMount(fetchProducts(),fetchFilters())
+onBeforeMount(fetchFilters(),fetchProducts());
 
 onMounted(
     debounce(
@@ -294,8 +287,6 @@ onMounted(
                         const { scrollTop, clientHeight } = document.documentElement;
                         const { scrollHeight: targetHeight } = document.querySelector('.collection-wrapper')
 
-                        console.log(clientHeight + scrollTop);
-                        console.log(targetHeight);
                         if((clientHeight + scrollTop >= targetHeight ) && ($data.products_count > $data.products.length) && !$store.getters.loaders.card) {
                             loadMore();
                         }
@@ -306,19 +297,39 @@ onMounted(
         },2000
     )
 )
-watch(
-    () => $data.filter.per_page,
-    () => {
-        $store.commit('card_loader',true);
-        fetchProducts({ page: 1, perPage: value, overwrite: true });
-    }
-)
 
 watch(
     () => $data.filter.sort_pricing,
     () => {
         $store.commit('card_loader',true);
         fetchProducts({ page: 1, perPage: $data.filter.per_page, overwrite: true });
+    }
+)
+
+watch(
+    () => $data.filter.colour,
+    () => {
+        $store.commit('card_loader',true);
+        fetchProducts();
+    }
+)
+
+watch(
+    () => $data.filter.name,
+    debounce(() => {
+        $store.commit('card_loader',true);
+        fetchProducts();
+    },500)
+)
+
+watch(
+    () => $data.filter.price,
+    debounce(() => {
+        $store.commit('card_loader',true);
+        fetchProducts();
+    },500),
+    {
+        deep: true
     }
 )
 

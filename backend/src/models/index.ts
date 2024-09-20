@@ -12,6 +12,7 @@ export { default as OrderReviewModel } from './order-review.model';
 export { default as PriceModel } from './price.model';
 export { default as ProductModel } from './product.model';
 export { default as ProductCategoryModel } from './product-category.model';
+export { default as ProductColourModel } from './product-colour.model';
 export { default as ProductVariantModel } from './product-variant.model';
 export { default as StockModel } from './stock.model';
 export { default as StockKeepingModel } from './stock-keeping.model';
