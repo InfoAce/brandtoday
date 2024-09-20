@@ -231,13 +231,13 @@ export class AppService {
     let variants      = products.map( product => product.variants.map( variant => ({ ...variant, id: uuidv4(), product_id: product.id }) ) ).flat();
 
     await Promise.all(
-        chunk(products,500).map( async (products) => {
+        chunk(products,1000).map( async (products) => {
             return new Promise( async (resolve,reject) => {
                 // setTimeout( async (products) => {
                     await this.productModel.insert(
                         products.map( 
-                            ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, colourImages: colour_images, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                                ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, colour_images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                            ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                                ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
                         )
                     );
                     resolve(true);
