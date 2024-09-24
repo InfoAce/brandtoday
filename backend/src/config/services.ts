@@ -1,8 +1,9 @@
 import { registerAs } from "@nestjs/config"
 import { sep } from 'path';
+import * as fs from 'fs';
 
 export default registerAs('services',() => {
-    
+    console.log(fs.createReadStream(`${process.cwd()}${sep}configurations.json`,{encoding:'utf8'}));
     const json      = require('json-reader-writer');
     const { 
         amrod: {
