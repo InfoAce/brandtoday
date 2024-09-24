@@ -3,8 +3,9 @@ import { sep } from 'path';
 import * as fs from 'fs';
 
 export default registerAs('services',() => {
-    console.log(fs.createReadStream(`${process.cwd()}${sep}configurations.json`,{encoding:'utf8'}));
-    const json      = require('json-reader-writer');
+
+    const home = !process.cwd().includes('backend') ? `${process.cwd()}${sep}backend` : process.cwd();
+    const json = require('json-reader-writer');
     const { 
         amrod: {
             account_number,
@@ -17,7 +18,7 @@ export default registerAs('services',() => {
             consumer_key,
             consumer_secret
         }
-    } = json.readJSON(`${process.cwd()}${sep}configurations.json`);
+    } = json.readJSON(`${home}${sep}configurations.json`);
 
     return {
         amrod:{
