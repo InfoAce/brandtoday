@@ -65,7 +65,6 @@ import { OrderCreatedListener } from './listeners';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        console.log( configService.get('app') );
         return {
           type:        "mysql",
           host:        configService.get<string>('app.DB_HOST'),
