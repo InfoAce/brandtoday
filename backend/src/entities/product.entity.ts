@@ -28,6 +28,7 @@ export class ProductEntity {
   companion_codes: string;
 
   @Column({
+    collation: 'utf8mb4_general_ci',
     type: 'longtext'
   })
   description: string;
