@@ -15,7 +15,8 @@ import { TimeoutInterceptor } from './interceptors';
 const { sep } = require('path');
 
 async function bootstrap() {
-  const app          = await NestFactory.create<NestExpressApplication>(
+  const home = !process.cwd().includes('backend') ? `${process.cwd()}${sep}backend` : process.cwd();
+  const app  = await NestFactory.create<NestExpressApplication>(
     AppModule,
     { 
       cors:     true,  
@@ -23,7 +24,7 @@ async function bootstrap() {
         transports: [
           // let's log errors into its own file
           new transports.DailyRotateFile({
-            dirname: `${process.cwd()}${sep}public${sep}logs${sep}`,
+            dirname: `${home}${sep}public${sep}logs${sep}`,
             filename: `error-%DATE%.log`,
             datePattern: 'YYYY-MM-DD',
             level: 'error',
@@ -43,7 +44,7 @@ async function bootstrap() {
 
           // logging all level
           new transports.DailyRotateFile({
-            dirname: `${process.cwd()}${sep}public${sep}logs${sep}`,
+            dirname: `${home}${sep}public${sep}logs${sep}`,
             filename: `info-%DATE%.log`,
             datePattern: 'YYYY-MM-DD',
             level: 'info',
