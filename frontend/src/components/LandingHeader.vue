@@ -2,7 +2,6 @@
     
     <!-- header start -->
     <header>
-        <div class="mobile-fix-option"></div>
         <div class="top-header">
             <div class="container-fluid">
                 <div class="row">
@@ -15,10 +14,10 @@
                     </div>
                     <div class="col-lg-6 text-end d-flex justify-content-end">
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
-                            <li class="onhover-div mobile-search mobile-wishlist p-3">
-                                <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                            <li class="p-3">
+                                <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart"></i></a>
                             </li>
-                            <li class="onhover-div mobile-search p-3">
+                            <li class="onhover-div p-3">
                                 <div>
                                     <a href="#" @click.prevent="openSearch"><i class="fa fa-magnifying-glass"></i></a>
                                 </div>
@@ -45,7 +44,7 @@
                             <li class="mobile-cart p-3" style="position: relative;">
                                 <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
                                     <i class="fa fa-shopping-cart"></i>
-                                    <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span>
+                                    <!-- <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span> -->
                                 </a>
                             </li>
                             <template v-if="isEmpty(auth)">
@@ -101,34 +100,32 @@
                     </div>
                 </template>
                 <template v-if="!isEmpty(home.categories)" >
-                    <div class="col-12 px-0 py-3" >
+                    <div class="col-12 px-4 py-3" >
                             <div id="main-menu" class="d-flex w-100 justify-content-between align-items-center">
-                                <div class="menu-left">
-                                    <div class="brand-logo text-center">
+                                <div class="brand-logo ">
+                                    <div class="text-center">
                                         <a @click.prevent="$router.push({ name: 'Home' })">
                                             <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
-                                            <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" alt="">
+                                            <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" style="height: 100% !important;" alt="">
                                         </a>
                                     </div>
                                 </div>                                     
-                                <div class="menu-center pull-center m-2">
+                                <div class=" pull-center m-2">
                                     <nav id="main-nav">
-                                        <div class="toggle-nav p-0">
-                                            <i class="fa fa-bars sidebar-bar"></i>
-                                            <img :src="home.company.logo" class="img-fluid blur-up lazyload" width="150" alt="">
-                                        </div>
-                                        <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+                                        <button class="toggle-nav btn btn-solid hover-solid btn-xs">
+                                            <i class="fa fa-bars sidebar-bar text-white"></i>
+                                        </button>
+                                        <ul class="sm pixelstrap">
                                             <li>
                                                 <div class="mobile-back text-end">
-                                                    Back
-                                                    <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                                                    <i class="fa fa-close" aria-hidden="true"></i>
                                                 </div>
                                             </li>
-                                                <li v-for="(item,index) in home.categories" :key="index">
-                                                    <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2">
-                                                        {{ item.name.toUpperCase()  }}
-                                                    </a>
-                                                </li>                                                                         
+                                            <li v-for="(item,index) in home.categories" :key="index">
+                                                <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2">
+                                                    {{ item.name.toUpperCase()  }}
+                                                </a>
+                                            </li>                                                                         
                                         </ul>
                                     </nav>
                                 </div>
@@ -237,14 +234,20 @@ const fetchMenus = () => {
 
 const initMenus = debounce( () => {
     $(function () {
-        $('#main-menu').smartmenus({
+        $('#menu-toggle').smartmenus({
             subMenusSubOffsetX: 1,
             subMenusSubOffsetY: -8
         });
-        $('#sub-menu').smartmenus({
-            subMenusSubOffsetX: 1,
-            subMenusSubOffsetY: -10
+        $('.toggle-nav').on('click', function () {
+            $('.sm-horizontal').css("right", "0px");
         });
+        $(".mobile-back").on('click', function () {
+            $('.sm-horizontal').css("right", "-410px");
+        });        
+        // $('#sub-menu').smartmenus({
+        //     subMenusSubOffsetX: 1,
+        //     subMenusSubOffsetY: -10
+        // });
     });
 },500);
 
