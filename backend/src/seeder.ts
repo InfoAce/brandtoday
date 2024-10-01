@@ -47,7 +47,7 @@ seeder({
                     TransactionEntity,
                     UserEntity
                 ],
-                synchronize: false
+                synchronize: true
             }
         },
         inject:[ConfigService]
