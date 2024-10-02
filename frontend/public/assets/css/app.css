@@ -13,3 +13,26 @@
 .infinite-scroll {
     display: block !important;
 }
+
+.carousel {
+    padding: 0px;
+}
+
+.card-body > .price-tag{
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    margin-right: 15px;
+    margin-top: 15px;
+    border-radius: 50px;
+    padding: 15px;
+    color:#fff;
+    right: 0;
+    background-color: #7e1414 !important;
+}
+.card-footer {
+    background-color: #fff !important;
+}
+.text-left {
+    text-align: left !important;
+}

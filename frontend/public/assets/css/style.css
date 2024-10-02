@@ -390,7 +390,7 @@ body.mulish-font {
     font-family: 'Mulish', sans-serif
 }
 
-h1 {
+/* h1 {
     font-size: 60px;
     color: #222;
     font-weight: 700;
@@ -440,7 +440,7 @@ h6 {
     font-weight: 400;
     color: #777;
     line-height: 24px
-}
+} */
 
 ul {
     padding-left: 0;
@@ -451,11 +451,11 @@ li {
     display: inline-block
 }
 
-p {
+/* p {
     font-size: 14px;
     color: #777;
     line-height: 20px
-}
+} */
 
 a {
     -webkit-transition: 0.5s ease;

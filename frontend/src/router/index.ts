@@ -388,7 +388,6 @@ const router = createRouter({
 router.beforeEach( 
   (to, from, next) => {
     store.commit('loader',true);
-    window.scrollTo({top: 0, behavior: 'smooth'});  
     const { name: routeName, meta: { auth, state, landing, admin, redirectIfAuth } } = to;
 
     if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
@@ -425,6 +424,7 @@ router.afterEach(
   debounce((to, from) => {
   $('.sm-horizontal').css("right", "-410px");
   store.commit('loader',false);
+  window.scrollTo({top: 0, behavior: 'smooth'});  
 },500))
 
 /**

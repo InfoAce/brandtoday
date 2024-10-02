@@ -28,6 +28,78 @@
         </section>
         <!-- Home slider end -->
 
+                <!-- Paragraph-->
+                <div class="title1 section-t-space">
+            <h2>What Our Clients Say About Us</h2>
+        </div>
+
+        <section class="section-b-space py-0">
+            <div class="container">
+                <div class="row">
+                    <template v-if="isEmpty($data.testimonials) && $data.loading">
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>         
+                        <div class="col-xl-3 col-6">
+                            <div class="ssc">
+                                <div class="ssc-wrapper">
+                                    <div class="ssc-square mb"></div>                               
+                                </div>
+                            </div>    
+                        </div>                             
+                    </template>
+                    <carousel  
+                        v-show="isEmpty($data.testimonials) && !$data.loading"
+                        :settings="$data.settings.testimonials" 
+                        :itemsToShow="3" 
+                        :wrapAround="true" 
+                        :transition="5000"
+                        :breakpoints="$data.breakpoints.testimonials"
+                    >
+                        <slide v-for="(testimonial,index) in dummyTestimonials" :key="index">
+                            <div class="col p-4">
+                                <div class="rating">
+                                    <i class="fa fa-star"></i> 
+                                    <i class="fa fa-star"></i> 
+                                    <i class="fa fa-star"></i> 
+                                    <i class="fa fa-star"></i> 
+                                    <i class="fa fa-star"></i>
+                                </div>
+                                <h6>{{ testimonial.description }}</h6>
+                            </div>
+                            <!-- <div class="carousel__item">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h4>{{ testimonial.name }} <span>( {{ testimonial.date  }} )</span></h4>
+                                        <p>{{ testimonial.description }}</p>                    
+                                    </div>
+                                </div>              
+                            </div> -->
+                        </slide>
+                    </carousel>              
+                </div>
+            </div>
+        </section>
+        <!-- Paragraph end -->  
+
         <!-- Paragraph-->
         <div class="title1 section-t-space">
             <h2>View products by category</h2>
@@ -78,45 +150,27 @@
                             </div>    
                         </div>                             
                     </template>
-                    <!-- <carousel  
+                    <carousel  
                         v-show="!isEmpty($data.categories) && !$data.loading" 
                         :settings="$data.settings.categories" 
                         :wrapAround="true" 
                         :breakpoints="$data.breakpoints.categories"
-                        :autoplay="4000"
+                        :autoplay="5000"
                     >
-                        <slide v-for="(category,index) in $data.categories" :key="index">
-                            <div class="carousel__item">
-                                <router-link :to="navigateTo(category,'id')">
-                                    <div class="classic-effect">
-                                        <div>
-                                            <img :src="category.image"  :alt="category.name" width="100%" height="250" />
-                                        </div>
+                        <slide class="col-md-4" v-for="(category,index) in $data.categories" :key="index">
+                            <div class="card m-2">
+                                <div class="card-body">
+                                    <img :src="category.image"  :alt="category.name" width="100%" style="object-fit: cover !important;"/>
+                                    <div class="row">
+                                        <div class="col p-4"><h5 class="m-0 text-theme text-center"><strong>{{ category.name }}</strong></h5></div>
                                     </div>
-                                </router-link>
-                                <div class="blog-details">
-                                    <router-link :to="navigateTo(category,'id')">
-                                        <p>{{ category.name }}</p>
-                                    </router-link>
                                 </div>
                             </div>
                         </slide>
                         <template #addons>
                             <pagination />
                         </template>
-                    </carousel> -->
-                    <div class="col-md-4" v-for="(category,index) in $data.categories":key="index" >
-                        <div class="py-2 mx-4">
-                            <div class="img-wrapper">
-                                <img class="img-fluid blur-up lazyload bg-img" :src="category.image" :alt="category.name" width="100%" height="250" />
-                            </div>
-                            <div class="product-detail mt-4 text-center">
-                                <router-link :to="navigateTo(category,'id')">
-                                    <h2 class="text-theme">{{ category.name }}</h2>
-                                </router-link>
-                            </div>
-                        </div>
-                    </div>                    
+                    </carousel>
                 </div>
             </div>
         </section>
@@ -220,113 +274,37 @@
                             </div>    
                         </div>                             
                     </template>
-                    <vue-marquee-slider
-                        :speed="20000"
-                        autoWidth
-                        :repeat="10"
+                    <carousel  
+                        v-show="!isEmpty($data.products) && !$data.loading" 
+                        :settings="$data.settings.categories" 
+                        :wrapAround="true" 
+                        :breakpoints="$data.breakpoints.categories"
+                        :autoplay="5000"
                     >
-                        <div class="col-8" v-for="(product,index) in $data.products" :key="index" >
-                            <div class="py-2 mx-4">
-                                <div class="img-wrapper">
-                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" width="100%">
-                                </div>
-                                <div class="product-detail mt-4">
-                                    <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})">
-                                        <h4 class="text-theme">{{ product.name }}</h4>
-                                    </a>
-                                    <h4>KSH {{ first(get(first(product.variants),'price')).amount }}</h4>
-                                    <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
-                                        <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
-                                    </ul>
+                        <slide class="col-md-4" v-for="(product,index) in $data.products" :key="index">
+                            <div class="card m-2">
+                                <div class="card-body p-2">
+                                    <img :src="product.images[0].urls[0].url" width="100%" style="object-fit: cover !important;"/>
+                                    <div class="row">
+                                        <div class="col-12 py-2"><h6 class="m-0 text-theme"><strong>{{ product.name }}</strong></h6></div>
+                                        <div class="col-12">
+                                            <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
+                                                <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #1c1c1c;`"></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="price-tag"><p class="m-0"><strong>{{ $store.getters.home.company.currency }}</strong> {{ first(get(first(product.variants),'price')).amount }}</p></div>
                                 </div>
                             </div>
-                        </div>
-                    </vue-marquee-slider>              
+                        </slide>
+                        <template #addons>
+                            <pagination />
+                        </template>
+                    </carousel>            
                 </div>
             </div>
         </section>
-        
-        
-        <!-- Paragraph-->
-        <div class="title1 section-t-space">
-            <h2 class="title-inner1">What Our Clients Say About Us</h2>
-        </div>
-
-        <section class="section-b-space py-0">
-            <div class="container">
-                <div class="row">
-                    <template v-if="isEmpty($data.testimonials) && $data.loading">
-                        <div class="col-xl-3 col-6">
-                            <div class="ssc">
-                                <div class="ssc-wrapper">
-                                    <div class="ssc-square mb"></div>                               
-                                </div>
-                            </div>    
-                        </div>
-                        <div class="col-xl-3 col-6">
-                            <div class="ssc">
-                                <div class="ssc-wrapper">
-                                    <div class="ssc-square mb"></div>                               
-                                </div>
-                            </div>    
-                        </div>
-                        <div class="col-xl-3 col-6">
-                            <div class="ssc">
-                                <div class="ssc-wrapper">
-                                    <div class="ssc-square mb"></div>                               
-                                </div>
-                            </div>    
-                        </div>         
-                        <div class="col-xl-3 col-6">
-                            <div class="ssc">
-                                <div class="ssc-wrapper">
-                                    <div class="ssc-square mb"></div>                               
-                                </div>
-                            </div>    
-                        </div>                             
-                    </template>
-                    <carousel  
-                        v-show="isEmpty($data.testimonials) && !$data.loading"
-                        :settings="$data.settings.testimonials" 
-                        :itemsToShow="3" 
-                        :wrapAround="true" 
-                        :transition="5000"
-                        :breakpoints="$data.breakpoints.testimonials"
-                    >
-                        <slide v-for="(testimonial,index) in dummyTestimonials" :key="index">
-                            <div class="carousel__item">
-                                <div class="media">
-                                    <div class="media-body">
-                                        <h4>{{ testimonial.name }} <span>( {{ testimonial.date  }} )</span></h4>
-                                        <p>{{ testimonial.description }}</p>                    
-                                    </div>
-                                </div>              
-                            </div>
-                        </slide>
-                    </carousel> 
-                    <carousel  
-                        v-if="!isEmpty($data.testimonials) && !$data.loading"
-                        :settings="$data.settings.testimonials" 
-                        :itemsToShow="3" 
-                        :wrapAround="true" 
-                        :transition="10000"
-                        :breakpoints="$data.breakpoints.testimonials"
-                    >
-                        <slide v-for="(testimonial,index) in $data.testimonials" :key="index">
-                            <div class="carousel__item">
-                                <div class="media">
-                                    <div class="media-body">
-                                        <h6>{{ testimonial.name }} <span>( {{ testimonial.created_at  }} )</span></h6>
-                                        <p>{{ testimonial.description }}</p>                    
-                                    </div>
-                                </div>              
-                            </div>
-                        </slide>
-                    </carousel>               
-                </div>
-            </div>
-        </section>
-        <!-- Paragraph end -->    
+          
     </div>
 </template>
 <script setup>
@@ -361,24 +339,24 @@ const $data  = reactive({
             },
         },
         categories: {
-            720: {
-                itemsToShow: 4,
+            1080: {
+                itemsToShow: 3,
                 snapAlign: 'center',
             },
             // 1024 and up
             1920: {
-                itemsToShow: 5,
+                itemsToShow: 4,
                 snapAlign: 'start',
             },
         },
         testimonials: {
-            720: {
-                itemsToShow: 4,
+            1080: {
+                itemsToShow: 3,
                 snapAlign: 'center',
             },
             // 1024 and up
             1920: {
-                itemsToShow: 5,
+                itemsToShow: 4,
                 snapAlign: 'start',
             },
         }
@@ -405,48 +383,13 @@ const $data  = reactive({
 
 const dummyTestimonials = computed( () => Array(
     {
-        date:        moment().subtract(1,'day').format('Do MMMM, Y'),
-        name:        'Anonymous',
-        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
-                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
-                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
-                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
-                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
-                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
-                        erat tempor quis. Vestibulum eu vestibulum ex.`
+        description: `We are simply blown away and spoilt for choice by the variety of products Brand Today provides. We’ll keep buying from them.`
     },
     {
-        date:        moment().subtract(2,'day').format('Do MMMM, Y'),
-        name:        'Anonymous',
-        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
-                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
-                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
-                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
-                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
-                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
-                        erat tempor quis. Vestibulum eu vestibulum ex.`
+        description: `The gifts from Brand Today were the highlight for our end of year company event! We cannot wait for the next gifting season for the excellent delivery and customer Service!`
     },
     {
-        date:        moment().subtract(3,'day').format('Do MMMM, Y'),
-        name:        'Anonymous',
-        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
-                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
-                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
-                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
-                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
-                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
-                        erat tempor quis. Vestibulum eu vestibulum ex.`
-    },
-    {
-        date:        moment().subtract(4,'day').format('Do MMMM, Y'),
-        name:        'Anonymous',
-        description: `Donec rhoncus massa quis nibh imperdiet dictum. Vestibulum id est sit amet felis
-                        fringilla bibendum at at leo. Proin molestie ac nisi eu laoreet. Integer
-                        faucibus enim nec ullamcorper tempor. Aenean nec felis dui. Integer tristique
-                        odio mi, in volutpat metus posuere eu. Aenean suscipit ipsum nunc, id volutpat
-                        lorem hendrerit ac. Sed id elit quam. In ac mauris arcu. Praesent eget lectus
-                        sit amet diam vestibulum varius. Suspendisse dignissim mattis leo, nec facilisis
-                        erat tempor quis. Vestibulum eu vestibulum ex.`
+        description: `The quality is great and delivered on time! Brand Today knows how to keep us delighted!`
     },
 ));
 
