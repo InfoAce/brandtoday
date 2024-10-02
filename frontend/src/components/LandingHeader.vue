@@ -110,7 +110,7 @@
                                         </a>
                                     </div>
                                 </div>                                     
-                                <div class=" pull-center m-2">
+                                <div class="pull-center m-2">
                                     <nav id="main-nav">
                                         <button class="toggle-nav btn btn-solid hover-solid btn-xs">
                                             <i class="fa fa-bars sidebar-bar text-white"></i>
@@ -121,10 +121,17 @@
                                                     <i class="fa fa-close" aria-hidden="true"></i>
                                                 </div>
                                             </li>
-                                            <li v-for="(item,index) in home.categories" :key="index">
-                                                <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2">
-                                                    {{ item.name.toUpperCase()  }}
+                                            <li v-for="(category,index) in home.categories" :key="index">
+                                                <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2 category_menu" :data-menu="category.code.toLowerCase().replace(/\s/g, '')" >
+                                                    {{ category.name.toUpperCase()  }}
                                                 </a>
+                                                <div class="col-12 d-flex p-4 justify-content-center hidden category_submenu flex-wrap" id="dropdown-menu" :data-submenu="category.code.toLowerCase().replace(/\s/g, '')">
+                                                    <div v-for="(sub_category,key) in category.__sub_categories__" :key="key">
+                                                        <a href="#" @click.prevent="navigateTo(item)" class="p-3">
+                                                            {{ sub_category.name.toUpperCase()  }}
+                                                        </a>
+                                                    </div> 
+                                                </div>
                                             </li>                                                                         
                                         </ul>
                                     </nav>
@@ -234,16 +241,39 @@ const fetchMenus = () => {
 
 const initMenus = debounce( () => {
     $(function () {
+        $('.category_menu').hover(
+            debounce((event) => {
+                let menu = $(event.target).data('menu');
+                $('.category_submenu').not('.hidden').addClass('hidden');
+                $(`div[data-submenu=${menu}]`).toggleClass('hidden');
+            },200)
+        );
+        // $('.category_menu').each( (key,menu) => {
+        //     $(menu).parentsUntil('div[class="main-menu"]').mouseout(
+        //         debounce((event) => {
+        //             console.log(event.target);
+        //             let menu = $(event.target).data('menu');
+        //             $(`div[data-submenu=${menu}]`).toggleClass('hidden');
+        //         },200)
+        //     )
+        // });
+        $('.category_submenu').mouseout(
+            debounce((event) => {
+                if($(event.target).hasClass('category_submenu')){
+                    $(event.target).toggleClass('hidden');
+                }
+            },100)
+        );
         $('#menu-toggle').smartmenus({
             subMenusSubOffsetX: 1,
             subMenusSubOffsetY: -8
         });
-        $('.toggle-nav').on('click', function () {
-            $('.sm-horizontal').css("right", "0px");
-        });
-        $(".mobile-back").on('click', function () {
-            $('.sm-horizontal').css("right", "-410px");
-        });        
+        // $('.toggle-nav').on('click', function () {
+        //     $('.sm-horizontal').css("right", "0px");
+        // });
+        // $(".mobile-back").on('click', function () {
+        //     $('.sm-horizontal').css("right", "-410px");
+        // });        
         // $('#sub-menu').smartmenus({
         //     subMenusSubOffsetX: 1,
         //     subMenusSubOffsetY: -10

@@ -33,6 +33,20 @@
 .card-footer {
     background-color: #fff !important;
 }
+
+#dropdown-menu {
+    position: fixed;
+    left:0;
+    top: 137px;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff;
+}
+
+.hidden {
+    display: none !important;
+}
+
 .text-left {
     text-align: left !important;
 }
