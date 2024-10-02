@@ -35,7 +35,7 @@ export class HomeController {
       try {
 
         let categories: any  = await this.categoryModel.find({ cache: true });
-        let products: any    = await this.productModel.find({ take: 10, orderBy: { created_at: 'RAND()' } })
+        let products: any    = await this.productModel.find({ take: 10, order: { created_at: 'DESC' } })
 
         categories = await (
           await Promise.all( 

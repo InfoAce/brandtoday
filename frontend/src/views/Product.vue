@@ -29,7 +29,7 @@
             <div class="collection-wrapper">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-7 col-xs-12">
+                        <div class="col-lg-6 col-xs-12 p-2">
                             <template v-if="$isEmpty(product) && loading.product">
                                 <div class="ssc">
                                     <div class="ssc-wrapper">
@@ -47,30 +47,34 @@
                                     :wrapAround="true" 
                                 >
                                     <Slide v-for="(image,index) in product.images" :key="index" :style="`height:${$store.getters.banner_height}`">
-                                        <img :src="image.urls[0].url" alt="" width="100%" :height="$store.getters.banner_height">
+                                        <div class="p-4">
+                                            <InnerImageZoom :src="image.urls[0].url" :zoomScale="2" /> 
+                                        </div>                                    
                                     </Slide>
-                                    <template #addons>
-                                        <Navigation />
-                                    </template>
                                 </Carousel>
-                                <Carousel
-                                    id="thumbnails"
-                                    :itemsToShow="4"
-                                    :wrap-around="true"
-                                    ref="carousel"
-                                >
-                                    <Slide v-for="(image,index) in product.images" :key="index">
-                                        <div class="carousel__item">
-                                            <img :src="image.urls[0].url" alt="" width="100%" height="200" />
-                                        </div>
-                                    </Slide>
-                                    <template #addons>
-                                        <pagination />
-                                    </template>
-                                </Carousel>   
+                                <div class="col-12 pt-4">
+                                    <Carousel
+                                        id="thumbnails"
+                                        :itemsToShow="3"
+                                        :wrap-around="true"
+                                        ref="carousel"
+                                    >
+                                        <Slide v-for="(image,index) in product.images" :key="index">
+                                            <div class="card col-12">
+                                                <div class="card-body">
+                                                    <img :src="image.urls[0].url" alt="" width="100%" height="200">
+                                                </div>
+                                            </div>
+                                        </Slide>
+                                        <template #addons>
+                                            <navigation />
+                                            <pagination />
+                                        </template>
+                                    </Carousel> 
+                                </div>
                             </template>                        
                         </div>
-                        <div class="col-lg-5 rtl-text">
+                        <div class="col-lg-6">
                             <div class="product-right">
                                 <h2>{{ product.name }}</h2>
                                 <h3 class="price-detail">KSH {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
@@ -327,7 +331,8 @@ import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import { ProductRatingForm, RelatedProduct } from '../components';
-
+import InnerImageZoom from 'vue-inner-image-zoom';
+import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css'
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -336,7 +341,7 @@ export default {
         });
     },
     components:{
-        Carousel, Slide, Pagination, Navigation, ProductRatingForm, RelatedProduct
+        Carousel, InnerImageZoom, Slide, Pagination, Navigation, ProductRatingForm, RelatedProduct
     },
     computed:{
         auth(){
@@ -401,6 +406,19 @@ export default {
     },
     data(){
         return{
+            breakpoints: {
+                gallery: {
+                    1080: {
+                        itemsToShow: 3,
+                        snapAlign: 'center',
+                    },
+                    // 1024 and up
+                    1920: {
+                        itemsToShow: 4,
+                        snapAlign: 'start',
+                    },
+                },                
+            },
             errors:      Object(),
             favourite:   Object(),
             form:        Object(),

@@ -80,7 +80,7 @@ export class CategoryController {
     ) {
         try {
             // Fetch the category with the specified ID
-            let category: any = await this.categoryModel.updateOne(id,body);
+            let category: any = await this.categoryModel.update(id,body);
 
             // Return the fetched category as a JSON response with a 200 status code
             return res.status(HttpStatus.OK).json({ category });

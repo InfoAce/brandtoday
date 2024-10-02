@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, Logger, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -6,6 +6,7 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { cloneDeep, first, get, isEmpty, omit, shuffle, toPlainObject } from 'lodash';
 import { sep } from 'path';
 import { CategoryModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
+import { EntityNotFoundError } from 'typeorm';
 
 @Controller('categories')
 export class CategoryController {
@@ -46,6 +47,47 @@ export class CategoryController {
         // If any error occurred during reading JSON files, clear 'amrod' object
         this.amrod.categories = [];
         this.amrod.products   = [];
+      }
+    }
+
+    /**
+     * The 'index' method is responsible for retrieving products based on the given category path.
+     * It reads the 'amrod.products' JSON file, filters the products based on the category path, and
+     * returns the filtered products as a JSON response.
+     *
+     * @param {string} path - The category path.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>} - A promise that resolves when the response is sent.
+     */
+    @Get(':category/:sub_category')
+    async create(
+      @Param('category')     category_id: string, 
+      @Param('sub_category') sub_category_id: string, 
+      @Req() req: Request, 
+      @Res() res: Response
+    ) {
+      try {
+        
+        // Find the category based on the provided category id
+        let category            = await this.categoryModel.findOne({ where: { id: category_id } });
+
+        // Find the sub category based on the provided sub category id
+        let sub_category        = await this.subCategoryModel.findOne({ where: { id: sub_category_id } });
+
+        // Find the sub category based on the provided sub category id
+        let [_, products_count] = await this.productCategoryModel.findCount({ where: { sub_category_id, category_id} });
+
+        return res.status(HttpStatus.OK).json({ category, sub_category, products_count });
+        
+      } catch(error){
+
+        if( error instanceof EntityNotFoundError){
+          throw new NotFoundException();
+        }
+        
+        throw new InternalServerErrorException();
+      
       }
     }
 

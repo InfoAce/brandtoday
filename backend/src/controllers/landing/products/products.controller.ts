@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, Logger, Param, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard, ClientGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -7,7 +7,7 @@ import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
-import { Any, Equal, ILike, Or } from 'typeorm';
+import { Any, EntityNotFoundError, Equal, ILike, Or } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 
@@ -50,8 +50,8 @@ export class ProductsController {
      */
     async index(
       @Query('name',new DefaultValuePipe(String())) queryName: string,
-      @Param('category',new DefaultValuePipe(String())) category: any,
-      @Param('sub_category',new DefaultValuePipe(String())) sub_category: any,
+      @Param('category',new DefaultValuePipe(String())) category_id: any,
+      @Param('sub_category',new DefaultValuePipe(String())) sub_category_id: any,
       @Query('page',new DefaultValuePipe(1)) queryPage: string,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
@@ -61,11 +61,6 @@ export class ProductsController {
     ) {
       try {  
 
-        // Find the category based on the provided category id
-        category          = await this.categoryModel.findOne({ where: { id: category } });
-
-        // Find the sub category based on the provided sub category id
-        sub_category      = await this.subCategoryModel.findOne({ where: { id: sub_category } });
 
         let query = this.productModel.createQueryBuilder("products")
                         .leftJoinAndSelect("products.categories", "categories")
@@ -82,34 +77,34 @@ export class ProductsController {
                        .orderBy("variants_prices.amount",querySortPricing == 'descending' ? 'DESC' : 'ASC')
         }
 
-        let [ products, count ] = await query.andWhere("categories.category_id = :category_id", {category_id: category.id})
-                                             .andWhere("categories.sub_category_id = :sub_category_id", {sub_category_id: sub_category.id})
+        let [ products, count ] = await query.andWhere("categories.category_id = :category_id", {category_id})
+                                             .andWhere("categories.sub_category_id = :sub_category_id", {sub_category_id})
                                              .skip((parseInt(queryPage) - 1) * (parseInt(queryPerPage))).take(parseInt(queryPerPage))
                                              .setFindOptions({ loadEagerRelations: true})
                                              .getManyAndCount();
                                              
         let getProducts = products.map( (product) => {
           if (!isNull(product.colour_images)) {
-            product.colour_images = product.colour_images.map((color) => ({
-              ...color,
-              hex: this.colors[color.code].colour,
-            }));
+            product.colour_images = product.colour_images.map((color) => {
+              return {
+                ...color,
+                hex: this.colors[color.code].colour,
+              }
+            });
           }
           return product;
         })
 
         // Send the products, category, and sub categories as a JSON response
-        res.status(HttpStatus.OK).json({category, sub_category, products: getProducts, products_count: count});
+        res.status(HttpStatus.OK).json({products: getProducts });
         
       } catch(error){ 
 
-        // If any error occurred, send the error as a JSON response
-        if( has(error,'applicationRef') ){
-          // Send the error as a JSON response
-          let { response: { status, data} } = error;
-          // Send the error as a JSON response
-          res.status(status).json(data);
+        if( error instanceof EntityNotFoundError){
+          throw new NotFoundException();
         }
+
+        throw new InternalServerErrorException();
 
       }
     } 

@@ -367,6 +367,11 @@ export default registerAs('colors',() => ({
     "C": {name: "Charcoal", code: "C", colour: ["#292D2E"]},
 
     /**
+     * Charcoal color
+     */
+    "CO": {name: "Coral", code: "C", colour: ["#FF4040"]},
+
+    /**
      * Stone Military Green color
      */
     "STMG": {name: "Stone Military Green", code: "STMG", colour: ["#BAB59F"]},

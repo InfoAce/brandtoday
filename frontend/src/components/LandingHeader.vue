@@ -9,6 +9,7 @@
                         <div class="header-contact">
                             <ul>
                                 <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</li>
+                                <li><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank" class="text-white">Download Digital Catalogues</a></li>
                             </ul>
                         </div>
                     </div>
@@ -127,9 +128,9 @@
                                                 </a>
                                                 <div class="col-12 d-flex p-4 justify-content-center hidden category_submenu flex-wrap" id="dropdown-menu" :data-submenu="category.code.toLowerCase().replace(/\s/g, '')">
                                                     <div v-for="(sub_category,key) in category.__sub_categories__" :key="key">
-                                                        <a href="#" @click.prevent="navigateTo(item)" class="p-3">
+                                                        <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href" class="p-3">
                                                             {{ sub_category.name.toUpperCase()  }}
-                                                        </a>
+                                                        </router-link>
                                                     </div> 
                                                 </div>
                                             </li>                                                                         
@@ -257,13 +258,16 @@ const initMenus = debounce( () => {
         //         },200)
         //     )
         // });
-        $('.category_submenu').mouseout(
-            debounce((event) => {
-                if($(event.target).hasClass('category_submenu')){
-                    $(event.target).toggleClass('hidden');
-                }
-            },100)
-        );
+        // $('.category_submenu').mouseout(
+        //     debounce((event) => {
+        //         if($(event.target).hasClass('category_submenu')){
+        //             $(event.target).addClass('hidden');
+        //         }
+        //         if(!$(event.target).hasClass('category_submenu')){
+        //             console.log($(event.target));
+        //         }
+        //     },100)
+        // );
         $('#menu-toggle').smartmenus({
             subMenusSubOffsetX: 1,
             subMenusSubOffsetY: -8

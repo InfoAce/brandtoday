@@ -42,6 +42,7 @@
                                         <li><a href="#" @click.prevent="$router.push({ name: 'ReturnRefunds'})">Return & Refunds</a></li>
                                         <li><a href="#" @click.prevent="$router.push({ name: 'TermsAndConditions'})">Terms & Conditions</a></li>
                                         <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Frequently Asked Questions</a></li>
+                                        <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Branding Techniques</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -70,6 +71,8 @@
                                         <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
                                         <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
                                         <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
+                                        <li><a href="https://g.co/kgs/3t2sxBs" target="_blank"><img src="/assets/images/google-review-symbol.png" width="150"/></a></li>
+                                        <li><a href="https://www.suavemarketing.co.ke/" target="_blank"><img src="/assets/images/suave.webp" width="150"/></a></li>
                                     </ul>
                                 </div>
                             </div>
