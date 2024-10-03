@@ -406,7 +406,8 @@ router.beforeEach(
       console.log(redirectIfAuth);
       if( !isEmpty(store.getters.auth) && redirectIfAuth )  { next({ name: 'Home' }); }
       if( !isEmpty(store.getters.auth) && !redirectIfAuth ) { next(); }
-      if( isEmpty(store.getters.auth) && !redirectIfAuth)   { next(); }
+      if( isEmpty(store.getters.auth)  && !redirectIfAuth)  { next(); }
+      if( isEmpty(store.getters.auth)  && redirectIfAuth)  { next(); }
       if( isEmpty(store.getters.auth) ) { next() }
     }
 
@@ -415,10 +416,10 @@ router.beforeEach(
 
 router.afterEach(
   debounce((to, from) => {
-  $('.sm-horizontal').css("right", "-410px");
-  $('.category_submenu').not('.hidden').addClass('hidden')
-  store.commit('loader',false);
-  window.scrollTo({top: 0, behavior: 'smooth'});  
+    $('.sm-horizontal').css("right", "-410px");
+    $('.category_submenu').not('.hidden').addClass('hidden')
+    store.commit('loader',false);
+    window.scrollTo({top: 0, behavior: 'smooth'});  
 },500))
 
 /**
