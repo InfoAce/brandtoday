@@ -84,4 +84,32 @@ export class QueueController {
         }
     } 
 
+    /**
+     * Retrieves the company information and returns it as a JSON response.
+     *
+     * @param {Request} req - The Express request object.
+     * @param {Response} res - The Express response object.
+     * @return {Promise<void>} A Promise that resolves when the response is sent.
+     */
+    @UseGuards(AuthGuard)
+    @UseInterceptors(QueueInterceptor)
+    @Put(':id')
+    async show(
+        @Req()  req: Request,  
+        @Res()  res: Response
+    ): Promise<Response> {
+        try {         
+            // Get the queue information from the request object
+            let queue = get(req,'queue');
+
+            // Send the queue information as a JSON response with a 200 status code
+            return res.status(HttpStatus.OK).json({ queue });
+
+        } catch(error) {
+            // If there is an error, throw an HttpException with the error message and status
+            throw new HttpException(error.status,error.message);
+
+        }
+    } 
+
 }

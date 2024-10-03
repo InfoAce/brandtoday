@@ -108,27 +108,3 @@ watch(
 	}
 )
 </script>
-<style>
-.sidebar-header.active {
-	margin-bottom: 0px !important;
-}
-.sidebar-item a {
-	padding-left: 30px !important;
-}
-.sidebar-title {
-	background-color: #ff4c3b !important;
-	font-size: 14px !important;
-    letter-spacing: .5px !important;
-    padding-bottom: 12px !important;
-    padding-top: 12px !important;
-    text-transform: capitalize !important;
-    font-weight: 500 !important;
-    color: #fff !important;
-    padding: 15px 18px !important;
-}
-
-.sidebar-title::hover {
-	background-color: #ff4c3b !important;
-	border-radius: 0px !important;
-}
-</style>

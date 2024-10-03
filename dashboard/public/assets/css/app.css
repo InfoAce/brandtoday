@@ -19,3 +19,44 @@ body{
 .table th,.table td {
     padding: .6rem
 }
+
+.sidebar-header.active {
+	margin-bottom: 0px !important;
+}
+.sidebar-item a {
+	padding-left: 30px !important;
+}
+.sidebar-title {
+	background-color: #7e1414 !important;
+	font-size: 14px !important;
+    letter-spacing: .5px !important;
+    padding-bottom: 12px !important;
+    padding-top: 12px !important;
+    text-transform: capitalize !important;
+    font-weight: 500 !important;
+    color: #fff !important;
+    padding: 15px 18px !important;
+}
+
+.sidebar-title::hover {
+	background-color: #7e1414 !important;
+	border-radius: 0px !important;
+}
+
+.page-wrapper .page-body-wrapper .page-sidebar .sidebar-menu>li>a.active {
+    background: #7e1414;
+    color: #fff;
+    border-radius: 0px;
+}
+
+.page-wrapper .page-body-wrapper .page-sidebar .sidebar-menu>li>a:not(.active):hover,
+.page-wrapper .page-body-wrapper .page-sidebar .sidebar-menu>li>a:not(.active):hover::before {
+    background: #7e1414 !important;
+    color: #fff;
+    border-radius: 0px;
+}
+
+.page-wrapper .page-body-wrapper .page-sidebar .sidebar-menu>li>a.active::before {
+    background-color: #7e1414;
+    width:0px;
+}

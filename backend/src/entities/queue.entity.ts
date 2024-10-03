@@ -32,6 +32,10 @@ export class QueueEntity {
           return 'categories';
         case 'products':
           return 'products';
+        case 'product_variants':
+          return 'product_variants';
+        case 'stocks':
+          return 'product_variants';                  
       }
     }
   })
@@ -53,7 +57,11 @@ export class QueueEntity {
         case 'brands':
           return 'products';
         case 'products':
+          return 'product_variants';          
+        case 'product_variants':
           return 'stocks';
+        case 'stocks':
+          return 'stock_keeping';                
       }
     }
   })

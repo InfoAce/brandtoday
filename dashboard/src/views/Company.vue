@@ -192,6 +192,20 @@
                             </div>                            
                         </div>
                         <div class="col-12">
+                            <div class="form-group">
+                                <label for="address">Use Currency Exchange</label>
+                                <VueToggles v-model="company.use_exchange_rate"/>
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'use_exchange_rate')">{{errors.use_exchange_rate}}</p>								
+                            </div>                            
+                        </div>
+                        <div class="col-12" v-show="company.use_exchange_rate">
+                            <div class="form-group">
+                                <label for="address">Currency Exchange</label>
+                                <input class="form-control" id="address" type="number" v-model="company.exchange_rate">
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'exchange_rate')">{{errors.exchange_rate}}</p>								
+                            </div>                            
+                        </div>
+                        <div class="col-12">
                             <button class="btn btn-primary" :disabled="isDisabled || loading.updating" @click="updateCompany">
                                 <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
                                 Save Changes
@@ -214,6 +228,7 @@ import vueDropzone from 'dropzone-vue3'
 import { CardLoader } from '../components';
 import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import moment from 'moment';
+import { VueToggles } from "vue-toggles";
 
 export default {
     beforeCreate(){
@@ -235,7 +250,8 @@ export default {
     },
     components: {
         CardLoader,
-        VuePictureCropper
+        VuePictureCropper,
+        VueToggles
     },
     computed:{
         authToken(){
@@ -503,6 +519,9 @@ export default {
                 .catch((err) => {
                     this.errors[err.path] = err.message;
                 });
+        },
+        toggleCurrency(){
+            
         }
     },
     watch:{

@@ -94,6 +94,19 @@ export class CompanyEntity {
   return_refunds: string;
 
   @Column({
+    type: 'tinyint',
+    nullable: true,
+    default:  0
+  })
+  use_exchange_rate: boolean;
+
+  @Column({
+    nullable: true,
+    default:  0
+  })
+  exchange_rate: number;
+
+  @Column({
     nullable: true,
     type: 'longtext'
   })

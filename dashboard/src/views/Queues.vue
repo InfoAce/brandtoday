@@ -71,7 +71,9 @@
                                               </td>
                                               <td>{{ $moment(queue.created_at).format('Do MMMM, Y')}}</td>        
                                               <td>
-                                                <button class="btn btn-primary btn-lg"><i class="fa fa-sync"></i></button>
+                                                <button class="btn btn-primary btn-sm" @click="synchronize(queue,index)">
+                                                    <i :class="queue.state ? 'fa fa-spin fa-sync' : 'fa fa-sync' "></i>
+                                                </button>
                                               </td>                                
                                           </tr>
                                       </template>
@@ -111,16 +113,16 @@
   import { useStore } from 'vuex';
   import moment from 'moment';
   import { VueToggles } from "vue-toggles";
-  import Paginate from "vuejs-paginate-next";
   
   const store    = useStore();
   const router   = useRouter();
   const $api     = inject('$api');
   const $swal    = inject('$swal');
+  const $toast   = inject('$toast');
   const $moment  = moment;
   const $isEmpty = isEmpty;
   const $isNull  = isNull;
-  const $data    = reactive({queues: Object()});
+  const $data    = reactive({queues: Array()});
   
   const fetch = async () => {
     try {
@@ -152,6 +154,48 @@
         });
     } catch(error) {
         store.commit('card_loader',false);
+    }
+  }
+
+
+  const synchronize = async (item,index) => {
+    if( !isNull(item.parent) && $data.queues.find( val => val.type == item.parent && val.status != 'complete') ){
+        return $swal?.fire({
+            icon: 'warning', // Icon to display in the dialog
+            title: 'Oops!!', // Title of the dialog
+            text:  'This queue will not be synced as its depends on another queue which is not complete.', // Text content of the dialog
+            showCancelButton: true // Whether to show a "Cancel" button
+        })
+    }
+    try {
+
+        const toastId             = $toast(`Synchronizing ${item.type} queue...`,{ type: 'info', isLoading: true });
+        const { data: { queue } } = await $api.put(`/dashboard/queues/${item.id}/update`,{state: !item.state});
+        $data.queues[index]       = cloneDeep(queue);
+        
+        const interval = setInterval( async() => {
+            
+            //Check if a toast is displayed or not
+            $toast.isActive(toastId);
+            
+            const { data: { queue } } = await $api.put(`/dashboard/queues/${item.id}`);
+            $data.queues[index]       = cloneDeep(queue);
+
+            if( queue.state === 0 && queue.status == 'complete'){
+                clearInterval(interval);
+                // Remove given toast
+                $toast.remove(toastId);
+
+                $toast.success(`Successfully synchronized ${item.type} queue.`);
+            }
+
+
+        },2000);
+        
+    } catch(error) {
+
+        console.log(error);
+        
     }
   }
   

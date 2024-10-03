@@ -66,9 +66,13 @@ seeder({
             QueueEntity,
             QueueEntity,
             QueueEntity,
-            QueueEntity
+            QueueEntity,
+            QueueEntity,
+            QueueEntity,
         ],
         [
+            {count:1},
+            {count:1},
             {count:1},
             {count:1},
             {count:1},
