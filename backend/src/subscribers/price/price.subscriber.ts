@@ -1,6 +1,7 @@
 import { AfterInsert, EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from 'typeorm';
 import { PriceEntity } from 'src/entities';
 import { Inject, Injectable } from '@nestjs/common';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 @EventSubscriber()
