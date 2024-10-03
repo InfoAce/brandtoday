@@ -39,16 +39,25 @@
 }
 
 #dropdown-menu {
-    position: fixed;
-    left:0;
-    top: 137px;
-    width: 100%;
-    z-index: 1;
-    background-color: #fff;
+  position: fixed;
+  left:0;
+  top: 137px;
+  width: 100%;
+  z-index: 1;
+  background-color: #fff;
+}
+
+#dropdown-sidemenu {
+  position: fixed;
+  left:200px;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  background-color: #fff;
 }
 
 .hidden {
-    display: none !important;
+  display: none !important;
 }
 
 .text-left {

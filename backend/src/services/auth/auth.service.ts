@@ -28,7 +28,7 @@ export class AuthService {
     async findOneByEmail(email: string){
         try {
         
-            return await this.userModel.findOneBy({ where: { email }, select:['id','email','password']});
+            return await this.userModel.findOneOrFail({ where: { email }, select:['id','email','password']});
         
         } catch (error) {
 

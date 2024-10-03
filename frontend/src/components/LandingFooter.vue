@@ -1,129 +1,85 @@
 <template>
-    <div>
-        <!-- footer -->
-        <footer class="footer-light">
-            <section class="section-b-space">
-                <div class="container">
-                    <div class="row footer-theme partition-f">
-                        <div class="col px-0">
-                            <div class="footer-title footer-mobile-title">
-                                <h4>about</h4>
-                            </div>
-                            <div class="footer-contant">
-                                <div class="footer-logo" v-show="!isEmpty(home.company)">
-                                    <i v-if="isNull(home.company.white_logo)" class="fa fa-image fa-10x"></i>
-                                    <img v-else :src="`${$store.getters.assetsUrl}${home.company.white_logo}`" width="200" :alt="home.company.name">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col px-0">
-                            <div class="sub-title">
-                                <div class="footer-title">
-                                    <h4>Shop by categories</h4>
-                                </div>
-                                <div class="footer-contant">
-                                    <ul>
-                                        <li v-for="(category,index) in home.categories" :key="index">
-                                            <a href="#" @click.prevent="navigateTo(category)">{{ category.name }}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col px-0">
-                            <div class="sub-title">
-                                <div class="footer-title">
-                                    <h4>Company</h4>
-                                </div>
-                                <div class="footer-contant">
-                                    <ul>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'AboutUs'})">Get To Know Us</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'PrivacyPolicy'})">Privacy Policy</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'ReturnRefunds'})">Return & Refunds</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'TermsAndConditions'})">Terms & Conditions</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Frequently Asked Questions</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Branding Techniques</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col px-0">
-                            <div class="sub-title">
-                                <div class="footer-title">
-                                    <h4>Shop</h4>
-                                </div>
-                                <div class="footer-contant">
-                                    <ul>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'AccountProfile'})">My Account</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'AccountFavourites'})">My Wishlist</a></li>
-                                        <li><a href="#" @click.prevent="$router.push({ name: 'Brands'})">Our Brands</a></li>
-                                    </ul>
-                                </div>
-                            </div> 
-                        </div>
-                        <div class="col px-0">
-                            <div class="sub-title">
-                                <div class="footer-title">
-                                    <h4>Contact Us</h4>
-                                </div>
-                                <div class="footer-contant">
-                                    <ul class="contact-list">
-                                        <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
-                                        <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
-                                        <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
-                                        <li><a href="https://g.co/kgs/3t2sxBs" target="_blank"><img src="/assets/images/google-review-symbol.png" width="150"/></a></li>
-                                        <li><a href="https://www.suavemarketing.co.ke/" target="_blank"><img src="/assets/images/suave.webp" width="150"/></a></li>
-                                    </ul>
-                                </div>
-                            </div>
+    <!-- footer -->
+    <footer class="footer-light p-4 m-0">
+        <div class="container p-4">
+            <div class="row footer-theme partition-f">
+                <div class="col px-0">
+                    <div class="footer-title footer-mobile-title">
+                        <h4>about</h4>
+                    </div>
+                    <div class="footer-contant">
+                        <div class="footer-logo" v-show="!isEmpty(home.company)">
+                            <i v-if="isNull(home.company.white_logo)" class="fa fa-image fa-10x"></i>
+                            <img v-else :src="`${$store.getters.assetsUrl}${home.company.white_logo}`" width="200" :alt="home.company.name">
                         </div>
                     </div>
                 </div>
-            </section>
-            <div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-6 col-md-6 col-sm-12">
-                            <div class="footer-end">
-                                <p class="text-white"><i class="fa fa-copyright" aria-hidden="true"></i> {{ moment().format('Y') }} {{ $store.getters.env.VITE_APP_NAME }}</p>
-                            </div>
+                <div class="col px-0">
+                    <div class="sub-title">
+                        <div class="footer-title">
+                            <h4>Shop by categories</h4>
                         </div>
-                        <!-- <div class="col-xl-6 col-md-6 col-sm-12">
-                            <div class="payment-card-bottom">
-                                <ul>
-                                    <li>
-                                        <a href="#"><img src="/assets/home/images/icon/visa.png" alt=""></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="/assets/home/images/icon/mastercard.png" alt=""></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="/assets/home/images/icon/paypal.png" alt=""></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="/assets/home/images/icon/american-express.png" alt=""></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="/assets/home/images/icon/discover.png" alt=""></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div> -->
+                        <div class="footer-contant">
+                            <ul>
+                                <li v-for="(category,index) in home.categories" :key="index">
+                                    <a href="#" @click.prevent="navigateTo(category)">{{ category.name }}</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+                </div>
+                <div class="col px-0">
+                    <div class="sub-title">
+                        <div class="footer-title">
+                            <h4>Company</h4>
+                        </div>
+                        <div class="footer-contant">
+                            <ul>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'AboutUs'})">Get To Know Us</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'PrivacyPolicy'})">Privacy Policy</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'ReturnRefunds'})">Return & Refunds</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'TermsAndConditions'})">Terms & Conditions</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Frequently Asked Questions</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'Faqs'})">Branding Techniques</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="sub-title">
+                        <div class="footer-title">
+                            <h4>Shop</h4>
+                        </div>
+                        <div class="footer-contant">
+                            <ul>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'AccountProfile'})">My Account</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'AccountFavourites'})">My Wishlist</a></li>
+                                <li><a href="#" @click.prevent="$router.push({ name: 'Brands'})">Our Brands</a></li>
+                            </ul>
+                        </div>
+                    </div> 
+                </div>
+                <div class="col px-0">
+                    <div class="sub-title">
+                        <div class="footer-title">
+                            <h4>Contact Us</h4>
+                        </div>
+                        <div class="footer-contant">
+                            <ul class="contact-list">
+                                <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
+                                <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
+                                <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
+                                <li><a href="https://g.co/kgs/3t2sxBs" target="_blank"><img src="/assets/images/google-review-symbol.png" width="150"/></a></li>
+                                <li><a href="https://www.suavemarketing.co.ke/" target="_blank"><img src="/assets/images/suave.webp" width="150"/></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <p class="text-white"><i class="fa fa-copyright" aria-hidden="true"></i> {{ moment().format('Y') }} {{ $store.getters.env.VITE_APP_NAME }}</p>
                 </div>
             </div>
-        </footer>
-        <!-- footer end -->
-
-        <!-- cookie bar start -->
-        <!-- <div class="cookie-bar">
-            <p>We use cookies to improve our site and your shopping experience. By continuing to browse our site you accept
-                our cookie policy.</p>
-            <a href="javascript:void(0)" class="btn btn-solid btn-xs">accept</a>
-            <a href="javascript:void(0)" class="btn btn-solid btn-xs">decline</a>
-        </div> -->
-        <!-- cookie bar end -->
-
+        </div>
         <!-- tap to top -->
         <div class="tap-top top-cls">
             <div>
@@ -135,8 +91,9 @@
                 <button id="transaction_cancel"> <i class="fa fa-times fa-lg text-danger" alt="Cancel"></i> </button>
             </div>
             <div class="body"></div>
-        </div>      
-    </div>
+        </div>
+    </footer>
+    <!-- footer end -->      
 </template>
 <style scoped>
 #payment_box {

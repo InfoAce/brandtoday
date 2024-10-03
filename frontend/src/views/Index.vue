@@ -28,8 +28,8 @@
         </section>
         <!-- Home slider end -->
 
-                <!-- Paragraph-->
-                <div class="title1 section-t-space">
+        <!-- Paragraph-->
+        <div class="title1 section-t-space">
             <h2>What Our Clients Say About Us</h2>
         </div>
 
@@ -67,9 +67,8 @@
                         </div>                             
                     </template>
                     <carousel  
-                        v-show="isEmpty($data.testimonials) && !$data.loading"
+                        v-if="isEmpty($data.testimonials) && !$data.loading"
                         :settings="$data.settings.testimonials" 
-                        :itemsToShow="3" 
                         :wrapAround="true" 
                         :transition="5000"
                         :breakpoints="$data.breakpoints.testimonials"
@@ -151,7 +150,7 @@
                         </div>                             
                     </template>
                     <carousel  
-                        v-show="!isEmpty($data.categories) && !$data.loading" 
+                        v-if="!isEmpty($data.categories) && !$data.loading" 
                         :settings="$data.settings.categories" 
                         :wrapAround="true" 
                         :breakpoints="$data.breakpoints.categories"
@@ -217,7 +216,7 @@
                         </div>                             
                     </template>
                     <carousel  
-                        v-show="!isEmpty($data.brands) && !$data.loading" 
+                        v-if="!isEmpty($data.brands) && !$data.loading" 
                         :autoplay="5000" :wrap-around="false"
                         class="p-0"
                         :settings="$data.settings.banners" 
@@ -275,7 +274,7 @@
                         </div>                             
                     </template>
                     <carousel  
-                        v-show="!isEmpty($data.products) && !$data.loading" 
+                        v-if="!isEmpty($data.products) && !$data.loading" 
                         :settings="$data.settings.categories" 
                         :wrapAround="true" 
                         :breakpoints="$data.breakpoints.categories"
@@ -350,6 +349,10 @@ const $data  = reactive({
             },
         },
         testimonials: {
+            720: {
+                itemsToShow: 2,
+                snapAlign: 'center',
+            },
             1080: {
                 itemsToShow: 3,
                 snapAlign: 'center',

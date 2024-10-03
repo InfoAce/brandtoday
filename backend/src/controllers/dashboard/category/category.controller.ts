@@ -20,15 +20,6 @@ export class CategoryController {
         try {
             let [categories, count]: any = await this.categoryModel.findAndCount({ take: queryPerPage, skip: (queryPage - 1) * queryPerPage, relations:{ sub_categories: true }  });
 
-            // categories = await Promise.all( 
-            //     categories.map(
-            //         async (category: any) => {
-            //             category.sub_categories_count = (await category.sub_categories).length;
-            //             return category;
-            //         }
-            //     )
-            // );
-
             return res.status(HttpStatus.OK).json({ categories, count});
 
         } catch(error) {

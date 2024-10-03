@@ -38,7 +38,7 @@ export class UserController {
     ) {
         try{
             // Retrieve paginated list of users based on the provided query parameters
-            let users = await this.userModel.paginate({ page, limit},{ where: { role: { name: type } } });
+            let users = await this.userModel.find({ skip: (page - 1) * limit, take: limit, where: { role: { name: type } }, });
             
             // Send the paginated list of users as a JSON response
             return res.status(HttpStatus.OK).json({users});

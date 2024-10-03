@@ -12,6 +12,7 @@ import { diskStorage } from 'multer';
 import { ControllerException } from 'src/exceptions/controller.exception';
 import { Express } from 'express'
 import { NotFoundInterceptor } from 'src/interceptors';
+import * as moment from 'moment';
 
 @Controller('auth')
 @UseInterceptors(NotFoundInterceptor)
@@ -99,7 +100,6 @@ export class AuthController {
             res.status(HttpStatus.OK).json({user});
 
         } catch(error) {
-            this.logger.error(error);
             // Log and throw error
             throw new ControllerException(error);            
         }   
@@ -108,10 +108,11 @@ export class AuthController {
     @Put('verify/:token')
     async verify(@Param('token') token: string, @Res() res: Response){
         try{
-            let { id }       = await this.userModel.findOneBy({ token });
+            let { id }       = await this.userModel.findOneOrFail({ where: { token } });
+
             let randomstring = require("randomstring");
             
-            this.userModel.updateOne({ id }, { email_verified_at: new Date(), token: randomstring.generate(100) });
+            await this.userModel.update({ id }, { email_verified_at: moment().format('YYYY-MM-DD HH:mm:ss'), token: randomstring.generate(100) });
 
             return res.status(HttpStatus.OK).json({});
 
@@ -248,7 +249,7 @@ export class AuthController {
             // Generate random string for token
             let randomstring = require("randomstring");
 
-            await this.userModel.updateOne({ email: body.email },{ token: randomstring.generate(100) });
+            await this.userModel.update({ email: body.email },{ token: randomstring.generate(100) });
             
             let user = await this.userModel.findOne({ where: { email: body.email } });
 
@@ -265,7 +266,7 @@ export class AuthController {
 
     @Post(':code/password')
     async setPassword(
-        @Param('code') code: String,
+        @Param('code') code: string,
         @Body()  body: SePasswordValidation,
         @Req()   req:  Request, 
         @Res()   res:  Response
@@ -279,7 +280,7 @@ export class AuthController {
             let password     = await bcrypt.hashSync(body.new_password, parseInt(this.configService.get('app.SALT_LENGTH')));
 
             // Update token and password
-            await this.userModel.updateOne({ token: code },{ password, token: randomstring.generate(100) });
+            await this.userModel.update({ token: code },{ password, token: randomstring.generate(100) });
             
             res.status(HttpStatus.OK).json({});
         

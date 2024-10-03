@@ -42,7 +42,7 @@ export class AccountController {
     async updateUser(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
         let authUser = get(req,'user');
         try {
-            let updatedUser = await this.userModel.updateOne({id: authUser.id},body)
+            let updatedUser = await this.userModel.update({id: authUser.id},body)
             set(req,'user',updatedUser);
             res.status(HttpStatus.OK).json({user: get(req,'user') });
         } catch (err) {
@@ -69,7 +69,7 @@ export class AccountController {
             
             let password = await bcrypt.hash(new_password, parseInt(this.configService.get('SALT_LENGTH')))
 
-            this.userModel.updateOne({id: get(req,'user').id},{ password  });
+            this.userModel.update({id: get(req,'user').id},{ password  });
 
             return res.status(HttpStatus.OK).json({});
             
