@@ -31,7 +31,7 @@ const router = createRouter({
     },
     {
       path: '/auth',
-      component: () => RouterView,
+      component: RouterView ,
       children: [
         {
           path: 'login',
@@ -85,7 +85,7 @@ const router = createRouter({
             //   component: () => import('@/views/Error404.vue')
             // },
           ],
-          component: () => RouterView
+          component: RouterView
         },
         {
           path: 'signup',
