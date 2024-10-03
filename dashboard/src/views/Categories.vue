@@ -6,8 +6,8 @@
               <div class="row">
                   <div class="col-lg-6">
                       <div class="page-header-left">
-                        <h3>Orders</h3>
-                        <p>List of created orders.</p>
+                        <h3>Categories</h3>
+                        <p>List of amrod product categories.</p>
                       </div>
                   </div>
                   <div class="col-lg-6">
@@ -19,7 +19,7 @@
                               </a>
                           </li>
                           <li class="breadcrumb-item">Data management</li>
-                          <li class="breadcrumb-item active">Orders</li>
+                          <li class="breadcrumb-item active">Categories</li>
                       </ol>
                   </div>
               </div>
@@ -33,13 +33,6 @@
               <div class="col-sm-12">
                   <div class="card">
                       <CardLoader />
-                      <div class="card-header">
-                          <form class="form-inline search-form search-box">
-                              <div class="form-group">
-                                  <input class="form-control-plaintext" type="search" placeholder="Search..">
-                              </div>
-                          </form>  
-                      </div>
                       <div class="card-body p-6">                    
                           <div class="table-responsive table-desi">
                               <table class="review-table table">
@@ -49,6 +42,8 @@
                                           <th>Name</th>
                                           <th>Code</th>
                                           <th>Path</th>
+                                          <th>Visibility</th>
+                                          <th>Priority</th>
                                           <th>Sub Categories</th>
                                           <th>Created On</th>
                                           <th></th>
@@ -61,7 +56,12 @@
                                           <td>{{ category.name }}</td>
                                           <td>{{ category.code }}</td>
                                           <td>{{ category.path }}</td>
-                                          <td>{{ category.sub_categories_count }}</td>
+                                          <td>
+                                            <div class="badge badge-success" v-show="category.show">Visible</div>
+                                            <div class="badge badge-danger" v-show="!category.show">Not Visible</div>
+                                          </td>
+                                          <td>{{ category.priority }}</td>
+                                          <td>{{ category.__sub_categories__.length }}</td>
                                           <td>{{ $moment(category.created_at).format('Do MMMM,Y') }}</td>      
                                           <td>
                                             <button 
@@ -77,7 +77,7 @@
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="7" class=" p-4">
+                                            <td colspan="9" class=" p-4">
                                                 <h4 class="mb-0 text-center"><i class="fa fa-exclamation-triangle"></i> No categories found.</h4>                                            
                                             </td>
                                         </tr>

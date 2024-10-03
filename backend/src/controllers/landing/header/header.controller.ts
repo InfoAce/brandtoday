@@ -33,7 +33,7 @@ export class HeaderController {
     async index(@Req() req: Request,  @Res() res: Response): Promise<void> {
         try {
             // Retrieve all categories from the database
-            let categories = await this.categoryModel.find({ cache: true, relations:{ sub_categories: true } });
+            let categories = await this.categoryModel.find({ where: { show: true }, cache: true, relations:{ sub_categories: true }, order: { priority: 'ASC'} });
 
             // Retrieve the first company from the database
             let company = await this.companyModel.first();

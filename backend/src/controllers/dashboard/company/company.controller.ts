@@ -18,9 +18,12 @@ export class CompanyController {
     async get(@Req() req: Request,  @Res() res: Response) {
         try{
 
-            let company = await this.companyModel.findOne({ id: get(req,'user').company_id });
+            let company = await this.companyModel.findOneOrFail({ 
+                where: { id: get(req,'user').company_id },
+                select: ['id','name','address','logo','white_logo','icon','email','phone_number','use_exchange_rate','exchange_rate','product_fee_type','use_product_fee','product_fee'] 
+            });
 
-            res.status(HttpStatus.OK).json({ company: pick(company,['id','name','address','logo','white_logo','icon','email','phone_number']) });
+            res.status(HttpStatus.OK).json({ company });
 
         } catch(error) {
 
@@ -42,7 +45,7 @@ export class CompanyController {
 
             await this.companyModel.save({ id: companyId, ...body });
 
-            let company = await this.companyModel.findOne({ id: get(req,'user').company_id });
+            let company = await this.companyModel.findOneOrFail({ where: { id: get(req,'user').company_id } });
 
             res.status(HttpStatus.OK).json({ company });
             

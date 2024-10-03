@@ -1,6 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
-import { RoleEntity, UserEntity } from './index';
+import { PriceEntity, RoleEntity, UserEntity } from './index';
 import { Seed, SeedRelation } from 'nestjs-class-seeder';
+
+export enum GlobalFee {
+  PERCENTAGE = 'percentage',
+  FIXED      = 'fixed'
+}
 
 @Entity("companies")
 export class CompanyEntity {
@@ -94,17 +99,24 @@ export class CompanyEntity {
   return_refunds: string;
 
   @Column({
-    type: 'tinyint',
     nullable: true,
     default:  0
   })
-  use_exchange_rate: boolean;
+  exchange_rate: number;
 
   @Column({
     nullable: true,
     default:  0
   })
-  exchange_rate: number;
+  product_fee: number;
+
+  @Column({
+    type:     "enum",
+    enum:     GlobalFee,
+    default:  GlobalFee.FIXED,
+    nullable: true
+  })
+  product_fee_type: string;
 
   @Column({
     nullable: true,
@@ -117,6 +129,9 @@ export class CompanyEntity {
     type: 'json'
   })
   service_fees: any;
+
+  @OneToMany(() => PriceEntity, (entity) => entity.company)
+  prices: Promise<PriceEntity[]>;
 
   @OneToMany(() => RoleEntity, (roles) => roles.company)
   @JoinColumn({
@@ -131,6 +146,20 @@ export class CompanyEntity {
     referencedColumnName: "company_id"
   })
   users: UserEntity[];
+
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    default:  false
+  })
+  use_exchange_rate: boolean;
+
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    default:  false
+  })
+  use_product_fee: boolean;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

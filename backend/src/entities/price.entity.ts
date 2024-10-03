@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, Index, ManyToOne} from 'typeorm';
-import { ProductVariantEntity } from './';
+import { CompanyEntity, ProductVariantEntity } from './';
 
 @Entity("prices")
 export class PriceEntity {
@@ -13,6 +13,16 @@ export class PriceEntity {
   @Column()
   @Index()
   full_code: string
+
+  @ManyToOne(() => CompanyEntity, (entity) =>  entity.prices, { eager: true, onDelete:"CASCADE", onUpdate: 'CASCADE' })
+  @JoinColumn({
+    name: 'company_id',
+    referencedColumnName: 'id'
+  })
+  company: CompanyEntity
+  
+  @Column()
+  company_id: string
 
   @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({

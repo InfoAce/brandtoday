@@ -206,6 +206,33 @@
                             </div>                            
                         </div>
                         <div class="col-12">
+                            <div class="form-group">
+                                <label for="use_product_fee">Use Product Fee</label>
+                                <VueToggles v-model="company.use_product_fee"/>
+                                <p class="text-danger col col-12 mb-0" v-show="$has(errors,'use_product_fee')">{{errors.use_product_fee}}</p>								
+                            </div>                            
+                        </div>
+                        <template  v-if="company.use_product_fee">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="product_fee_type">Product Pricing Fee Type</label>
+                                    <select class="form-control" id="product_fee_type" v-model="company.product_fee_type">
+                                        <option value="">*Select Type</option>
+                                        <option value="fixed">Fixed</option>
+                                        <option value="percentage">Percentage</option>
+                                    </select>
+                                    <p class="text-danger col col-12 mb-0" v-show="$has(errors,'product_fee_type')">{{errors.product_fee_type}}</p>								
+                                </div>                            
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="product_fee">Product Fee</label>
+                                    <input class="form-control" id="product_fee" type="number" v-model="company.product_fee">
+                                    <p class="text-danger col col-12 mb-0" v-show="$has(errors,'product_fee')">{{errors.product_fee}}</p>								
+                                </div>                            
+                            </div>
+                        </template>
+                        <div class="col-12">
                             <button class="btn btn-primary" :disabled="isDisabled || loading.updating" @click="updateCompany">
                                 <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
                                 Save Changes
@@ -309,15 +336,20 @@ export default {
                 address:      String(),
                 name:         String(),
                 email:        String(),
+                exchange_rate: Number(),
                 icon:         String(),
                 logo:         String(),
                 white_logo:   String(),
                 phone_number: String(),
+                product_fee:      Number(),
+                product_fee_type: String(),
+                use_exchange_rate: Boolean(),
+                use_product_fee: Boolean(),
             },
             images: {
                 icon: false,
                 logo: false,
-                white_logo: false
+                white_logo: false,
             },
             form:{
                 logo: String(),
@@ -357,7 +389,24 @@ export default {
                                 .email("*Enter a valid email address")
                                 .required("*Email address is required"),                         
             phone_number:     yup.string()
-                                .required("*Phone number is required"),                         
+                                .required("*Phone number is required"), 
+            exchange_rate:     yup.number()
+                                  .when("use_exchange_rate", {
+                                    is: true,
+                                    then: yup.number().required("Exchange rate amount is required").test( val => val != 0)
+                                  }),
+            product_fee_type:  yup.string()
+                                  .when("use_product_fee", {
+                                    is: true,
+                                    then: yup.number().required("Exchange rate amount is required").test( val => !isEmpty(val))
+                                  }),
+            product_fee:     yup.number()
+                                  .when("use_product_fee", {
+                                    is: true,
+                                    then: yup.number().required("Exchange rate amount is required").test( val => val != 0)
+                                  }),
+            use_exchange_rate: yup.boolean(),                                                                                         
+            use_product_fee: yup.boolean(),                                                                                         
         });
 
         // Finish logo or icon update and trigger refetch of company
@@ -504,7 +553,10 @@ export default {
                 
                 this.company             = cloneDeep(company);
                 this.loading.updating    = false;
+
+                this.$toast.success('Company information updated successfully.');
             } catch(error) {
+                console.log(error);
                this.$toast.error('Something went wrong while updating company information.')
                this.loading.updating    = false;
             }

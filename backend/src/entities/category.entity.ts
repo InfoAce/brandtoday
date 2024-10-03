@@ -16,6 +16,20 @@ export class CategoryEntity {
   @Column({ type: 'varchar', length: 255 })
   path: string;
 
+  @Column({
+    type: 'boolean', 
+    nullable: true,
+    default: false
+  })
+  show: boolean;
+
+  @Column({
+    type: 'int', 
+    nullable: true,
+    default: 1 
+  })
+  priority: number;
+
   @OneToMany(() => ProductCategoryEntity, (product_categories) => product_categories.category, { lazy: true })
   @JoinColumn()
   product_categories: ProductCategoryEntity;

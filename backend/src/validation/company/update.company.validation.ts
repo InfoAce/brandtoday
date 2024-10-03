@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export class UpdateCompanyValidation {
 
@@ -29,4 +29,27 @@ export class UpdateCompanyValidation {
     @IsNotEmpty()
     @IsString()
     phone_number: string
+
+    @ValidateIf( value => value.use_exchange_rate === true )
+    @IsOptional()
+    @IsNumber()
+    exchange_rate: number
+
+    @ValidateIf( value => value.use_product_fee === true )
+    @IsOptional()
+    @IsNumber()
+    product_fee: number
+
+    @ValidateIf( value => value.use_product_fee === true )
+    @IsOptional()
+    @IsString()
+    product_fee_type: string
+
+    @IsNotEmpty()
+    @IsBoolean()
+    use_exchange_rate: boolean
+
+    @IsNotEmpty()
+    @IsBoolean()
+    use_product_fee: boolean
 }

@@ -25,7 +25,7 @@ export class QueueEntity {
     if( !has(previousRecord,'first_name') ){
       switch(previousRecord.type){
         case 'categories':
-          return 'products';
+          return 'product_variants';
         case 'prices':
           return null;
         case 'brands':

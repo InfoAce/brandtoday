@@ -12,8 +12,20 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="name" class="col-form-label">Name</label>
-                        <input type="text" class="form-control" id="first_name" v-model="$data.category.name">
+                        <input type="text" class="form-control" id="name" v-model="$data.category.name">
                         <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'name')">{{$data.errors.name}}</p>	
+                    </div>
+                    <div class="form-group">
+                        <label for="show" class="col-form-label">Visible</label>
+                        <div class="col-12">
+                            <input type="checkbox" id="show" v-model="$data.category.show" />
+                        </div>
+                        <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'show')">{{$data.errors.show}}</p>	
+                    </div>
+                    <div class="form-group">
+                        <label for="priority" class="col-form-label">Priotity</label>
+                        <input type="number" class="form-control" id="priority" :min="1" v-model="$data.category.priority">
+                        <p class="text-danger col col-12 mb-4" v-show="has($data.errors,'priority')">{{$data.errors.priority}}</p>	
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -55,9 +67,11 @@ const $data = reactive({
 })
 
 const formSchema = yup.object().shape({
-	code:   yup.string().required("*Code is required"),
-	name:   yup.string().required("*Nameis required"),                         
-    path:   yup.string().required("*Path is required"),                       
+	code:     yup.string().required("*Code is required"),
+	name:     yup.string().required("*Nameis required"),                         
+    path:     yup.string().required("*Path is required"),   
+	priority: yup.number().required("*Priotity is required"),       
+	show:     yup.boolean().required("*Visibility is required"),                         
 });
 
 /**

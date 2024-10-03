@@ -35,6 +35,7 @@ export class AppService {
     private brandModel:           BrandModel,
     private categoryModel:        CategoryModel,
     private childSubCategory:     ChildSubCategoryModel,
+    private companyModel:         CompanyModel,
     private priceModel:           PriceModel,
     private productModel:         ProductModel,
     private productColourModel:   ProductColourModel,
@@ -359,19 +360,18 @@ export class AppService {
     this.logger.log(`Synchronizing prices`);
 
     // Fetch amrod prices
-    let prices = await this.amrodService.getPrices();   
+    let prices  = await this.amrodService.getPrices();  
+    let company = await this.companyModel.first(); 
 
     await Promise.all(
         chunk(prices,500).map( async (prices) => {
             return new Promise( async (resolve,reject) => {
-                // setTimeout( async () => {
-                    await this.priceModel.insert( 
-                        prices.map( 
-                            ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
-                                ({ full_code, simple_code, amount }) )
-                    );
-                    resolve(true);
-                // }, 2000)
+                await this.priceModel.insert( 
+                    prices.map( 
+                        ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
+                            ({ full_code, simple_code, amount, company_id: company.id }) )
+                );
+                resolve(true);
             }) 
         })
     );

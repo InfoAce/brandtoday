@@ -293,7 +293,7 @@ export class AuthController {
     async updateCompany(@Body() body: any, @Req() req: Request,  @Res() res: Response) {
         let { company } = get(req,'user');
         try{
-            let updatedCompany = await this.companyModel.updateOne(company.id,body);
+            let updatedCompany = await this.companyModel.update(company.id,body);
             return res.status(HttpStatus.OK).json({updatedCompany});
         } catch(err) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR);

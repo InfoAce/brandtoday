@@ -44,7 +44,7 @@ export class WebsiteController {
     ) {
         try {
             // Fetch the company details for the authenticated user from the database
-            let company = await this.companyModel.findOne({ id: get(req,'user').company_id });
+            let company = await this.companyModel.findOneOrFail({ where:{ id: get(req,'user').company_id } });
 
             // Return the company details as a JSON response with a 200 status code
             return res.status(HttpStatus.OK).json({ company });
@@ -73,7 +73,7 @@ export class WebsiteController {
         try{   
             // Get the authenticated user from the request
             let user        = get(req,'user');
-            let company     = await this.companyModel.findOne({ id: user.company_id });
+            let company     = await this.companyModel.findOneOrFail({ where:{ id: user.company_id } });
             let banners:any = Array();
 
             // Append the base URL to the banner path
@@ -117,7 +117,7 @@ export class WebsiteController {
         try{   
             // Get the authenticated user from the request
             let user        = get(req,'user');
-            let company     = await this.companyModel.findOne({ id: user.company_id });
+            let company     = await this.companyModel.findOneOrFail({ where:{ id: user.company_id } });
             let brands:any = Array();
 
             // Append the base URL to the banner path
@@ -390,7 +390,7 @@ export class WebsiteController {
         try{   
             // Get the authenticated user from the request
             let user             = get(req,'user');
-            let company          = await this.companyModel.findOne({ id: user.company_id });
+            let company          = await this.companyModel.findOneOrFail({ where:{ id: user.company_id } });
             let service_fees:any = Array();
 
             // Generate random string for token
