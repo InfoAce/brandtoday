@@ -13,7 +13,7 @@
                 </div>             
             </template>
             <carousel  
-                v-show="!isEmpty($data.categories) && !$data.loading" 
+                v-if="!isEmpty($data.categories) && !$data.loading" 
                 :autoplay="5000" :wrap-around="false"
                 class="p-0"
                 :settings="$data.settings.banners" 
