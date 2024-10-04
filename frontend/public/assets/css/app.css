@@ -195,6 +195,10 @@
     display: block !important;
   }
 
+  .pixelstrap li a > .sub-arrow {
+    display: none !important;
+  }
+
   .pixelstrap {
     padding-right: 0px !important;
   }
