@@ -85,7 +85,7 @@
                             </div>
                         </div>     
                     </div>
-                    <div class="menu-right pull-right">
+                    <div class="menu-right pull-right" v-if="!isEmpty(home.categories)">
                         <div>
                             <nav id="main-nav">
                                 <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
