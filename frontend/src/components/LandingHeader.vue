@@ -94,20 +94,38 @@
                                         <div class="mobile-back text-end">Back<i class="fa fa-angle-right ps-2"
                                                 aria-hidden="true"></i></div>
                                     </li>
-                                    <li v-for="(category,index) in home.categories" :key="index" class="py-2">
+                                    <template v-if="isEmpty(auth)">
+                                        <li class="mobile"><a href="#" @click.prevent="$router.push({name:'Login'})">LOGIN</a></li>
+                                        <li class="mobile"><a href="#" @click.prevent="redirectToDashboard">DASHBOARD</a></li>
+                                        <li class="mobile"><router-link :to="$router.resolve({name:'Signup'}).href">SIGNUP</router-link></li>
+                                    </template>
+                                    <template v-if="!isEmpty(auth)">
+                                        <li class="mobile">
+                                            <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
+                                                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                                <span>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
+                                            </a>
+                                        </li>
+                                        <li class="mobile">
+                                            <a href="#" @click.prevent="logout">
+                                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                                LOGOUT
+                                            </a>
+                                        </li>
+                                    </template>                                    
+                                    <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
                                         <a href="javascript:void(0)">{{ category.name.toUpperCase()  }}</a>
                                         <ul>
                                             <li>
                                                 <router-link 
                                                     :to="$router.resolve({ name: 'Category', params: { category: category.id } }).href" 
                                                     :data-menu="category.code.toLowerCase().replace(/\s/g, '')" 
-                                                    class="p-3"
                                                 >
-                                                    All
+                                                    ALL
                                                 </router-link>                                                
                                             </li>
                                             <li v-for="(sub_category,key) in category.__sub_categories__" :key="key">
-                                                <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href" class="p-3">
+                                                <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href">
                                                     {{ sub_category.name.toUpperCase()  }}
                                                 </router-link>
                                             </li> 
@@ -116,27 +134,6 @@
                                 </ul>
                             </nav>
                         </div>
-                        <!-- <div>
-                            <div class="icon-nav d-none d-sm-block">
-                                <ul>
-                                    <li class="onhover-div mobile-search">
-                                        <div><img src="../assets/images/icon/search.png" onclick="openSearch()"
-                                                class="img-fluid blur-up lazyload" alt=""> <i class="ti-search"
-                                                onclick="openSearch()"></i></div>
-                                    </li>
-                                    <li class="onhover-div mobile-setting">
-                                        <div><img src="../assets/images/icon/setting.png"
-                                                class="img-fluid blur-up lazyload" alt=""> <i
-                                                class="ti-settings"></i></div>
-                                    </li>
-                                    <li class="onhover-div mobile-cart">
-                                        <div><img src="../assets/images/icon/cart.png"
-                                                class="img-fluid blur-up lazyload" alt=""> <i
-                                                class="ti-shopping-cart"></i></div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>
@@ -237,8 +234,12 @@ const fetchMenus = () => {
             
             $('#main-menu').smartmenus({
                 hideTimeout: 300,
-                subMenusSubOffsetX: 1,
-                subMenusSubOffsetY: -8,
+                subMenusMaxWidth: '100%',
+                subMenusMinWidth: '100%',
+            });
+
+            $('#main-menu').bind('activate.smapi', function(e, menu) {
+
             });
 
             $('#main-menu').bind('show.smapi', function(e, menu) {
@@ -252,6 +253,18 @@ const fetchMenus = () => {
                     $(menu).css('justify-content', 'center');
                     $(menu).css('left', '0');
                     $(menu).css('top', 'auto');
+                    $(menu).css('width', '100%');
+                    $(menu).css('margin-left', '0 !important');
+                }
+                if(window.innerWidth < 1200 ){
+                    $(menu).css('display', 'block');
+                    $(menu).css('flex-wrap', 'none');
+                    $(menu).css('position', 'relative');
+                    $(menu).css('width', 'auto');
+                    $(menu).css('justify-content', 'center');
+                    $(menu).css('right', 'none');
+                    $(menu).css('top', '2');
+                    $(menu).css('margin-left', '0 !important');
                 }
             });
 
@@ -272,7 +285,7 @@ const initMenus = debounce( () => {
         });
         
         $(".mobile-back").on('click', function () {
-            $('.sm-horizontal').css("right", "-410px");
+            $('.sm-horizontal').css("right", "-300px");
         });   
     });
 },500);
