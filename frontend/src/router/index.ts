@@ -411,7 +411,6 @@ router.beforeEach(
 
 router.afterEach(
   debounce((to, from) => {
-    $('.sm-horizontal').css("right", "-410px");
     $('.category_submenu').not('.hidden').addClass('hidden')
     store.commit('loader',false);
     window.scrollTo({top: 0, behavior: 'smooth'});  

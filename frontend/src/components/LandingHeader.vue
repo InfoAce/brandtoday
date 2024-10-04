@@ -51,7 +51,7 @@
                             <template v-if="isEmpty(auth)">
                                 <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Login'})">Login</a></li>
                                 <li class="p-3"><a href="#" @click.prevent="redirectToDashboard">Dashboard</a></li>
-                                <li class="p-3"><a href="#" @click.prevent="$router.push({name:'Signup'})">Signup</a></li>
+                                <li class="p-3"><router-link :to="$router.resolve({name:'Signup'}).href">Signup</router-link></li>
                             </template>
                             <template v-if="!isEmpty(auth)">
                                 <li class="p-3">
@@ -74,72 +74,71 @@
         </div>
         <div class="container-fluid">
             <div class="row px-2">
-                <template v-if="isEmpty(home.categories)" >
-                    <div class="ssc">
-                        <div class="ssc-wrapper px-0"> 
-                            <div class="flex align-center justify-between">
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
-                                <div class="w-40">
-                                    <div class="ssc-line w-90 mbs"></div>
-                                </div>
+                <div class="main-menu">
+                    <div class="menu-left">
+                        <div class="brand-logo py-2">
+                            <div class="text-center">
+                                <router-link :to="$router.resolve({ name: 'Home' }).href">
+                                    <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
+                                    <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" style="height: 100% !important;" alt="">
+                                </router-link>
                             </div>
-                        </div>
+                        </div>     
                     </div>
-                </template>
-                <template v-if="!isEmpty(home.categories)" >
-                    <div class="col-12 px-4 py-3" >
-                            <div id="main-menu" class="d-flex w-100 justify-content-between align-items-center">
-                                <div class="brand-logo ">
-                                    <div class="text-center">
-                                        <a @click.prevent="$router.push({ name: 'Home' })">
-                                            <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
-                                            <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" style="height: 100% !important;" alt="">
-                                        </a>
-                                    </div>
-                                </div>                                     
-                                <div class="pull-center m-2">
-                                    <nav id="main-nav">
-                                        <button class="toggle-nav btn btn-solid hover-solid btn-xs">
-                                            <i class="fa fa-bars sidebar-bar text-white"></i>
-                                        </button>
-                                        <ul class="sm pixelstrap">
+                    <div class="menu-right pull-right">
+                        <div>
+                            <nav id="main-nav">
+                                <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
+                                <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+                                    <li>
+                                        <div class="mobile-back text-end">Back<i class="fa fa-angle-right ps-2"
+                                                aria-hidden="true"></i></div>
+                                    </li>
+                                    <li v-for="(category,index) in home.categories" :key="index" class="py-2">
+                                        <a href="javascript:void(0)">{{ category.name.toUpperCase()  }}</a>
+                                        <ul>
                                             <li>
-                                                <div class="mobile-back text-end">
-                                                    <i class="fa fa-close" aria-hidden="true"></i>
-                                                </div>
+                                                <router-link 
+                                                    :to="$router.resolve({ name: 'Category', params: { category: category.id } }).href" 
+                                                    :data-menu="category.code.toLowerCase().replace(/\s/g, '')" 
+                                                    class="p-3"
+                                                >
+                                                    All
+                                                </router-link>                                                
                                             </li>
-                                            <li v-for="(category,index) in home.categories" :key="index">
-                                                <a href="#" @click.prevent="navigateTo(item)" class="py-2 px-2 category_menu" :data-menu="category.code.toLowerCase().replace(/\s/g, '')" >
-                                                    {{ category.name.toUpperCase()  }}
-                                                </a>
-                                                <div class="col-12 d-flex p-4 justify-content-center hidden category_submenu flex-wrap" id="dropdown-menu" :data-submenu="category.code.toLowerCase().replace(/\s/g, '')">
-                                                    <div v-for="(sub_category,key) in category.__sub_categories__" :key="key">
-                                                        <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href" class="p-3">
-                                                            {{ sub_category.name.toUpperCase()  }}
-                                                        </router-link>
-                                                    </div> 
-                                                </div>
-                                            </li>                                                                         
+                                            <li v-for="(sub_category,key) in category.__sub_categories__" :key="key">
+                                                <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href" class="p-3">
+                                                    {{ sub_category.name.toUpperCase()  }}
+                                                </router-link>
+                                            </li> 
                                         </ul>
-                                    </nav>
-                                </div>
+                                    </li>                                                                         
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- <div>
+                            <div class="icon-nav d-none d-sm-block">
+                                <ul>
+                                    <li class="onhover-div mobile-search">
+                                        <div><img src="../assets/images/icon/search.png" onclick="openSearch()"
+                                                class="img-fluid blur-up lazyload" alt=""> <i class="ti-search"
+                                                onclick="openSearch()"></i></div>
+                                    </li>
+                                    <li class="onhover-div mobile-setting">
+                                        <div><img src="../assets/images/icon/setting.png"
+                                                class="img-fluid blur-up lazyload" alt=""> <i
+                                                class="ti-settings"></i></div>
+                                    </li>
+                                    <li class="onhover-div mobile-cart">
+                                        <div><img src="../assets/images/icon/cart.png"
+                                                class="img-fluid blur-up lazyload" alt=""> <i
+                                                class="ti-shopping-cart"></i></div>
+                                    </li>
+                                </ul>
                             </div>
+                        </div> -->
                     </div>
-                </template>
+                </div>
             </div>
         </div>
     </header>
@@ -268,16 +267,42 @@ const initMenus = debounce( () => {
         //         }
         //     },100)
         // );
-        $('#menu-toggle').smartmenus({
-            subMenusSubOffsetX: 1,
-            subMenusSubOffsetY: -8
+        $('.toggle-nav').on('click', function () {
+            $('.sm-horizontal').css("right", "0px");
         });
-        // $('.toggle-nav').on('click', function () {
-        //     $('.sm-horizontal').css("right", "0px");
-        // });
-        // $(".mobile-back").on('click', function () {
-        //     $('.sm-horizontal').css("right", "-410px");
-        // });        
+        
+        $(".mobile-back").on('click', function () {
+            $('.sm-horizontal').css("right", "-410px");
+        });   
+
+        $('#main-menu').smartmenus({
+            hideTimeout: 300,
+            subMenusSubOffsetX: 1,
+            subMenusSubOffsetY: -8,
+        });
+
+        $('#main-menu').bind('show.smapi', function(e, menu) {
+            if(window.innerWidth >= 1200 ){
+                $(menu).css('display', 'flex');
+                $(menu).css('flex-wrap', 'wrap');
+                $(menu).css('position', 'fixed');
+                $(menu).css('max-width', '100%');
+                $(menu).css('min-width', '100%');
+                $(menu).css('width', '100%');
+                $(menu).css('justify-content', 'center');
+                $(menu).css('left', '0');
+                $(menu).css('top', 'auto');
+            }
+        });
+
+        $('#main-menu').bind('beforehide.smapi', function(e, menu) {
+            $(menu).css('display', 'none');
+        });
+        // $('#sub-menu').smartmenus({
+        //     subMenusMaxWidth: '100%',
+        //     subMenusSubOffsetX: 1,
+        //     subMenusSubOffsetY: -8
+        // });     
         // $('#sub-menu').smartmenus({
         //     subMenusSubOffsetX: 1,
         //     subMenusSubOffsetY: -10
@@ -304,20 +329,6 @@ const logout = () => {
             $router.push({ name: "Login" });
         }
     });	
-}
-
-/**
- * Navigates to the category page with the given category name as query parameter.
- *
- * @param {Object} item - The category object containing the category name.
- * @return {Object} The navigation object returned by the Vue Router.
- */
-const navigateTo = (item) => {
-    // Use the Vue Router to navigate to the Category page with the category name as query parameter.
-    $router.push({ 
-        name:   'Category', 
-        params: { category: item.id } 
-    });
 }
 
 /**
