@@ -88,10 +88,10 @@
                     <div class="menu-right pull-right" v-if="!isEmpty(home.categories)">
                         <div>
                             <nav id="main-nav">
-                                <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
+                                <div class="toggle-nav" @click="showSidebar"><i class="fa fa-bars sidebar-bar"></i></div>
                                 <ul id="main-menu" class="sm pixelstrap sm-horizontal">
                                     <li>
-                                        <div class="mobile-back text-end">Back<i class="fa fa-angle-right ps-2"
+                                        <div class="mobile-back text-end" @click="closeSideber">Back<i class="fa fa-angle-right ps-2"
                                                 aria-hidden="true"></i></div>
                                     </li>
                                     <li class="mobile"><a href="#" @click.prevent="openSearch">SEARCH</a></li>
@@ -278,17 +278,10 @@ const fetchMenus = () => {
         })
 }
 
-const initMenus = debounce( () => {
-    $(function () {
-        $('.toggle-nav').on('click', function () {
-            $('.sm-horizontal').css("right", "0px");
-        });
-        
-        $(".mobile-back").on('click', function () {
-            $('.sm-horizontal').css("right", "-300px");
-        });   
-    });
-},500);
+const showSidebar  = () => $('.pixelstrap').css("right", "0px");
+
+const closeSideber = () => $('.pixelstrap').css("right", "-300px");
+
 
 /**
  * Logout function to clear the user's authentication data and redirect to the login page.
@@ -375,7 +368,6 @@ const redirectToDashboard = () => {
 }
 
 onBeforeMount( () => fetchMenus() );
-onMounted(     () => initMenus() );
 </script>
 
 <style scoped>
