@@ -223,6 +223,30 @@ const fetchMenus = () => {
              * Set the favicon of the website to the company's icon.
              */
             addIcon(company.icon)
+
+            $('#main-menu').smartmenus({
+                hideTimeout: 300,
+                subMenusSubOffsetX: 1,
+                subMenusSubOffsetY: -8,
+            });
+
+            $('#main-menu').bind('show.smapi', function(e, menu) {
+                if(window.innerWidth >= 1200 ){
+                    $(menu).css('display', 'flex');
+                    $(menu).css('flex-wrap', 'wrap');
+                    $(menu).css('position', 'fixed');
+                    $(menu).css('max-width', '100%');
+                    $(menu).css('min-width', '100%');
+                    $(menu).css('width', '100%');
+                    $(menu).css('justify-content', 'center');
+                    $(menu).css('left', '0');
+                    $(menu).css('top', 'auto');
+                }
+            });
+
+            $('#main-menu').bind('beforehide.smapi', function(e, menu) {
+                $(menu).css('display', 'none');
+            });
         })
         .catch( error => {
             /**
@@ -241,32 +265,6 @@ const fetchMenus = () => {
 
 const initMenus = debounce( () => {
     $(function () {
-        $('.category_menu').hover(
-            debounce((event) => {
-                let menu = $(event.target).data('menu');
-                $('.category_submenu').not('.hidden').addClass('hidden');
-                $(`div[data-submenu=${menu}]`).toggleClass('hidden');
-            },200)
-        );
-        // $('.category_menu').each( (key,menu) => {
-        //     $(menu).parentsUntil('div[class="main-menu"]').mouseout(
-        //         debounce((event) => {
-        //             console.log(event.target);
-        //             let menu = $(event.target).data('menu');
-        //             $(`div[data-submenu=${menu}]`).toggleClass('hidden');
-        //         },200)
-        //     )
-        // });
-        // $('.category_submenu').mouseout(
-        //     debounce((event) => {
-        //         if($(event.target).hasClass('category_submenu')){
-        //             $(event.target).addClass('hidden');
-        //         }
-        //         if(!$(event.target).hasClass('category_submenu')){
-        //             console.log($(event.target));
-        //         }
-        //     },100)
-        // );
         $('.toggle-nav').on('click', function () {
             $('.sm-horizontal').css("right", "0px");
         });
@@ -274,39 +272,6 @@ const initMenus = debounce( () => {
         $(".mobile-back").on('click', function () {
             $('.sm-horizontal').css("right", "-410px");
         });   
-
-        $('#main-menu').smartmenus({
-            hideTimeout: 300,
-            subMenusSubOffsetX: 1,
-            subMenusSubOffsetY: -8,
-        });
-
-        $('#main-menu').bind('show.smapi', function(e, menu) {
-            if(window.innerWidth >= 1200 ){
-                $(menu).css('display', 'flex');
-                $(menu).css('flex-wrap', 'wrap');
-                $(menu).css('position', 'fixed');
-                $(menu).css('max-width', '100%');
-                $(menu).css('min-width', '100%');
-                $(menu).css('width', '100%');
-                $(menu).css('justify-content', 'center');
-                $(menu).css('left', '0');
-                $(menu).css('top', 'auto');
-            }
-        });
-
-        $('#main-menu').bind('beforehide.smapi', function(e, menu) {
-            $(menu).css('display', 'none');
-        });
-        // $('#sub-menu').smartmenus({
-        //     subMenusMaxWidth: '100%',
-        //     subMenusSubOffsetX: 1,
-        //     subMenusSubOffsetY: -8
-        // });     
-        // $('#sub-menu').smartmenus({
-        //     subMenusSubOffsetX: 1,
-        //     subMenusSubOffsetY: -10
-        // });
     });
 },500);
 
