@@ -184,7 +184,7 @@
   }
 }
 
-@media only screen and (min-device-width: 1200px) and (max-width: 1450px) {
+@media only screen and (min-width: 1200px) and (max-width: 1450px) {
 
   .pixelstrap li a {
     font-size: small !important;
@@ -200,6 +200,7 @@
   }
 
   .pixelstrap {
+    right: 0px !important;
     padding-right: 0px !important;
   }
 
@@ -223,6 +224,7 @@
   .pixelstrap li:not(:first-child) {
     margin-top: 10px !important;
   }
+
 
 }
 
