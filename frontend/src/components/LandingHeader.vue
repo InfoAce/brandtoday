@@ -238,10 +238,6 @@ const fetchMenus = () => {
                 subMenusMinWidth: '100%',
             });
 
-            $('#main-menu').bind('activate.smapi', function(e, menu) {
-
-            });
-
             $('#main-menu').bind('show.smapi', function(e, menu) {
                 if(window.innerWidth >= 1200 ){
                     $(menu).css('display', 'flex');
@@ -271,6 +267,7 @@ const fetchMenus = () => {
             $('#main-menu').bind('beforehide.smapi', function(e, menu) {
                 $(menu).css('display', 'none');
             });
+            
             /**
              * @description
              * Code to run after the promise is resolved or rejected.
