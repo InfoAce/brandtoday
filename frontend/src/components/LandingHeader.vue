@@ -223,7 +223,18 @@ const fetchMenus = () => {
              * Set the favicon of the website to the company's icon.
              */
             addIcon(company.icon)
+            
+        })
+        .catch( error => {
+            /**
+             * @description
+             * Catch any errors that occur while fetching the menu.
+             */
+            console.error('Error fetching menu:', error);
+        })
+        .finally( () => {
 
+            
             $('#main-menu').smartmenus({
                 hideTimeout: 300,
                 subMenusSubOffsetX: 1,
@@ -247,15 +258,6 @@ const fetchMenus = () => {
             $('#main-menu').bind('beforehide.smapi', function(e, menu) {
                 $(menu).css('display', 'none');
             });
-        })
-        .catch( error => {
-            /**
-             * @description
-             * Catch any errors that occur while fetching the menu.
-             */
-            console.error('Error fetching menu:', error);
-        })
-        .finally( () => {
             /**
              * @description
              * Code to run after the promise is resolved or rejected.
