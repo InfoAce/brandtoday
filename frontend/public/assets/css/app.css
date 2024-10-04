@@ -184,10 +184,7 @@
   }
 }
 
-@media only screen and (max-width: 1450px) {
-  .pixelstrap li ul li a {
-    padding: 10px !important;
-  }
+@media only screen and (min-device-width: 1200px) and (max-width: 1450px) {
 
   .pixelstrap li a {
     font-size: small !important;
@@ -195,7 +192,7 @@
   }
 
   .pixelstrap li a > .sub-arrow {
-    display: none !important;
+    display: block !important;
   }
 
   .pixelstrap {
@@ -209,10 +206,10 @@
     line-height: 15px !important;
     font-weight: bold;
     letter-spacing: 0.07em !important;
-    font-size: 10pt !important;
+    font-size: small !important;
   }
   .pixelstrap a {
-    font-size: 10pt !important;
+    font-size: small !important;
     font-weight: none;
     padding: 10px;
     line-height: 0px !important;
@@ -224,7 +221,6 @@
   }
 
 }
-
 
 @media only screen and (min-width: 579px) {
   .pixelstrap .mobile {

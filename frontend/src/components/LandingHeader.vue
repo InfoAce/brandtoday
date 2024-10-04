@@ -94,6 +94,9 @@
                                         <div class="mobile-back text-end">Back<i class="fa fa-angle-right ps-2"
                                                 aria-hidden="true"></i></div>
                                     </li>
+                                    <li class="mobile"><a href="#" @click.prevent="openSearch">SEARCH</a></li>
+                                    <li class="mobile"><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank">DOWNLOAD DIGITAL CATALOGUES</a></li>
+                                    <li class="mobile"><a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })">WISHLIST</a></li>
                                     <template v-if="isEmpty(auth)">
                                         <li class="mobile"><a href="#" @click.prevent="$router.push({name:'Login'})">LOGIN</a></li>
                                         <li class="mobile"><a href="#" @click.prevent="redirectToDashboard">DASHBOARD</a></li>
@@ -267,7 +270,7 @@ const fetchMenus = () => {
             $('#main-menu').bind('beforehide.smapi', function(e, menu) {
                 $(menu).css('display', 'none');
             });
-            
+
             /**
              * @description
              * Code to run after the promise is resolved or rejected.
