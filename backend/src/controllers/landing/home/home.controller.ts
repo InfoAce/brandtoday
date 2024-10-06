@@ -35,7 +35,7 @@ export class HomeController {
       try {
 
         let categories: any  = await this.categoryModel.find({ cache: true });
-        let products: any    = await this.productModel.find({ take: 10, order: { created_at: 'DESC' } })
+        let products: any    = await this.productModel.find({ take: 10, cache: true });
 
         categories = await (
           await Promise.all( 
@@ -61,11 +61,11 @@ export class HomeController {
 
         let company = await this.companyModel.first();
 
-        return res.status(HttpStatus.OK).json({ brands: company.brands, categories, banners: company.banners, products });
+        return res.status(HttpStatus.OK).json({  brands: company.brands, categories, banners: company.banners, products });
 
-      } catch(err) {
+      } catch(error) {
 
-        this.logger.error(err);
+        this.logger.error(error);
         
       }
 

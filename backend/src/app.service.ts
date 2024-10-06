@@ -4,10 +4,11 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, take, toPlainObject } from 'lodash';
+import { cloneDeep, chunk, isEmpty, isNull, get, take, toPlainObject } from 'lodash';
 import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
 import { queue } from 'rxjs';
+import { ProductEntity, ProductVariantEntity } from './entities';
 
 @Injectable()
 export class AppService {
@@ -347,8 +348,9 @@ export class AppService {
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
     } catch (error) {
+        console.log(error);
         // Logging
-        this.logger.log(`Failed to synchronize stock keeping`);
+        this.logger.log(`Failed to synchronize product variants`);
         
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
@@ -363,15 +365,22 @@ export class AppService {
     let prices  = await this.amrodService.getPrices();  
     let company = await this.companyModel.first(); 
 
+
     await Promise.all(
-        chunk(prices,500).map( async (prices) => {
+        chunk(prices,5).map( async (prices) => {
             return new Promise( async (resolve,reject) => {
-                await this.priceModel.insert( 
-                    prices.map( 
-                        ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
-                            ({ full_code, simple_code, amount, company_id: company.id }) )
-                );
-                resolve(true);
+                try {
+                    await this.priceModel.insert( 
+                        prices.map( 
+                            ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
+                            ({ full_code, simple_code, amount, company_id: company.id })
+                        )
+                    );
+                    setTimeout( () => resolve(true), 2000);
+                } catch (error) {
+                    console.log(error);
+                    console.log(prices)
+                }
             }) 
         })
     );
@@ -427,39 +436,36 @@ export class AppService {
         // Logging
         this.logger.log(`Synchronizing stock keeping`);
 
-        let page    = 1;
-        let perPage = 500;
-        let total   = 0;
+        let stocks =  await this.stockModel.createQueryBuilder('stocks')
+                                           .leftJoinAndMapOne('stocks.variant','product_variants', 'product_variants', 'stocks.full_code = product_variants.full_code')
+                                           .leftJoinAndMapOne('stocks.product','products', 'products', 'stocks.simple_code = products.simple_code')
+                                           .getMany();
+ 
+        let stock_keeping = await Promise.all(
+            (await stocks).map( 
+                async (stock) => {
 
-        // Fetch amrod stock
-        // let stocks   = (await this.amrodService.getStock()).map( async(stock) => ({ ...stock, stock_id: (await this.stockModel.findOne({ where: { full_code: stock.fullCode } })).id }));
-
-        // for(let i = 0; i < 10; i++){
-
-        let stocks = await this.stockModel.find();
-
-        let assorted = await Promise.all(
-            stocks.map( 
-                async ({full_code, id, simple_code}) => {
-                    let variant = await this.productVariantModel.findOne({ where: { full_code } });
-                    let product = await this.productModel.findOne({ where: { full_code } });
-                    if( !isEmpty(variant)){
-                        return  { stock_id: id, variant_id: variant.id, id: uuidv4() };
-                    } else {
-                        if( !isEmpty(product) ){
-                            return { stock_id: id, product_id: product.id, id: uuidv4()}
-                        }
-                        return {}
+                    let data     = { stock_id: get(stock,'id'), product_id: null, variant_id: null };
+                    let product  = get(stock,'product');
+                    let variant  = get(stock,'variant');
+                    
+                    if( !isEmpty(product) ) {
+                        data.product_id = product.id; 
                     }
+
+                    if( !isEmpty(variant) ) {
+                        data.variant_id = variant.id; 
+                    }
+
+                    return data;
                 }
             ),
         );
 
         await Promise.all(
-            chunk(assorted,500).map( async (stock_keeping) => {
-                stock_keeping = await stock_keeping;
+            chunk(stock_keeping,1000).map( async (item) => {
                 return new Promise( async (resolve,reject) => {
-                    await this.stockKeepingModel.insert(stock_keeping.filter( (value) => !isEmpty(value) ));
+                    await this.stockKeepingModel.insert(item);
                     resolve(true);
                 }) 
             })
@@ -472,6 +478,7 @@ export class AppService {
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
 
     } catch (error) {
+
         // Logging
         this.logger.log(`Failed to synchronize stock keeping`);
         

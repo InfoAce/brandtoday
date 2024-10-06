@@ -7,9 +7,10 @@ import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
-import { Any, EntityNotFoundError, Equal, ILike, Or } from 'typeorm';
+import { Any, EntityNotFoundError, Equal, ILike, In, Not, Or } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
+import { ModelException } from 'src/exceptions';
 
 @Controller('products')
 export class ProductsController {
@@ -86,9 +87,13 @@ export class ProductsController {
         let getProducts = products.map( (product) => {
           if (!isNull(product.colour_images)) {
             product.colour_images = product.colour_images.map((color) => {
-              return {
-                ...color,
-                hex: this.colors[color.code].colour,
+              try {
+                return {
+                  ...color,
+                  hex: this.colors[color.code].colour,
+                }
+              } catch(error){
+                console.log(color)
               }
             });
           }
@@ -100,14 +105,42 @@ export class ProductsController {
         
       } catch(error){ 
 
+
         if( error instanceof EntityNotFoundError){
           throw new NotFoundException();
         }
 
-        throw new InternalServerErrorException();
-
+        throw new ModelException(error);
       }
     } 
+
+    @Get('fetch')
+    /**
+     * Show a product by its code.
+     *
+     * @param {string} code - The code of the product.
+     * @param {Request} req - The request object.
+     * @param {Response} res - The response object.
+     * @return {Promise<void>}
+     */
+    async fetch(
+      @Req() req: Request,  // The request object
+      @Res() res: Response // The response object
+    ) {
+      try {
+        // Fetch brands
+        let products = await this.productModel.find({ take: 10});
+
+        // Send the product and favourite as a JSON response with a status code of 200 (OK)
+        res.status(HttpStatus.OK).json({ products });
+
+      } catch(error){
+
+        // Log any errors that occur
+        this.logger.error(error);
+
+      }
+    }
 
     @Get('brands')
     /**
@@ -193,7 +226,7 @@ export class ProductsController {
         let user: any   = get(req,'user');
         
         // Find the product with the given code
-        let product: any = await this.productModel.findOne({ where: { id: product_id }});
+        let product: any = await this.productModel.findOne({ where: { id: product_id }, cache: true});
 
         if (!isNull(product.colour_images)) {
           product.colour_images = product.colour_images.map((color) => ({
@@ -202,27 +235,19 @@ export class ProductsController {
           }));
         }
 
-        // let related_products: any = product.categories.map( 
-        //                                                 category => cached_products.find( 
-        //                                                   item => item.categories.find( val => {
-        //                                                     let subject = category.path.split('/');
+        let categories            = await product.categories;
+        let related_products: any = await this.productCategoryModel.find({ where: { category_id: In(categories.map( category => toPlainObject(category).category_id ) ), product_id: Not(product.id) }, take: 15, cache: true});
 
-        //                                                     if( subject.lenght == 1 || subject.length == 2 ){
-        //                                                       return val.path.includes(subject[0]);
-        //                                                     }
+        related_products          = related_products.map( product_category => product_category.product )
+                                                    .map( product => ({ 
+                                                        ...product, 
+                                                        colour_images: product.colour_images.map( (color) => ({
+                                                          ...color,
+                                                          hex: this.colors[color.code].colour,
+                                                        }))
+                                                      })
+                                                    );
 
-        //                                                     subject.splice(subject.length - 1)
-        //                                                     return val.path.includes(subject.join('/'));
-
-        //                                                   }) 
-        //                                                 )
-        //                                               )
-        //                                               .filter( item => item.fullCode != product.fullCode )
-        //                                               .map( item => { 
-        //                                                 let price = cached_prices.find( price => price.fullCode.includes(item.fullCode) );
-        //                                                 return { ...item, price: price.price };
-        //                                               });
-        
         // Initialize the favourite object
         let favourite: any = {};
 
@@ -233,7 +258,7 @@ export class ProductsController {
 
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        res.status(HttpStatus.OK).json({ product, favourite });
+        res.status(HttpStatus.OK).json({ product, favourite, related_products });
 
       } catch(error){
 

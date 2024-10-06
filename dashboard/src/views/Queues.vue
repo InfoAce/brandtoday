@@ -189,6 +189,14 @@
                 $toast.success(`Successfully synchronized ${item.type} queue.`);
             }
 
+            if( queue.state === 0 && queue.status == 'failed'){
+                clearInterval(interval);
+                // Remove given toast
+                $toast.remove(toastId);
+
+                $toast.danger(`Failed to synchronize ${item.type} queue.`);
+            }
+
 
         },2000);
         

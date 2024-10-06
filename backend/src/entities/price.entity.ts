@@ -10,7 +10,9 @@ export class PriceEntity {
   @Column()
   amount: number;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   @Index()
   full_code: string
 
@@ -24,7 +26,7 @@ export class PriceEntity {
   @Column()
   company_id: string
 
-  @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ onDelete:"CASCADE", onUpdate: 'CASCADE' })
+  @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ orphanedRowAction: 'nullify', onDelete:"SET NULL", onUpdate: 'CASCADE' })
   @JoinColumn({
     name: 'full_code',
     referencedColumnName: 'full_code'
