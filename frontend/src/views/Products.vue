@@ -34,7 +34,7 @@
                                 <CardLoader v-if="!isEmpty($data.products)" />
                                 <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
                                 <div class="row" >
-                                    <div class="col-xl-3 col-md-6 col mb-4" v-for="(product,index) in $data.products" :key="index">
+                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4" v-for="(product,index) in $data.products" :key="index">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="product-box">
@@ -52,18 +52,18 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="product-detail">
-                                                        <div>
-                                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme">
-                                                                <h6>{{ product.name }}</h6>
-                                                            </a>
-                                                            <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
-                                                                <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
-                                                            </ul>
-                                                        </div>
+                                                    <div class="col-12 px-0 pt-3 ">
+                                                        <h6 class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</h6>
+                                                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme d-flex justify-content-between">
+                                                            <p class="text-wrap p-0 m-0"> {{ product.name }} </p>
+                                                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.variants),'price')).amount }}</strong></p>
+                                                        </a>
+                                                        <p class="m-0 p-0"><strong>Excl. VAT & Excl. Branding</strong></p>
+                                                        <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
+                                                            <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
+                                                        </ul>
                                                     </div>
                                                 </div>
-                                                <div class="price-tag"><p class="m-0"><strong>{{ currency }}{{ first(get(first(product.variants),'price')).amount }}</strong></p></div>
                                             </div>
                                         </div>
                                     </div>

@@ -76,8 +76,9 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="product-right">
-                                <h2>{{ product.name }}</h2>
-                                <h3 class="price-detail">KSH {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
+                                <h2 class="text-theme">{{ product.full_code }}</h2>
+                                <h2 class="text-theme">{{ product.name }}</h2>
+                                <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
                                 <div class="border-product">
                                     <h5> 
                                         Selected colour: 
@@ -360,6 +361,9 @@ export default {
         },
         colour_images(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
+        },
+        currency(){
+            return this.$store.getters.home.company.currency
         },
         variants(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images)  ? 

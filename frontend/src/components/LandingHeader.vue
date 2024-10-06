@@ -117,7 +117,10 @@
                                         </li>
                                     </template>                                    
                                     <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
-                                        <a href="javascript:void(0)">{{ category.name.toUpperCase()  }}</a>
+                                        <a 
+                                            href="javascript:void(0)" 
+                                            :class="has($route.params,'category') && $route.params.category == category.id ? 'show' : '' " 
+                                        >{{ category.name.toUpperCase()  }}</a>
                                         <ul>
                                             <li>
                                                 <router-link 
@@ -152,16 +155,17 @@
     }
 </style>
 <script setup>
-import { cloneDeep, debounce, get, isEmpty, isNull } from 'lodash';
+import { cloneDeep, debounce, get, isEmpty, isNull, has } from 'lodash';
 import { useStore } from 'vuex';
 import { computed, onBeforeMount, onMounted, inject, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import router from '../router';
 import localStorage from 'reactive-localstorage';
 
 const $api     = inject('$api');
 const $swal    = inject('$swal');
 const $store   = useStore();
+const $route   = useRoute(); 
 const $router  = useRouter(); 
 const data     = reactive({categories: Array(), search: String() });
 

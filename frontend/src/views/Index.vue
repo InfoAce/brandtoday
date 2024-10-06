@@ -285,14 +285,16 @@
                                 <div class="card-body p-2">
                                     <img :src="product.images[0].urls[0].url" width="100%" style="object-fit: cover !important;"/>
                                     <div class="row">
-                                        <div class="col-12 py-2"><h6 class="m-0 text-theme"><strong>{{ product.name }}</strong></h6></div>
+                                        <div class="col-12 py-2">
+                                            <p class="m-0 text-theme"><strong>{{ product.name }}</strong></p>
+                                            <h6 class="m-2 text-theme"><strong>{{ $store.getters.home.company.currency }}</strong> {{ first(get(first(product.variants),'price')).amount }}</h6>
+                                        </div>
                                         <div class="col-12">
                                             <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #1c1c1c;`"></li>
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="price-tag"><p class="m-0"><strong>{{ $store.getters.home.company.currency }}</strong> {{ first(get(first(product.variants),'price')).amount }}</p></div>
                                 </div>
                             </div>
                         </slide>
@@ -327,7 +329,15 @@ const $data  = reactive({
     testimonials: Array(),
     breakpoints: {
         brands: {
+            480: {
+                itemsToShow: 1,
+                snapAlign: 'center',
+            },
             720: {
+                itemsToShow: 2,
+                snapAlign: 'center',
+            },
+            1080: {
                 itemsToShow: 4,
                 snapAlign: 'center',
             },
@@ -338,6 +348,14 @@ const $data  = reactive({
             },
         },
         categories: {
+            480: {
+                itemsToShow: 1,
+                snapAlign: 'center',
+            },
+            720: {
+                itemsToShow: 2,
+                snapAlign: 'center',
+            },
             1080: {
                 itemsToShow: 3,
                 snapAlign: 'center',
@@ -349,6 +367,14 @@ const $data  = reactive({
             },
         },
         testimonials: {
+            480: {
+                itemsToShow: 1,
+                snapAlign: 'center',
+            },
+            720: {
+                itemsToShow: 2,
+                snapAlign: 'center',
+            },
             720: {
                 itemsToShow: 2,
                 snapAlign: 'center',

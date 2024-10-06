@@ -163,6 +163,10 @@
   }
 }
 
+.pixelstrap li .show {
+  color:#7e1414 !important;
+}
+
 @media only screen and (min-width: 1451px) {
 
   .pixelstrap li ul li a {
