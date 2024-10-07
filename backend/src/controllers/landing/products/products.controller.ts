@@ -71,7 +71,7 @@ export class ProductsController {
         }
 
         if( !isEmpty(queryName) ){
-          [products, products_count] = await this.productModel.findAndCount({ where: { name: Like(`%${queryName}%`) }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
+          [products, products_count] = await this.productModel.findAndCount({ where: [ { name: Like(`%${queryName}%` ) }, { full_code: Like(`%${queryName}%` ) } ], skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
         }
 
         // let query = this.productModel.createQueryBuilder("products")
