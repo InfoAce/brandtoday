@@ -25,13 +25,13 @@
                                     :options="{
                                         viewMode: 1,
                                         dragMode: 'move',
-                                        aspectRatio: 16 / 6,
+                                        aspectRatio: 12 / 4,
                                         cropBoxResizable: false
                                     }"
                                     :presetMode="{
                                         mode: 'fixedSize',
-                                        width: 3840,
-                                        height: 2160,
+                                        width: 1920,
+                                        height: 650,
                                     }"
                                 />   
                                 <div class="d-flex justify-content-between mt-2">
