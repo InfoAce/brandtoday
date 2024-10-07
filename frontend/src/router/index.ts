@@ -267,6 +267,15 @@ const router = createRouter({
       path: '/products',
       children: [
         {
+          path: '',
+          name: "ViewProducts",
+          meta: {
+            title: 'Products',
+            auth:   false,        
+          },
+          component: () => import('@/views/Products.vue')
+        },
+        {
           path: ':category',
           children:[
             {
@@ -275,9 +284,6 @@ const router = createRouter({
               meta: {
                 title: 'Products',
                 auth: false,
-        
-                
-                
               },
               component: () => import('@/views/Products.vue')
             }
@@ -289,10 +295,7 @@ const router = createRouter({
           name: "Product",
           meta: {
             title: 'Product',
-            auth:   false,
-            
-    
-            
+            auth:   false,        
           },
           component: () => import('@/views/Product.vue')
         },

@@ -8,7 +8,7 @@
                     <div class="col-lg-6">
                         <div class="header-contact">
                             <ul>
-                                <li><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</li>
+                                <li><a :href="`tel:${home.company.phone_number}`" class="text-white"><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</a></li>
                                 <li><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank" class="text-white">Download Digital Catalogues</a></li>
                             </ul>
                         </div>
@@ -351,7 +351,7 @@ const closeSearch = () => {
 const searchProduct = () => {
     // Navigate to the search results page with the given search query
     $router.push({
-        name: 'Products',
+        name: 'ViewProducts',
         query: { name: data.search }
     });
     closeSearch();

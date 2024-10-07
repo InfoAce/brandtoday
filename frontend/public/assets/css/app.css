@@ -75,6 +75,14 @@
     align-items: center;
     justify-content: center;
 }
+
+.product-card {
+  box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.2),4px 4px 5px 0 rgba(0,0,0,0.2),0px 0px 5px 0 rgba(0,0,0,0.2),-4px 4px 5px 0 rgba(0,0,0,0.2);
+}
+
+.product-card:hover {
+  border: 2px solid #7e1414;
+}
    
 .lds-default,
 .lds-default div {
@@ -174,6 +182,7 @@
   }
 
   .pixelstrap li a {
+    font-weight: bold !important;
     font-size: normal !important;
     padding-right: 8px !important;
   }
@@ -188,10 +197,34 @@
   }
 }
 
-@media only screen and (min-width: 1200px) and (max-width: 1450px) {
+@media only screen and (min-width: 1221px) and (max-width: 1450px) {
 
   .pixelstrap li a {
+    font-weight: bold !important;
     font-size: small !important;
+    padding-right: 8px !important;
+  }
+
+  .pixelstrap li a > .sub-arrow {
+    display: block !important;
+  }
+
+  .pixelstrap li a > .sub-arrow {
+    display: none !important;
+  }
+
+  .pixelstrap {
+    right: 0px !important;
+    padding-right: 0px !important;
+  }
+
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1220px) {
+
+  .pixelstrap li a {
+    font-weight: bold !important;
+    font-size: smaller  !important;
     padding-right: 8px !important;
   }
 
@@ -219,7 +252,7 @@
   }
   .pixelstrap a {
     font-size: small !important;
-    font-weight: none;
+    font-weight: bold !important;
     padding: 10px;
     line-height: 0px !important;
     letter-spacing: 0px !important;

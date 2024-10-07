@@ -157,7 +157,7 @@
                         :autoplay="5000"
                     >
                         <slide class="col-md-4" v-for="(category,index) in $data.categories" :key="index">
-                            <div class="card m-2">
+                            <div class="card m-2 product-card">
                                 <div class="card-body">
                                     <img :src="category.image"  :alt="category.name" width="100%" style="object-fit: cover !important;"/>
                                     <div class="row">
@@ -281,7 +281,7 @@
                         :autoplay="5000"
                     >
                         <slide class="col-md-4" v-for="(product,index) in $data.products" :key="index">
-                            <div class="card m-2">
+                            <div class="card m-2 product-card">
                                 <div class="card-body p-2">
                                     <img :src="product.images[0].urls[0].url" width="100%" style="object-fit: cover !important;"/>
                                     <div class="row">
