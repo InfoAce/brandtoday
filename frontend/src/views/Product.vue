@@ -79,7 +79,7 @@
                                 <div class="card-body product-right">
                                     <h2 class="text-theme">{{ product.full_code }}</h2>
                                     <h2 class="text-theme">{{ product.name }}</h2>
-                                    <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
+                                    <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.__variants__),'price')),'amount') }}</h3>
                                     <div class="border-product">
                                         <h5> 
                                             Selected colour: 
@@ -370,12 +370,12 @@ export default {
         variants(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images)  ? 
                         !isEmpty(this.selections.colour) ? 
-                            this.product.variants.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) :
-                                this.product.variants.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) ): 
+                            this.product.__variants__.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) :
+                                this.product.__variants__.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) ): 
                     [];
         },
         isVariant(){
-            return !isEmpty(this.product) ? !isEmpty(this.product.variants.filter( val => !isNull(val.code_size) )) : false
+            return !isEmpty(this.product) ? !isEmpty(this.product.__variants__.filter( val => !isNull(val.code_size) )) : false
         }
     },
     created(){
@@ -454,7 +454,7 @@ export default {
         addToCart(){
             let { isVariant, product, selections } = this;
             let data     = cloneDeep(this.form);
-            let selected = product.variants.find( variant => selections.colour.code == variant.code_colour );
+            let selected = product.__variants__.find( variant => selections.colour.code == variant.code_colour );
 
             if( has(selections,'colour') && !isEmpty(selections.colour.images) ){
                 data.image = selections.colour.images[0].urls[0].url;
@@ -490,7 +490,7 @@ export default {
             this.initView();
         },
         initView(product){
-            let isVariant = !isEmpty(product) ? !isEmpty(product.variants.filter( val => !isNull(val.code_size_name) )) : false;
+            let isVariant = !isEmpty(product) ? !isEmpty(product.__variants__.filter( val => !isNull(val.code_size_name) )) : false;
             
             this.product  = cloneDeep(product);
 
@@ -515,7 +515,7 @@ export default {
 
                     set(this.selections,'sizes',Object());
                     set(this.form,'sizes',Array());
-                    set(this.form,'price',first(first(product.variants).price).amount);
+                    set(this.form,'price',first(first(product.__variants__).price).amount);
                 break;
                 case false:
                     // Check if product has variants and add validation of quantity if empty
@@ -616,7 +616,7 @@ export default {
             this.form.colour       = colour.name;  
 
             if( !this.isVariant ){
-                let variant     = this.product.variants.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
+                let variant     = this.product.__variants__.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
                 this.form.price = first(variant.price).amount;
             }
 

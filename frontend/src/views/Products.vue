@@ -56,7 +56,7 @@
                                                         <h6 class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</h6>
                                                         <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme d-flex justify-content-between">
                                                             <p class="text-wrap p-0 m-0"> {{ product.name }} </p>
-                                                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.variants),'price')).amount }}</strong></p>
+                                                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>
                                                         </a>
                                                         <p class="m-0 p-0"><strong>Excl. VAT & Excl. Branding</strong></p>
                                                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">

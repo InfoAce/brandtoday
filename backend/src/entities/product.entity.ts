@@ -77,11 +77,11 @@ export class ProductEntity {
   @JoinColumn()
   order_items: OrderItemEntity[];
 
-  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { eager: true })
+  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
   @JoinColumn()
   stocks: StockKeepingEntity[];
 
-  @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { eager: true })
+  @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { lazy: true })
   @JoinColumn()
   variants: ProductVariantEntity[];
 
