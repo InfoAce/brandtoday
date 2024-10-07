@@ -49,15 +49,15 @@ export class HomeController {
           )
         );
 
-        products = await Promise.all(products.map( (product) => {
-          if (!isNull(product.colour_images)) {
-            product.colour_images = product.colour_images.map((color) => ({
-              ...color,
-              hex: this.colors[color.code].colour,
-            }));
-          }
-          return product;
-        }))
+        products = await Promise.all(
+          products.map( async(product) => {
+            if (!isNull(product.colour_images)) {
+              product.colour_images = product.colour_images.map((color) => ({ ...color, hex: this.colors[color.code].colour }));
+            }
+            await product.variants;
+            return product;
+          })
+        )
 
         let company = await this.companyModel.first();
 

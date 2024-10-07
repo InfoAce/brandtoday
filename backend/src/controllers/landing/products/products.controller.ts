@@ -100,7 +100,6 @@ export class ProductsController {
             if (!isNull(product.colour_images)) {
               product.colour_images = product.colour_images.map((color) => ({ ...color, hex: this.colors[color.code].colour }));
             }
-            await product.stocks;
             await product.variants;
             return product;
           })
@@ -241,18 +240,31 @@ export class ProductsController {
           }));
         }
 
+        await product.variants;
+        await product.stocks;
+
         let categories            = await product.categories;
         let related_products: any = await this.productCategoryModel.find({ where: { category_id: In(categories.map( category => toPlainObject(category).category_id ) ), product_id: Not(product.id) }, take: 15, cache: true});
 
-        related_products          = related_products.map( product_category => product_category.product )
-                                                    .map( product => ({ 
-                                                        ...product, 
-                                                        colour_images: product.colour_images.map( (color) => ({
-                                                          ...color,
-                                                          hex: this.colors[color.code].colour,
-                                                        }))
-                                                      })
-                                                    );
+        related_products          = await Promise.all(
+            related_products.map( product_category => product_category.product )
+                            .map( async product => {
+                              await product.variants;
+                              await product.stocks;
+                              return product;
+                            })
+                            .map( async product => { 
+                                product = await product;
+                                return{
+                                  ...product, 
+                                  colour_images: product.colour_images.map( (color) => ({
+                                    ...color,
+                                    hex: this.colors[color.code].colour,
+                                  }))
+                                }
+                              }
+                            )
+        );
 
         // Initialize the favourite object
         let favourite: any = {};

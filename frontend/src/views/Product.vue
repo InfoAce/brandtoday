@@ -630,6 +630,7 @@ export default {
 
         },
         selectSize(variant,event){
+            console.log(variant)
             // Check if colour has been selected
             if( has(this.errors,'colour') ){
                 this.$toast.warning('Select colour.');
@@ -711,6 +712,7 @@ export default {
         "$route.params":{
             handler(){
                 this.product.loading = true;
+                this.$store.commit('loader',true);
                 this.fetchProduct();
             },
             deep: true
