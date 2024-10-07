@@ -394,18 +394,14 @@ router.beforeEach(
 
     window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
 
-    console.log(to)
     if( auth ){
-      if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login' }); }
-      if( isEmpty(store.getters.auth) && routeName == 'Login' ){ next({ name: 'Home' }); }
-      if( isEmpty(store.getters.auth) && routeName == 'Signup' ){ next({ name: 'Home' }); }
+      if( isEmpty(store.getters.auth) && routeName == 'Login' ){ next({ name: 'Login' }) }
       next();
     }
 
     if( !auth ){
-      if( !isEmpty(store.getters.auth) && routeName != 'Login' ){  next({ name: 'Login' }); }
-      if( !isEmpty(store.getters.auth) && routeName == 'Login' ){  next({ name: 'Home' }); }
-      if( !isEmpty(store.getters.auth) && routeName == 'Signup' ){ next({ name: 'Home' }); }
+      if( !isEmpty(store.getters.auth) && routeName == 'Login' ){  next({ name: 'Home' }) }
+      if( !isEmpty(store.getters.auth) && routeName == 'Signup' ){ next({ name: 'Home' }) }
       next();
     }
 
