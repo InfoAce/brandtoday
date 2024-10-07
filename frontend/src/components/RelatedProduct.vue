@@ -1,6 +1,6 @@
 <template>
     <div class="col-md-4 col-xs-6">
-        <div class="card product-card">
+        <div class="card">
             <div class="card-body">
                 <div class="product-box">
                     <div class="img-wrapper">

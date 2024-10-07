@@ -35,7 +35,7 @@
                                 <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
                                 <div class="row" >
                                     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4" v-for="(product,index) in $data.products" :key="index">
-                                        <div class="card product-card">
+                                        <div class="card">
                                             <div class="card-body">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
