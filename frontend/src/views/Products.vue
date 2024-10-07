@@ -9,7 +9,7 @@
                             <h2 class="text-theme">Products - {{ $data.products_count }}</h2>
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" v-if="!isEmpty($data.category) && !isEmpty($data.sub_category)">
                         <nav aria-label="breadcrumb" class="theme-breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
@@ -29,13 +29,13 @@
             <div class="collection-wrapper">
                 <div class="container-fluid">
                     <div class="row px-4">                   
-                        <div class="col collection-product-wrapper">
+                        <div class="col px-0 collection-product-wrapper">
                             <div class="product-wrapper-grid">
                                 <CardLoader v-if="!isEmpty($data.products)" />
                                 <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
                                 <div class="row" >
                                     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4" v-for="(product,index) in $data.products" :key="index">
-                                        <div class="card">
+                                        <div class="card product-card">
                                             <div class="card-body">
                                                 <div class="product-box">
                                                     <div class="img-wrapper">
@@ -147,10 +147,18 @@ const fetchFilters = async() =>{
 const fetchProducts = async (append = false) => {
 
     // Destructuring assignment for easier access
-    let { params } = $route;
+    let { query, params } = $route;
     let { filter: { sort_pricing , per_page, page, price, name } } = $data;
-    let url        = `/products/${params.category}/${params.sub_category}?page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`;
+    let url        = `/products`;
+    
+    if( !isEmpty(params) ){
+        url += `?category=${params.category}&sub_category=${params.sub_category}&page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`
+    }
 
+    if( !isEmpty(query) ){
+        url += `?name=${query.name}&page=${page}&perPage=${per_page}`;
+    }
+    
     if( !isEmpty(name) ){
         url += `&name=${name}`;
     }
@@ -162,34 +170,40 @@ const fetchProducts = async (append = false) => {
     $store.commit('card_loader',true);
     
     try {
-        // Make API call to get category and sub category
-        const { data:{ category, sub_category, products_count } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
+        if( !isEmpty(params) ){
+            // Make API call to get category and sub category
+            const { data:{ category, sub_category, products_count } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
 
-        /**
-         * Clones the category object and assigns it to the this.category property.
-         * @type {Object}
-         */
-        $data.category      = cloneDeep(category);
+            /**
+             * Clones the category object and assigns it to the this.category property.
+             * @type {Object}
+             */
+            $data.category      = cloneDeep(category);
 
-        /**
-         * Clones the sub_category object and assigns it to the $data.sub_category property.
-         * @type {Object}
-         */
-        $data.sub_category   = cloneDeep(sub_category);
+            /**
+             * Clones the sub_category object and assigns it to the $data.sub_category property.
+             * @type {Object}
+             */
+            $data.sub_category   = cloneDeep(sub_category);
 
-        $data.products_count = products_count;
+            $data.products_count = products_count;
+        }
+
 
         // Make API call to get products
-        const { data:{ products } } = await $api.get(url);
+        const { data } = await $api.get(url);
         
         if( append ){
-            $data.products = $data.products.concat(products);
+            $data.products = $data.products.concat(data.products);
         }
 
         if( !append ){
-            $data.products = cloneDeep(products);
+            $data.products = cloneDeep(data.products);
         }
 
+        if( !isEmpty(query) ){
+            $data.products_count = data.products_count;
+        }
 
     } catch({ response }){
 

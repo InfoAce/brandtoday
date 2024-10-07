@@ -12,7 +12,7 @@ import { AmrodService, AuthService, MailService, PesapalService } from './servic
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
 import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { OrderSubscriber, PriceSubscriber, UserSubscriber } from './subscribers';
+import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
@@ -101,6 +101,7 @@ import { OrderCreatedListener } from './listeners';
           subscribers: [
             OrderSubscriber,
             PriceSubscriber,
+            ProductColourSubscriber,
             UserSubscriber
           ]
         }

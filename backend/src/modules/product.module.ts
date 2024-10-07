@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ProductCategoryModel,  ProductColourModel, ProductModel, ProductVariantModel } from '../models';
 import { ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductColourSubscriber } from 'src/subscribers';
 
 @Module({
   exports:[

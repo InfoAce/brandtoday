@@ -75,130 +75,132 @@
                             </template>                        
                         </div>
                         <div class="col-lg-6">
-                            <div class="product-right">
-                                <h2 class="text-theme">{{ product.full_code }}</h2>
-                                <h2 class="text-theme">{{ product.name }}</h2>
-                                <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
-                                <div class="border-product">
-                                    <h5> 
-                                        Selected colour: 
-                                        <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
-                                        <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
-                                    </h5>	
-                                    <ul class="color-variant p-0">
-                                        <template v-for="(hex,index) in colour_images">
-                                            <li   
-                                                v-if="selections.hex.includes(hex)"                                       
-                                                :key="`active_${index}`" 
-                                                class="active"
-                                                :ref="hex"                     
-                                                :style="`background-color: ${hex}`"                       
-                                                @click="($event) => selectColour(hex,$event)"                        
-                                            ></li>
-                                            <li   
-                                                v-if="!selections.hex.includes(hex)"                                
-                                                :key="`inactive_${index}`" 
-                                                :style="`background-color: ${hex}`"                       
-                                                :ref="hex"                   
-                                                @click="($event) => selectColour(hex,$event)"                        
-                                            ></li>
-                                        </template>
-                                        <template v-if="$isEmpty(colour_images)">
-                                            <h5 class="text-danger">No colour options found.</h5>
-                                        </template>
-                                    </ul>
-                                </div>
-                                <div id="selectSize" class="addeffect-section product-description border-product">
-                                    <template v-if="isVariant">
-                                        <div class="row pb-2">
-                                            <div class="col-12">
-                                                <h5>
-                                                    Selected size: 
-                                                    <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
-                                                    <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
-                                                </h5>
-                                            </div>                                    
-                                            <div class="col-md-6 py-2" v-for="(variant,index) of variants" :key="index">
-                                                <div class="quantity-box">
-                                                    <div class="input-group">
-                                                        <span :class="$has(selections.sizes,variant.code_size) ? `input-group-prepend active` : `input-group-prepend` ">
-                                                            <button 
-                                                                class="btn" 
-                                                                @click="selectSize(variant,$event)" 
-                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
-                                                            >{{ variant.code_size_name }}</button>
-                                                        </span>
-                                                        <input 
-                                                            type="number" 
-                                                            :name="`quantity_${variant.full_code}`" 
-                                                            class="form-control input-number" 
-                                                            :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
-                                                            v-if="!$has(selections.sizes,variant.code_size)"
-                                                            value="0"
-                                                        > 
-                                                        <input 
-                                                            type="number" 
-                                                            :name="`quantity_${variant.full_code}`" 
-                                                            class="form-control input-number" 
-                                                            :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
-                                                            v-if="$has(selections.sizes,variant.code_size)" 
-                                                            v-model="form.sizes[selections.sizes[variant.code_size]].quantity" 
-                                                            value="0"
-                                                        > 
-                                                    </div>
-                                                </div>
-                                                <div class="text-center">
-                                                    <h6 class="mb-0">Stock Available: {{ $first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity }}</h6>
-                                                </div>                                
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <template v-if="!isVariant">
-                                        <h5 class="product-title">Quantity</h5>
-                                        <div class="qty-box">
-                                            <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
-                                                        <i class="fa fa-angle-left"></i>
-                                                    </button> 
-                                                </span>
-                                                <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity"> 
-                                                <span class="input-group-prepend">
-                                                    <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
-                                                        <i class="fa fa-angle-right"></i>
-                                                    </button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="product-buttons">
-                                    <div class="d-flex">
-                                        <div>
-                                            <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
-                                                <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
-                                                <span v-if="$isEmpty(cartItem)">add to cart</span>
-                                                <span v-if="!$isEmpty(cartItem)">already in cart</span> 
-                                            </button>                                             
-                                        </div>
-                                        <div class="px-4">
-                                            <template v-if="$isEmpty($store.getters.auth)">
-                                                <button class="btn btn-solid btn-animation text-white" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
-                                                    <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
-                                                    wishlist
-                                                </button>    
+                            <div class="card">
+                                <div class="card-body product-right">
+                                    <h2 class="text-theme">{{ product.full_code }}</h2>
+                                    <h2 class="text-theme">{{ product.name }}</h2>
+                                    <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.variants),'price')),'amount') }}</h3>
+                                    <div class="border-product">
+                                        <h5> 
+                                            Selected colour: 
+                                            <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
+                                            <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
+                                        </h5>	
+                                        <ul class="color-variant p-0">
+                                            <template v-for="(hex,index) in colour_images">
+                                                <li   
+                                                    v-if="selections.hex.includes(hex)"                                       
+                                                    :key="`active_${index}`" 
+                                                    class="active"
+                                                    :ref="hex"                     
+                                                    :style="`background-color: ${hex}`"                       
+                                                    @click="($event) => selectColour(hex,$event)"                        
+                                                ></li>
+                                                <li   
+                                                    v-if="!selections.hex.includes(hex)"                                
+                                                    :key="`inactive_${index}`" 
+                                                    :style="`background-color: ${hex}`"                       
+                                                    :ref="hex"                   
+                                                    @click="($event) => selectColour(hex,$event)"                        
+                                                ></li>
                                             </template>
-                                            <template v-else>
-                                                <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
-                                                    <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
-                                                    <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
-                                                    <span v-show="$isEmpty(favourite)">Wishlist</span>
-                                                    <span v-show="!$isEmpty(favourite)">Already in wishlist</span>
-                                                </button>    
-                                            </template>                                        
+                                            <template v-if="$isEmpty(colour_images)">
+                                                <h5 class="text-danger">No colour options found.</h5>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                    <div id="selectSize" class="addeffect-section product-description border-product">
+                                        <template v-if="isVariant">
+                                            <div class="row pb-2">
+                                                <div class="col-12">
+                                                    <h5>
+                                                        Selected size: 
+                                                        <span v-if="$has(errors,'sizes')" class="text-danger mr-0">{{errors.sizes}}</span>
+                                                        <span v-if="!$isEmpty(form.sizes)" class="mr-0"><strong>{{ form.sizes.map( size => size.name ).join(',') }}</strong></span>
+                                                    </h5>
+                                                </div>                                    
+                                                <div class="col-md-6 py-2" v-for="(variant,index) of variants" :key="index">
+                                                    <div class="quantity-box">
+                                                        <div class="input-group">
+                                                            <span :class="$has(selections.sizes,variant.code_size) ? `input-group-prepend active` : `input-group-prepend` ">
+                                                                <button 
+                                                                    class="btn" 
+                                                                    @click="selectSize(variant,$event)" 
+                                                                    :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour)"
+                                                                >{{ variant.code_size_name }}</button>
+                                                            </span>
+                                                            <input 
+                                                                type="number" 
+                                                                :name="`quantity_${variant.full_code}`" 
+                                                                class="form-control input-number" 
+                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
+                                                                v-if="!$has(selections.sizes,variant.code_size)"
+                                                                value="0"
+                                                            > 
+                                                            <input 
+                                                                type="number" 
+                                                                :name="`quantity_${variant.full_code}`" 
+                                                                class="form-control input-number" 
+                                                                :disabled="($first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity) <= 0 || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
+                                                                v-if="$has(selections.sizes,variant.code_size)" 
+                                                                v-model="form.sizes[selections.sizes[variant.code_size]].quantity" 
+                                                                value="0"
+                                                            > 
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <h6 class="mb-0">Stock Available: {{ $first(variant.stocks).stock.quantity - $first(variant.stocks).stock.reserved_quantity }}</h6>
+                                                    </div>                                
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <template v-if="!isVariant">
+                                            <h5 class="product-title">Quantity</h5>
+                                            <div class="qty-box">
+                                                <div class="input-group">
+                                                    <span class="input-group-prepend">
+                                                        <button type="button" class="btn quantity-left-minus" data-type="minus" data-field="" @click="() => descreaseQuantity()">
+                                                            <i class="fa fa-angle-left"></i>
+                                                        </button> 
+                                                    </span>
+                                                    <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity"> 
+                                                    <span class="input-group-prepend">
+                                                        <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
+                                                            <i class="fa fa-angle-right"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="product-buttons">
+                                        <div class="d-flex">
+                                            <div>
+                                                <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
+                                                    <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
+                                                    <span v-if="$isEmpty(cartItem)">add to cart</span>
+                                                    <span v-if="!$isEmpty(cartItem)">already in cart</span> 
+                                                </button>                                             
+                                            </div>
+                                            <div class="px-4">
+                                                <template v-if="$isEmpty($store.getters.auth)">
+                                                    <button class="btn btn-solid btn-animation text-white" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
+                                                        <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
+                                                        wishlist
+                                                    </button>    
+                                                </template>
+                                                <template v-else>
+                                                    <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
+                                                        <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
+                                                        <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
+                                                        <span v-show="$isEmpty(favourite)">Wishlist</span>
+                                                        <span v-show="!$isEmpty(favourite)">Already in wishlist</span>
+                                                    </button>    
+                                                </template>                                        
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
