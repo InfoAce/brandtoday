@@ -95,21 +95,21 @@ export class ProductsController {
         //                                      .setFindOptions({ loadEagerRelations: true})
         //                                      .getManyAndCount();
                                              
-        // let getProducts = products.map( (product) => {
-        //   if (!isNull(product.colour_images)) {
-        //     product.colour_images = product.colour_images.map((color) => {
-        //       try {
-        //         return {
-        //           ...color,
-        //           hex: this.colors[color.code].colour,
-        //         }
-        //       } catch(error){
-        //         console.log(color)
-        //       }
-        //     });
-        //   }
-        //   return product;
-        // })
+        products = products.map( (product) => {
+          if (!isNull(product.colour_images)) {
+            product.colour_images = product.colour_images.map((color) => {
+              try {
+                return {
+                  ...color,
+                  hex: this.colors[color.code].colour,
+                }
+              } catch(error){
+                console.log(color)
+              }
+            });
+          }
+          return product;
+        })
 
         // Send the products, category, and sub categories as a JSON response
         res.status(HttpStatus.OK).json({products, products_count });
