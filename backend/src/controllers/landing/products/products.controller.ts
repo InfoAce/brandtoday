@@ -226,7 +226,7 @@ export class ProductsController {
         let user: any   = get(req,'user');
         
         // Find the product with the given code
-        let product: any = await this.productModel.findOne({ where: { id: product_id }, cache: true});
+        let product: any = await this.productModel.findOne({ where: { id: product_id }});
 
         if (!isNull(product.colour_images)) {
           product.colour_images = product.colour_images.map((color) => ({

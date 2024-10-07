@@ -34,8 +34,8 @@ export class HomeController {
 
       try {
 
-        let categories: any  = await this.categoryModel.find({ cache: true });
-        let products: any    = await this.productModel.find({ take: 10, cache: true });
+        let categories: any  = await this.categoryModel.find();
+        let products: any    = await this.productModel.find({ take: 10 });
 
         categories = await (
           await Promise.all( 
