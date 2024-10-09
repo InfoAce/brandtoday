@@ -9,6 +9,7 @@ export { QueueEntity as QueueEntity } from './queue.entity';
 export { OrderEntity as OrderEntity } from './order.entity';
 export { OrderReviewEntity as OrderReviewEntity } from './order-review.entity';
 export { OrderItemEntity as OrderItemEntity } from './order-item.entity';
+export { OrderTimelineEntity as OrderTimelineEntity } from './order-timeline.entity';
 export { PriceEntity as PriceEntity } from './price.entity';
 export { ProductEntity as ProductEntity } from './product.entity';
 export { ProductCategoryEntity as ProductCategoryEntity } from './product-category.entity';
@@ -18,6 +19,5 @@ export { ProductVariantEntity as ProductVariantEntity } from './product-variant.
 export { StockKeepingEntity  as StockKeepingEntity } from './stock-keeping.entity';
 export { StockEntity  as StockEntity } from './stock.entity';
 export { SubCategoryEntity  as SubCategoryEntity } from './sub-category.entity';
-export { TimelineEntity as TimelineEntity } from './timeline.entity';
 export { TransactionEntity as TransactionEntity } from './transaction.entity';
 export { UserEntity as UserEntity } from './user.entity';

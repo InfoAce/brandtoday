@@ -9,6 +9,7 @@ export { default as QueueModel } from './queue.model';
 export { default as OrderModel } from './order.model';
 export { default as OrderItemModel } from './order-item.model';
 export { default as OrderReviewModel } from './order-review.model';
+export { default as OrderTimelineModel } from './order-timeline.model';
 export { default as PriceModel } from './price.model';
 export { default as ProductModel } from './product.model';
 export { default as ProductCategoryModel } from './product-category.model';

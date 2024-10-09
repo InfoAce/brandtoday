@@ -80,6 +80,7 @@ export class MailService {
         extra_charges:   Array(),
         items:           order.items,
         order_number:    order.num_id,
+        transaction:     order.transaction,
         total:           order.items.map( item => item.quantity * item.price ).reduce( (a,c) => a + c, 0)
       }
       
@@ -94,13 +95,13 @@ export class MailService {
         template: 'order/create',  // The name of the handlebars template to use.
         context,
       });
-
-      await this.mailerService.sendMail({
-        to: user.company.email,  // The recipient's email address.
-        subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
-        template: 'company/new-order',  // The name of the handlebars template to use.
-        context,
-      });
+      
+      // await this.mailerService.sendMail({
+      //   to: user.company.email,  // The recipient's email address.
+      //   subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
+      //   template: 'company/new-order',  // The name of the handlebars template to use.
+      //   context,
+      // });
 
     } catch (error) {
       // Log any errors that occur during the sending of the email.

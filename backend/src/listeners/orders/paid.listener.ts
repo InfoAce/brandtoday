@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { OrderCreatedEvent } from 'src/events';
-import { OrderModel } from 'src/models';
+import { OrderModel, OrderTimelineModel } from 'src/models';
 import { MailService } from 'src/services';
 
 @Injectable()
@@ -14,7 +14,8 @@ export class OrderPaidListener {
    */
   constructor(
     private mailService: MailService,
-    private readonly orderModel: OrderModel
+    private readonly orderModel: OrderModel,
+    private readonly orderTimelineModel: OrderTimelineModel
   ) {}
 
   @OnEvent('order.paid',{ async: true })
@@ -26,8 +27,13 @@ export class OrderPaidListener {
    * @returns {void}
    */
   async handleOrderCreatedEvent({ id }: OrderCreatedEvent) {
-    let order  = await this.orderModel.findOneBy({ id });
-    await this.mailService.payment(order);
+    try {
+      let order  = await this.orderModel.findOneBy({ id });
+      await this.orderTimelineModel.save({ order_id: order.id, name: 'paid' })
+      await this.mailService.payment(order);
+    } catch(error) {
+      console.log(error);
+    }
   }
 
 }

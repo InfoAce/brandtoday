@@ -1,20 +1,26 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrderEntity, OrderItemEntity } from 'src/entities';
+import { OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity } from 'src/entities';
 import { OrderCreatedListener, OrderPaidListener } from 'src/listeners';
-import { OrderItemModel, OrderModel } from 'src/models';
+import { OrderItemModel, OrderModel, OrderTimelineModel } from 'src/models';
 
 @Module({
-  exports:     [
+  exports:  [
     OrderModel,
-    OrderItemModel
+    OrderItemModel,
+    OrderTimelineModel
   ],
   imports: [
-    TypeOrmModule.forFeature([OrderEntity,OrderItemEntity])
+    TypeOrmModule.forFeature([
+      OrderEntity,
+      OrderItemEntity,
+      OrderTimelineEntity
+    ])
   ],
   providers:   [
     OrderModel,
     OrderItemModel,
+    OrderTimelineModel,
     OrderCreatedListener,
     OrderPaidListener
   ]

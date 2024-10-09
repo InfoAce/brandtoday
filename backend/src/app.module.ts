@@ -10,7 +10,7 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
-import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -19,7 +19,6 @@ import { AppService } from './app.service';
 import { resolve } from 'path';
 import { SessionSerialize } from './utils';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { TimelineEntity } from './entities/timeline.entity';
 import { OrderCreatedListener } from './listeners';
 
 @Module({
@@ -82,6 +81,7 @@ import { OrderCreatedListener } from './listeners';
             OrderEntity,
             OrderItemEntity,
             OrderReviewEntity,
+            OrderTimelineEntity,
             PriceEntity,
             ProductEntity,
             ProductCategoryEntity,
@@ -93,11 +93,10 @@ import { OrderCreatedListener } from './listeners';
             StockEntity,
             StockKeepingEntity,
             SubCategoryEntity,
-            TimelineEntity,
             TransactionEntity,
             UserEntity
           ],
-          synchronize: false,
+          synchronize: true,
           subscribers: [
             OrderSubscriber,
             PriceSubscriber,

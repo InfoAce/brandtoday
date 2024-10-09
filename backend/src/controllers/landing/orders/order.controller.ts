@@ -1,10 +1,10 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Logger, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { first, get, has, pick, set, sum } from 'lodash';
 import * as bcrypt from 'bcrypt';
 import { ClientGuard, OptionalGuard } from 'src/guards';
-import { AddressBookModel, CompanyModel, OrderItemModel, OrderModel, RoleModel, TransactionModel, UserModel } from 'src/models';
+import { AddressBookModel, CompanyModel, OrderItemModel, OrderModel, OrderTimelineModel, RoleModel, TransactionModel, UserModel } from 'src/models';
 import { CreateOrderValidation } from 'src/validation';
 import { MailService } from 'src/services';
 import { PesapalService } from 'src/services/pesapal/pesapal.service';
@@ -44,6 +44,7 @@ export class OrderController {
     private mailService: MailService, // The mail service instance.
     private orderModel: OrderModel, // The order model instance.
     private orderItemModel: OrderItemModel, // The order model instance.
+    private orderTimelineModel: OrderTimelineModel, // The order timeline model instance.
     private transactionModel: TransactionModel, // The transaction model instance.
     private pesapalService: PesapalService, // The pesapal service instance.
     private userModel: UserModel // The user model instance.
@@ -84,7 +85,7 @@ export class OrderController {
     }
   }   
 
-  @UseGuards(ClientGuard)
+  @UseGuards(OptionalGuard)
   @Post('')
   /**
    * Store a new user order.
@@ -122,8 +123,28 @@ export class OrderController {
         let address = await this.addressBookModel.save({ ...pick(form,['address_line_1','address_line_2','county_state','city_town','country','postal_code','category']),'user_id': user.id });
         let order   = await this.orderModel.save({ ...pick(form,['items']), user_id: user.id, address_id: address.id, num_id: moment().unix() });
         
+        await Promise.all(
+          form.items.map( async (item) => {
+            if( has(item,'sizes') ){
+              return await Promise.all( 
+                item.sizes.map( async (size) => {
+                  return await this.orderItemModel.save({ ...item, size: size.name, quantity: size.quantity, order_id: order.id });
+                })
+              )
+            }
+            if( !has(item,'sizes') ){
+              return await this.orderItemModel.save({ ...item, order_id: order.id });
+            }
+          })
+        )
+  
         // Send user confirmation email
         await this.mailService.sendUserConfirmation(user);
+
+        // Send order created event
+        order                 = await this.orderModel.findOneBy({ id: order.id });
+        orderCreatedEvent.id  = order.id;
+        this.eventEmitter.emit('order.created', orderCreatedEvent);
 
         // Send response with stored order
         return res.status(HttpStatus.OK).json({ order });
@@ -234,7 +255,7 @@ export class OrderController {
    * @param {Response} res - The Express response object.
    * @returns {Promise<void>} Promise that resolves with a JSON response containing the order.
    */
-  @UseGuards(ClientGuard)
+  // @UseGuards(ClientGuard)
   @Put(':order/send')  
   async send(
     @Param('order') orderId: string,
@@ -244,7 +265,7 @@ export class OrderController {
 
     try{
       // Find the order
-      let order = await this.orderModel.findOne({id: orderId });
+      let order = await this.orderModel.findOneOrFail({ where:{ id: orderId } });
       // Find the user associated with the order
       let user  = await this.userModel.findOne({ where: { id: order.user_id }});
 
@@ -256,7 +277,8 @@ export class OrderController {
       // });
 
       // Send the order invoice to the user's email address
-      await this.mailService.sendOrderInvoice(order, user);
+      await this.mailService.createOrder(order);
+
 
       // Return the order as a JSON response
       return res.status(HttpStatus.OK).json({ order });
@@ -277,7 +299,7 @@ export class OrderController {
    * @param {Response} res - The Express response object.
    * @returns {Promise<void>} Promise that resolves with a JSON response containing the transaction status.
    */
-  @UseGuards(ClientGuard)
+  @UseGuards(OptionalGuard)
   @Get(':order/status')  
   async status(
     @Param('order') orderId: string,
@@ -336,7 +358,7 @@ export class OrderController {
    * @param {Response} res - The Express response object.
    * @returns {Promise<void>} Promise that resolves with a JSON response containing the redirect URL and order ID.
    */
-  @UseGuards(ClientGuard)
+  @UseGuards(OptionalGuard)
   @Put(':order/transaction')
   async transaction(
     @Param('order') orderId: string,
@@ -392,9 +414,13 @@ export class OrderController {
 
     } catch(error){
 
-      console.log(error);
+      if( error instanceof PesapalServiceException ){
+        let applicationRef = get(error,'applicationRef');
+        return res.status(applicationRef.status).json({ message: applicationRef.message });
+      }
       
-      this.logger.error(error);
+      // If an error occurs, log the error and return an HTTP 500 status
+      throw new InternalServerErrorException(error);
     
     }
   }

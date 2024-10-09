@@ -3,9 +3,9 @@ meta(http-equiv='X-UA-Compatible' content='IE=edge')
 meta(name='viewport' content='width=device-width,initial-scale=1')
 link(rel='icon' href='images/favicon.png' type='image/x-icon')
 link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
-link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
-center
-  table.main.bg-body(width='100%' cellspacing='0' cellpadding='0' style='font-family: Montserrat, sans-serif;border-collapse: collapse;width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;background-color: #f5f7fb;')
+link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet')
+div(style='background-color: #fafafa; width:100%; height: 100%; margin-top: 10px; margin-bottom: 10px;font-family: "Montserrat", sans-serif !important')
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='padding: 30px;background-color: #fff;-webkit-box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);width: 50%;margin-top: 30px; border-top: 3px solid #7e1414;')
     tbody
       tr
         td
@@ -13,29 +13,22 @@ center
             tbody
               tr
                 td(style='display:flex;justify-content:center;')
-                  img(src=company_logo alt=company_name)
+                  img(src='/assets/images/success.png' alt='alt')
               tr
                 td(style='text-align: center;')
-                  h2(style='color: #444444;font-weight: bold; margin-top: 10px;margin-bottom: 10px;padding-bottom: 0;display: inline-block;line-height: 1;')
-                    | Order #
-                    span
-                      b=order_number
-                    span 
-                      | has been created
+                  h2(style='color: #444444;font-weight: bold; margin-top: 10px;margin-bottom: 10px;padding-bottom: 0;display: inline-block;line-height: 1;') Thank You
               tr
-                td(style='text-align: center;')
-                  h2(style='color: #444444;font-weight: bold; margin-top: 10px;margin-bottom: 10px;padding-bottom: 0;display: inline-block;line-height: 1;') Shipping Address
-                  p(style='text-align: center;')
-                    span=address.address_line_1
-                    span
-                      | ,
-                    span=address.postal_code
-                    span
-                      | ,                                      
-                    span=address.county_state    
-                    span
-                      | ,                                            
-                    span=address.country                                                                                                                       
+                td
+                  p(style='margin: 15px 0; text-align: center;') Payment Is Successfully Processsed And Your Order Is On The Way
+                  p(style='margin: 15px 0; text-align: center;') 
+                    | Transaction ID:
+                    b=transaction.confirmation_code
+                  p(style='margin: 15px 0; text-align: center;') 
+                    | Payment Method:
+                    b=transaction.payment_method
+              tr
+                td
+                  div(style='border-top:1px solid #ededed;height:1px;margin-top: 30px;')
           table.order-detail(border='0' cellpadding='0' cellspacing='0' align='left' style='width:100%; margin-top: 30px;border: 1px solid #ddd;border-collapse: collapse; background-color: #fff;')
             tbody
                 each item, key in items
@@ -87,3 +80,24 @@ center
                          span 
                             |
                          span=(extra_charges.map( charge => charge.amount).reduce( (a,c) => a + c,  0) + total).toFixed(0) 
+                tr
+                    td(colspan="2")
+                        table(style='padding: 20px; width:100%')
+                            tbody
+                                tr
+                                    td(style='font-size: 13px; font-weight: 400; color: #444444; letter-spacing: 0.2px;')
+                                        h5(style='font-size: 16px;font-weight: 500;color: #000;line-height: 16px;padding-bottom: 13px;border-bottom: 1px solid #e6e8eb;letter-spacing: -0.65px;margin-top: 0;margin-bottom: 13px;text-align: left;') DELIVERY ADDRESS
+                                        p(style='text-align: left;font-weight: normal;font-size: 14px;color: #000000;line-height: 21px;margin-top: 0;margin: 15px 0;')
+                                            | 268 Cambridge Lane New Albany,
+                                            br
+                                            | IN 47150268 Cambridge Lane
+                                            br
+                                            | New Albany, IN 47150
+                                    td(style='font-size: 13px; font-weight: 400; color: #444444; letter-spacing: 0.2px;')
+                                        h5(style='font-size: 16px;font-weight: 500;color: #000;line-height: 16px;padding-bottom: 13px;border-bottom: 1px solid #e6e8eb;letter-spacing: -0.65px;margin-top: 0;margin-bottom: 13px;text-align: left;') SHIPPING ADDRESS
+                                        p(style='text-align: left;font-weight: normal;font-size: 14px;color: #000000;line-height: 21px;margin-top: 0;margin: 15px 0;')
+                                            | 268 Cambridge Lane New Albany,
+                                            br
+                                            | IN 47150268 Cambridge Lane
+                                            br
+                                            | New Albany, IN 47150

@@ -4,11 +4,10 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, get, take, toPlainObject } from 'lodash';
+import { cloneDeep, chunk, isEmpty, isNull, get, take, intersectionBy } from 'lodash';
 import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
-import { queue } from 'rxjs';
-import { ProductEntity, ProductVariantEntity } from './entities';
+
 
 @Injectable()
 export class AppService {
@@ -400,6 +399,11 @@ export class AppService {
         // Fetch amrod stock
         let stocks   = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));
 
+        // Get product variants
+        let variants = await this.productVariantModel.find();
+
+        stocks = intersectionBy(stocks.map( stock => ({ ...stock, full_code: stock.fullCode })), variants, 'full_code');
+
         await Promise.all(
             chunk(stocks,500).map( async (stocks) => {
                 return new Promise( async (resolve,reject) => {
@@ -486,5 +490,54 @@ export class AppService {
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
     }
   }
-    
+  
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async amrodDataSync() {
+
+    try{
+        this.logger.log(`Amrod synchronization started.`);        
+
+        // Get amrod credentials from the configuration service
+        let { credentials } = this.configService.get<any>('services.amrod');
+
+        // Login to amrod
+        await this.amrodService.login(credentials);
+
+        let stocksUpdated: Array<any> = await this.amrodService.getUpdatedStock();
+        
+        // Get product variants
+        let variants = await this.productVariantModel.find();
+
+        // Match existing stocks with variants
+        stocksUpdated = intersectionBy(stocksUpdated.map( stock => ({ ...stock, full_code: stock.fullCode })), variants, 'full_code');
+
+        await this.stockModel.upsert(
+            stocksUpdated.map( 
+                stock => ({ 
+                    full_code:         get(stock,'fullCode'), 
+                    quantity:          get(stock,'stock'), 
+                    reserved_quantity: get(stock,'reservedStock'), 
+                    incoming_quantity: get(stock,'incomingStock'), 
+                    type:              get(stock,'stockType')
+                }) 
+            ),
+            {
+                conflictPaths: ["full_code"],
+                upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+            },
+        )
+
+        // Logging
+        this.logger.log(`Amrod synchronization completed.`);        
+
+    } catch (error) {
+
+        // Logging
+        this.logger.log(`Failed to synchronize stock keeping`);
+
+        console.log(error);
+    }
+
+  }
+
 }

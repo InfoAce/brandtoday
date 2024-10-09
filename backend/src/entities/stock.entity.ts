@@ -14,7 +14,9 @@ export class StockEntity {
   })
   colour_code: string;
 
-  @Column()
+  @Column({
+    unique: true
+  })
   full_code: string;
 
   @Column({

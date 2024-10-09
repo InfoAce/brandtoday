@@ -224,6 +224,35 @@ export class AmrodService {
 
     }
 
+    /**
+     * Fetches all prices from the Amrod API
+     * 
+     * @returns {Promise<Array<Object>>} A promise that resolves with an array of price objects
+     */
+    async getUpdatedPrices(): Promise<Array<any>> {
+        try {
+
+            // Get the authentication token from the cache
+            let auth  = await this.cacheManager.get('amrod_auth');
+
+            // Make a GET request to the Amrod API to fetch all prices
+            let { data }  = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.prices.updated}`) );
+
+            // Return the fetched prices
+            return data;
+
+        } catch (error) {
+
+            // Log any errors that occur during the request
+            this.logger.error(`Prices: ${error}`);
+
+             // Throw an AmrodServiceException with the error
+            throw new AmrodServiceException(error);
+
+        }
+
+    }
+
 
     /**
      * Fetches all categories from the Amrod API.

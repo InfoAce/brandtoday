@@ -38,10 +38,10 @@ export class UserController {
     ) {
         try{
             // Retrieve paginated list of users based on the provided query parameters
-            let users = await this.userModel.find({ skip: (page - 1) * limit, take: limit, where: { role: { name: type } }, });
+            let [ users, count] = await this.userModel.findAndCount({ skip: (page - 1) * limit, take: limit, where: { role: { name: type } } });
             
             // Send the paginated list of users as a JSON response
-            return res.status(HttpStatus.OK).json({users});
+            return res.status(HttpStatus.OK).json({users,count});
         } catch(err) {
             // If an error occurs, send a 500 Internal Server Error response
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,7 +75,6 @@ export class UserController {
             
         } catch(error) {
 
-            console.log(error);
             if( has(error,'applicationRef') ){
                 throw new HttpException(error.applicationRef.status,error.applicationRef.message);
             }

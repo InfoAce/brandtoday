@@ -54,7 +54,6 @@ export class DashboardOrderController {
 
   }   
 
-
   /**
    * Fetch an order by its ID and return it as a JSON response.
    *

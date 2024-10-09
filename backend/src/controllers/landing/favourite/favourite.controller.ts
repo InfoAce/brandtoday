@@ -6,13 +6,20 @@ import { cloneDeep, get, set } from 'lodash';
 import { WishlistValidation } from 'src/validation';
 import { paginate } from "src/helpers";
 import { sep } from 'path';
+import { Config } from 'winston/lib/winston/config';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('favourites')
 export class FavouriteController {
 
+    private colors = Object();
+
     constructor(
+        private configService: ConfigService,
         private readonly favouriteModel: FavouriteModel,
-    ){}
+    ){
+        this.colors = this.configService.get<any>('colors');
+    }
 
     /**
      * Get the paginated list of favourite products for the authenticated user.
@@ -39,6 +46,19 @@ export class FavouriteController {
 
             // Get the list of favourite items for the authenticated user
             let favourites    = await this.favouriteModel.find({ where: { user_id: user.id }, skip: (queryPage - 1) * (queryPerPage + 1), take: queryPerPage,  });
+
+            favourites = await Promise.all(
+                cloneDeep(favourites).map( async favourite => {
+                    favourite.product.colour_images = favourite.product.colour_images.map(
+                        (color) => ({
+                            ...color,
+                            hex: this.colors[color.code].colour,
+                        })
+                    );
+                    await favourite.product.variants;
+                    return favourite;
+                })
+            );
 
             // Send the paginated list of favourite products as a JSON response
             return res.status(HttpStatus.OK).json({ favourites });

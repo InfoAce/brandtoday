@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 import { OrderEntity } from './index';
 
-@Entity("timelines")
-export class TimelineEntity {
+@Entity("order-timelines")
+export class OrderTimelineEntity {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
