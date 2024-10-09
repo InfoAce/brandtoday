@@ -139,7 +139,7 @@
                                                     <div class="col-12 mb-2" v-for="(address, index) in $data.addresses" :key="index">
                                                         <div class="card">
                                                             <div class="card-body d-flex align-items-center justify-content-between">
-                                                                <div class="address-box">
+                                                                <div class="address-box d-flex align-items-center">
                                                                     <input class="form-check-input" style="width: 2em; height: 2em;" type="radio" name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">                                                    
                                                                     <label class="form-check-label px-2">
                                                                         <strong>
@@ -203,12 +203,12 @@
                                                     <li v-for="(fee,key) in $data.service_fees" :key="key">
                                                         {{ fee.name }}
                                                         <span class="count text-end" v-if="fee.type == 'fixed'">{{ home.company.currency }} {{ fee.amount.toFixed(2) }}</span>
-                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ) }}</span>
+                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ).toFixed(0) }}</span>
                                                     </li>
                                                 </template>
                                             </ul>
                                             <ul class="total">
-                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(2) }}</span></li>
+                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(0) }}</span></li>
                                             </ul>
                                         </div>                                     
                                     </div>

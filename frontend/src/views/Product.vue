@@ -565,7 +565,6 @@ export default {
                    .then( (colours) => {
                         colours.forEach( ({ data:{ stock }}) => {
                             this.stock[stock.colourCode] = stock.stock;
-                            console.log(this.stock[stock.colourCode]);
                             if( stock.stock == 0 ){
                                 this.$refs[stock.colourCode][0].classList.add('inactive');
                             }

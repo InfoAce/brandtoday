@@ -5,20 +5,20 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="counter-box text-theme">
-                    <h3>{{ summary.order_count }}</h3>
-                    <h5><span class="fa fa-box fa-lg m-2"></span>Total Order</h5>
+                    <h6 class="m-0">{{ summary.order_count }}</h6>
+                    <h6 class="m-0"><span class="fa fa-box fa-lg m-2"></span>Total Order</h6>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="counter-box">
-                    <h3>{{ summary.pending_order_count }}</h3>
-                    <h5><span class="fa fa-cart-arrow-down fa-lg m-2"></span>Pending Order</h5>
+                <div class="counter-box text-theme">
+                    <h6 class="m-0">{{ summary.pending_order_count }}</h6>
+                    <h6 class="m-0"><span class="fa fa-cart-arrow-down fa-lg m-2"></span>Pending Order</h6>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="counter-box">
-                    <h3>{{ summary.favourite_count }}</h3>
-                    <h5><span class="fa fa-heart fa-lg m-2"></span>Whislist</h5>
+                <div class="counter-box text-theme">
+                    <h6 class="m-0">{{ summary.favourite_count }}</h6>
+                    <h6 class="m-0"><span class="fa fa-heart fa-lg m-2"></span>Whislist</h6>
                 </div>
             </div>
         </div>

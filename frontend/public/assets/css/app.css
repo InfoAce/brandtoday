@@ -174,6 +174,10 @@
 .pixelstrap li .show {
   color:#7e1414 !important;
 }
+.dashboard-section .dashboard-sidebar .faq-tab .nav-tabs {
+  justify-content: center;
+  overflow: hidden !important;
+}
 
 @media only screen and (min-width: 1451px) {
 
@@ -275,5 +279,8 @@
 @media only screen and (max-width: 578px) {
   .pixelstrap .mobile {
     display: block;
+  }
+  .cart_qty_cls {
+    display: none;
   }
 }

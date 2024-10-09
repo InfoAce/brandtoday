@@ -8,7 +8,13 @@
                     <div class="col-lg-6">
                         <div class="header-contact">
                             <ul>
-                                <li><a :href="`tel:${home.company.phone_number}`" class="text-white"><i class="fa fa-phone" aria-hidden="true"></i>Call Us: {{ home.company.phone_number }}</a></li>
+                                <li>
+                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                    Call Us:
+                                    <template v-if="!isEmpty(home.company.phone_number)">
+                                        <a v-for="(phone,key) in home.company.phone_number.split('/')" :href="`tel:${phone}`" class="text-white" :key="key">{{ phone }}</a>
+                                    </template>
+                                </li>
                                 <li><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank" class="text-white">Download Digital Catalogues</a></li>
                             </ul>
                         </div>
@@ -45,7 +51,7 @@
                             <li class="mobile-cart p-3" style="position: relative;">
                                 <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
                                     <i class="fa fa-shopping-cart"></i>
-                                    <!-- <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span> -->
+                                    <span class="cart_qty_cls" style="right: 0;">{{ cart.length }}</span>
                                 </a>
                             </li>
                             <template v-if="isEmpty(auth)">
@@ -91,31 +97,37 @@
                                 <div class="toggle-nav" @click="showSidebar"><i class="fa fa-bars sidebar-bar"></i></div>
                                 <ul id="main-menu" class="sm pixelstrap sm-horizontal">
                                     <li>
-                                        <div class="mobile-back text-end" @click="closeSideber">Back<i class="fa fa-angle-right ps-2"
-                                                aria-hidden="true"></i></div>
+                                        <div class="mobile-back text-end" @click="closeSideber">Back<i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
                                     </li>
                                     <li class="mobile"><a href="#" @click.prevent="openSearch">SEARCH</a></li>
                                     <li class="mobile"><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank">DOWNLOAD DIGITAL CATALOGUES</a></li>
                                     <li class="mobile"><a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })">WISHLIST</a></li>
+                                    <li class="mobile">
+                                        <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
+                                           SHOPPING CART
+                                           <span style="right: 0;">({{ cart.length }})</span>
+                                        </a>
+                                    </li>
                                     <template v-if="isEmpty(auth)">
                                         <li class="mobile"><a href="#" @click.prevent="$router.push({name:'Login'})">LOGIN</a></li>
                                         <li class="mobile"><a href="#" @click.prevent="redirectToDashboard">DASHBOARD</a></li>
                                         <li class="mobile"><router-link :to="$router.resolve({name:'Signup'}).href">SIGNUP</router-link></li>
                                     </template>
-                                    <template v-if="!isEmpty(auth)">
-                                        <li class="mobile">
-                                            <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
-                                                <i class="fa fa-user-circle" aria-hidden="true"></i>
-                                                <span>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
-                                            </a>
-                                        </li>
-                                        <li class="mobile">
-                                            <a href="#" @click.prevent="logout">
-                                                <i class="fa fa-sign-out" aria-hidden="true"></i>
-                                                LOGOUT
-                                            </a>
-                                        </li>
-                                    </template>                                    
+                                    <li v-if="!isEmpty(auth)" class="mobile">
+                                        <a href="#">ACCOUNT</a>
+                                        <ul>
+                                            <li style="text-transform: uppercase;">
+                                                <a href="#" @click.prevent="$router.push({name:'AccountProfile'})" >
+                                                    {{ auth.user.first_name }} {{  auth.user.last_name }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" @click.prevent="logout" >
+                                                    LOGOUT
+                                                </a>
+                                            </li>                                            
+                                        </ul>
+                                    </li>                                  
                                     <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
                                         <a 
                                             href="javascript:void(0)" 
