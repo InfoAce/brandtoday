@@ -346,12 +346,13 @@ const validateForm = (field) => {
 const checkTransactionStatus = (statusInterval: number, order_id: string) => {
     $api.get(`/orders/${order_id}/status`)
         .then( ({ data: { transaction }}) => {
-            console.log(transaction);
+
             // If the transaction is paid, stop the interval and redirect the user to the order success page.
             if (transaction.status_code === 1) {
                 $data.loader.order = false;
                 clearInterval(statusInterval);
                 document.querySelector('#payment_box').style.visibility = 'hidden';
+                document.querySelector('#payment_box .body iframe').remove();
                 $toast.success('Payment successful. Please check your email for order details.');
 
                 setTimeout(() => {
