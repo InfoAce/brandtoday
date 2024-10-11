@@ -18,12 +18,12 @@
                         </div>
                     </div>
                     <div class="col-12 px-0 pt-3 ">
-                        <h6 class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</h6>
-                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme d-flex justify-content-between">
-                            <p class="text-wrap p-0 m-0"> {{ product.name }} </p>
-                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>
+                        <p class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</p>
+                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme">
+                            <h6 class="text-wrap p-0 m-0"> {{ product.name }} </h6>
                         </a>
-                        <p class="m-0 p-0"><strong>Excl. VAT & Excl. Branding</strong></p>
+                        <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>
+                        <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                             <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                         </ul>

@@ -81,77 +81,73 @@
         <div class="container-fluid">
             <div class="row px-2">
                 <div class="main-menu">
-                    <div class="menu-left">
-                        <div class="brand-logo py-2">
-                            <div class="text-center">
-                                <router-link :to="$router.resolve({ name: 'Home' }).href">
-                                    <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
-                                    <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" style="height: 100% !important;" alt="">
-                                </router-link>
-                            </div>
-                        </div>     
-                    </div>
-                    <div class="menu-right pull-right" v-if="!isEmpty(home.categories)">
-                        <div>
-                            <nav id="main-nav">
-                                <div class="toggle-nav" @click="showSidebar"><i class="fa fa-bars sidebar-bar"></i></div>
-                                <ul id="main-menu" class="sm pixelstrap sm-horizontal">
-                                    <li>
-                                        <div class="mobile-back text-end" @click="closeSideber">Back<i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
-                                    </li>
-                                    <li class="mobile"><a href="#" @click.prevent="openSearch">SEARCH</a></li>
-                                    <li class="mobile"><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank">DOWNLOAD DIGITAL CATALOGUES</a></li>
-                                    <li class="mobile"><a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })">WISHLIST</a></li>
-                                    <li class="mobile">
-                                        <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
-                                           SHOPPING CART
-                                           <span style="right: 0;">({{ cart.length }})</span>
-                                        </a>
-                                    </li>
-                                    <template v-if="isEmpty(auth)">
-                                        <li class="mobile"><a href="#" @click.prevent="$router.push({name:'Login'})">LOGIN</a></li>
-                                        <li class="mobile"><a href="#" @click.prevent="redirectToDashboard">DASHBOARD</a></li>
-                                        <li class="mobile"><router-link :to="$router.resolve({name:'Signup'}).href">SIGNUP</router-link></li>
-                                    </template>
-                                    <li v-if="!isEmpty(auth)" class="mobile">
-                                        <a href="#">ACCOUNT</a>
-                                        <ul>
-                                            <li style="text-transform: uppercase;">
-                                                <a href="#" @click.prevent="$router.push({name:'AccountProfile'})" >
-                                                    {{ auth.user.first_name }} {{  auth.user.last_name }}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" @click.prevent="logout" >
-                                                    LOGOUT
-                                                </a>
-                                            </li>                                            
-                                        </ul>
-                                    </li>                                  
-                                    <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
-                                        <a 
-                                            href="javascript:void(0)" 
-                                            :class="has($route.params,'category') && $route.params.category == category.id ? 'show' : '' " 
-                                        >{{ category.name.toUpperCase()  }}</a>
-                                        <ul>
-                                            <li>
-                                                <router-link 
-                                                    :to="$router.resolve({ name: 'Category', params: { category: category.id } }).href" 
-                                                    :data-menu="category.code.toLowerCase().replace(/\s/g, '')" 
-                                                >
-                                                    ALL
-                                                </router-link>                                                
-                                            </li>
-                                            <li v-for="(sub_category,key) in category.__sub_categories__" :key="key">
-                                                <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href">
-                                                    {{ sub_category.name.toUpperCase()  }}
-                                                </router-link>
-                                            </li> 
-                                        </ul>
-                                    </li>                                                                         
-                                </ul>
-                            </nav>
+                    <div class="brand-logo py-2">
+                        <div class="text-center">
+                            <router-link :to="$router.resolve({ name: 'Home' }).href">
+                                <i v-if="isNull(home.company.logo)" class="fa fa-image fa-5x text-center justify-content-center"></i>
+                                <img v-else :src="`${$store.getters.assetsUrl}${home.company.logo}`" class="img-fluid blur-up lazyload" width="200" style="height: 100% !important;" alt="">
+                            </router-link>
                         </div>
+                    </div>  
+                    <div v-if="!isEmpty(home.categories)" class="justify-content-left menu-list">
+                        <nav id="main-nav">
+                            <div class="toggle-nav" @click="showSidebar"><i class="fa fa-bars sidebar-bar"></i></div>
+                            <ul id="main-menu" class="sm pixelstrap sm-horizontal">
+                                <li>
+                                    <div class="mobile-back text-end" @click="closeSideber">Back<i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
+                                </li>
+                                <li class="mobile"><a href="#" @click.prevent="openSearch">SEARCH</a></li>
+                                <li class="mobile"><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank">DOWNLOAD DIGITAL CATALOGUES</a></li>
+                                <li class="mobile"><a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })">WISHLIST</a></li>
+                                <li class="mobile">
+                                    <a href="#" @click.prevent="$router.push({ name: 'Cart'})" >
+                                        SHOPPING CART
+                                        <span style="right: 0;">({{ cart.length }})</span>
+                                    </a>
+                                </li>
+                                <template v-if="isEmpty(auth)">
+                                    <li class="mobile"><a href="#" @click.prevent="$router.push({name:'Login'})">LOGIN</a></li>
+                                    <li class="mobile"><a href="#" @click.prevent="redirectToDashboard">DASHBOARD</a></li>
+                                    <li class="mobile"><router-link :to="$router.resolve({name:'Signup'}).href">SIGNUP</router-link></li>
+                                </template>
+                                <li v-if="!isEmpty(auth)" class="mobile">
+                                    <a href="#">ACCOUNT</a>
+                                    <ul>
+                                        <li style="text-transform: uppercase;">
+                                            <a href="#" @click.prevent="$router.push({name:'AccountProfile'})" >
+                                                {{ auth.user.first_name }} {{  auth.user.last_name }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" @click.prevent="logout" >
+                                                LOGOUT
+                                            </a>
+                                        </li>                                            
+                                    </ul>
+                                </li>                                  
+                                <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
+                                    <a 
+                                        href="javascript:void(0)" 
+                                        :class="has($route.params,'category') && $route.params.category == category.id ? 'show' : '' " 
+                                    >{{ category.name.toUpperCase()  }}</a>
+                                    <ul>
+                                        <li>
+                                            <router-link 
+                                                :to="$router.resolve({ name: 'Category', params: { category: category.id } }).href" 
+                                                :data-menu="category.code.toLowerCase().replace(/\s/g, '')" 
+                                            >
+                                                ALL
+                                            </router-link>                                                
+                                        </li>
+                                        <li v-for="(sub_category,key) in category.__sub_categories__" :key="key">
+                                            <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href">
+                                                {{ sub_category.name.toUpperCase()  }}
+                                            </router-link>
+                                        </li> 
+                                    </ul>
+                                </li>                                                                         
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

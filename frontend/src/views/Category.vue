@@ -35,19 +35,23 @@
                                         <PlaceholderLoader v-if="isEmpty($data.sub_categories) && $data.loader || !isEmpty($data.sub_categories) && $data.loader" :count="10"/>
                                         <div class="row margin-res" v-if="!isEmpty($data.sub_categories) && !$data.loader">
                                             <div class="col-xl-3 col-6 col-grid-box mb-4" v-for="(sub_category,index) in $data.sub_categories" :key="index">
-                                                <a href="#" @click.prevent="viewProducts(sub_category)">
-                                                    <div class="product-box">
-                                                        <div class="img-wrapper">
-                                                            <div class="front">                                                    
-                                                                <img style="object-fit: cover !important;" v-if="!isEmpty(sub_category.image)" :src="sub_category.image.urls[0].url" :alt="sub_category.categoryName" height="300">
+                                                <div class="card">
+                                                    <div class="card-body product-card">
+                                                        <a href="#" @click.prevent="viewProducts(sub_category)">
+                                                            <div class="product-box">
+                                                                <div class="img-wrapper">
+                                                                    <div class="front">                                                    
+                                                                        <img style="object-fit: cover !important;" v-if="!isEmpty(sub_category.image)" :src="sub_category.image.urls[0].url" :alt="sub_category.categoryName" height="300">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="product-detail">
+                                                                    <h4>{{ sub_category.name }}</h4>
+                                                                    <h6 class="text-muted">{{ sub_category.products_count }} products</h6>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="product-detail">
-                                                            <h4>{{ sub_category.name }}</h4>
-                                                            <h6 class="text-muted">{{ sub_category.products_count }} products</h6>
-                                                        </div>
+                                                        </a>                                                        
                                                     </div>
-                                                </a>
+                                                </div>                                            
                                             </div>
                                         </div>
                                     </div>
