@@ -154,6 +154,12 @@ export class MailService {
           company_name: user.company.name,
           company_logo: user.company.logo,
           currency:     user.company.currency,
+          customer:        {
+            email:           user.email,
+            first_name:      user.first_name,
+            last_name:       user.last_name,
+            phone_number:    user.phone_number
+          },
           order_number: order.num_id,
           transaction:  order.transaction
         },

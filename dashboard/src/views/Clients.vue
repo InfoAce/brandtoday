@@ -57,8 +57,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-if="!$isEmpty($data.clients.items)">
-                                        <tr v-for="(client,index) in $data.clients.items" :key="index">
+                                    <template v-if="!$isEmpty($data.clients)">
+                                        <tr v-for="(client,index) in $data.clients" :key="index">
                                             <td>{{ index + 1 }}</td>
                                             <td>
                                             <img v-if="!$isNull(client.image)" :src="client.image" :alt="`${client.first_name} ${client.last_name}`"/>
@@ -67,9 +67,9 @@
                                             <td>{{ client.first_name }} {{ client.last_name }}</td>
                                             <td>{{ client.email }}</td>
                                             <td>{{ client.phone_number }}</td>
-                                            <td class="td-check">
-                                                <i v-if="!$isEmpty(client.email_verified_at)" data-feather="check-circle"></i>
-                                                <i v-if="$isEmpty(client.email_verified_at)" data-feather="x-circle"></i>
+                                            <td>
+                                                <h6 v-if="!$isEmpty(client.email_verified_at)" class="badge badge-success p-2"><i class="fa fa-check-circle"></i></h6>
+                                                <h6 v-if="$isEmpty(client.email_verified_at)" class="badge badge-primary p-2"><i class="fa fa-close "></i></h6>
                                             </td>
                                             <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
                                         </tr>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.clients)">
                             <paginate
-                                :page-count="$data.clients.meta.itemCount"
+                                :page-count="$data.filter.total"
                                 :click-handler="fetchPaginate"
                                 :prev-text="'Prev'"
                                 :next-text="'Next'"
@@ -114,25 +114,33 @@ import Paginate from "vuejs-paginate-next";
 const store    = useStore();
 const router   = useRouter();
 const $api     = inject('$api');
+const $toast   = inject('$toast');
 const swal     = inject('$swal');
 const $moment  = moment;
 const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
-const $data    = reactive({clients: Object()});
+const $data    = reactive({clients: Object(),filter:{ page: 1, perPage: 10, total: 0 }});
 
-const fetch = async (params = { page: 1, limit: 10}) => {
+const fetch = async () => {
     try {
         store.commit('card_loader',true);
-        let { page, limit } = params,url = `/dashboard/users?type=client&page=${page}&limit=${limit}`;
-        let { data: { users } } = await $api.get(url);
+        let { page, perPage } = $data.filter,url = `/dashboard/users?type=client&page=${page}&limit=${perPage}`;
+        let { data: { users, count } } = await $api.get(url);
         store.commit('card_loader',false);
-        $data.clients = cloneDeep(users);
+        $data.clients      = cloneDeep(users);
+        $data.filter.total = count;
     } catch(error) {
         store.commit('card_loader',false);
+        $toast.error(`Something went wrong while fetching users.`);
     }
 }
 
+/**
+ * Handles pagination click event.
+ * 
+ * @param {Object} event The pagination event object.
+ */
 const fetchPaginate = () => {
     console.log(arguments);
 }

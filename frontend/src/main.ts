@@ -19,6 +19,7 @@ import storage from './storage';
 import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
 import App from './App.vue';
+
 const app                         = createApp(App)
 const { VITE_RECAPTCHA_SITE_KEY } = import.meta.env;
 

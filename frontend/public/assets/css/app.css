@@ -1,3 +1,9 @@
+body {
+  font-family: "Montserrat", sans-serif !important;
+  font-optical-sizing: auto !important;
+  font-style: normal !important;
+}
+
 .dashboard-section .dashboard-table .table th,
 .dashboard-section .dashboard-table .table td {
     text-align: left !important;
@@ -191,6 +197,61 @@
   top: 0 !important;
 }
 
+.search-results {
+  top: auto;
+  position: absolute;
+  z-index: 100;
+  background-color: #fff;
+  -webkit-transition: all linear 0.3s;
+  transition: all linear 0.3s;
+  width: 25vw;
+  text-align: left;
+  -webkit-transform: translateY(30px);
+  transform: translateY(30px);
+  opacity: 0;
+  visibility: hidden;
+  left: 0;
+  padding: 0;
+  border-radius: 0 !important;
+  -webkit-box-shadow: 0 0 8px #ddd;
+  box-shadow: 0 0 8px #ddd;
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-results li:first-child {
+  justify-content: space-between;
+}
+
+.search-results li:last-child {
+  justify-content: center;
+}
+
+.search-results li,
+.search-results li a {
+  padding: 10px !important; 
+  display: flex !important; 
+  align-items: center !important; 
+  z-index: 100;
+}
+
+.search-results li p,
+.search-results li h6,
+.search-results li h5{
+  padding-left: 10px;
+  margin: 0 !important;
+  font-size:unset !important;
+
+}
+
+.top-links {
+  display: flex;
+  justify-content: end;
+}
 
 @media only screen and (min-width: 1451px) {
 
@@ -306,11 +367,33 @@
     letter-spacing: 0px !important;
   }
 
+  .search-results {
+    width: 35vw;
+  }
+
   .pixelstrap li:not(:first-child) {
     margin-top: 10px !important;
   }
 
 
+}
+
+@media only screen and (max-width: 850px) {
+  .search-results {
+    width: 50vw;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .top-links {
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 10px;
+  }
+  .search-results {
+    right:0;
+    min-width: 100%;
+  }
 }
 
 @media only screen and (min-width: 579px) {
@@ -326,5 +409,8 @@
   }
   .cart_qty_cls {
     display: none;
+  }
+  .top-header{
+    height: 100% !important;
   }
 }

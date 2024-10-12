@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="header-contact">
-                            <ul>
+                            <ul class="align-items-center">
                                 <li>
                                     <i class="fa fa-phone" aria-hidden="true"></i>
                                     Call Us:
@@ -19,7 +19,30 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-6 text-end d-flex justify-content-end">
+                    <div class="col-lg-6 top-links">
+                        <ul class="header-dropdown d-flex align-items-center justify-content-end">
+                            <li class="onhover-div mobile-cart p-0">
+                                <input type="text" class="form-control" placeholder="Search products" v-model="data.product_name"/>
+                                <ul class="search-results visible" v-show="!isEmpty(data.product.items)">
+                                    <li>
+                                        <h5 class="text-theme">Matches Found: {{ data.product.count }} </h5>
+                                        <button class="btn btn-solid btn-xs" type="button" @click="openLiveChat()">Chat with us</button>
+                                    </li>
+                                    <li v-for="(product,index) in data.product.items" :key="index">
+                                        <router-link :to="$router.resolve({ name: 'Product', params: { product: product.id }}).href">
+                                            <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="" width="20%">
+                                            <div>
+                                                <h6 class="text-theme">{{ product.name }}</h6>
+                                                <p style="color: #000;">{{ product.full_code }}</p>
+                                            </div>
+                                        </router-link>
+                                    </li>
+                                    <li>
+                                        <button class="btn btn-solid btn-xs" type="button" @click="openSearchResults()">View More</button>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
                             <li class="p-3">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart"></i></a>
@@ -165,9 +188,8 @@
 <script setup>
 import { cloneDeep, debounce, get, isEmpty, isNull, has } from 'lodash';
 import { useStore } from 'vuex';
-import { computed, onBeforeMount, onMounted, inject, reactive } from 'vue';
+import { computed, onBeforeMount, onMounted, inject, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import router from '../router';
 import localStorage from 'reactive-localstorage';
 
 const $api     = inject('$api');
@@ -175,7 +197,15 @@ const $swal    = inject('$swal');
 const $store   = useStore();
 const $route   = useRoute(); 
 const $router  = useRouter(); 
-const data     = reactive({categories: Array(), search: String() });
+const data     = reactive({
+    categories:   Array(),
+    search:       String(), 
+    product_name: String(), 
+    product:     {
+        count:  Number(),
+        items:  Array(),
+    }
+});
 
 //Computed
 const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace('api/v1','') );
@@ -365,6 +395,19 @@ const searchProduct = () => {
     closeSearch();
 }
 
+const fetchProducts = debounce(
+    async (name) => {
+        try{
+            const { data: { count, products } } = await $api.put(`/header?name=${name}`);
+            data.product.items = cloneDeep(products);
+            data.product.count = cloneDeep(count);
+        } catch(error) {
+
+        }
+    },
+    1000
+)
+
 /**
  * Redirects the user to the dashboard.
  *
@@ -379,6 +422,40 @@ const redirectToDashboard = () => {
     window.location.href = $store.getters.env.VITE_DASHBOARD_URL;
 }
 
+const openLiveChat = () => { 
+    $('.tawk-button').trigger('click') 
+}
+
+const openSearchResults = () => {
+    $router.push({ name: 'ViewProducts', query: { name: data.product_name } });
+    data.product_name = String();
+}
+
+watch(
+    () => data.product_name,
+    (name) => {
+        if( !isEmpty(name) ){
+            fetchProducts(name)
+        }
+        if( isEmpty(name) ){
+            data.product.items = [];
+            data.product.count = 0;
+        }
+    }
+)
+
+watch(
+    () => $route,
+    () => {
+        data.product.items = [];
+        data.product.count = 0;
+        data.product_name  = String();
+    },
+    {
+        deep: true
+    }
+)
+
 onBeforeMount( () => fetchMenus() );
 </script>
 
@@ -390,4 +467,4 @@ onBeforeMount( () => fetchMenus() );
     font-weight: normal;
     font-size:   medium;
 }
-</style>../router/home
+</style>

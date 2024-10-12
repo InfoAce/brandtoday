@@ -45,6 +45,7 @@
                                     :settings="settings.images" 
                                     :itemsToShow="1" 
                                     :wrapAround="true" 
+                                    v-model="currentSlide"
                                 >
                                     <Slide v-for="(image,index) in product.images" :key="index" :style="`height:${$store.getters.banner_height}`">
                                         <div class="p-4">
@@ -58,6 +59,7 @@
                                         :itemsToShow="3"
                                         :wrap-around="true"
                                         ref="carousel"
+                                        v-model="currentSlide"
                                     >
                                         <Slide v-for="(image,index) in product.images" :key="index">
                                             <img :src="image.urls[0].url" alt="" width="70%">
@@ -422,6 +424,7 @@ export default {
                     },
                 },                
             },
+            currentSlide: 1,
             errors:      Object(),
             favourite:   Object(),
             form:        Object(),

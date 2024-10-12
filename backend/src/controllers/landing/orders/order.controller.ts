@@ -277,7 +277,7 @@ export class OrderController {
       // });
 
       // Send the order invoice to the user's email address
-      await this.mailService.createOrder(order);
+      await this.mailService.payment(order);
 
 
       // Return the order as a JSON response

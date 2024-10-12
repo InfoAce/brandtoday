@@ -1,20 +1,30 @@
-meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
-meta(http-equiv='X-UA-Compatible' content='IE=edge')
-meta(name='viewport' content='width=device-width,initial-scale=1')
-link(rel='icon' href='images/favicon.png' type='image/x-icon')
-link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
-link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
-center
-  table.main.bg-body(width='100%' cellspacing='0' cellpadding='0' style='font-family: Montserrat, sans-serif;border-collapse: collapse;width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;background-color: #f5f7fb;')
-    tbody
-      tr
-        td
+doctype transitional
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width,initial-scale=1')
+  link(rel='icon' href='images/favicon.png' type='image/x-icon')
+  link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
+  link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
+div(style='background-color: #fafafa; width:100%; height: 100%; padding-top: 10px; padding-bottom: 10px;')
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='padding: 30px;font-family: Montserrat, sans-serif !important;background-color: #fff;-webkit-box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);width: 50%;border: 2px solid #ededed;')
+    tbody(style='font-family: Montserrat, sans-serif !important;')
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='font-family: Montserrat, sans-serif !important;')
           table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%; background-color: #fff;')
-            tbody
-              tr
+            tbody(style='font-family: Montserrat, sans-serif !important;')
+              tr 
+                td 
+                    p
+                      span Hello 
+                      span=customer.first_name 
+                      span 
+                      span=customer.last_name 
+                      span , thank you for placing an order with us.
+              tr(style='font-family: Montserrat, sans-serif !important;')
                 td(style='display:flex;justify-content:center;')
                   img(src=company_logo alt=company_name)
-              tr
+              tr(style='font-family: Montserrat, sans-serif !important;')
                 td(style='text-align: center;')
                   h2(style='color: #444444;font-weight: bold; margin-top: 10px;margin-bottom: 10px;padding-bottom: 0;display: inline-block;line-height: 1;')
                     | Order #
@@ -22,22 +32,25 @@ center
                       b=order_number
                     span 
                       | has been created
-              tr
+              tr(style='font-family: Montserrat, sans-serif !important;')
                 td(style='text-align: center;')
-                  h2(style='color: #444444;font-weight: bold; margin-top: 10px;margin-bottom: 10px;padding-bottom: 0;display: inline-block;line-height: 1;') Shipping Address
-                  p(style='text-align: center;')
-                    span=address.address_line_1
-                    span
-                      | ,
-                    span=address.postal_code
-                    span
-                      | ,                                      
-                    span=address.county_state    
-                    span
-                      | ,                                            
-                    span=address.country                                                                                                                       
-          table.order-detail(border='0' cellpadding='0' cellspacing='0' align='left' style='width:100%; margin-top: 30px;border: 1px solid #ddd;border-collapse: collapse; background-color: #fff;')
-            tbody
+                                                                                                                    
+          table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:100%; margin-top: 30px;border: 1px solid #ddd;border-collapse: collapse; background-color: #fff;')
+            tbody(style='font-family: Montserrat, sans-serif !important;')
+                tr
+                    td.price(colspan='4' style='line-height: 49px;text-align: center;padding-right: 28px;color: #000000;border-left: unset;border: 1px solid #ddd;border-collapse: collapse;')
+                      h3(style='color: #444444;font-weight: bold; margin-top: 10px;padding-bottom: 0;display: inline-block;line-height: 1;') Shipping Address
+                      p(style='text-align: center;padding-top:0px;margin-top:0px;')
+                        span=address.address_line_1
+                        span
+                          | ,
+                        span=address.postal_code
+                        span
+                          | ,                                      
+                        span=address.county_state    
+                        span
+                          | ,                                            
+                        span=address.country              
                 each item, key in items
                     tr(style="border-top: 1px solid #ededed;")
                         td(style='border-collapse: collapse; display:flex; padding: 10px; align-items: center;')
@@ -48,7 +61,7 @@ center
                                     span=item.name
                                 p
                                     | Quantity:
-                                    span=item.qunatity  
+                                    span=item.quantity  
                                 p
                                     | Colour:
                                     span=item.colour  

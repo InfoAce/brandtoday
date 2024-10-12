@@ -61,8 +61,12 @@
                                           <td> {{ order.num_id }}</td>
                                           <td>{{ order.__user__.first_name }} {{ order.__user__.last_name }}</td>
                                           <td>{{ order.items.length }}</td>
-                                          <td>KSH {{ order.total }}</td>
-                                          <td>{{ order.status }}</td>
+                                          <td>{{ company.currency }} {{ order.total }}</td>
+                                          <td>
+                                            <h6 v-if="order.status == 'paid'" class="badge badge-success badge-outline p-2"><i class="fa fa-check-circle"></i> {{ order.status }}</h6>
+                                            <h6 v-if="order.status == 'pending'" class="badge badge-warning p-2"><i class="fa fa-exclamation-triangle "></i> {{ order.status }}</h6>
+                                            <h6 v-if="order.status == 'shipped'" class="badge badge-info p-2"><i class="fa fa-exclamation-triangle "></i>{{ order.status }}</h6>
+                                         </td>
                                           <td>{{ $moment(order.created_at).format('Do MMMM, Y hh:mm:ss') }}</td>      
                                           <td>
                                             <a href="#" @click.prevent="viewOrder(order.id, index)" class="btn btn-primary p-2 btn-sm" ref="buttonOrders">
@@ -105,7 +109,7 @@
 </template>
   
 <script setup lang="ts">
-import { inject, reactive, onBeforeMount, ref } from 'vue';
+import { computed, inject, reactive, onBeforeMount, ref } from 'vue';
 import { cloneDeep, isEmpty, isNull, has, sum, times } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
@@ -143,7 +147,9 @@ const $data    = reactive({
     view: Object()
 });
 const buttonOrders = ref([]);
-defineExpose({ buttonOrders })
+defineExpose({ buttonOrders });
+
+const company  = computed( () => $store.getters.home.company);
 
 
 const formSchema = yup.object().shape({

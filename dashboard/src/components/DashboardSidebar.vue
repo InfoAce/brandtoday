@@ -4,8 +4,8 @@
 	<div class="main-header-left d-none d-lg-block">
 		<div class="logo-wrapper m-2 p-0">
 			<a href="#" @click.prevent="$router.push({ name: 'Overview' })">
-				<i data-feather="bar-chart" v-if="!isEmpty($data.company) && isNull($data.company.logo)"></i>
-				<img v-if="!isEmpty($data.company) && !isNull($data.company.logo)" class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${$store.getters.assetsUrl}${$data.company.logo}`"  :alt="`${$data.company.name}`">
+				<i data-feather="bar-chart" v-if="!isEmpty(company) && isNull(company.logo)"></i>
+				<img v-if="!isEmpty(company) && !isNull(company.logo)" class="d-none d-lg-block blur-up lazyloaded w-100" :src="`${$store.getters.assetsUrl}${company.logo}`"  :alt="`${company.name}`">
 			</a>
 		</div>
 	</div>
@@ -60,11 +60,8 @@ const $route  = useRoute();
 const $router = useRouter();
 const $store  = useStore();
 const menus   = computed( () => $store.getters.sidebarMenus );
+const company   = computed( () => $store.getters.home.company );
 const $has    = has;
-const $data   = reactive({
-	company: Object()
-});
-
 /**
  * @description
  * This function will update the favicon of the website dynamically.
@@ -91,7 +88,7 @@ onMounted(
 		$(`a[data-route-name="${$route.name}"]`).addClass('active');	
 		try {
             let { data:{ company } } = await $api.get('dashboard/sidebar');
-			$data.company = cloneDeep(company);
+			$store.commit('company',company)
 			addIcon(company.icon);
         } catch(error) {
 			$toast.error('Oops!! Something went wrong while fetching company information.')

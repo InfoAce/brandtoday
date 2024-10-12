@@ -551,6 +551,7 @@ export default {
 
                 let { data: {company } } = await this.$api.put(`/dashboard/company/${this.company.id}/update`,this.company);
                 
+                $store.commit('company',company);
                 this.company             = cloneDeep(company);
                 this.loading.updating    = false;
 

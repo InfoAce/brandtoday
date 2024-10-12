@@ -10,10 +10,11 @@
 <script setup lang="ts">
 import { LandingFooter, LandingHeader, LandingLoader } from './components';
 import { useStore } from 'vuex'
-import { onBeforeMount, onMounted, watch } from 'vue';
+import { inject, onBeforeMount, onMounted, watch } from 'vue';
 import { debounce, isEmpty } from 'lodash';
 
-const store   = useStore();
+const store  = useStore();
+// const toggle = inject('toggle');
 
 const app_shopping_cart: any  = localStorage.getItem(`${store.getters.env.VITE_APP_NAME.replaceAll(' ','')}_SHOPPING_CART`);
 
@@ -24,6 +25,10 @@ if( !isEmpty(app_shopping_cart) ){
 window.addEventListener("resize", debounce((event) => {
 	store.commit('device_width',window.innerWidth)
 },200));
+
+// onMounted( () => {
+// 	toggle();
+// }) 
 
 watch( 
 	() => store.getters.cart,

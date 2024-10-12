@@ -20,7 +20,6 @@ export default createStore({
       cart: Array(),
       get env(){ return import.meta.env },
       home:{
-        categories: Array(),
         company:    Object()
       },
       loader: false,
@@ -61,8 +60,8 @@ export default createStore({
     device_width(state,value) {
       state.device_width = value;
     },
-    home(state,value) {
-      state.home = value
+    company(state,value) {
+      state.home.company = value
     },
     loader(state,value) {
       state.loader = value

@@ -195,6 +195,8 @@ const selectCrop = async () => {
         let type: any = blob?.type.split('/');
         let filename: number = moment().unix();
 
+        console.log(blob);
+
         // Create a new File object with the cropped image and a unique filename
         let file: object = new File([blob], `${filename.toString()}.${type[1]}`, {
             type: blob?.type,

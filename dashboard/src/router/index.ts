@@ -205,32 +205,16 @@ router.beforeEach(
   (to, from, next) => {
     const { name: routeName, meta: { auth, state, landing, admin, redirectIfAuth } } = to;
 
-    if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
-      window.document.getElementById("mySidenav").classList.remove('open-side')
-    }
-    
     window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
         
-    if( !auth && admin ){
-      if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Overview'}) }
-      if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (isEmpty(store.getters.auth) && !redirectIfAuth) ) { next() }
-      if( isEmpty(store.getters.auth) && redirectIfAuth ){ next() }
+    if( auth ){
+      if( isEmpty(store.getters.auth) && routeName == 'Login' ){ next({ name: 'Login' }) }
+      next();
     }
 
-    if( auth && admin ){
-      if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
-      if( isEmpty(store.getters.auth) && routeName != 'AdminLogin' ){ next({ name: 'AdminLogin'}) }
-    }
-
-    if( !auth && !admin ){
-      if( !isEmpty(store.getters.auth) && redirectIfAuth) { next({ name: 'Home'}) }
-      if( (!isEmpty(store.getters.auth) && !redirectIfAuth) || (isEmpty(store.getters.auth) && !redirectIfAuth) ) { next() }
-      if( isEmpty(store.getters.auth) && redirectIfAuth ){ next() }
-    }
-
-    if( auth && !admin ){
-      if( isEmpty(store.getters.auth) && routeName != 'Login' ){ next({ name: 'Login' }); }
-      if( !isEmpty(store.getters.auth) && !redirectIfAuth) { next() }
+    if( !auth ){
+      if( !isEmpty(store.getters.auth) && routeName == 'Login' ){  next({ name: 'Overview' }) }
+      next();
     }
   }
 );

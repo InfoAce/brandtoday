@@ -1,8 +1,8 @@
 <template>
     <!-- footer -->
     <footer class="footer-light p-4 m-0">
-        <div class="container p-4">
-            <div class="row footer-theme partition-f">
+        <div class="container-fluid">
+            <div class="row footer-theme partition-f p-4">
                 <div class="col px-0">
                     <div class="footer-title footer-mobile-title">
                         <h4>about</h4>
@@ -69,6 +69,9 @@
                                 <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
                                 <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
                                 <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
+                                <li><h2>Send us a Google Review</h2></li>
+                                <li><a :href="`https://wa.me/${$data.whatsapp.number}?text=${encodeURIComponent($data.whatsapp.message)}`" target="_blank"><img src="/assets/images/whatsapp-icon.png" width="150"/></a></li>
+                                <li><h2>Send us a Google Review</h2></li>
                                 <li><a href="https://g.co/kgs/3t2sxBs" target="_blank"><img src="/assets/images/google-review-symbol.png" width="150"/></a></li>
                                 <li><a href="https://www.suavemarketing.co.ke/" target="_blank"><img src="/assets/images/suave.webp" width="150"/></a></li>
                             </ul>
@@ -132,14 +135,20 @@
 </style>
 <script setup>
 import { isEmpty, isNull } from 'lodash';
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import moment from 'moment';
 
 // Magic functions 
-const $store = useStore();
+const $store  = useStore();
 const $router = useRouter();
+const $data   = reactive({
+    whatsapp:{
+        number:  '+254714123456',
+        message: 'Hello, I would like to know more about your products'
+    }
+});
 
 // Computed
 const backendUri = computed( () => $store.getters.env.VITE_API_URL.replace('api/v1','') );
@@ -159,6 +168,15 @@ const home       = computed( () => $store.getters.home);
         name:   'Category', 
         params: { category: item.id } 
     });
+}
+
+const send_handle = () => {
+  const num = document.getElementById("number").value;
+  const msg = document.getElementById("msg").value;
+  const name = document.getElementById("name").value;
+
+  const win = window.open(`https://wa.me/${num}?text=I%27m%20api%20msg%20hello%20${name}%20friend%20${msg}`, '_blank');
+  // win.focus();
 }
 
 </script>

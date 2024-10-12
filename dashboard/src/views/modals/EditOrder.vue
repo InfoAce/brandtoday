@@ -34,7 +34,7 @@
                                                         <tr class="table-order" v-for="(item,index) in order.items" :key="index">
                                                             <td>
                                                                 <a href="javascript:void(0)">
-                                                                    <img :src="item.image" class="img-fluid blur-up lazyload" alt="">
+                                                                    <img :src="item.image" class="img-fluid lazyload" alt="">
                                                                 </a>
                                                                 <h5>{{ item.name }}<br><span v-if="has(item,'sizes')">{{ item.sizes.map( size => size.name ).join(',') }}</span></h5>
                                                             </td>
@@ -44,11 +44,11 @@
                                                             </td>
                                                             <td>
                                                                 <p>Price</p>
-                                                                <h5>{{ item.price }}</h5>
+                                                                <h5>{{ company.currency }} {{ item.price }}</h5>
                                                             </td>
                                                             <td class="text-end">
                                                                 <p>Total</p>
-                                                                <h5>{{ has(item,'sizes') ?  item.price * sum(item.sizes.map( size => size.quantity )) : item.price * item.quantity }}</h5>
+                                                                <h5>{{ company.currency }} {{ has(item,'sizes') ?  item.price * sum(item.sizes.map( size => size.quantity )) : item.price * item.quantity }}</h5>
                                                             </td>
                                                         </tr>
 
@@ -61,7 +61,7 @@
                                                                 <h4 class="theme-color fw-bold">Total Price :</h4>
                                                             </td>
                                                             <td class="text-end">
-                                                                <h4 class="theme-color fw-bold">{{ total }}</h4>
+                                                                <h4 class="theme-color fw-bold">{{ company.currency }} {{ total }}</h4>
                                                             </td>
                                                         </tr>
                                                     </tfoot>
@@ -105,7 +105,7 @@
                                                 </div> -->
 
                                                 <div class="col-12">
-                                                    <div class="order-success" v-if="!isEmpty(get(order,'transaction'))">
+                                                    <div class="order-success" v-if="!isEmpty(get(order,'transaction')) && order.status != 'pending'">
                                                         <div class="payment-mode">
                                                             <h4>payment method</h4>
                                                             <ul class="list-group">
@@ -114,7 +114,7 @@
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="order-success" v-if="isEmpty(get(order,'transaction'))">
+                                                    <div class="order-success" v-if="!isEmpty(get(order,'transaction')) && order.status == 'pending'">
                                                         <div class="payment-mode">
                                                             <h4 class="text-danger">Pending Payment</h4>                                                          
                                                         </div>
@@ -143,6 +143,7 @@
 import { computed, defineProps, watch } from 'vue';
 import { get, isEmpty, has, sum } from 'lodash';
 import moment from 'moment';
+import { useStore } from 'vuex';
 
 /**
  * Define component properties
@@ -161,6 +162,8 @@ const $props = defineProps({
     }
 });
 
+const $store    = useStore();
+
 /**
  * Computed order from component properties
  * 
@@ -168,6 +171,9 @@ const $props = defineProps({
  * @returns {Object}
  */
 const order = computed(() => $props.data);
+
+const company  = computed( () => $store.getters.home.company);
+
 
 /**
  * Computed total from order

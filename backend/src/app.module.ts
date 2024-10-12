@@ -126,7 +126,6 @@ import { OrderCreatedListener } from './listeners';
     CategoryModule,
     CompanyModule,
     FavouriteModule,
-    MailModule,
     OrderModule,
     PriceModule,
     ProductModule,
