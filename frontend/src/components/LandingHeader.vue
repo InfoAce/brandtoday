@@ -44,7 +44,7 @@
                             </li>
                         </ul>
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
-                            <li class="p-3">
+                            <li class="p-3" v-if="!isEmpty(auth)">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart"></i></a>
                             </li>
                             <li class="onhover-div p-3">
