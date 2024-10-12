@@ -93,9 +93,8 @@ export class AppService {
             })
           );
         }
-
       } catch(error) {
-
+        this.logger.log(error);
       }
   }
 
