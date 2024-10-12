@@ -96,7 +96,7 @@ import { OrderCreatedListener } from './listeners';
             TransactionEntity,
             UserEntity
           ],
-          synchronize: true,
+          synchronize: false,
           subscribers: [
             OrderSubscriber,
             PriceSubscriber,
