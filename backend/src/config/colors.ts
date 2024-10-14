@@ -68,6 +68,11 @@ export default registerAs('colors',() => ({
     "NN": {name: "Navy Navy", code: "NN", colour: ["#262449","#2d2a67"]},
 
     /**
+     * Navy Navy color
+     */
+    "NB": {name: "New Blue", code: "NB", colour: ["#2522CA"]},    
+
+    /**
      * Purple color
      */
     "P": {name: "Purple", code: "P", colour: ["#4E377F"]},
