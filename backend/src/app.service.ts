@@ -513,6 +513,7 @@ export class AppService {
         await this.stockModel.upsert(
             stocksUpdated.map( 
                 stock => ({ 
+                    simple_code:       get(stock,'simpleCode'), 
                     full_code:         get(stock,'fullCode'), 
                     quantity:          get(stock,'stock'), 
                     reserved_quantity: get(stock,'reservedStock'), 
