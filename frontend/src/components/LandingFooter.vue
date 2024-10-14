@@ -69,7 +69,6 @@
                                 <li><i class="fa fa-map-marker"></i>Location: {{ home.company.address }}</li>
                                 <li><i class="fa fa-phone"></i>Call Us: {{ home.company.phone_number }}</li>
                                 <li><i class="fa fa-envelope"></i>Email Us: <a href="#">{{ home.company.email }}</a></li>
-                                <li><h2>Send us a Google Review</h2></li>
                                 <li><a :href="`https://wa.me/${$data.whatsapp.number}?text=${encodeURIComponent($data.whatsapp.message)}`" target="_blank"><img src="/assets/images/whatsapp-icon.png" width="150"/></a></li>
                                 <li><h2>Send us a Google Review</h2></li>
                                 <li><a href="https://g.co/kgs/3t2sxBs" target="_blank"><img src="/assets/images/google-review-symbol.png" width="150"/></a></li>
