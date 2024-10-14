@@ -6,7 +6,7 @@
                 <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>{{ product.name }}</h2>
+                            <h4 class="m-0">{{ product.name }}</h4>
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -44,10 +44,10 @@
                                     v-if="!$isEmpty(product.images)"
                                     :settings="settings.images" 
                                     :itemsToShow="1" 
-                                    :wrapAround="true" 
+                                    :wrap-around="false" 
                                     v-model="currentSlide"
                                 >
-                                    <Slide v-for="(image,index) in product.images" :key="index" :style="`height:${$store.getters.banner_height}`">
+                                    <Slide v-for="(image,index) in product.images" :key="index" style="width:50vw;">
                                         <div class="p-4">
                                             <InnerImageZoom :src="image.urls[0].url" :zoomScale="2" /> 
                                         </div>                                    
@@ -99,9 +99,9 @@
                         </div>
                         <div class="col-lg-5 col-md-6 col-12 product-details">
                             <div class="product-right px-2 py-4">
-                                <p class="text-theme">{{ product.full_code }}</p>
+                                <h5 class="text-theme m-0">{{ product.full_code }}</h5>
                                 <h2 class="text-theme">{{ product.name }}</h2>
-                                <h6>Price</h6>
+                                <p>Price</p>
                                 <h3 class="price-detail">{{ currency }} {{ $get($first($get($first(product.__variants__),'price')),'amount') }}</h3>
                                 <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                 <div class="border-product">

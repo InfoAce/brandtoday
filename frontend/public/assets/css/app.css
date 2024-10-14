@@ -7,6 +7,32 @@ h1,h2,h3,h4,h5,h6,p {
   font-size: unset !important;
 }
 
+h1 {
+  font-size: xx-large !important;
+
+}
+
+h2 {
+  font-size: x-large !important;
+}
+
+h3{
+  font-size: large !important;
+}
+
+h4 {
+  font-size: medium !important;
+}
+
+h5, h6 {
+  font-size: small !important;
+}
+
+p {
+  font-size: smaller !important;
+  font-weight: unset !important;
+}
+
 .dashboard-section .dashboard-table .table th,
 .dashboard-section .dashboard-table .table td {
     text-align: left !important;

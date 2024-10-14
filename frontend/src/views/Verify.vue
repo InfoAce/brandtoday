@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>Account Verification</h2>
+                            <h4>Account Verification</h4>
                         </div>
                     </div>
                     <div class="col-sm-6">

@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="page-title">
-                        <h2>create account</h2>
+                        <h4>create account</h4>
                     </div>
                 </div>
                 <div class="col-sm-6">

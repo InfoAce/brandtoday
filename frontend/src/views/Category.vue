@@ -6,7 +6,7 @@
                 <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2 class="text-theme">Sub Categories - {{ $data.products_count }} results</h2>
+                            <h4 class="text-theme">Sub Categories - {{ $data.products_count }} results</h4>
                         </div>
                     </div>
                     <div class="col-sm-6">

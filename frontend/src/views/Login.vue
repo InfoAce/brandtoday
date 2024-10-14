@@ -6,7 +6,7 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="page-title">
-						<h2>Login</h2>
+						<h4>Login</h4>
 					</div>
 				</div>
 				<div class="col-sm-6">

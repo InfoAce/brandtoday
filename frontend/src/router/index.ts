@@ -395,8 +395,8 @@ router.beforeEach(
     window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
 
     if( auth ){
-      if( isEmpty(store.getters.auth) && routeName == 'Login' ){ next({ name: 'Login' }) }
-      next();
+      if( isEmpty(store.getters.auth) ){ next({ name: 'Login' }) }
+      if( !isEmpty(store.getters.auth) ){ next(); }
     }
 
     if( !auth ){

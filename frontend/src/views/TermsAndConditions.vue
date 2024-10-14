@@ -6,7 +6,7 @@
 			<div class="row px-4">
 				<div class="col-sm-6">
 					<div class="page-title">
-						<h2>Terms & Conditions</h2>
+						<h4>Terms & Conditions</h4>
 					</div>
 				</div>
 				<div class="col-sm-6">

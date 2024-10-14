@@ -6,7 +6,7 @@
                 <div class="row px-4">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2 class="text-theme">Products - {{ $data.products_count }}</h2>
+                            <h4 class="text-theme">Products - {{ $data.products_count }}</h4>
                         </div>
                     </div>
                     <div class="col-sm-6" v-if="!isEmpty($data.category) && !isEmpty($data.sub_category)">
@@ -260,7 +260,13 @@ const selectSubCategory = (value,category) => {
     }
 };
 
-const selectSubChildCategory = (category) => {
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Selects a sub child category based on the provided category object.
+ * @param {Object} category - The category object to select.
+ * @returns {void} - Nothing.
+ */
+/******  6cb6fd7d-b553-4c82-a531-6430d184a89f  *******/const selectSubChildCategory = (category) => {
     $data.sub_child_category = btoa(category.categoryName.toLowerCase());
 };
 

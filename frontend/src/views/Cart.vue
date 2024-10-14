@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="page-title">
-                            <h2>Shopping Cart</h2>
+                            <h4>Shopping Cart</h4>
                         </div>
                     </div>
                     <div class="col-sm-6">
