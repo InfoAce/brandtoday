@@ -85,10 +85,13 @@
                                     </li>
                                 </ul>
                                 <div class="tab-content nav-material" id="top-tabContent">
-                                    <div class="tab-pane fade show active" id="top-home" role="tabpanel"
-                                        aria-labelledby="top-home-tab">
-                                        <div class="product-tab-discription p-4">
+                                    <div class="tab-pane fade show active p-4" id="top-home" role="tabpanel" aria-labelledby="top-home-tab">
+                                        <div class="product-tab-discription">
                                             <div class="part" v-html="product.description"></div>                                
+                                        </div>
+                                        <div class="col-12 py-2" v-if="!$isEmpty(product.full_branding_guide)">
+                                            <h4>Branding</h4>
+                                            <a :href="product.full_branding_guide" target="_blank">View Branding Guide</a>
                                         </div>
                                     </div>                        
                                     <div class="tab-pane fade" id="top-review" role="tabpanel" aria-labelledby="review-top-tab" v-if="!$isEmpty(auth)">

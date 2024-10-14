@@ -33,6 +33,22 @@ p {
   font-weight: unset !important;
 }
 
+.part p,
+.part div {
+  font-size: medium !important;
+}
+
+.part ul {
+  padding-left: 20px !important;
+  display: grid !important;
+}
+
+.part ul li {
+  display: list-item;
+  font-size: medium !important;
+  list-style-type: square !important;
+}
+
 .dashboard-section .dashboard-table .table th,
 .dashboard-section .dashboard-table .table td {
     text-align: left !important;
