@@ -532,9 +532,8 @@ export class AppService {
     } catch (error) {
 
         // Logging
-        this.logger.log(`Failed to synchronize stock keeping`);
-
-        console.log(error);
+        this.logger.log(JSON.stringify(error));
+        this.logger.log(`Failed to synchronize`);
     }
 
   }

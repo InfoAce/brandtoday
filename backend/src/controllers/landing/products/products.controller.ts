@@ -98,7 +98,13 @@ export class ProductsController {
         products = await Promise.all(
           products.map( async(product) => {
             if (!isNull(product.colour_images)) {
-              product.colour_images = product.colour_images.map((color) => ({ ...color, hex: this.colors[color.code].colour }));
+              product.colour_images = product.colour_images.map((color) =>{
+                try {
+                  return { ...color, hex: this.colors[color.code].colour };
+                } catch(error){
+                  this.logger.log(`[COLOUR ERROR]${JSON.stringify(color)}`)
+                }
+              });
             }
             await product.variants;
             return product;
