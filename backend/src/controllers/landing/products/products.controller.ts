@@ -244,27 +244,27 @@ export class ProductsController {
         await product.stocks;
 
         let categories            = await product.categories;
-        let related_products: any = await this.productCategoryModel.find({ where: { category_id: In(categories.map( category => toPlainObject(category).category_id ) ), product_id: Not(product.id) }, take: 15, cache: true});
+        // let related_products: any = await this.productCategoryModel.find({ where: { category_id: In(categories.map( category => toPlainObject(category).category_id ) ), product_id: Not(product.id) }, take: 15, cache: true});
 
-        related_products          = await Promise.all(
-            related_products.map( product_category => product_category.product )
-                            .map( async product => {
-                              await product.variants;
-                              await product.stocks;
-                              return product;
-                            })
-                            .map( async product => { 
-                                product = await product;
-                                return{
-                                  ...product, 
-                                  colour_images: product.colour_images.map( (color) => ({
-                                    ...color,
-                                    hex: this.colors[color.code].colour,
-                                  }))
-                                }
-                              }
-                            )
-        );
+        // related_products          = await Promise.all(
+        //     related_products.map( product_category => product_category.product )
+        //                     .map( async product => {
+        //                       await product.variants;
+        //                       await product.stocks;
+        //                       return product;
+        //                     })
+        //                     .map( async product => { 
+        //                         product = await product;
+        //                         return{
+        //                           ...product, 
+        //                           colour_images: product.colour_images.map( (color) => ({
+        //                             ...color,
+        //                             hex: this.colors[color.code].colour,
+        //                           }))
+        //                         }
+        //                       }
+        //                     )
+        // );
 
         // Initialize the favourite object
         let favourite: any = {};
@@ -276,7 +276,7 @@ export class ProductsController {
 
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
-        res.status(HttpStatus.OK).json({ product, favourite, related_products });
+        res.status(HttpStatus.OK).json({ product, favourite });
 
       } catch(error){
 
