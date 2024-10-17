@@ -12,6 +12,8 @@ import { stat } from 'fs';
 import { PesapalServiceException } from 'src/exceptions/pesapal.exception';
 import { OrderRepository } from 'src/repositories';
 import { OrderEntity } from 'src/entities';
+import { Between, IsNull, Not } from 'typeorm';
+import * as moment from 'moment';
 
 @Controller('dashboard/overview')
 export class OverviewController {
@@ -20,6 +22,7 @@ export class OverviewController {
 
   constructor(
     private orderModel: OrderModel,
+    private transactionModel: TransactionModel,
     private userModel: UserModel,
   ){}
 
@@ -32,14 +35,24 @@ export class OverviewController {
 
     try{
 
-      let [ clients, clientsCount ] = await this.userModel.findAndCount({ where: { role: { name: 'client' } } });
-      let [ staff,   staffCount   ] = await this.userModel.findAndCount({ where: { role: { name: 'staff' } } });
-      let [ orders,  ordersCount  ] = await this.orderModel.findAndCount();
-      
-      let pending_orders: number    = orders.filter(order => order.status == 'pending').length 
+      let startdate          = moment();
+      let enddate            = moment().subtract(1,'year');
 
+      let clients            = await this.userModel.count({ where: { role: { name: 'client' } } });
+      let staff              = await this.userModel.count({ where: { role: { name: 'staff' } } });
+      let orders             = await this.orderModel.count();
+      let pending_orders     = await this.orderModel.count({ where: { status: 'pending' } });
+      let revenue_received   = await this.transactionModel.sum('amount', { confirmation_code: Not(IsNull()) });
+      let revenue_pending    = await this.transactionModel.sum('amount', { confirmation_code: IsNull() });
+      let order_distribution = await this.orderModel.createQueryBuilder('orders')
+                                         .select('orders.status, orders.created_at, COUNT(orders.id) as count')
+                                         .where({ created_at: Between(enddate.format('YYYY-MM'),startdate.format('YYYY-MM')) })
+                                         .groupBy('orders.status')
+                                         .getMany()
+
+      console.log(order_distribution)
       return res.status(HttpStatus.OK).json({ 
-        summary: { clients: clientsCount, staff: staffCount, orders: ordersCount, pending_orders}, 
+        summary: { clients, staff, orders, pending_orders, revenue_received, revenue_pending}, 
       });
 
     } catch (error) {

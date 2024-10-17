@@ -4,11 +4,10 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, get, take, intersectionBy } from 'lodash';
+import { cloneDeep, chunk, isEmpty, isNull, flatten, get, take, intersectionBy } from 'lodash';
 import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
-
-
+import * as fs from 'fs'
 @Injectable()
 export class AppService {
 
@@ -240,8 +239,8 @@ export class AppService {
                     // setTimeout( async (products) => {
                         await this.productModel.insert(
                             products.map( 
-                                ({ id, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                                    ({ id, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                                ({ id, brand, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                                    ({ id, brand: !isNull(brand) ? brand.code : null, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
                             )
                         );
                         resolve(true);
@@ -490,8 +489,98 @@ export class AppService {
     }
   }
   
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  async amrodDataSyncDaily() {
+
+    try{
+        this.logger.log(`Amrod synchronization started.`);        
+
+        // Get amrod credentials from the configuration service
+        let { credentials } = this.configService.get<any>('services.amrod');
+
+        // Login to amrod
+        await this.amrodService.login(credentials);
+
+        let productsUpdated: Array<any> = await this.amrodService.getUpdatedProducts();
+
+        let pricesUpdated: Array<any>   = await this.amrodService.getUpdatedPrices();
+
+        // Get product variants
+        let prices = await this.priceModel.find();
+
+        // Get product variants
+        let products = await this.productModel.find();        
+
+        // Get product variants
+        // let colours = await this.productColourModel.find();        
+
+        // Match existing stocks with variants
+        pricesUpdated = intersectionBy(pricesUpdated.map( stock => ({ ...stock, full_code: stock.fullCode })), prices, 'full_code');
+
+        // Match existing stocks with variants
+        productsUpdated = intersectionBy(productsUpdated.map( product => ({ ...product, full_code: product.fullCode })), products, 'full_code');        
+
+        // let coloursUpdate = intersectionBy(colours, products.map( product => ({ ...product, product_id: product.id })), 'product_id'); 
+        // let coloursUpdate = intersectionBy(
+        //     productsUpdated.filter( product => ({ ...product.colourImages, product_id: product.id }) )
+        //                    .flat()
+        //                    .map( colour => ({ ...colour }) ), 
+        //     intersectionBy(colours, products.map( product => ({ ...product, product_id: product.id })), 'product_id'), 
+        //     'full_code'
+        // ); 
+        // fs.writeFileSync('public/colours.json', JSON.stringify(
+        //     flatten(productsUpdated.map( product => ({ ...product.colourImages.map( colour => ({ ...colour, product_id: product.id})) }) ),2)
+        // ));
+
+        await this.productModel.upsert(
+            productsUpdated.map( 
+                ({ brand, fullCode: full_code, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                    ({ brand: !isNull(brand) ? brand.code : null, full_code, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+            ),
+            {
+                conflictPaths: ["full_code"],
+                upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+            },
+        )
+
+        // await this.productColourModel.upsert(
+        //     colours.map( 
+        //         ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
+        //     ),            
+        //     {
+        //         conflictPaths: ["full_code"],
+        //         upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+        //     },
+        // )
+        
+        await this.priceModel.upsert(
+            pricesUpdated.map( 
+                price => ({ 
+                    full_code:   get(price,'full_code'), 
+                    simple_code: get(price,'simplecode'), 
+                    price:       get(price,'price'),                
+                }) 
+            ),
+            {
+                conflictPaths: ["full_code"],
+                upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+            },
+        )
+
+        // Logging
+        this.logger.log(`Amrod synchronization completed.`);        
+
+    } catch (error) {
+
+        // Logging
+        this.logger.log(error);
+        this.logger.log(`Failed to synchronize`);
+    }
+
+  }
+
   @Cron(CronExpression.EVERY_10_MINUTES)
-  async amrodDataSync() {
+  async amrodDataSyncTenMins() {
 
     try{
         this.logger.log(`Amrod synchronization started.`);        

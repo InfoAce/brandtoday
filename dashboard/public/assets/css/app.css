@@ -1,6 +1,43 @@
 body{
     background: #ededed;
+    font-family: "Montserrat", sans-serif !important;
+    margin: 0;
 }
+  
+h1,h2,h3,h4,h5,h6,p, li, input, a {
+  font-family: unset !important;
+  font-size: unset !important;
+}
+
+h1 {
+  font-size: xxx-large !important;
+}
+
+h2 {
+  font-size: xx-large !important;
+}
+
+h3{
+  font-size: x-large !important;
+}
+
+h4 {
+  font-size: large !important;
+}
+
+h5, h6 {
+  font-size: medium !important;
+}
+
+p {
+    font-size: smaller !important;
+    font-weight: unset !important;
+}
+
+.success-box .icons-widgets .align-self-center {
+    background-color: #198754 !important
+}
+
 .page-body {
     background: #ededed !important;
 }

@@ -322,7 +322,7 @@ export class OrderController {
       if( transaction_status.status_code === 1 ){
       
         // Update the transaction status in the database
-        await this.transactionModel.updateOne(transaction.id,{
+        await this.transactionModel.update(transaction.id,{
           confirmation_code: transaction_status.confirmation_code,
           payment_method:    transaction_status.payment_method,
           status:            transaction_status.status,

@@ -39,8 +39,9 @@ export default registerAs('services',() => {
                     updated: 'Prices/GetUpdated'
                 },
                 products: {
-                    with_branding:    'Products/GetProductsAndBranding',
-                    without_branding: 'Products',
+                    update_without_branding: 'Products/GetUpdatedProducts',
+                    with_branding:           'Products/GetProductsAndBranding',
+                    without_branding:        'Products',
                 },
                 stocks:{
                     all: 'Stock',

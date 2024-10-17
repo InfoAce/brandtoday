@@ -9,6 +9,11 @@ export class ProductEntity {
 
   @Column({
     nullable: true,
+  })
+  brand: string;
+
+  @Column({
+    nullable: true,
     type: 'json'
   })
   branding_templates: string;

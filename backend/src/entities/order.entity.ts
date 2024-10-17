@@ -72,8 +72,8 @@ export class OrderEntity {
   })
   user_id: string;
 
-  @CreateDateColumn()
-  created_at: Date; // Creation date
+  @CreateDateColumn({ type: 'datetime'})
+  created_at: string; // Creation date
   
   @UpdateDateColumn()
   updated_at: Date

@@ -83,13 +83,13 @@ export class AmrodService {
         // Try to login to the Amrod vendor service
         try {
             // Construct the URL for the login request
-            const url = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
+            let url = `${this.config.endpoints.auth_uri}/${this.config.endpoints.login}`;
 
             // Extract the customer code, password, and username from the data
-            const { account_number: CustomerCode, password: Password, username: UserName } = data;
+            let { account_number: CustomerCode, password: Password, username: UserName } = data;
 
             // Make a POST request to the login endpoint
-            const { data: auth_data } = await firstValueFrom(
+            let { data: auth_data } = await firstValueFrom(
                 this.request({ base_uri: this.config.endpoints.auth_uri }).post(url, { CustomerCode, Password, UserName })
             );
 
@@ -121,7 +121,7 @@ export class AmrodService {
             let auth = await this.cacheManager.get('amrod_auth');
 
             // Make a GET request to the Amrod API to fetch all products
-            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.products.without_branding}`) );
+            let { data } = await firstValueFrom( this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(`${this.config.endpoints.products.with_branding}`) );
 
             // Return the fetched products
             return data;
@@ -138,6 +138,36 @@ export class AmrodService {
 
     }
 
+    /**
+     * Fetches updated products from the Amrod API.
+     * 
+     * @returns {Promise<Array<any>>} A promise that resolves with an array of updated product objects.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getUpdatedProducts(): Promise<Array<any>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and endpoint for updated products
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.products.update_without_branding}`;
+
+            // Execute a GET request to fetch updated products from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched updated products data
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Products: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    }
 
     /**
      * Fetches all stocks from the Amrod API

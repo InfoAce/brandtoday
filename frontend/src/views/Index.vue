@@ -14,7 +14,7 @@
             </template>
             <carousel  
                 v-if="!isEmpty($data.categories) && !$data.loading" 
-                :autoplay="5000" :wrap-around="false"
+                :autoplay="5000" :wrap-around="true"
                 class="p-0"
                 :settings="$data.settings.banners" 
             >
@@ -69,7 +69,7 @@
                     <carousel  
                         v-if="isEmpty($data.testimonials) && !$data.loading"
                         :settings="$data.settings.testimonials" 
-                        :wrapAround="true" 
+                        :wrap-around="true" 
                         :transition="5000"
                         :breakpoints="$data.breakpoints.testimonials"
                     >
@@ -152,7 +152,7 @@
                     <carousel  
                         v-if="!isEmpty($data.categories) && !$data.loading" 
                         :settings="$data.settings.categories" 
-                        :wrapAround="true" 
+                        :wrap-around="true" 
                         :breakpoints="$data.breakpoints.categories"
                         :autoplay="5000"
                     >
@@ -219,7 +219,7 @@
                     </template>
                     <carousel  
                         v-if="!isEmpty($data.brands) && !$data.loading" 
-                        :autoplay="5000" :wrap-around="false"
+                        :autoplay="5000" :wrap-around="true"
                         class="p-0"
                         :settings="$data.settings.banners" 
                     >
@@ -278,7 +278,7 @@
                     <carousel  
                         v-if="!isEmpty($data.products) && !$data.loading" 
                         :settings="$data.settings.categories" 
-                        :wrapAround="true" 
+                        :wrap-around="true" 
                         :breakpoints="$data.breakpoints.categories"
                         :autoplay="5000"
                     >
