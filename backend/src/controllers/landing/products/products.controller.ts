@@ -66,7 +66,7 @@ export class ProductsController {
         let products_count = Number();
 
         if( !isEmpty(category_id) && !isEmpty(sub_category_id) ){
-          let product_categories =  await this.productCategoryModel.find({ where: { category_id, sub_category_id }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true});
+          let product_categories = await this.productCategoryModel.find({ where: { category_id, sub_category_id }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true});
           products               = cloneDeep(product_categories).map( (category) => category.product );
         }
 

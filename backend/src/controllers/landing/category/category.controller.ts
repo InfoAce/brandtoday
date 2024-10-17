@@ -76,7 +76,7 @@ export class CategoryController {
         let sub_category        = await this.subCategoryModel.findOne({ where: { id: sub_category_id } });
 
         // Find the sub category based on the provided sub category id
-        let [_, products_count] = await this.productCategoryModel.findCount({ where: { sub_category_id, category_id} });
+        let [_, products_count] = await this.productCategoryModel.findAndCount({ where: { sub_category_id, category_id} });
 
         return res.status(HttpStatus.OK).json({ category, sub_category, products_count });
         
@@ -167,7 +167,7 @@ export class CategoryController {
         sub_categories = await (
           await Promise.all( 
             sub_categories.map( async (sub_category) => {
-              let [ product_categories, count] = await this.productCategoryModel.findCount({ where: { sub_category_id: sub_category.id } });
+              let [ product_categories, count] = await this.productCategoryModel.findAndCount({ where: { sub_category_id: sub_category.id } });
 
               products_count += count;
               
