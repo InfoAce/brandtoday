@@ -121,7 +121,7 @@ export class OrderController {
 
         // Save user, address, and order
         let user    = await this.userModel.save(pick(form,['first_name','last_name','email','phone_number','password','token','company_id','role_id']));
-        let address = await this.addressBookModel.save({ ...pick(form,['address_line_1','address_line_2','county_state','city_town','country','postal_code','category']),'user_id': user.id });
+        let address = await this.addressBookModel.save({ ...pick(form,['address_line_1','address_line_2','county_state','city_town','country','postal_code','category']),'user_id': user.id, category: 'home' });
         let order   = await this.orderModel.save({ ...pick(form,['items']), user_id: user.id, address_id: address.id, num_id: moment().unix() });
         
         await Promise.all(
