@@ -9,7 +9,7 @@ export enum Status {
   CONFIRMED    = "confirmed",
   IN_TRANSIT   = "in_transit",
   DELIVERED    = "delivered",
-  CANCELLED    = "cencelled",
+  CANCELLED    = "cancelled",
 }
 
 @Entity("orders")
