@@ -37,7 +37,7 @@ export class OverviewController {
       let revenue_received   = ( await this.transactionModel.sum('amount', { confirmation_code: Not(IsNull()) }) ) || 0;
       let revenue_pending    = ( await this.transactionModel.sum('amount', { confirmation_code: IsNull() }) ) || 0;
       let order_distribution = await this.orderModel.createQueryBuilder('orders')
-                                         .select(`orders.status, DATE_FORMAT(orders.created_at,'%Y-%m') as date, COUNT(orders.id) as count`)
+                                         .select(`orders.status, orders.created_at, DATE_FORMAT(orders.created_at,'%Y-%m') as date, COUNT(orders.id) as count`)
                                          .where({ created_at: Between(enddate.format('YYYY-MM-DD'), startdate.format('YYYY-MM-DD')) })
                                          .groupBy('YEAR(orders.created_at),MONTH(orders.created_at),orders.status')
                                          .getRawMany()
