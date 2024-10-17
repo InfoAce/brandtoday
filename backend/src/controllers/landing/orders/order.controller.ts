@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ControllerException } from 'src/exceptions/controller.exception';
 
 @Controller('orders')
 export class OrderController {
@@ -186,6 +187,8 @@ export class OrderController {
       if( error instanceof PesapalServiceException ) {
         this.logger.error(error);
       }
+
+      throw new ControllerException(error);
 
     }
   } 
