@@ -44,13 +44,13 @@ export class OverviewController {
       let pending_orders     = await this.orderModel.count({ where: { status: 'pending' } });
       let revenue_received   = await this.transactionModel.sum('amount', { confirmation_code: Not(IsNull()) });
       let revenue_pending    = await this.transactionModel.sum('amount', { confirmation_code: IsNull() });
-      let order_distribution = await this.orderModel.createQueryBuilder('orders')
-                                         .select('orders.status, orders.created_at, COUNT(orders.id) as count')
-                                         .where({ created_at: Between(enddate.format('YYYY-MM'),startdate.format('YYYY-MM')) })
-                                         .groupBy('orders.status')
-                                         .getMany()
+      // let order_distribution = await this.orderModel.createQueryBuilder('orders')
+      //                                    .select('orders.status, orders.created_at, COUNT(orders.id) as count')
+      //                                    .where({ created_at: Between(enddate.format('YYYY-MM'),startdate.format('YYYY-MM')) })
+      //                                    .groupBy('orders.status')
+      //                                    .getMany()
 
-      console.log(order_distribution)
+      // console.log(order_distribution)
       return res.status(HttpStatus.OK).json({ 
         summary: { clients, staff, orders, pending_orders, revenue_received, revenue_pending}, 
       });
