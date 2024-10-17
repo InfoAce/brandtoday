@@ -235,17 +235,16 @@ export class AppService {
 
         await Promise.all(
             chunk(products,1000).map( async (products) => {
-                return new Promise( async (resolve,reject) => {
-                    // setTimeout( async (products) => {
-                        await this.productModel.insert(
-                            products.map( 
-                                ({ id, brand, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                                    ({ id, brand: !isNull(brand) ? brand.code : null, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
-                            )
-                        );
-                        resolve(true);
-                    // }, 2000);
-                })
+                await this.productModel.upsert(
+                    products.map( 
+                        ({ id, brand, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                            ({ id, brand: !isNull(brand) ? brand.code : null, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                    ),
+                    {
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
             })
         )
 
@@ -254,28 +253,31 @@ export class AppService {
                 colour_images,
                 500
             ).map( async (colour) => {
-                return new Promise( async (resolve,reject) => {
-                    // setTimeout( async (products) => {
-                        await this.productColourModel.insert(
-                            colour.map( 
-                                ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
-                            )
-                        );
-                        resolve(true);
-                    // }, 2000);
-                })
+                return await this.productColourModel.upsert(
+                    colour.map( 
+                        ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
+                    ),
+                    {
+                        conflictPaths: ["product_id"],
+                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
             })
         )
 
         await Promise.all(
-            chunk(product_categories,2000).map( async (prod_categories) => {
-                return new Promise( async (resolve,reject) => {
-                    // setTimeout( async (prod_categories) => {
-                        await this.productCategoryModel.insert( prod_categories );
-                        resolve(true);
-                    // }, 5000)
-                }) 
-            })
+            chunk(product_categories,2000).map( 
+                async (prod_categories) => {
+                    await this.productCategoryModel.upsert( 
+                        prod_categories,
+                        {
+                            conflictPaths: ["product_id"],
+                            upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        },
+
+                    );
+                }
+            )
         )
 
         // Logging
@@ -284,8 +286,9 @@ export class AppService {
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
     } catch (error) {
+        console.log(error);
         // Logging
-        this.logger.log(`Failed to synchronize stock keeping`);
+        this.logger.log(`Failed to synchronize products`);
         
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
