@@ -149,17 +149,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Orders created for the past 12 months.</h5>
-                        <div class="card-header-right">
-                            <ul class="list-unstyled card-option">
-                                <li><i class="icofont icofont-simple-left"></i></li>
-                                <li><i class="view-html fa fa-code"></i></li>
-                                <li><i class="icofont icofont-maximize full-card"></i></li>
-                                <li><i class="icofont icofont-minus minimize-card"></i></li>
-                                <li><i class="icofont icofont-refresh reload-card"></i></li>
-                                <li><i class="icofont icofont-error close-card"></i></li>
-                            </ul>
-                        </div>
+                        <h4>Orders created for the past 12 months.</h4>
                     </div>
                     <div class="card-body sell-graph">
                         <Bar :data="$ordersChart.config" :options="$ordersChart.options" />
@@ -171,8 +161,8 @@
 </template>
 
 <script setup>
-import { computed, inject, onBeforeMount, reactive, ref, watch } from 'vue';
-import { cloneDeep, debounce } from 'lodash';
+import { computed, inject, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
+import { cloneDeep, debounce, get } from 'lodash';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -184,23 +174,61 @@ import {
   LinearScale
 } from 'chart.js'
 import { useStore } from 'vuex';
+import moment from 'moment';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const $api         = inject('$api');
-const $data        = reactive({ summary: {} });
+const $toast       = inject('$toast');
+const $data        = reactive({ 
+    listMonths:      Array(),
+    summary: {
+        clients:          0, 
+        staff:            0, 
+        orders:           0,
+        pending_orders:   0,
+        revenue_received: 0, 
+        revenue_pending:  0, 
+    },
+    orderStatus: [
+        {
+            label: 'Paid',
+            backgroundColor: '#cce5ff',
+            data: []
+        },
+        {
+            label: 'Pending',
+            backgroundColor: '#ffbc58',
+            data: []
+        },
+        {
+            label: 'Confirmed',
+            backgroundColor: '#d1ecf1',
+            data: []
+        },
+        {
+            label: 'Cancelled',
+            backgroundColor: '#7e1414',
+            data: []
+        },
+        {
+            label: 'In Transit',
+            backgroundColor: '#a5a5a5',
+            data: []
+        },
+        {
+            label: 'Delivered',
+            backgroundColor: '#d4edda',
+            data: []
+        } 
+    ]
+});
 const $store       = useStore();
 const $ordersChart = computed( 
     () => ({
         config: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'Data One',
-                    backgroundColor: '#f87979',
-                    data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-                }
-            ]
+            labels: $data.listMonths.map( item => item.name ),
+            datasets: $data.orderStatus
         },
         options: {
             responsive: true,
@@ -211,22 +239,54 @@ const $ordersChart = computed(
 
 const company = computed( () => $store.getters.home.company );
 
-onBeforeMount( 
-    debounce( 
-        async () => {
-            try {
-                $store.commit('loader',true);
-                let { data: { summary} } = await $api.get(`/dashboard/overview`);
+const getListOfMonths = () => {
+    let startdate          = moment().add(1,'day');
+    let enddate            = moment().subtract(11,'month');
 
-                $data.summary = cloneDeep(summary);
+    if (enddate < startdate){
+        let date = enddate.startOf('month');
+        while (date < startdate.endOf('month')) {
+            $data.listMonths.push({ date: date.format('YYYY-MM'), name: date.format('MMMM'), data: Array() });
+            date.add(1,'month');
+        }
+    }
 
-                $store.commit('loader',false);
+    $data.orderStatus = $data.orderStatus.map(
+        (order) => {
+            order.data = $data.listMonths.map( item => 0 );
+            return order;
+        }
+    );
 
-            } catch(error) {
+}
 
-            }
-        },
-        500
-    ) 
+onBeforeMount( () => getListOfMonths() )
+
+onMounted( 
+    async () => {
+        try {
+            $store.commit('loader',true);
+
+            let { data: { order_distribution, summary } } = await $api.get(`/dashboard/overview`);
+
+            $data.summary = cloneDeep(summary);
+
+            $data.orderStatus = $data.orderStatus.map(
+                (order) => {
+                    order.data = $data.listMonths.map( item => parseInt(get(order_distribution.find( dist => dist.date == item.date && dist.status == order.label.toLowerCase() ),'count')) || 0  );
+                    return order;
+                }
+            );
+
+            $store.commit('loader',false);
+
+        } catch(error) {
+            console.log(error);
+
+            $toast.error(`Something went wrong in fetching data.`);
+
+        }
+    },
 )
+
 </script>
