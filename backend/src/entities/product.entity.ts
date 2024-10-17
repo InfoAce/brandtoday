@@ -60,7 +60,9 @@ export class ProductEntity {
   @Column()
   simple_code: string;
 
-  @Column()
+  @Column({
+    unique: true
+  })
   full_code: string;
 
   @Column({
