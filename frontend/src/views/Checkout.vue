@@ -382,7 +382,7 @@ const  openPesapal = () => {
     iframe.setAttribute('src',redirect_url);
     iframe.setAttribute('height',window.screen.height);
     iframe.setAttribute('width',window.screen.width);
-    iframe.setAttribute('sandbox','allow-forms allow-scripts');
+    iframe.setAttribute('sandbox','allow-same-origin allow-scripts allow-popups allow-forms');
 
     document.querySelector('#payment_box .body').append(iframe);
     document.querySelector('#payment_box').style.visibility = 'visible';
@@ -418,14 +418,14 @@ const placeOrder = async () => {
         // Send a POST request to the API to place the order
         const { data: { order } } = await $api.post('/orders',data);
 
-        // Store the order object in the component's data
-        $data.order               = cloneDeep(order);
-
         // Show a success toast
         $toast.success('Your order has been placed successfully.');
         
         // Send a PUT request to the API to update the order's transaction status
-        await $api.put(`/orders/${order.id}/transaction`);
+        const { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
+
+        // Store the order object in the component's data
+        $data.order               = cloneDeep(orderData);
 
         // Show a success toast
         $toast.success('Redirecting you to make payment for your order.');
