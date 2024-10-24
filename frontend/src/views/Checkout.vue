@@ -400,22 +400,44 @@ const  openPesapal = () => {
             
 }
 
+/**
+ * Places an order by sending a POST request to the API with the form data.
+ * If the request is successful, the order object is stored in the component's data and a success toast is shown.
+ * The user is then redirected to make payment for the order.
+ * If the request fails, an error toast is shown and the error is logged to the console.
+ * @returns {void}
+ */
 const placeOrder = async () => {
     try{
-        $data.loader.order      = true;
-        const data              = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.form,'type','new');
-        let { data: { order } } = await $api.post('/orders',data);
-        let { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
-        $data.order             = cloneDeep(orderData);
+        // Set the loader to true
+        $data.loader.order        = true;
+
+        // Set the type of the order to either 'existing' or 'new' based on whether the user is logged in or not
+        const data                = !isEmpty(authUser.value) ? set($data.form,'type','existing') : set($data.form,'type','new');
+
+        // Send a POST request to the API to place the order
+        const { data: { order } } = await $api.post('/orders',data);
+
+        // Store the order object in the component's data
+        $data.order               = cloneDeep(order);
+
+        // Show a success toast
+        $toast.success('Your order has been placed successfully.');
+        
+        // Send a PUT request to the API to update the order's transaction status
+        await $api.put(`/orders/${order.id}/transaction`);
+
+        // Show a success toast
+        $toast.success('Redirecting you to make payment for your order.');
+        
+        // Open the payment iframe
         openPesapal();
     } catch (error) {
+        // Show an error toast
+        $toast.error('Oops! Something went wrong when placing the order.')
+        
+        // Log the error to the console
         console.log(error);
-        // $data.loader.order = true;
-        // if( data.statusCode == 400 ){
-        //     data.message.forEach( (value:string) => {
-        //         $toast.error(value);
-        //     })
-        // }
     }
 }
 
