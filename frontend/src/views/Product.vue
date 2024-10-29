@@ -486,6 +486,8 @@ export default {
             }
 
             this.cart.push(cloneDeep(data));
+
+            this.$toast.success('This product has been added to your cart.');
         },
         addQuantity(event){
             this.form.sizes[this.selections.sizes[sizeName]].quantity = event.target.value;
@@ -519,7 +521,7 @@ export default {
             set(this.form,'price',      String());
             set(this.form,'colour',     String());
             set(this.form,'image',      String());
-            set(this.form,'name',       String());
+            set(this.form,'name',       String(product.name));
 
             switch( this.isVariant ){   
                 case true: 
