@@ -221,7 +221,9 @@ export default {
             consumer_key:   yup.string()
                                .required("*Consuner key is required"),
             consumer_secret:yup.string()
-                               .required("*Consumer secret is required"),                                                                                                  
+                               .required("*Consumer secret is required"),    
+            live:           yup.boolean()
+                               .required("*Live is required"),                                                                                              
         });        
 
     },
