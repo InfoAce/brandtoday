@@ -56,8 +56,8 @@ export default registerAs('services',() => {
         },
         pesapal: {
             base:{
-                live:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
-                sandbox: "https://cybqa.pesapal.com/pesapalv3/api" // live phase endpoint
+                live: "https://cybqa.pesapal.com/pesapalv3/api", // live phase endpoint
+                sandbox:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
             },
             endpoints: {
                 auth:         "/Auth/RequestToken", // get authorization token4

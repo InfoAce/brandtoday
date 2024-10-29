@@ -21,7 +21,7 @@ export class PesapalService {
     // Interceptor with authentication
     request(data: any = {}){
         this.httpService.axiosRef.defaults.headers.common['Content-Type'] = "application/json";
-        this.httpService.axiosRef.defaults.baseURL = this.config.endpoints.live;
+        this.httpService.axiosRef.defaults.baseURL = this.config.live ? this.config.endpoints.live : this.config.endpoints.sandbox;
         if( !isEmpty(data) ){
             if( has(data,'auth') ){
                 let { auth } = data;

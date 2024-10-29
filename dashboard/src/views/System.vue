@@ -74,12 +74,16 @@
                                     </div>                            
                                 </div>
                                 <div class="col-12">
-                                    <h4><strong>Pesapal API Settings</strong></h4><hr>
+                                    <h4 class="d-flex justify-content-between">
+                                        <strong>Pesapal API Settings <span class="fa fa-eye-slash ml-2" id="reveal"  data-state="show" @click="revealPespal"></span></strong>
+                                        <span class="badge badge-success" v-if="configurations.pesapal.live">Live</span>
+                                        <span class="badge badge-warning" v-if="!configurations.pesapal.live">Sandbox</span>
+                                    </h4><hr>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="consumer_key">Consumer Key</label>
-                                        <input class="form-control" id="consumer_key" type="text" v-model="configurations.pesapal.consumer_key">
+                                        <input class="form-control" id="consumer_key" type="password" v-model="configurations.pesapal.consumer_key">
                                         <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_key')">{{errors.consumer_key}}</p>								
                                     </div>                            
                                 </div>
@@ -89,7 +93,14 @@
                                         <input class="form-control" id="consumer_secret" type="password" v-model="configurations.pesapal.consumer_secret">
                                         <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_secret')">{{errors.consumer_secret}}</p>								
                                     </div>                            
-                                </div>     
+                                </div>    
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="use_product_fee">Status</label>
+                                        <VueToggles v-model="configurations.pesapal.live"/>
+                                        <p class="text-danger col col-12 mb-0" v-show="$has(errors,'use_product_fee')">{{errors.use_product_fee}}</p>								
+                                    </div>                            
+                                </div> 
                                 <div class="col-12">
                                     <button class="btn btn-primary" :disabled="isDisabled || loading.updating">
                                         <i class="fa fa-spinner fa-spin" v-if="loading.updating"></i>
@@ -111,6 +122,7 @@ import { inject, reactive, ref, watch } from 'vue';
 import { debounce, each, isEmpty, has, pick, cloneDeep } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
+import { VueToggles } from "vue-toggles";
 
 export default {
     /**
@@ -161,6 +173,7 @@ export default {
             next();
         });
     },
+    components: { VueToggles },
     data(){
         return {
             errors: {},
@@ -174,7 +187,8 @@ export default {
                 },
                 pesapal: {
                     consumer_key:    String(),
-                    consumer_secret: String()
+                    consumer_secret: String(),
+                    live:            Boolean()
                 }
             },
             loading: {
@@ -223,6 +237,12 @@ export default {
                 .finally( () => {
                     this.$store.commit('loader',false);
                 });
+        },
+        revealPespal(event){
+            let state = event.target.dataset.state;
+            document.querySelector('#consumer_key').type    = state == 'show' ? 'text' : 'password';
+            document.querySelector('#consumer_secret').type = state == 'show' ? 'text' : 'password';
+            event.target.dataset.state = state == 'show' ? 'hide' : 'show';
         },
         async syncAmrod() {
             try {
