@@ -61,7 +61,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col">
-                                                            <h2 class="td-color">KSH {{ item.price }}</h2>
+                                                            <h2 class="td-color">{{ currency }} {{ item.price }}</h2>
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
@@ -71,7 +71,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2>KSH {{ item.price }}</h2>
+                                                    <h2>{{ currency }} {{ item.price }}</h2>
                                                 </td>
                                                 <td>
                                                     <div class="qty-box">
@@ -81,7 +81,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2 class="td-color">KSH {{ (item.price * size.quantity).toFixed(0) }}</h2>
+                                                    <h2 class="td-color">{{ currency }} {{ (item.price * size.quantity) }}</h2>
                                                 </td>
                                                 <td>
                                                     <a href="#" class="icon" @click.prevent="removeSizeItem({ item, key, index})"><i class="fa fa-trash"></i></a>
@@ -106,7 +106,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col">
-                                                            <h2 class="td-color">KSH {{ item.price }}</h2>
+                                                            <h2 class="td-color">{{ currency }} {{ item.price }}</h2>
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
@@ -116,7 +116,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2>KSH {{ item.price }}</h2>
+                                                    <h2>{{ currency }} {{ item.price }}</h2>
                                                 </td>
                                                 <td>
                                                     <div class="qty-box" v-if="has(item,'sizes')">
@@ -131,8 +131,8 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2 class="td-color" v-if="has(item,'sizes')">KSH {{ (sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(0) }}</h2>
-                                                    <h2 class="td-color" v-if="!has(item,'sizes')">KSH {{ (item.quantity * item.price).toFixed(0) }}</h2>
+                                                    <h2 class="td-color" v-if="has(item,'sizes')">{{ currency }} {{ (sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(0) }}</h2>
+                                                    <h2 class="td-color" v-if="!has(item,'sizes')">{{ currency }} {{ (item.quantity * item.price).toFixed(0) }}</h2>
                                                 </td>
                                                 <td>
                                                     <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
@@ -143,10 +143,10 @@
                                     <tr>
                                         <td colspan="3"></td>
                                         <td> 
-                                            <h2 class="td-color">total price: </h2>
+                                            <h2 class="td-color">Total Amount: </h2>
                                         </td>
                                         <td colspan="2">
-                                            <h2 class="td-color">KSH {{ total.toFixed(0) }}</h2>
+                                            <h2 class="td-color"> {{ currency }} {{ total }}</h2>
                                         </td>
                                     </tr>
                                 </template>
@@ -189,6 +189,8 @@ const items = computed({
         $store.commit('cart',value);
     }
 });
+
+const currency = computed( () => $store.getters.home.company.currency );
 
 const total = computed( () => { 
     return sum(items.value.map( (val:any) => { 

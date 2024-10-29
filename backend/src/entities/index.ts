@@ -16,8 +16,8 @@ export { ProductCategoryEntity as ProductCategoryEntity } from './product-catego
 export { ProductReviewEntity  as ProductReviewEntity } from './product-review.entity';
 export { ProductColourEntity as ProductColourEntity } from './product-colour.entity';
 export { ProductVariantEntity as ProductVariantEntity } from './product-variant.entity';
-export { StockKeepingEntity  as StockKeepingEntity } from './stock-keeping.entity';
 export { StockEntity  as StockEntity } from './stock.entity';
 export { SubCategoryEntity  as SubCategoryEntity } from './sub-category.entity';
+export { SubChildSubCategoryEntity  as SubChildSubCategoryEntity } from './sub-child-sub-category.entity';
 export { TransactionEntity as TransactionEntity } from './transaction.entity';
 export { UserEntity as UserEntity } from './user.entity';

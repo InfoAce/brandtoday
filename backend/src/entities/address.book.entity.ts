@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { UserEntity } from './user.entity';
 import { OrderEntity } from './order.entity';
 
-@Entity("address_book")
+@Entity("address-book")
 export class AddressBookEntity {
   
   @PrimaryGeneratedColumn("uuid")

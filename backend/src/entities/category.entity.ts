@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, OneToMany, ManyToOne, Index } from 'typeorm';
 import { ProductCategoryEntity, SubCategoryEntity } from './index';
 
 @Entity("categories")
@@ -8,6 +8,7 @@ export class CategoryEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
+  @Index({ unique: true })
   code: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -19,7 +20,7 @@ export class CategoryEntity {
   @Column({
     type: 'boolean', 
     nullable: true,
-    default: false
+    default: true
   })
   show: boolean;
 
@@ -31,13 +32,16 @@ export class CategoryEntity {
   priority: number;
 
   @OneToMany(() => ProductCategoryEntity, (product_categories) => product_categories.category, { lazy: true })
-  @JoinColumn()
+  @JoinColumn({
+    name:                 "code",
+    referencedColumnName: "category_code"
+  })
   product_categories: ProductCategoryEntity;
 
   @OneToMany(() => SubCategoryEntity, (product) => product.category, { lazy: true })
   @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "category_id",
+    name:                 "code",
+    referencedColumnName: "category_code"
   })
   sub_categories: SubCategoryEntity[];
 

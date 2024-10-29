@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { CategoryEntity, ChildSubCategoryEntity, ProductColourEntity, ProductEntity, SubCategoryEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany, OneToMany, Index } from 'typeorm';
+import { CategoryEntity, ChildSubCategoryEntity, ProductColourEntity, ProductEntity, SubCategoryEntity, SubChildSubCategoryEntity } from './index';
 
-@Entity("product_categories")
+@Entity("product-categories")
 export class ProductCategoryEntity {
 
   @PrimaryGeneratedColumn("uuid")
@@ -9,49 +9,70 @@ export class ProductCategoryEntity {
 
   @ManyToOne(() => CategoryEntity,(category) => category.product_categories, { cascade: true, onUpdate: "CASCADE", onDelete: 'CASCADE' })
   @JoinColumn({
-    name:                 "category_id",
-    referencedColumnName: "id",
+    name:                 "category_code",
+    referencedColumnName: "code",
   })
   category: CategoryEntity;
 
   @Column({
     nullable: true
   })
-  category_id: string;
+  @Index()
+  category_code: string;
 
-  // @ManyToOne(() => ChildSubCategoryEntity,{ onUpdate: "SET NULL", onDelete: 'SET NULL', orphanedRowAction: 'nullify', nullable: true })
-  // @JoinColumn({
-  //   name:                 "child_sub_category_id",
-  //   referencedColumnName: "id",
-  // })
-  // child_sub_category?: ChildSubCategoryEntity | null;
+  @ManyToOne(() => ChildSubCategoryEntity, (entity) => entity.product_categories, { onUpdate: "SET NULL", onDelete: 'SET NULL', orphanedRowAction: 'nullify', nullable: true })
+  @JoinColumn({
+    name:                 "child_sub_category_code",
+    referencedColumnName: "code",
+  })
+  child_sub_category: ChildSubCategoryEntity | null;
 
   @Column({
     nullable: true
   })
-  child_sub_category_id: string;
+  @Index()
+  child_sub_category_code: string;
+
+  @Column({
+    unique: true
+  })
+  path: string;
 
   @ManyToOne(() => ProductEntity,(product) => product.categories, { eager: true, onUpdate: "CASCADE", onDelete: 'CASCADE' })
   @JoinColumn({
-    name:                 "product_id",
-    referencedColumnName: "id",
+    name:                 "product_code",
+    referencedColumnName: "full_code",
   })
   product: ProductEntity;
 
   @Column()
-  product_id: string;
+  product_code: string;
 
   @ManyToOne(() => SubCategoryEntity, (sub_category) => sub_category.product_categories,  { onUpdate: "SET NULL", onDelete: 'SET NULL', orphanedRowAction: 'nullify', nullable: true })
   @JoinColumn({
-    name:                 "sub_category_id",
-    referencedColumnName: "id",
+    name:                 "sub_category_code",
+    referencedColumnName: "code",
   })
-  sub_category?: SubCategoryEntity | null;
+  sub_category: SubCategoryEntity | null;
 
   @Column({
     nullable: true
   })
-  sub_category_id: string;
+  @Index()
+  sub_category_code: string;
+
+  @ManyToOne(() => SubChildSubCategoryEntity, (entity) => entity.product_categories, { onUpdate: "SET NULL", onDelete: 'SET NULL', orphanedRowAction: 'nullify' })
+  @JoinColumn({
+    name:                 "sub_child_sub_category_code",
+    referencedColumnName: "code",
+  })
+  sub_child_sub_category: SubChildSubCategoryEntity;
+
+  @Column({
+    nullable: true
+  })
+  @Index()
+  sub_child_sub_category_code: string;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

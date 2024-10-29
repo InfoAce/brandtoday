@@ -29,7 +29,7 @@
                                         <button class="btn btn-solid btn-xs" type="button" @click="openLiveChat()">Chat with us</button>
                                     </li>
                                     <li v-for="(product,index) in data.product.items" :key="index">
-                                        <router-link :to="$router.resolve({ name: 'Product', params: { product: product.id }}).href">
+                                        <router-link :to="$router.resolve({ name: 'Product', params: { product: product.full_code }}).href">
                                             <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="" width="20%">
                                             <div>
                                                 <h6 class="text-theme">{{ product.name }}</h6>
@@ -151,19 +151,19 @@
                                 <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
                                     <a 
                                         href="javascript:void(0)" 
-                                        :class="has($route.params,'category') && $route.params.category == category.id ? 'show' : '' " 
+                                        :class="has($route.params,'category') && $route.params.category == category.cpde ? 'show' : '' " 
                                     >{{ category.name.toUpperCase()  }}</a>
                                     <ul>
                                         <li>
                                             <router-link 
-                                                :to="$router.resolve({ name: 'Category', params: { category: category.id } }).href" 
+                                                :to="$router.resolve({ name: 'Category', params: { category: category.code } }).href" 
                                                 :data-menu="category.code.toLowerCase().replace(/\s/g, '')" 
                                             >
                                                 ALL
                                             </router-link>                                                
                                         </li>
                                         <li v-for="(sub_category,key) in category.__sub_categories__" :key="key">
-                                            <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.id, sub_category: sub_category.id }}).href">
+                                            <router-link :to="$router.resolve({ name: 'Products', params:{ category: category.code, sub_category: sub_category.code }}).href">
                                                 {{ sub_category.name.toUpperCase()  }}
                                             </router-link>
                                         </li> 

@@ -7,13 +7,14 @@ export class PriceEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: 'double'
+  })
   amount: number;
 
   @Column({
-    nullable: true
+    unique: true
   })
-  @Index()
   full_code: string
 
   @ManyToOne(() => CompanyEntity, (entity) =>  entity.prices, { eager: true, onDelete:"CASCADE", onUpdate: 'CASCADE' })
@@ -26,7 +27,7 @@ export class PriceEntity {
   @Column()
   company_id: string
 
-  @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ orphanedRowAction: 'nullify', onDelete:"SET NULL", onUpdate: 'CASCADE' })
+  @ManyToOne(() => ProductVariantEntity, (variant) =>  variant.price,{ onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({
     name: 'full_code',
     referencedColumnName: 'full_code'

@@ -6,7 +6,7 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { cloneDeep, first, get, isEmpty, omit, shuffle, toPlainObject } from 'lodash';
 import { sep } from 'path';
 import { CategoryModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError, Like } from 'typeorm';
 
 @Controller('categories')
 export class CategoryController {
@@ -60,23 +60,23 @@ export class CategoryController {
      * @param {Response} res - The response object.
      * @return {Promise<void>} - A promise that resolves when the response is sent.
      */
-    @Get(':category/:sub_category')
+    @Get(':category_code/:sub_category_code')
     async create(
-      @Param('category')     category_id: string, 
-      @Param('sub_category') sub_category_id: string, 
+      @Param('category_code') category_code: string, 
+      @Param('sub_category_code') sub_category_code: string, 
       @Req() req: Request, 
       @Res() res: Response
     ) {
       try {
         
         // Find the category based on the provided category id
-        let category            = await this.categoryModel.findOne({ where: { id: category_id } });
+        let category            = await this.categoryModel.findOne({ where: { code: category_code } });
 
         // Find the sub category based on the provided sub category id
-        let sub_category        = await this.subCategoryModel.findOne({ where: { id: sub_category_id } });
+        let sub_category        = await this.subCategoryModel.findOne({ where: { code: sub_category_code } });
 
         // Find the sub category based on the provided sub category id
-        let [_, products_count] = await this.productCategoryModel.findAndCount({ where: { sub_category_id, category_id} });
+        let [_, products_count] = await this.productCategoryModel.findAndCount({ where: { category_code, sub_category_code } });
 
         return res.status(HttpStatus.OK).json({ category, sub_category, products_count });
         
@@ -139,7 +139,7 @@ export class CategoryController {
 
     }  
 
-    @Put(':id/sub_categories')
+    @Put(':code/sub_categories')
     /**
      * Get a list of subcategories for a given category.
      *
@@ -149,7 +149,7 @@ export class CategoryController {
      * @return {Promise<void>}
      */
     async show(
-      @Param('id', new DefaultValuePipe(String()) ) categoryId: string,
+      @Param('code', new DefaultValuePipe(String()) ) categoryCode: string,
       @Req() req: Request,
       @Res() res: Response
     ) {
@@ -159,15 +159,15 @@ export class CategoryController {
         let products_count: number = 0;
 
         // Find the category based on the provided path
-        let category            = await this.categoryModel.findOne({ where: { id: categoryId } });
+        let category            = await this.categoryModel.findOne({ where: { code: categoryCode } });
         
-        let sub_categories: any = await this.subCategoryModel.find({ where: { category_id: categoryId } });
+        let sub_categories: any = await this.subCategoryModel.find({ where: { category_code: categoryCode } });
 
         // Map the subcategories to include an image from the products
         sub_categories = await (
           await Promise.all( 
             sub_categories.map( async (sub_category) => {
-              let [ product_categories, count] = await this.productCategoryModel.findAndCount({ where: { sub_category_id: sub_category.id } });
+              let [ product_categories, count] = await this.productCategoryModel.findAndCount({ where: { sub_category_code: sub_category.code } });
 
               products_count += count;
               

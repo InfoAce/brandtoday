@@ -1,8 +1,8 @@
 import { seeder, createClassSeeders  } from "nestjs-class-seeder";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
-import { ConfigApp, ConfigDatabase } from "./config";
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, SubCategoryEntity, SubChildSubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { ConfigApp } from "./config";
 
 seeder({
   debug: true,
@@ -42,8 +42,8 @@ seeder({
                     RoleEntity,
                     QueueEntity,
                     StockEntity,
-                    StockKeepingEntity,
-                    SubCategoryEntity,        
+                    SubCategoryEntity,
+                    SubChildSubCategoryEntity,        
                     TransactionEntity,
                     UserEntity
                 ],
@@ -68,10 +68,8 @@ seeder({
             QueueEntity,
             QueueEntity,
             QueueEntity,
-            QueueEntity,
         ],
         [
-            {count:1},
             {count:1},
             {count:1},
             {count:1},

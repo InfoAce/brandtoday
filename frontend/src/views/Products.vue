@@ -55,9 +55,9 @@
                                                     <div class="col-12 px-0 pt-3 ">
                                                         <p class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</p>
                                                         <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})" class="text-theme">
-                                                            <h6 class="text-wrap p-0 m-0"> {{ product.name }} </h6>
+                                                            <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
                                                         </a>
-                                                        <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>                                                    
+                                                        <h6 class="m-0 p-0">{{ currency }} {{ product.price }}</h6>                                                    
                                                         <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                             <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
@@ -152,7 +152,8 @@ const fetchProducts = async (append = false) => {
     let url        = `/products`;
     
     if( !isEmpty(params) ){
-        url += `?category=${params.category}&sub_category=${params.sub_category}&page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`
+
+        url += `?category_code=${params.category}&sub_category_code=${params.sub_category}&page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`
     }
 
     if( !isEmpty(query) ){
@@ -187,6 +188,12 @@ const fetchProducts = async (append = false) => {
             $data.sub_category   = cloneDeep(sub_category);
 
             $data.products_count = products_count;
+
+            document.querySelector('meta[name="keywords"]')
+                    .setAttribute(
+                        'content',
+                        `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${category.name}, ${category.code}, ${sub_category.name}, ${sub_category.code}`
+                    );
         }
 
 
@@ -281,7 +288,7 @@ const openFilter = () => {
 
 const viewProduct = (product) => {
     window.removeEventListener('scroll', () => {});
-    return $router.push({ name: 'Product', params: { product: product.id }});
+    return $router.push({ name: 'Product', params: { product: product.full_code }});
 }
 
 onBeforeMount(fetchFilters(),fetchProducts());

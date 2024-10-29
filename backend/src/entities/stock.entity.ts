@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 import { ProductVariantEntity } from './product-variant.entity';
 import { ProductEntity } from './product.entity';
-import { StockKeepingEntity } from './stock-keeping.entity';
 
 @Entity("stocks")
 export class StockEntity {
@@ -34,15 +33,22 @@ export class StockEntity {
   @Column()
   simple_code: string;
 
+  @ManyToOne(() => ProductEntity, (product) => product.variants, { lazy: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @JoinColumn({
+    name:                 "simple_code",
+    referencedColumnName: "full_code",
+  })
+  product: ProductEntity;
+
   @Column()
   type: number;
 
-  @OneToOne(() => StockKeepingEntity,(product) => product.stock, { lazy: true } )
+  @ManyToOne(() => ProductVariantEntity, (entity) => entity.stock, { lazy: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinColumn({
-    name: 'product_id',
-    referencedColumnName: 'id'
+    name:                 "full_code",
+    referencedColumnName: "full_code",
   })
-  stock_keeping: StockKeepingEntity[]
+  variant: ProductVariantEntity;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

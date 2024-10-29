@@ -40,7 +40,7 @@ export class HomeController {
         categories = await (
           await Promise.all( 
             (await categories).map( async (category) => {
-              let product_categories = await this.productCategoryModel.find({ take: 1, where: { category_id: category.id } });
+              let product_categories = await this.productCategoryModel.find({ take: 1, where: { category_code: category.code } });
               let product            = get(first(shuffle(product_categories)),'product');
               // Get the categories for the child category
               let images: any        = get(product,'images');   

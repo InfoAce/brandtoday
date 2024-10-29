@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany, Index } from 'typeorm';
-import { PriceEntity, ProductEntity, StockEntity, StockKeepingEntity } from './index';
+import { PriceEntity, ProductEntity, StockEntity } from './index';
 
-@Entity("product_variants")
+@Entity("product-variants")
 export class ProductVariantEntity {
 
   @PrimaryGeneratedColumn("uuid")
@@ -53,27 +53,24 @@ export class ProductVariantEntity {
   components: string;
 
   @Column()
-  @Index()
+  @Index({ unique: true })
   full_code: string;
-
-  @Column()
-  product_id: string;
 
   @Column()
   simple_code: string;
 
   @ManyToOne(() => ProductEntity, (product) => product.variants, { lazy: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinColumn({
-    name:                 "product_id",
-    referencedColumnName: "id",
+    name:                 "simple_code",
+    referencedColumnName: "full_code",
   })
   product: ProductEntity;
 
-  @OneToMany( () => PriceEntity, (price) =>  price.variant, { eager: true })
-  price: PriceEntity[];
+  @OneToOne( () => PriceEntity, (price) =>  price.variant, { eager: true })
+  price: PriceEntity;
 
-  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.variant, { eager: true })
-  stocks: StockKeepingEntity[];
+  @OneToOne( () => StockEntity,(stock_keeping) => stock_keeping.variant, { eager: true })
+  stock: StockEntity;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

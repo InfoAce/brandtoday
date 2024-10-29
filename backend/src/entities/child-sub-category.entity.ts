@@ -1,41 +1,43 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne } from 'typeorm';
-import { CategoryEntity, ProductCategoryEntity, ProductEntity, SubCategoryEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, Index } from 'typeorm';
+import { CategoryEntity, ProductCategoryEntity, ProductEntity, SubCategoryEntity, SubChildSubCategoryEntity } from './index';
 
-@Entity("child_sub_categories")
+@Entity("child-sub-categories")
 export class ChildSubCategoryEntity {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => SubCategoryEntity, (sub_category) => sub_category.child_sub_categories, { eager: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
-  @JoinColumn({
-    name:                 "sub_category_id",
-    referencedColumnName: "id",
-  })
-  sub_category: SubCategoryEntity;
-
   @Column()
-  sub_category_id: string;
+  @Index()
+  code: string;
+
+  @ManyToOne(() => SubCategoryEntity, (sub_category) => sub_category.sub_categories, { eager: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @JoinColumn({
+    name:                 "category_code",
+    referencedColumnName: "code",
+  })
+  category: SubCategoryEntity;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    unique: true
+  })
   path: string;
 
-  // @OneToMany(() => ProductCategoryEntity, (product_category) => product_category.child_sub_category,{ lazy: true } )
-  // @JoinColumn({
-  //   name: "id",
-  //   referencedColumnName: "child_sub_category_id"
-  // })
-  // product_categories: ProductCategoryEntity[];
+  @Column({
+    nullable: true,
+  })
+  category_code: string;
 
-  // @OneToMany(() => ProductEntity, (product) => product.sub_category, { lazy: true })
-  // @JoinColumn({
-  //   name:                 "id",
-  //   referencedColumnName: "sub_category_id"
-  // })
-  // products: ProductEntity[];
+  @OneToMany(() => ProductCategoryEntity, (entity) => entity.child_sub_category, { lazy: true } )
+  @JoinColumn()
+  product_categories: ProductCategoryEntity[];  
+
+  @OneToMany(() => SubChildSubCategoryEntity, (entity) => entity.category, { lazy: true } )
+  @JoinColumn()
+  sub_categories: SubChildSubCategoryEntity[];  
 
   @CreateDateColumn()
   created_at: Date; // Creation date

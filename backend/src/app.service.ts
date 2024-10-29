@@ -4,14 +4,16 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, flatten, get, take, intersectionBy } from 'lodash';
-import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, RoleModel, StockKeepingModel, StockModel, SubCategoryModel, UserModel } from 'src/models';
+import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, map, maxBy, take, intersectionBy, uniqBy } from 'lodash';
+import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs'
 @Injectable()
 export class AppService {
 
-  private readonly logger    = new Logger(AppService.name);
+  private readonly logger = new Logger(AppService.name);
+
+  private readonly sleep  = new Promise( (resolve) => setTimeout(resolve, 1000) );
 
   /**
    * The constructor for the AppService class.
@@ -41,8 +43,8 @@ export class AppService {
     private productCategoryModel: ProductCategoryModel,
     private productVariantModel:  ProductVariantModel,
     private stockModel:           StockModel,
-    private stockKeepingModel:    StockKeepingModel,
     private subCategoryModel:     SubCategoryModel,
+    private subChildSubCategory:  SubChildSubCategoryModel,
   ){ }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
@@ -85,9 +87,6 @@ export class AppService {
                 case 'stocks':
                   this.synchronizeStocks(queue);
                 break;
-                case 'stock_keeping':
-                    this.synchronizeStockKeeping(queue);
-                break;
               }
             })
           );
@@ -107,16 +106,16 @@ export class AppService {
 
     await Promise.all(
       chunk(brands,500).map( async (brands) => {
-          return new Promise( async (resolve,reject) => {
-              // setTimeout( async (brands) => {
-                  await this.brandModel.insert(
-                      brands.map( 
-                          ({ code, image, name}) => ({ code, name, image }) 
-                      )
-                  );
-                  resolve(true);
-              // }, 2000);
-          })
+        await this.brandModel.upsert(
+            brands.map( 
+                ({ code, image, name}) => 
+                    ({ code, name, image }) 
+            ),
+            {
+                conflictPaths: ["code"],
+                upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+            },
+        );
       })
     )
 
@@ -128,64 +127,87 @@ export class AppService {
   }
 
   async synchronizeCategories(queue) {
-     // Logging
-     this.logger.log(`Synchronizing categories`);
+    try{
+        // Logging
+        this.logger.log(`Synchronizing categories`);
 
-     // Fetch amrod product categories
-     let categories           = (await this.amrodService.getCategories()).map( category => ({ ...category, id: uuidv4() }));  
-     let sub_categories       = categories.map( category => category.children.map( sub_category => ({ ...sub_category, id: uuidv4(), category_id: category.id, children: sub_category.children }) ) ).flat();
-     let child_sub_categories = sub_categories.map( sub_category => sub_category.children.map( child_sub_category => ({ ...child_sub_category, id: uuidv4(), sub_category_id: sub_category.id }) ) ).flat();
-     
-     await Promise.all(
-         chunk(categories,500).map( async (categories) => {
-             return new Promise( async (resolve,reject) => {
-                //  setTimeout( async (categories) => {
-                    await this.categoryModel.insert(
-                        categories.map( 
-                            ({categoryName: name, categoryCode: code, categoryPath: path, id }) => ({ id, code, name, path}) 
-                        )
-                    )
-                    resolve(true);
-                //  }, 2000);
-             })
-         })
-     )
+        // Fetch amrod product categories
+        let categories               = (await this.amrodService.getCategories()).map( category => ({ ...category }));  
+        let sub_categories           = categories.map( category => category.children.map( sub_category => ({ ...sub_category, category_code: category.categoryName.toLowerCase().replace(/\s/g, ''), children: sub_category.children, }) ) ).flat();    
+        let child_sub_categories     = sub_categories.map( sub_category => sub_category.children.map( child_sub_category => ({ ...child_sub_category, category_code: sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
+        let sub_child_sub_categories = child_sub_categories.map( child_sub_category => child_sub_category.children.map( sub_child_sub_category => ({ ...sub_child_sub_category, category_code: child_sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
+        
+        await Promise.all(
+            chunk(categories,500).map( async (categories) => {
+                await this.categoryModel.upsert(
+                    categories.map( 
+                        ({categoryName: name, categoryCode, categoryPath: path }) => 
+                            ({ code: categoryCode.replace(/\s/g, '').toLowerCase(), name, path}) 
+                    ),
+                    {
+                        conflictPaths: ["code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+            })
+        )
 
-     await Promise.all(
-         chunk(sub_categories,500).map( async (sub_categories) => {
-             return new Promise( async (resolve,reject) => {
-                //  setTimeout( async (sub_categories) => {
-                    await this.subCategoryModel.insert(
-                            sub_categories.map( ({categoryName: name, categoryCode: code, categoryPath: path, id, category_id }) => ({ id, category_id, code, name, path}) 
-                        )
-                    )
-                    resolve(true);
-                //  }, 2000);
-             })
-         })
-     )
+        await Promise.all(
+            chunk(sub_categories,500).map( async (sub_categories) => {
+                await this.subCategoryModel.upsert(
+                    sub_categories.map( 
+                        ({categoryName: name, categoryPath: path, category_code }) => 
+                            ({ code: name.replace(/\s/g, '').toLowerCase(), name, path, category_code}) 
+                    ),
+                    {
+                        conflictPaths: ["path"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+            })
+        )
 
+        await Promise.all(
+            chunk(child_sub_categories,500).map( async (child_sub_categories) => {
+                await this.childSubCategory.upsert(
+                    child_sub_categories.map( 
+                        ({categoryName: name, categoryPath: path, category_code }) => 
+                            ({ code: name.replace(/\s/g, '').toLowerCase(), name, path, category_code }) 
+                    ),
+                    {
+                        conflictPaths: ["path"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+            })
+        )
 
-     await Promise.all(
-         chunk(child_sub_categories,500).map( async (child_sub_categories) => {
-             return new Promise( async (resolve,reject) => {
-                //  setTimeout( async (child_sub_categories) => {
-                    await this.childSubCategory.insert(
-                        child_sub_categories.map( 
-                            ({categoryName: name, categoryCode: code, categoryPath: path, id, sub_category_id }) => ({ id, sub_category_id, code, name, path}) 
-                        )
-                    )
-                    resolve(true);
-                //  }, 2000);
-             })
-         })
-     )
+        await Promise.all(
+            chunk(sub_child_sub_categories,500).map( async (sub_child_sub_categories) => {
+                await this.subChildSubCategory.upsert(
+                    sub_child_sub_categories.map( 
+                        ({categoryName: name, categoryPath: path, category_code }) => 
+                            ({ code: name.replace(/\s/g, '').toLowerCase(), name, path, category_code }) 
+                    ),
+                    {
+                        conflictPaths: ["path"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+            })
+        )
 
-     // Logging
-     this.logger.log(`Done Synchronizing categories`);
+        // Logging
+        this.logger.log(`Done Synchronizing categories`);
 
-     // Update queue status
-     await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        // Update queue status
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+
+        // Update queue status
+        await this.queueModel.updateOne({ type: 'products' },{ status: 'waiting', state: true });
+    } catch(error) {
+        console.log(error);
+    }
   }
 
   async synchronizeProducts(queue) {
@@ -194,99 +216,133 @@ export class AppService {
         this.logger.log(`Synchronizing products`);
 
         // Fetch amrod products
-        let products             = (await this.amrodService.getProducts()).map( product => ({ ...product, id: uuidv4() }));    
-        let categories           = await this.categoryModel.find();  
-        let sub_categories       = await this.subCategoryModel.find();
-        let child_sub_categories = await this.childSubCategory.find();
+        let products = await this.amrodService.getProducts()  
 
-        let product_categories  = products.map( 
+        let company  = await this.companyModel.first();
+
+        // Fetch amrod prices  
+        let prices   = await this.amrodService.getPrices();  
+
+        products = products.map( product => {
+            let full_code     = product.fullCode.split('-');
+            let productPrices = prices.filter( price => price.simplecode.includes(`${full_code[0]}-${full_code[1]}`) );
+            let maxPrice      = get(maxBy( productPrices,'price'),'price');
+            return { ...product, price: maxPrice, code: product.productName.toLowerCase().replace(/\s/g, '') }
+        });
+
+        let product_categories  = uniqBy(products,'code').map( 
             product => product.categories.map( 
                 category => {
                     let path = category.path.split('/');
-                    if( path.length > 2) {
-                        let fetched_sub_category       = sub_categories.find( fetched_sub_category => fetched_sub_category.path == take(path,2).join('/') );
-                        let fetched_child_sub_category = child_sub_categories.find( fetched_child_sub_category => fetched_child_sub_category.path == take(path,3).join('/') );
-                        return { 
-                            id: uuidv4(), 
-                            category_id:           fetched_sub_category.category_id, 
-                            sub_category_id:       fetched_child_sub_category.sub_category_id, 
-                            child_sub_category_id: fetched_child_sub_category.id, 
-                            product_id:   product.id 
+                    if( path.length == 4 ) {
+                        return {  
+                            category_code:               path[0].toLowerCase().replace(/\s/g, ''), 
+                            sub_category_code:           path[1].toLowerCase().replace(/\s/g, ''),
+                            child_sub_category_code:     path[2].toLowerCase().replace(/\s/g, ''),
+                            sub_child_sub_category_code: path[3].toLowerCase().replace(/\s/g, ''),
+                            path:                        `${path.join('-')}-${product.fullCode}`,
+                            product_code:                product.fullCode 
+                        }
+                    }        
+                    if( path.length == 3 ) {
+                        return {  
+                            category_code:           path[0].toLowerCase().replace(/\s/g, ''), 
+                            sub_category_code:       path[1].toLowerCase().replace(/\s/g, ''),
+                            child_sub_category_code: path[2].toLowerCase().replace(/\s/g, ''),
+                            path:                    `${path.join('-')}-${product.fullCode}`,
+                            product_code:            product.fullCode 
                         }
                     }
                     if( path.length == 2) {
-                        let fetched_sub_category = sub_categories.find( fetched_sub_category => fetched_sub_category.path == take(path,2).join('/') );
                         return {  
-                            id: uuidv4(), 
-                            category_id: fetched_sub_category.category_id, 
-                            sub_category_id: fetched_sub_category.id, 
-                            product_id:   product.id 
+                            category_code:     path[0].toLowerCase().replace(/\s/g, ''), 
+                            sub_category_code: path[1].toLowerCase().replace(/\s/g, ''),
+                            path:              `${path.join('-')}-${product.fullCode}`,
+                            product_code:      product.fullCode 
                         }
                     }
                     if( path.length == 1) {
-                        let fetched_category = categories.find( fetched_category => fetched_category.path == take(path,1).join('/') );
-                        return { id: uuidv4(), category_id: fetched_category.id, product_id: product.id }
+                        return { 
+                            category_code: path[0].toLowerCase().replace(/\s/g, ''), 
+                            path:         `${path.join('-')}-${product.fullCode}`,
+                            product_code:  product.fullCode 
+                        }
                     }
                 }
             ) 
-        ).flat();
+        )
+        .flat()
+        .filter( category => category instanceof Object );
 
-        let colour_images = products.filter( product => !isNull(product.colourImages) ).map( product => product.colourImages.map( images => ({...images, product_id: product.id })) ).flat().map( colour => ({ ...colour, id: uuidv4() }) );
+        product_categories = uniqBy(product_categories,'path');
+
+        let colour_images = products.filter( product => !isNull(product.colourImages) ).map( product => product.colourImages.map( images => ({...images, product_code: product.fullCode })) ).flat().map( colour => ({ ...colour, id: uuidv4(), simple_code: `${colour.product_code}-${colour.code}` }) );
 
         await Promise.all(
-            chunk(products,1000).map( async (products) => {
+            chunk(uniqBy(products,'code'),1).map( async (products) => {
                 await this.productModel.upsert(
                     products.map( 
-                        ({ id, brand, fullCode: full_code, simpleCode: simple_code, price: amount, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                            ({ id, brand: !isNull(brand) ? brand.code : null, full_code, simple_code, amount, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                        ({ brand, fullCode: full_code, price, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                            ({ brand: !isNull(brand) ? brand.code : null, code: name.toLowerCase().replace(/\s/g, ''), full_code, company_id: company.id, price, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
                     ),
                     {
-                        conflictPaths: ["full_code"],
-                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        conflictPaths: ["code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );
+                await this.sleep;
             })
         )
 
+        // Logging
+        this.logger.log(`Done saving products`);
+
         await Promise.all(
-            chunk(
-                colour_images,
-                500
-            ).map( async (colour) => {
-                return await this.productColourModel.upsert(
+            chunk(colour_images,1).map( async (colour) => {
+                await this.productColourModel.upsert(
                     colour.map( 
-                        ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
+                        ({ name, images, code, product_code, simple_code }) => 
+                            ({ name, images, code, product_code, simple_code }) 
                     ),
                     {
-                        conflictPaths: ["product_id"],
+                        conflictPaths: ["code"],
                         upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );
+                await this.sleep;
             })
         )
 
+        // Logging
+        this.logger.log(`Done saving product colours`);
+        
         await Promise.all(
-            chunk(product_categories,2000).map( 
-                async (prod_categories) => {
-                    await this.productCategoryModel.upsert( 
-                        prod_categories,
+            chunk(product_categories,1).map( 
+                async (product_categories) => {
+                    await this.productCategoryModel.upsert(
+                        product_categories,
                         {
-                            conflictPaths: ["product_id"],
-                            upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                            conflictPaths: ["path"],
+                            upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                         },
-
                     );
+                    await this.sleep;
                 }
             )
         )
 
         // Logging
-        this.logger.log(`Done Synchronizing products`);
+        this.logger.log(`Done saving product categories`);
 
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+
+        await this.queueModel.updateOne({ type: 'product_variants'},{ status: 'waiting', state: true });
+
     } catch (error) {
+
         console.log(error);
+
         // Logging
         this.logger.log(`Failed to synchronize products`);
         
@@ -302,51 +358,52 @@ export class AppService {
         this.logger.log(`Synchronizing product variants`);
 
         // Fetch amrod products
-        let products = (await this.amrodService.getProducts()).map( async(product) => ({ ...product, id: (await this.productModel.findOne({ where: { full_code: product.fullCode } })).id })); 
-        let variants = (await Promise.all(
-            products.map( async(product) => (await product).variants.map( async(variant) => ({ ...variant, product_id: (await product).id, id: uuidv4() }) ) )
-        )).flat();
+        let products = await this.amrodService.getProducts(); 
+        products     = uniqBy(products.map( product => ({ ...product, code: product.productName.toLowerCase().replace(/\s/g, '') })),'code');
 
-        variants = await Promise.all(
-            chunk(variants,1000).map( async (variants) => {
-                return await Promise.all(
-                        variants.map( async (variant, index) => { 
-                            variant = await variant;
-                            return { 
-                                id:                      variant.id, 
-                                product_id:              variant.product_id, 
-                                simple_code:             variant.simpleCode, 
-                                full_code:               variant.fullCode, 
-                                code_colour:             variant.codeColour, 
-                                code_colour_name:        variant.codeColourName, 
-                                code_size:               variant.codeSize, 
-                                code_size_name:          variant.codeSizeName, 
-                                categorized_attribute:   variant.categorisedAttribute, 
-                                packaging_and_dimension: variant.packagingAndDimension, 
-                                product_dimension:       variant.productDimension, 
-                                is_logo_24:              variant.isLogo24, 
-                                components:              variant.components 
-                            }
-                        }
-                    ) 
-                )
-            })
-        );
+        let variants = products.map( product => product.variants )
+                              .flat()
+                              .map( (variant) => {
+                                return { 
+                                    simple_code:             variant.simpleCode, 
+                                    full_code:               variant.fullCode, 
+                                    code_colour:             variant.codeColour, 
+                                    code_colour_name:        variant.codeColourName, 
+                                    code_size:               variant.codeSize, 
+                                    code_size_name:          variant.codeSizeName, 
+                                    categorized_attribute:   variant.categorisedAttribute, 
+                                    packaging_and_dimension: variant.packagingAndDimension, 
+                                    product_dimension:       variant.productDimension, 
+                                    is_logo_24:              variant.isLogo24, 
+                                    components:              variant.components 
+                                }
+                              });
 
+                            
         await Promise.all(
-            variants.map( async (variants) => {
-                return new Promise( async (resolve,reject) => {
-                    await this.productVariantModel.insert(variants)
-                    resolve(true);
-                }) 
+            variants.map( async (variant) => {
+                await this.productVariantModel.upsert(
+                    variant,
+                    {
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+                await this.sleep;
             })
         );
+
 
         // Logging
         this.logger.log(`Done Synchronizing product variants`);
 
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+
+        await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true });
+        
+        await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true });
+
     } catch (error) {
         console.log(error);
         // Logging
@@ -361,27 +418,29 @@ export class AppService {
     // Logging
     this.logger.log(`Synchronizing prices`);
 
-    // Fetch amrod prices
-    let prices  = await this.amrodService.getPrices();  
-    let company = await this.companyModel.first(); 
+    // Fetch product variants
+    let variants       = await this.productVariantModel.find(); 
 
+    // Fetch amrod prices
+    let prices         = await this.amrodService.getPrices();  
+    let company        = await this.companyModel.first(); 
 
     await Promise.all(
-        chunk(prices,5).map( async (prices) => {
-            return new Promise( async (resolve,reject) => {
-                try {
-                    await this.priceModel.insert( 
-                        prices.map( 
-                            ({ fullCode: full_code, simplecode: simple_code, price: amount }) => 
-                            ({ full_code, simple_code, amount, company_id: company.id })
-                        )
-                    );
-                    setTimeout( () => resolve(true), 2000);
-                } catch (error) {
-                    console.log(error);
-                    console.log(prices)
-                }
-            }) 
+        chunk(
+            uniqBy(intersectionBy(prices.map( price => ({ ...price, full_code: price.fullCode })),variants,'full_code'),'full_code'),
+            1
+        ).map( async (prices) => {
+            await this.priceModel.upsert( 
+                prices.map( 
+                    ({ full_code, simplecode: simple_code, price: amount }) => 
+                        ({ full_code, simple_code, amount, company_id: company.id })
+                ),
+                {
+                    conflictPaths: ["full_code"],
+                    upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                },
+            );
+            await this.sleep;
         })
     );
 
@@ -398,7 +457,7 @@ export class AppService {
         this.logger.log(`Synchronizing stocks`);
 
         // Fetch amrod stock
-        let stocks   = (await this.amrodService.getStock()).map( stock => ({ ...stock, id: uuidv4() }));
+        let stocks   = await this.amrodService.getStock();
 
         // Get product variants
         let variants = await this.productVariantModel.find();
@@ -406,17 +465,19 @@ export class AppService {
         stocks = intersectionBy(stocks.map( stock => ({ ...stock, full_code: stock.fullCode })), variants, 'full_code');
 
         await Promise.all(
-            chunk(stocks,500).map( async (stocks) => {
-                return new Promise( async (resolve,reject) => {
-                    await this.stockModel.insert( 
-                        stocks.map( 
-                            ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code, id}) => {
-                                return { id, simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
-                            }
-                        )
-                    )
-                    resolve(true);
-                })
+            chunk(stocks,1).map( async (stocks) => {
+                await this.stockModel.upsert( 
+                    stocks.map( 
+                        ({simpleCode: simple_code, fullCode: full_code, stockType: type, stock: quantity, reservedStock: reserved_quantity, incomingStock: incoming_quantity, colourCode: colour_code }) => {
+                            return { simple_code, full_code, type, quantity, reserved_quantity, incoming_quantity, colour_code }
+                        }
+                    ),
+                    {
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                )
+                await this.sleep;
             })
         );
 
@@ -427,157 +488,88 @@ export class AppService {
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
         
     } catch (error) {
+        console.log(error);
+
         // Logging
-        this.logger.log(`Failed to synchronize stock keeping`);
+        this.logger.log(`Failed to synchronize stocks`);
         
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
     }
   }
 
-  async synchronizeStockKeeping(queue) {
+//   async synchronizeStockKeeping(queue) {
 
-    try {
-        // Logging
-        this.logger.log(`Synchronizing stock keeping`);
+//     try {
+//         // Logging
+//         this.logger.log(`Synchronizing stock keeping`);
 
-        let stocks =  await this.stockModel.createQueryBuilder('stocks')
-                                           .leftJoinAndMapOne('stocks.variant','product_variants', 'product_variants', 'stocks.full_code = product_variants.full_code')
-                                           .leftJoinAndMapOne('stocks.product','products', 'products', 'stocks.simple_code = products.simple_code')
-                                           .getMany();
+//         let stocks =  await this.stockModel.createQueryBuilder('stocks')
+//                                            .leftJoinAndMapOne('stocks.variant','product_variants', 'product_variants', 'stocks.full_code = product_variants.full_code')
+//                                            .leftJoinAndMapOne('stocks.product','products', 'products', 'stocks.simple_code = products.simple_code')
+//                                            .getMany();
  
-        let stock_keeping = await Promise.all(
-            (await stocks).map( 
-                async (stock) => {
+//         let stock_keeping = await Promise.all(
+//             (await stocks).map( 
+//                 async (stock) => {
 
-                    let data     = { stock_id: get(stock,'id'), product_id: null, variant_id: null };
-                    let product  = get(stock,'product');
-                    let variant  = get(stock,'variant');
+//                     let data     = { stock_id: get(stock,'id'), product_id: null, variant_id: null };
+//                     let product  = get(stock,'product');
+//                     let variant  = get(stock,'variant');
                     
-                    if( !isEmpty(product) ) {
-                        data.product_id = product.id; 
-                    }
+//                     if( !isEmpty(product) ) {
+//                         data.product_id = product.id; 
+//                     }
 
-                    if( !isEmpty(variant) ) {
-                        data.variant_id = variant.id; 
-                    }
+//                     if( !isEmpty(variant) ) {
+//                         data.variant_id = variant.id; 
+//                     }
 
-                    return data;
-                }
-            ),
-        );
+//                     return data;
+//                 }
+//             ),
+//         );
 
-        await Promise.all(
-            chunk(stock_keeping,1000).map( async (item) => {
-                return new Promise( async (resolve,reject) => {
-                    await this.stockKeepingModel.insert(item);
-                    resolve(true);
-                }) 
-            })
-        )
+//         await Promise.all(
+//             chunk(stock_keeping,1000).map( async (item) => {
+//                 return new Promise( async (resolve,reject) => {
+//                     await this.stockKeepingModel.insert(item);
+//                     resolve(true);
+//                 }) 
+//             })
+//         )
 
-        // Logging
-        this.logger.log(`Done Synchronizing stock keeping`);
+//         // Logging
+//         this.logger.log(`Done Synchronizing stock keeping`);
 
-        // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+//         // Update queue status
+//         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
 
-    } catch (error) {
+//     } catch (error) {
 
-        // Logging
-        this.logger.log(`Failed to synchronize stock keeping`);
+//         // Logging
+//         this.logger.log(`Failed to synchronize stock keeping`);
         
-        // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
-    }
-  }
+//         // Update queue status
+//         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
+//     }
+//   }
   
   @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async amrodDataSyncDaily() {
 
     try{
-        this.logger.log(`Amrod synchronization started.`);        
+        this.logger.log(`Full amrod data synchronization started.`);        
 
-        // Get amrod credentials from the configuration service
-        let { credentials } = this.configService.get<any>('services.amrod');
-
-        // Login to amrod
-        await this.amrodService.login(credentials);
-
-        let productsUpdated: Array<any> = await this.amrodService.getUpdatedProducts();
-
-        let pricesUpdated: Array<any>   = await this.amrodService.getUpdatedPrices();
-
-        // Get product variants
-        let prices = await this.priceModel.find();
-
-        // Get product variants
-        let products = await this.productModel.find();        
-
-        // Get product variants
-        // let colours = await this.productColourModel.find();        
-
-        // Match existing stocks with variants
-        pricesUpdated = intersectionBy(pricesUpdated.map( stock => ({ ...stock, full_code: stock.fullCode })), prices, 'full_code');
-
-        // Match existing stocks with variants
-        productsUpdated = intersectionBy(productsUpdated.map( product => ({ ...product, full_code: product.fullCode })), products, 'full_code');        
-
-        // let coloursUpdate = intersectionBy(colours, products.map( product => ({ ...product, product_id: product.id })), 'product_id'); 
-        // let coloursUpdate = intersectionBy(
-        //     productsUpdated.filter( product => ({ ...product.colourImages, product_id: product.id }) )
-        //                    .flat()
-        //                    .map( colour => ({ ...colour }) ), 
-        //     intersectionBy(colours, products.map( product => ({ ...product, product_id: product.id })), 'product_id'), 
-        //     'full_code'
-        // ); 
-        // fs.writeFileSync('public/colours.json', JSON.stringify(
-        //     flatten(productsUpdated.map( product => ({ ...product.colourImages.map( colour => ({ ...colour, product_id: product.id})) }) ),2)
-        // ));
-
-        await this.productModel.upsert(
-            productsUpdated.map( 
-                ({ brand, fullCode: full_code, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                    ({ brand: !isNull(brand) ? brand.code : null, full_code, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
-            ),
-            {
-                conflictPaths: ["full_code"],
-                upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-            },
-        )
-
-        // await this.productColourModel.upsert(
-        //     colours.map( 
-        //         ({ id, name, images, code, product_id }) => ({ id, name, images, code, product_id }) 
-        //     ),            
-        //     {
-        //         conflictPaths: ["full_code"],
-        //         upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-        //     },
-        // )
-        
-        await this.priceModel.upsert(
-            pricesUpdated.map( 
-                price => ({ 
-                    full_code:   get(price,'full_code'), 
-                    simple_code: get(price,'simplecode'), 
-                    price:       get(price,'price'),                
-                }) 
-            ),
-            {
-                conflictPaths: ["full_code"],
-                upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-            },
-        )
+        await this.queueModel.updateOne({ type: 'categories'},{ status: 'waiting', state: true });  
 
         // Logging
-        this.logger.log(`Amrod synchronization completed.`);        
+        this.logger.log(`Full amrod data synchronization completed.`);        
 
     } catch (error) {
 
         // Logging
-        this.logger.log(error);
-        this.logger.log(`Failed to synchronize`);
+        this.logger.log(`Failed to synchonize full amrod data`);
     }
 
   }
@@ -586,7 +578,7 @@ export class AppService {
   async amrodDataSyncTenMins() {
 
     try{
-        this.logger.log(`Amrod synchronization started.`);        
+        this.logger.log(`Partial amrod data synchronization started.`);        
 
         // Get amrod credentials from the configuration service
         let { credentials } = this.configService.get<any>('services.amrod');
@@ -595,6 +587,8 @@ export class AppService {
         await this.amrodService.login(credentials);
 
         let stocksUpdated: Array<any> = await this.amrodService.getUpdatedStock();
+
+        this.logger.log(`Synchronizing updated stocks`);   
         
         // Get product variants
         let variants = await this.productVariantModel.find();
@@ -619,14 +613,15 @@ export class AppService {
             },
         )
 
+        this.logger.log(`Done synchronizing updated stocks`);        
+
         // Logging
-        this.logger.log(`Amrod synchronization completed.`);        
+        this.logger.log(`Partial amrod data synchronization completed.`);        
 
     } catch (error) {
 
         // Logging
-        this.logger.log(error);
-        this.logger.log(`Failed to synchronize`);
+        this.logger.log(`Failed to synchronize partial amrod data`);
     }
 
   }

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { StockKeepingModel, StockModel } from '../models';
-import { StockEntity, StockKeepingEntity } from 'src/entities';
+import { StockModel } from '../models';
+import { StockEntity } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  exports:[StockModel,StockKeepingModel],
+  exports:[StockModel],
   imports: [
-    TypeOrmModule.forFeature([StockEntity,StockKeepingEntity])
+    TypeOrmModule.forFeature([StockEntity])
   ],
-  providers: [StockModel,StockKeepingModel],
+  providers: [StockModel],
 })
 export class StockModule {}

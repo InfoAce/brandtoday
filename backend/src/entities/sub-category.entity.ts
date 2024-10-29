@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne,OneToMany,  ManyToOne, JoinTable, ManyToMany, Index } from 'typeorm';
 import { CategoryEntity, ChildSubCategoryEntity, ProductCategoryEntity, ProductEntity } from './index';
 
-@Entity("sub_categories")
+@Entity("sub-categories")
 export class SubCategoryEntity {
 
   @PrimaryGeneratedColumn("uuid")
@@ -9,31 +9,37 @@ export class SubCategoryEntity {
 
   @ManyToOne(() => CategoryEntity, (category) => category.sub_categories,{ eager: true, onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinColumn({
-    name:                 "category_id",
-    referencedColumnName: "id",
+    name:                 "category_code",
+    referencedColumnName: "code",
   })
   category: CategoryEntity;
 
   @Column()
-  category_id: string;
+  category_code: string;
+
+  @Column()
+  @Index()
+  code: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    unique: true
+  })
   path: string;
 
-  @OneToMany(() => ChildSubCategoryEntity, (child_sub_category) => child_sub_category.sub_category, { lazy: true })
+  @OneToMany(() => ChildSubCategoryEntity, (entity) => entity.category, { lazy: true })
   @JoinColumn({
-    name:                 "id",
-    referencedColumnName: "sub_category_id"
+    name:                 "code",
+    referencedColumnName: "category_code"
   })
-  child_sub_categories: ChildSubCategoryEntity[];
+  sub_categories: ChildSubCategoryEntity[];
   
   @OneToMany(() => ProductCategoryEntity, (product_category) => product_category.sub_category,{ lazy: true } )
   @JoinColumn({
-    name: "id",
-    referencedColumnName: "sub_category_id"
+    name: "code",
+    referencedColumnName: "sub_category_code"
   })
   product_categories: ProductCategoryEntity[];
 

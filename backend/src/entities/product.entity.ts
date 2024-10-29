@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
-import { FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductColourEntity, ProductVariantEntity, StockEntity, StockKeepingEntity } from './index';
+import { CompanyEntity, FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductColourEntity, ProductVariantEntity, StockEntity } from './index';
 
 @Entity("products")
 export class ProductEntity {
@@ -22,6 +22,11 @@ export class ProductEntity {
   @JoinColumn()
   categories: ProductCategoryEntity[];
 
+  @Column({
+    unique: true
+  })
+  code: string;
+  
   @OneToMany(() => ProductColourEntity, (entity) => entity.product,{ eager: true })
   @JoinColumn()
   colour_images: ProductColourEntity[];
@@ -31,6 +36,16 @@ export class ProductEntity {
     type:'json'
   })
   companion_codes: string;
+  
+  @ManyToOne(() => CompanyEntity, (entity) =>  entity.products, { eager: true, onDelete:"CASCADE", onUpdate: 'CASCADE' })
+  @JoinColumn({
+    name: 'company_id',
+    referencedColumnName: 'id'
+  })
+  company: CompanyEntity
+  
+  @Column()
+  company_id: string
 
   @Column({
     collation: 'utf8mb4_general_ci',
@@ -76,6 +91,12 @@ export class ProductEntity {
   })
   images: string;
 
+  @Column({
+    nullable: true,
+    type: 'double'
+  })
+  price: number;
+
   @OneToMany( () => FavouriteEntity,(entity) => entity.product, { lazy: true })
   @JoinColumn()
   favourites: FavouriteEntity[];
@@ -84,9 +105,9 @@ export class ProductEntity {
   @JoinColumn()
   order_items: OrderItemEntity[];
 
-  @OneToMany( () => StockKeepingEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
+  @OneToMany( () => StockEntity,(stock_keeping) => stock_keeping.product, { lazy: true })
   @JoinColumn()
-  stocks: StockKeepingEntity[];
+  stocks: StockEntity[];
 
   @OneToMany(() => ProductVariantEntity,(variants) => variants.product, { lazy: true })
   @JoinColumn()

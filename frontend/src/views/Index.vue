@@ -289,12 +289,12 @@
                                         <div class="img-wrapper">
                                             <div v-if="!isEmpty(product.images)">
                                                 <div class="front">
-                                                    <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                    <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})">
                                                         <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
                                                     </a>
                                                 </div>
                                                 <div class="back" v-if="product.images.length > 1">
-                                                    <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                    <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})">
                                                         <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                                     </a>
                                                 </div>
@@ -302,10 +302,10 @@
                                         </div>
                                         <div class="col-12 px-0 pt-3 text-left">
                                             <p class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</p>
-                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme">
+                                            <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})" class="text-theme">
                                                 <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
                                             </a>
-                                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>
+                                            <h5 class="m-0 p-0">{{ currency }} {{ product.price }}</h5>
                                             <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                             <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
@@ -479,7 +479,7 @@ const fetch = async () => {
  */
 const navigateTo = (item) => {
     // Generate and return the route object for navigating to the 'Products' view
-    return $router.resolve({ name: 'Category', params: { category: item.id } }).path;
+    return $router.resolve({ name: 'Category', params: { category: item.code } }).path;
 }
 
 onBeforeMount( () => fetch() );

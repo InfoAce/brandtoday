@@ -11,9 +11,7 @@ const router = createRouter({
       meta: {
         title: 'Home',
         auth: false,
-
-        
-        
+        tags: 'Categories, Products, Brands'
       },
       component: () => import('@/views/Index.vue')
     },
@@ -23,9 +21,6 @@ const router = createRouter({
       meta: {
         title: 'Not Found',
         auth: false,
-
-        
-        
       },
       component: () => import('@/views/Error404.vue')
     },
@@ -40,8 +35,7 @@ const router = createRouter({
             title: 'Login',
             auth:   false,
             redirectIfAuth: true,
-            
-            
+            tags: 'Login, Authentication'            
           },
           component: () => import('@/views/Login.vue')
         },
@@ -55,8 +49,6 @@ const router = createRouter({
                 title: 'Forgot Password',
                 auth:   false,
                 redirectIfAuth: true,
-                
-                
               },
               component: () => import('@/views/Forgot.vue')
             },
@@ -67,8 +59,6 @@ const router = createRouter({
                 title: 'Reset Password',
                 auth:   false,
                 redirectIfAuth: true,
-                
-                
               },
               component: () => import('@/views/Reset.vue')
             },
@@ -93,9 +83,8 @@ const router = createRouter({
           meta: {
             title: 'Signup',
             auth: false,
-            
             redirectIfAuth: true,
-            
+            tags: 'Signup, Authentication'            
           },
           component: () => import('@/views/Signup.vue')
         },  
@@ -107,9 +96,7 @@ const router = createRouter({
       meta: {
         title: 'Get to Know Us',
         auth:   false,
-
-        
-        
+        tags: 'Who we are, About us' 
       },
       component: () => import('@/views/AboutUs.vue')
     },
@@ -119,9 +106,7 @@ const router = createRouter({
       meta: {
         title: 'Privacy Policy',
         auth:   false,
-
-        
-        
+        tags: 'Privacy Statement, Privacy Policy' 
       },
       component: () => import('@/views/PrivacyPolicy.vue')
     },
@@ -131,9 +116,7 @@ const router = createRouter({
       meta: {
         title: 'FAQs',
         auth:   false,
-
-        
-        
+        tags: 'Frequently Asked Questions, FAQs' 
       },
       component: () => import('@/views/Faqs.vue')
     },
@@ -143,9 +126,7 @@ const router = createRouter({
       meta: {
         title: 'Brands',
         auth:   false,
-
-        
-        
+        tags: 'Company Brands, Brands'  
       },
       component: () => import('@/views/Brands.vue')
     },
@@ -155,9 +136,7 @@ const router = createRouter({
       meta: {
         title: 'Return Refunds',
         auth:   false,
-
-        
-        
+        tags: 'Product Return Statements, Return Refunds' 
       },
       component: () => import('@/views/ReturnRefunds.vue')
     }, 
@@ -167,24 +146,10 @@ const router = createRouter({
       meta: {
         title: 'Terms & Conditions',
         auth:   false,
-
-        
-        
+        tags: 'Terms and Conditions' 
       },
       component: () => import('@/views/TermsAndConditions.vue')
-    }, 
-    {
-      path: '/brands',
-      name: "Brands",
-      meta: {
-        title: 'Our Brands',
-        auth:  false,
-
-        state: 0,
-        
-      },
-      component: () => import('@/views/Brands.vue')
-    },  
+    },   
     {
       path: '/category',
       children: [
@@ -194,9 +159,8 @@ const router = createRouter({
           meta: {
             title: 'Product Category',
             auth:  false,
-    
             state: 0,
-            
+            tags: 'Categories, Product Categories'             
           },
           component: () => import('@/views/Category.vue')
         },
@@ -205,10 +169,7 @@ const router = createRouter({
           name: "Error404",
           meta: {
             title: 'Not Found',
-            auth: false,
-    
-            
-            
+            auth: false, 
           },
           component: () => import('@/views/Error404.vue')
         }, 
@@ -224,9 +185,7 @@ const router = createRouter({
           meta: {
             title: 'Cart',
             auth:   false,
-    
-            
-            
+            tags: 'Shopping, Cart, Shopping Cart'  
           },
           component: () => import('@/views/Cart.vue')
         },  
@@ -239,9 +198,7 @@ const router = createRouter({
               meta: {
                 title: 'Checkout',
                 auth:   false,
-        
-                
-                
+                tags: 'Product Purchase, Checkout, Signup, Place Order'  
               },
               component: () => import('@/views/Checkout.vue')
             },
@@ -251,9 +208,6 @@ const router = createRouter({
               meta: {
                 title: 'Order Success',
                 auth:   false,
-        
-                
-                
               },
               component: () => import('@/views/OrderSuccess.vue')
             },
@@ -271,7 +225,8 @@ const router = createRouter({
           name: "ViewProducts",
           meta: {
             title: 'Products',
-            auth:   false,        
+            auth:   false,    
+            tags: 'Shopping, Products, View Products'      
           },
           component: () => import('@/views/Products.vue')
         },
@@ -284,6 +239,7 @@ const router = createRouter({
               meta: {
                 title: 'Products',
                 auth: false,
+                tags: 'Shopping, Products, View Products'      
               },
               component: () => import('@/views/Products.vue')
             }
@@ -295,7 +251,8 @@ const router = createRouter({
           name: "Product",
           meta: {
             title: 'Product',
-            auth:   false,        
+            auth:   false,     
+            tags: 'View Product, Product Category, Product Sub Category'         
           },
           component: () => import('@/views/Product.vue')
         },
@@ -310,9 +267,6 @@ const router = createRouter({
           meta: {
             title: 'Email Verification',
             auth: false,
-            
-    
-            
           },
           component: () => import('@/views/Verify.vue')
         }
@@ -328,9 +282,6 @@ const router = createRouter({
           meta: {
             title: 'Account Profile',
             auth: true,
-            
-    
-            
           },
           component: () => import('@/views/Account.vue')
         },
@@ -339,10 +290,7 @@ const router = createRouter({
           name: "AccountOrders",
           meta: {
             title: 'Client Orders',
-            auth: true,
-            
-    
-            
+            auth: true, 
           },
           component: () => import('@/views/Orders.vue')
         },
@@ -352,8 +300,6 @@ const router = createRouter({
           meta: {
             title: 'Address Book',
             auth:   true,
-    
-            
           },
           component: () => import('@/views/AddressBook.vue')
         },
@@ -363,7 +309,6 @@ const router = createRouter({
           meta: {
             title: 'Favourites',
             auth: true,
-    
           },
           component: () => import('@/views/Favourites.vue')
         },
@@ -373,7 +318,6 @@ const router = createRouter({
           meta: {
             title: 'Client Security',
             auth: true,
-    
           },
           component: () => import('@/views/Security.vue')
         }
@@ -386,13 +330,17 @@ const router = createRouter({
 router.beforeEach( 
   (to, from, next) => {
     store.commit('loader',true);
-    const { name: routeName, meta: { auth } } = to;
+    const { name: routeName, meta: { auth, tags } } = to;
 
     if( window.document.getElementById("mySidenav")?.classList.contains('open-side') ){
       window.document.getElementById("mySidenav").classList.remove('open-side')
     }
 
     window.document.querySelector('title').innerHTML = `${to.meta.title} | ${import.meta.env.VITE_APP_NAME}`;
+
+    if( tags != undefined ){
+      document.querySelector('meta[name="keywords"]').setAttribute('content',tags);
+    }
 
     if( auth ){
       if( isEmpty(store.getters.auth) ){ next({ name: 'Login' }) }

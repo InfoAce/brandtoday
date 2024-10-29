@@ -114,7 +114,7 @@
                                                         v-model="$data.form.country"
                                                         :options="listCountries" 
                                                         searchable
-                                                        placeholder="Coutry"
+                                                        placeholder="Country"
                                                     />
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'country')">{{$data.errors.country}}</p>	
                                                 </div>                                       

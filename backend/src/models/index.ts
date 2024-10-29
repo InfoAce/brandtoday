@@ -16,7 +16,7 @@ export { default as ProductCategoryModel } from './product-category.model';
 export { default as ProductColourModel } from './product-colour.model';
 export { default as ProductVariantModel } from './product-variant.model';
 export { default as StockModel } from './stock.model';
-export { default as StockKeepingModel } from './stock-keeping.model';
 export { default as SubCategoryModel } from './sub-category.model';
+export { default as SubChildSubCategoryModel } from './sub-child-sub-category.model';
 export { default as TransactionModel } from './transaction.model';
 export { default as UserModel } from './user.model';

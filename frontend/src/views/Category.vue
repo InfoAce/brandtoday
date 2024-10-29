@@ -94,6 +94,11 @@ const fetch = () => {
             $data.sub_categories = cloneDeep(sub_categories).filter( sub => sub.products_count > 0 );
             $data.products_count = products_count;
             $data.category       = cloneDeep(category);
+            document.querySelector('meta[name="keywords"]')
+                    .setAttribute(
+                        'content',
+                        `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${category.name}, ${category.code}`
+                    );
         })
         .catch( () => {
             $data.loader =  false           
@@ -103,7 +108,7 @@ const fetch = () => {
         })
 }
 const viewProducts = (sub_category) => {
-    $router.push({ name: 'Products', params: { category: $route.params.category, sub_category: sub_category.id }})
+    $router.push({ name: 'Products', params: { category: $route.params.category, sub_category: sub_category.code }})
 }
 
 // Initialize component

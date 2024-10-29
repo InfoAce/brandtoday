@@ -51,8 +51,8 @@ export class ProductsController {
      */
     async index(
       @Query('name',new DefaultValuePipe(String())) queryName: string,
-      @Query('category',new DefaultValuePipe(String())) category_id: any,
-      @Query('sub_category',new DefaultValuePipe(String())) sub_category_id: any,
+      @Query('category_code',new DefaultValuePipe(String())) category_code: any,
+      @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: any,
       @Query('page',new DefaultValuePipe(1)) queryPage: string,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
@@ -65,8 +65,8 @@ export class ProductsController {
         let products       = Array();
         let products_count = Number();
 
-        if( !isEmpty(category_id) && !isEmpty(sub_category_id) ){
-          let product_categories = await this.productCategoryModel.find({ where: { category_id, sub_category_id }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true});
+        if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
+          let product_categories = await this.productCategoryModel.find({ where: { category_code, sub_category_code }, order: { product: { price: 'ASC' } }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true});
           products               = cloneDeep(product_categories).map( (category) => category.product );
         }
 
@@ -217,7 +217,7 @@ export class ProductsController {
     }
 
     @UseGuards(OptionalGuard)
-    @Put(':product_id')
+    @Put(':full_code')
     /**
      * Show a product by its code.
      *
@@ -227,7 +227,7 @@ export class ProductsController {
      * @return {Promise<void>}
      */
     async show(
-      @Param('product_id') product_id: string, // The code of the product
+      @Param('full_code') full_code: string, // The code of the product
       @Req() req: Request,  // The request object
       @Res() res: Response // The response object
     ) {
@@ -237,7 +237,7 @@ export class ProductsController {
         let user: any   = get(req,'user');
         
         // Find the product with the given code
-        let product: any = await this.productModel.findOne({ where: { id: product_id }});
+        let product: any = await this.productModel.findOne({ where: { full_code: full_code }});
 
         if (!isNull(product.colour_images)) {
           product.colour_images = product.colour_images.map((color) => ({

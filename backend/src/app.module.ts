@@ -10,9 +10,9 @@ import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService } from './services';
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
-import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, StockKeepingEntity, SubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, SubCategoryEntity, SubChildSubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, UserSubscriber } from './subscribers';
+import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, ProductSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
@@ -91,8 +91,8 @@ import { OrderCreatedListener } from './listeners';
             QueueEntity,
             RoleEntity,
             StockEntity,
-            StockKeepingEntity,
             SubCategoryEntity,
+            SubChildSubCategoryEntity,
             TransactionEntity,
             UserEntity
           ],
@@ -100,6 +100,7 @@ import { OrderCreatedListener } from './listeners';
           subscribers: [
             OrderSubscriber,
             PriceSubscriber,
+            ProductSubscriber,
             ProductColourSubscriber,
             UserSubscriber
           ]

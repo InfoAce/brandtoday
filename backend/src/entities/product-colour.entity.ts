@@ -20,13 +20,19 @@ export class ProductColourEntity {
 
   @ManyToOne(() => ProductEntity, (entity) => entity.colour_images, { onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({
-    name: 'product_id',
-    referencedColumnName: 'id'
+    name: 'product_code',
+    referencedColumnName: 'full_code'
   })
   product: ProductEntity
 
   @Column()
-  product_id: string
+  @Index()
+  product_code: string
+
+  @Column({
+    unique: true
+  })
+  simple_code: string;  
 
   @CreateDateColumn()
   created_at: Date; // Creation date

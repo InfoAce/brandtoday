@@ -165,7 +165,7 @@ const home       = computed( () => $store.getters.home);
     // Use the Vue Router to navigate to the Category page with the category name as query parameter.
     $router.push({ 
         name:   'Category', 
-        params: { category: item.id } 
+        params: { category: item.code } 
     });
 }
 

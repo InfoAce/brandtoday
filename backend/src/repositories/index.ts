@@ -18,6 +18,6 @@ export { ProductReviewRepository as ProductReviewRepository } from './product-re
 export { ProductVariantRepository as ProductVariantRepository } from './product-variant.repository';
 export { TransactionRepository as TransactionRepository } from './transaction.repository';
 export { StockRepository as StockRepository } from './stock.repository';
-export { StockKeepingRepository as StockKeepingRepository } from './stock-keeping.repository';
 export { SubCategoryRepository as SubCategoryRepository } from './sub-category.repository';
+export { SubChildSubCategoryRepository as SubChildSubCategoryRepository } from './sub-child-sub-category.repository';
 export { UserRepository as UserRepository } from './user.repository';

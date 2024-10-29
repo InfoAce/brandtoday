@@ -388,12 +388,14 @@ export class OrderController {
         url: `${this.configService.get<string>('app.APP_URL')}/api/v1/orders/${order.id}/status`,
         ipn_notification_type: 'GET'
       },token);
+
+      let app_env = this.configService.get<string>('app.APP_ENV');
       
       // Create the pesapal order
       let pesapal_order = await this.pesapalService.order({
         id:              order.id,
         currency:        user.currency,
-        amount:           1.00,
+        amount:          app_env == 'development' ? 1 : totalAmount,
         description:     `User ${user.email} is paying for ${order.items.length}. The total amount is ${totalAmount}.`,
         callback_url:    `${this.configService.get<string>('app.APP_URL')}/checkout/${order.id}/complete`,
         notification_id: pesapal_ipn.ipn_id,

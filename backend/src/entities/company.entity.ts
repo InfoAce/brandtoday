@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
-import { PriceEntity, RoleEntity, UserEntity } from './index';
+import { PriceEntity, ProductEntity, RoleEntity, UserEntity } from './index';
 import { Seed, SeedRelation } from 'nestjs-class-seeder';
 
 export enum GlobalFee {
@@ -129,6 +129,9 @@ export class CompanyEntity {
     type: 'json'
   })
   service_fees: any;
+
+  @OneToMany(() => ProductEntity, (entity) => entity.company)
+  products: Promise<ProductEntity[]>;
 
   @OneToMany(() => PriceEntity, (entity) => entity.company)
   prices: Promise<PriceEntity[]>;
