@@ -66,9 +66,7 @@ export default registerAs('services',() => {
                 status:       "/Transactions/GetTransactionStatus", // track the transaction status
                 registeripn:  "/URLSetup/RegisterIPN", // register Instant Payment Notification
                 ipn:          "/URLSetup/RegisterIPN", // create an Instant Payment Notification
-                live:         "https://pay.pesapal.com/v3/api", // testing phase endpoint
                 orderRequest: "/Transactions/SubmitOrderRequest", // create an order request for a client
-                sandbox:      "https://cybqa.pesapal.com/pesapalv3/api" // live phase endpoint
             },
             configuration:{
                 consumer_key,
