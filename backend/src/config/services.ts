@@ -57,7 +57,7 @@ export default registerAs('services',() => {
         },
         pesapal: {
             base:{
-                live: "https://cybqa.pesapal.com/pesapalv3/api", // live phase endpoint
+                live: "https://cybqa.pesapal.com/pesapal/v3/api", // live phase endpoint
                 sandbox:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
             },
             endpoints: {
