@@ -221,7 +221,7 @@
                                                 </button>    
                                             </template>
                                             <template v-else>
-                                                <button class="btn btn-solid hover-solid btn-animation text-white" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
+                                                <button class="btn btn-solid btn-animation text-white w-100 p-3" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
                                                     <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
                                                     <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
                                                     <span v-show="$isEmpty(favourite)">Wishlist</span>
@@ -682,7 +682,7 @@ export default {
 
         },
         selectSize(variant,event){
-            console.log(variant)
+
             // Check if colour has been selected
             if( has(this.errors,'colour') ){
                 this.$toast.warning('Select colour.');

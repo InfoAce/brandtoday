@@ -7,18 +7,18 @@ export class FavouriteEntity {
   
   @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @ManyToOne(() => ProductEntity, (entity) => entity.favourites, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' } )
-  @JoinColumn({
-    name:                 "product_id",
-    referencedColumnName: "id",
-  })
-  product: ProductEntity;
-
+  
   @Column({
     nullable: false
   })
-  product_id: string;
+  full_code: string;
+
+  @ManyToOne(() => ProductEntity, (entity) => entity.favourites, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' } )
+  @JoinColumn({
+    name:                 "full_code",
+    referencedColumnName: "full_code",
+  })
+  product: ProductEntity;
 
   @ManyToOne(() => UserEntity, (entity) => entity.favourites, { onDelete: 'CASCADE', onUpdate: 'CASCADE' } )
   @JoinColumn({

@@ -84,9 +84,9 @@ export class FavouriteController {
      * @returns {Promise<void>} Promise that resolves with a JSON response containing the stored favourite item.
      */
     @UseGuards(ClientGuard)
-    @Put(':product_id')    
+    @Put(':full_code')    
     async store(
-        @Param('product_id',new DefaultValuePipe(String())) product_id: any,
+        @Param('full_code',new DefaultValuePipe(String())) full_code: string,
         @Req()  req: Request,  // The Express request object
         @Res()  res: Response // The Express response object
     ){
@@ -96,7 +96,7 @@ export class FavouriteController {
             let user = get(req,'user');
 
             // Save the new favourite item with the user ID set
-            let favourite = await this.favouriteModel.save({user_id: user.id, product_id});
+            let favourite = await this.favouriteModel.save({user_id: user.id, full_code});
 
             // Return the newly created favourite item as a JSON response with a 200 status code
             return res.status(HttpStatus.OK).json({ favourite });

@@ -107,7 +107,6 @@ export class OrderController {
 
       // Check if the order type is new or existing
       if (form.type == "new") {
-        console.log(await this.userModel.exists({ where: { email: form.email } }));
 
         // Generate random string for token and fetch company and role IDs
         let randomstring      = require("randomstring");
@@ -285,7 +284,6 @@ export class OrderController {
       // Send the order invoice to the user's email address
       await this.mailService.payment(order);
 
-
       // Return the order as a JSON response
       return res.status(HttpStatus.OK).json({ order });
 
@@ -385,7 +383,6 @@ export class OrderController {
       
       // Process pesapal transaction
       let { token } = await this.pesapalService.auth();
-
       // Register the IPN (Instant Payment Notification) for the order
       let pesapal_ipn  = await this.pesapalService.registerIPN({
         url: `${this.configService.get<string>('app.APP_URL')}/api/v1/orders/${order.id}/status`,
@@ -393,7 +390,7 @@ export class OrderController {
       },token);
 
       let app_env = this.configService.get<string>('app.APP_ENV');
-      
+
       // Create the pesapal order
       let pesapal_order = await this.pesapalService.order({
         id:              order.id,
