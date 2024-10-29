@@ -16,7 +16,8 @@ export default registerAs('services',() => {
         },
         pesapal:{
             consumer_key,
-            consumer_secret
+            consumer_secret,
+            live
         }
     } = json.readJSON(`${home}${sep}configurations.json`);
 
@@ -71,7 +72,8 @@ export default registerAs('services',() => {
             },
             configuration:{
                 consumer_key,
-                consumer_secret
+                consumer_secret,
+                live
             }
         }
     };

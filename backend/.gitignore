@@ -3,6 +3,8 @@
 /node_modules
 /build
 
+configurations.json
+
 # Logs
 logs
 *.log
