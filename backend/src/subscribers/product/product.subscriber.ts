@@ -30,13 +30,13 @@ export class ProductSubscriber implements EntitySubscriberInterface<ProductEntit
                         product.price = (product.price + product.company.product_fee);
                     break;
                     case 'percentage':
-                        product.price = parseFloat((product.price * (product.company.product_fee/100)).toFixed(2));
+                        product.price = (product.price * (product.company.product_fee/100));
                     break;
                 }
             }
 
         }
-
+        
         return product;
 
     }

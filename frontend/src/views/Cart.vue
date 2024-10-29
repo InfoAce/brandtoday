@@ -46,12 +46,12 @@
                                         <template v-if="has(item,'sizes')">
                                             <tr v-for="(size,key) in item.sizes" :key="key">
                                                 <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
                                                         <img :src="item.image" :alt="item.name" class="img-thumbnail">
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})"><strong>{{ item.name }} - {{ size.name }}</strong></a>
+                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})"><strong>{{ item.name }} - {{ size.name }}</strong></a>
                                                     <div class="mobile-cart-content row">
                                                         <div class="col">
                                                             <div class="qty-box">
@@ -61,7 +61,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col">
-                                                            <h2 class="td-color">{{ currency }} {{ item.price }}</h2>
+                                                            <h2 class="td-color">{{ currency }} {{ item.price.toFixed(2) }}</h2>
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
@@ -81,7 +81,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2 class="td-color">{{ currency }} {{ (item.price * size.quantity) }}</h2>
+                                                    <h2 class="td-color">{{ currency }} {{ (item.price * size.quantity).toFixed(2) }}</h2>
                                                 </td>
                                                 <td>
                                                     <a href="#" class="icon" @click.prevent="removeSizeItem({ item, key, index})"><i class="fa fa-trash"></i></a>
@@ -91,12 +91,12 @@
                                         <template v-else>
                                             <tr>
                                                 <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})">
+                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
                                                         <img :src="item.image" :alt="item.name" class="img-thumbnail">
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.code }})"><strong>{{ item.name }}</strong></a>
+                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})"><strong>{{ item.name }}</strong></a>
                                                     <div class="mobile-cart-content row">
                                                         <div class="col">
                                                             <div class="qty-box">
@@ -106,7 +106,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col">
-                                                            <h2 class="td-color">{{ currency }} {{ item.price }}</h2>
+                                                            <h2 class="td-color">{{ currency }} {{ item.price.toFixed(2) }}</h2>
                                                         </div>
                                                         <div class="col">
                                                             <h2 class="td-color">
@@ -116,12 +116,12 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2>{{ currency }} {{ item.price }}</h2>
+                                                    <h2>{{ currency }} {{ item.price.toFixed(2)}}</h2>
                                                 </td>
                                                 <td>
                                                     <div class="qty-box" v-if="has(item,'sizes')">
                                                         <div class="input-group">
-                                                            <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" disabled :value="sum(item.sizes.map( (size: any) => size.quantity))">
+                                                            <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" disabled :value="sum(item.sizes.map( (size: any) => size.quantity)).toFixed(2)">
                                                         </div>
                                                     </div>
                                                     <div class="qty-box" v-if="!has(item,'sizes')">
@@ -131,8 +131,8 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <h2 class="td-color" v-if="has(item,'sizes')">{{ currency }} {{ (sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(0) }}</h2>
-                                                    <h2 class="td-color" v-if="!has(item,'sizes')">{{ currency }} {{ (item.quantity * item.price).toFixed(0) }}</h2>
+                                                    <h2 class="td-color" v-if="has(item,'sizes')">{{ currency }} {{ (sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(2) }}</h2>
+                                                    <h2 class="td-color" v-if="!has(item,'sizes')">{{ currency }} {{ (item.quantity * item.price).toFixed(2) }}</h2>
                                                 </td>
                                                 <td>
                                                     <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
@@ -146,7 +146,7 @@
                                             <h2 class="td-color">Total Amount: </h2>
                                         </td>
                                         <td colspan="2">
-                                            <h2 class="td-color"> {{ currency }} {{ total }}</h2>
+                                            <h2 class="td-color"> {{ currency }} {{ total.toFixed(2) }}</h2>
                                         </td>
                                     </tr>
                                 </template>

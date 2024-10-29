@@ -305,7 +305,7 @@
                                             <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})" class="text-theme">
                                                 <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
                                             </a>
-                                            <h5 class="m-0 p-0">{{ currency }} {{ product.price }}</h5>
+                                            <h5 class="m-0 p-0">{{ currency }} {{ product.price.toFixed(2) }}</h5>
                                             <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                             <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                 <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>

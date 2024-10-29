@@ -10,6 +10,7 @@ import { isEmpty } from 'lodash';
 import * as moment from 'moment';
 import  'winston-daily-rotate-file';
 import { TimeoutInterceptor } from './interceptors';
+import { useContainer } from 'class-validator';
 
 // Directory separator
 const { sep } = require('path');
@@ -85,6 +86,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   // app.useGlobalInterceptors(new TimeoutInterceptor());
   app.useStaticAssets(resolve('/public'));
+  
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.listen(APP_PORT);
 

@@ -234,7 +234,7 @@
 import { computed, inject, onBeforeMount, onMounted, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import * as yup from "yup";
-import { cloneDeep, debounce, each, first, isEmpty, has, omit, set, sum, values } from 'lodash';
+import { cloneDeep, debounce, each, first, isEmpty, has, get, omit, set, sum, values } from 'lodash';
 import { VueTelInput } from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css'
 import { countries } from 'countries-list';
@@ -433,11 +433,26 @@ const placeOrder = async () => {
         // Open the payment iframe
         openPesapal();
     } catch (error) {
-        // Show an error toast
-        $toast.error('Oops! Something went wrong when placing the order.')
-        
-        // Log the error to the console
-        console.log(error);
+        $data.loader.order = false;
+
+        if( has(error,'response') ){
+
+            // Show an error
+            switch(get(error.response,'status')){
+                case 400:
+                    let messages: any = get(error.response,'data.message');
+                    messages.forEach( (value) => {
+                        // Show an error toast
+                        $toast.warning(value)
+                    });
+                return;
+                default: 
+                    return $toast.error('Oops! Something went wrong when placing the order.')
+            }
+        }
+
+    } finally {
+        $data.loader.order        = false;
     }
 }
 

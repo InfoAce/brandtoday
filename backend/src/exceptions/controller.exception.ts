@@ -1,5 +1,7 @@
-import { Logger } from "@nestjs/common";
+import { HttpException, Logger } from "@nestjs/common";
 import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { QueryFailedError } from "typeorm";
+import { get } from 'lodash';
 
 export class ControllerException extends ExceptionsHandler {
     private logger = new Logger(ControllerException.name)
@@ -11,7 +13,6 @@ export class ControllerException extends ExceptionsHandler {
         // Call the parent constructor passing the error object
         super(error);
 
-        // Log the error object with the logger
         // The logger will print the error object as a JSON string
         this.logger.error(JSON.stringify(error));
     }

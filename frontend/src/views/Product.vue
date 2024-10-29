@@ -104,7 +104,7 @@
                                 <h5 class="text-theme m-0">{{ product.full_code }}</h5>
                                 <h2 class="text-theme">{{ product.name }}</h2>
                                 <p>Price</p>
-                                <h3 class="price-detail">{{ currency }} {{ product.price }}</h3>
+                                <h3 class="price-detail" v-if="!$isEmpty(product)">{{ currency }} {{ product.price.toFixed(2) }}</h3>
                                 <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                 <div class="border-product my-2">
                                     <h5> 
@@ -157,6 +157,7 @@
                                                         </span>
                                                         <input 
                                                             type="number" 
+                                                            min="1"
                                                             :name="`quantity_${variant.full_code}`" 
                                                             class="form-control input-number" 
                                                             :disabled="(variant.stock.quantity - variant.stock.reserved_quantity) <= 0  || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
@@ -165,6 +166,7 @@
                                                         > 
                                                         <input 
                                                             type="number" 
+                                                            min="1"
                                                             :name="`quantity_${variant.full_code}`" 
                                                             class="form-control input-number" 
                                                             :disabled="(variant.stock.quantity - variant.stock.reserved_quantity) <= 0  || $isEmpty(selections.colour) || !$has(selections.sizes,variant.code_size)"
@@ -363,7 +365,7 @@ export default {
             }
         },
         cartItem(){
-            return this.cart.find( val => val.product_id == this.product.id ) ?? {};
+            return this.cart.find( val => val.full_code == this.product.full_code ) ?? {};
         },
         colour_images(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
@@ -513,10 +515,11 @@ export default {
 
             $(`input[name="quantity_${product.full_code}"]`).val(1);
 
-            set(this.form,'product_id', String());
+            set(this.form,'full_code',  String(product.full_code));
             set(this.form,'price',      String());
             set(this.form,'colour',     String());
-            set(this.form,'name',       String(product.name));
+            set(this.form,'image',      String());
+            set(this.form,'name',       String());
 
             switch( this.isVariant ){   
                 case true: 
@@ -532,7 +535,7 @@ export default {
 
                     set(this.selections,'sizes',Object());
                     set(this.form,'sizes',Array());
-                    set(this.form,'price',product.price);
+                    set(this.form,'price',parseFloat(product.price.toFixed(2)));
                 break;
                 case false:
                     // Check if product has variants and add validation of quantity if empty
@@ -541,25 +544,50 @@ export default {
                 break;
             }
             
-            this.schemaShape.product_id = yup.string().required("*Product is required."); // validate product code   
+            this.schemaShape.full_code  = yup.string().required("*Product is required."); // validate product code   
             this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
             this.schemaShape.price      = yup.number().required("*Price is required."); // validate product price
             this.schemaShape.hex        = yup.string(); // validate product hex colour
-            this.schemaShape.name       = yup.string(); // validate product hex colour
+            this.schemaShape.image      = yup.string(); // validate product image
+            this.schemaShape.name       = yup.string(); // validate product image
 
             set(this.selections,'colour',Object()); // Initialize colour selection
             
-            this.formSchema           = yup.object().shape(this.schemaShape);  // Initialize validation
-            this.form.product_id      = product.id;
+            this.formSchema          = yup.object().shape(this.schemaShape);  // Initialize validation
 
             if( !isEmpty(this.cartItem) ){
-                this.form.sizes        = cloneDeep(this.cartItem.sizes);
                 this.selections.colour = this.product.colour_images.find( colour => colour.hex.includes(this.cartItem.hex) );
                 this.selections.sizes  = this.cartItem.sizes.reduce((a, v) => { a[v.name] = this.cartItem.sizes.findIndex( val => val.name == v.name) ; return a; }, {});
                 this.selections.hex    = clone(this.cartItem.hex);
+                each(
+                    this.cartItem,
+                    (value,key) => {
+                        set(this.form,key,value);
+                    }
+                );
+                this.alreadyInCart();
             }
-            // this.fetchColourStock(product); // Fetch colour stock           
-        },        
+        
+        },   
+        async alreadyInCart(){
+            const { isConfirmed } = await this.$swal.fire({
+                icon:  'question', // Set the icon to a question mark
+                title: 'Shopping Cart', // Set the title of the dialog to 'Logout'
+                text:  'This product has already been added to the shopping cart. Do you want to view the shopping cart?', // Set the text of the dialog
+                showCancelButton: true, // Show a cancel button in the dialog
+                confirmButtonText: 'Yes',
+                cancelButtonText:  'No'
+            });
+
+            if( isConfirmed ){
+                this.$router.push({ name: 'Cart' });
+            }
+
+            if( !isConfirmed ){
+                this.$swal.close();
+            }
+
+        },  
         descreaseQuantity(){
             let quantity = parseInt($(`input[name="quantity_${this.product.full_code}"]`).val());
             if( quantity != 1 ){
@@ -699,19 +727,6 @@ export default {
             });
              
         },
-    },
-    mounted(){
-        this.$nextTick( 
-            debounce(
-                () => {
-                    if( !isEmpty(this.cartItem) ){
-                        this.form = cloneDeep(this.cartItem);
-                    }    
-                    $('[data-toggle="tooltip"]').tooltip()                                 
-                },
-                200
-            )
-        );
     },
     watch:{
         form:{

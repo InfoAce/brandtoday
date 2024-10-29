@@ -1,4 +1,5 @@
-import { IsEmail, Matches, MaxLength, MinLength ,IsArray, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import { IsEmail, Matches, MaxLength, MinLength ,IsArray, IsNotEmpty, IsString, ValidateIf, Validate } from 'class-validator';
+import { isEmailUnique } from 'src/helpers/validators/user.validator';
 
 export class CreateOrderValidation {
     @IsString()
@@ -26,6 +27,7 @@ export class CreateOrderValidation {
   
     @ValidateIf( item => item.type == 'new' )
     @IsEmail()
+    @isEmailUnique()
     @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,3}$/g,{ message: "Enter a valid email address."})
     email: string;
   

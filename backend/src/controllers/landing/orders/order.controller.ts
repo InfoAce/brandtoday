@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { first, get, has, pick, set, sum } from 'lodash';
@@ -107,6 +107,8 @@ export class OrderController {
 
       // Check if the order type is new or existing
       if (form.type == "new") {
+        console.log(await this.userModel.exists({ where: { email: form.email } }));
+
         // Generate random string for token and fetch company and role IDs
         let randomstring      = require("randomstring");
         let { id: companyId } = await this.companyModel.first();
@@ -183,6 +185,7 @@ export class OrderController {
       }
 
     } catch(error) {
+
       // If a PesapalServiceException occurs, log the status
       if( error instanceof PesapalServiceException ) {
         this.logger.error(error);

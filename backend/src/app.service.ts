@@ -497,65 +497,8 @@ export class AppService {
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
     }
   }
-
-//   async synchronizeStockKeeping(queue) {
-
-//     try {
-//         // Logging
-//         this.logger.log(`Synchronizing stock keeping`);
-
-//         let stocks =  await this.stockModel.createQueryBuilder('stocks')
-//                                            .leftJoinAndMapOne('stocks.variant','product_variants', 'product_variants', 'stocks.full_code = product_variants.full_code')
-//                                            .leftJoinAndMapOne('stocks.product','products', 'products', 'stocks.simple_code = products.simple_code')
-//                                            .getMany();
- 
-//         let stock_keeping = await Promise.all(
-//             (await stocks).map( 
-//                 async (stock) => {
-
-//                     let data     = { stock_id: get(stock,'id'), product_id: null, variant_id: null };
-//                     let product  = get(stock,'product');
-//                     let variant  = get(stock,'variant');
-                    
-//                     if( !isEmpty(product) ) {
-//                         data.product_id = product.id; 
-//                     }
-
-//                     if( !isEmpty(variant) ) {
-//                         data.variant_id = variant.id; 
-//                     }
-
-//                     return data;
-//                 }
-//             ),
-//         );
-
-//         await Promise.all(
-//             chunk(stock_keeping,1000).map( async (item) => {
-//                 return new Promise( async (resolve,reject) => {
-//                     await this.stockKeepingModel.insert(item);
-//                     resolve(true);
-//                 }) 
-//             })
-//         )
-
-//         // Logging
-//         this.logger.log(`Done Synchronizing stock keeping`);
-
-//         // Update queue status
-//         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
-
-//     } catch (error) {
-
-//         // Logging
-//         this.logger.log(`Failed to synchronize stock keeping`);
-        
-//         // Update queue status
-//         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
-//     }
-//   }
   
-  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async amrodDataSyncDaily() {
 
     try{
@@ -575,7 +518,7 @@ export class AppService {
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)
-  async amrodDataSyncTenMins() {
+  async amrodDataSyncPartial() {
 
     try{
         this.logger.log(`Partial amrod data synchronization started.`);        

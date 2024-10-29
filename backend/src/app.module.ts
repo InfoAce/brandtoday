@@ -12,7 +12,7 @@ import { AmrodService, AuthService, MailService, PesapalService } from './servic
 import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
 import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, SubCategoryEntity, SubChildSubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, ProductSubscriber, UserSubscriber } from './subscribers';
+import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, ProductSubscriber, StockSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from './app.service';
@@ -20,6 +20,7 @@ import { resolve } from 'path';
 import { SessionSerialize } from './utils';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { OrderCreatedListener } from './listeners';
+import { CustomEmailvalidation } from './helpers/validators/user.validator';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { OrderCreatedListener } from './listeners';
             PriceSubscriber,
             ProductSubscriber,
             ProductColourSubscriber,
+            StockSubscriber,
             UserSubscriber
           ]
         }
@@ -166,6 +168,7 @@ import { OrderCreatedListener } from './listeners';
       provide: 'CacheService',
       useClass: CacheInterceptor,
     },
+    CustomEmailvalidation,
     JwtStrategy,
     LocalStrategy,
     PesapalService,

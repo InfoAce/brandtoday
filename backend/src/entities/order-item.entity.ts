@@ -8,12 +8,17 @@ export class OrderItemEntity {
   id: string;
 
   @Column({
-    nullable: false
+    nullable: true
   })
   colour: string;
 
   @Column({
     nullable: false
+  })
+  full_code: string;
+
+  @Column({
+    nullable: true
   })
   hex: string;
 
@@ -28,7 +33,7 @@ export class OrderItemEntity {
   name: string;
 
   @Column({
-    type: 'numeric',
+    type: 'double',
     nullable: false
   })
   price: number;
@@ -46,15 +51,10 @@ export class OrderItemEntity {
 
   @ManyToOne(() => ProductEntity, (entity) => entity.order_items, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
-    name:                 "product_id",
-    referencedColumnName: "id",
+    name:                 "full_code",
+    referencedColumnName: "full_code",
   })
   product: ProductEntity;
-
-  @Column({
-    nullable: false
-  })
-  product_id: string;
   
   @ManyToOne(() => OrderEntity, (entity) => entity.items, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
