@@ -117,7 +117,7 @@
                                         <div class="media-body media-doller"><span class="m-0"></span>
                                             <span class="m-0 text-success">Revenue Received</span>
                                             <h3 class="mb-0 text-success">
-                                                {{ company.currency }} {{  $data.summary.revenue_received }}
+                                                {{ company.currency }} {{ $data.summary.revenue_received.toFixed(2) }}
                                             </h3>
                                         </div>
                                     </div>
@@ -136,7 +136,7 @@
                                         <div class="media-body media-doller"><span class="m-0"></span>
                                             <span class="m-0">Revenue Pending</span>
                                             <h3 class="mb-0">
-                                                {{ company.currency }} {{  $data.summary.revenue_pending}}
+                                                {{ company.currency }} {{  $data.summary.revenue_pending.toFixed(2) }}
                                             </h3>
                                         </div>
                                     </div>
@@ -182,6 +182,12 @@ const $api         = inject('$api');
 const $toast       = inject('$toast');
 const $data        = reactive({ 
     listMonths:      Array(),
+    amrod:{
+        categories:       0,
+        products:         0,
+        product_variants: 0,
+        prices:           0
+    },
     summary: {
         clients:          0, 
         staff:            0, 

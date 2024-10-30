@@ -33,6 +33,11 @@ p {
   font-weight: unset !important;
 }
 
+.badge {
+  font-style: normal !important;
+  margin: 0 !important;
+}
+
 .part p,
 .part div {
   font-size: medium !important;
