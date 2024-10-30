@@ -107,7 +107,39 @@ export class AmrodService {
             throw new AmrodServiceException(error);
         }
     }
-        
+
+    /**
+     * Fetches all colour swatches from the Amrod API.
+     * 
+     * @returns {Promise<Array<Object>>} A promise that resolves with an array of colour swatch objects.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getColourSwatches(): Promise<Array<any>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and endpoint for colour swatches
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.colour_swatches}`;
+
+            // Execute a GET request to fetch colour swatches from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched colour swatches data
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Colour Swatches: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    }
+    
+    
     /**
      * Fetches all products from the Amrod API
      * 

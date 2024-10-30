@@ -74,43 +74,6 @@ export class ProductsController {
           [products, products_count] = await this.productModel.findAndCount({ where: [ { name: Like(`%${queryName}%` ) }, { full_code: Like(`%${queryName}%` ) } ], skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
         }
 
-        // let query = this.productModel.createQueryBuilder("products")
-        //                 .leftJoinAndSelect("products.categories", "categories")
-        //                 .leftJoinAndSelect("products.colour_images", "colour_images")
-
-        // // If sub child category is provided, add it to the where clause
-        // if (!isEmpty(queryName)) {
-        //   query = query.andWhere("products.name LIKE :name", {name: `%${queryName}%`});
-        // }
-        
-        // if (!isEmpty(queryPriceRange)) {
-        //   query = query.leftJoinAndSelect("products.variants", "variants").leftJoinAndSelect("variants.price", "variants_prices")
-        //   query = query.andWhere("variants_prices.amount >= :min AND variants_prices.amount <= :max", {min: queryPriceRange.split('~')[0], max: queryPriceRange.split('~')[1]})
-        //                .orderBy("variants_prices.amount",querySortPricing == 'descending' ? 'DESC' : 'ASC')
-        // }
-
-        // let [ products, count ] = await query.andWhere("categories.category_id = :category_id", {category_id})
-        //                                      .andWhere("categories.sub_category_id = :sub_category_id", {sub_category_id})
-        //                                      .skip((parseInt(queryPage) - 1) * (parseInt(queryPerPage))).take(parseInt(queryPerPage))
-        //                                      .setFindOptions({ loadEagerRelations: true})
-        //                                      .getManyAndCount();
-                                             
-        products = await Promise.all(
-          products.map( async(product) => {
-            if (!isNull(product.colour_images)) {
-              product.colour_images = product.colour_images.map((color) =>{
-                try {
-                  return { ...color, hex: this.colors[color.code].colour };
-                } catch(error){
-                  this.logger.log(`[COLOUR ERROR]${JSON.stringify(color)}`)
-                }
-              });
-            }
-            await product.variants;
-            return product;
-          })
-        )
-
         // Send the products, category, and sub categories as a JSON response
         res.status(HttpStatus.OK).json({products, products_count });
         
@@ -239,38 +202,8 @@ export class ProductsController {
         // Find the product with the given code
         let product: any = await this.productModel.findOne({ where: { full_code: full_code }});
 
-        if (!isNull(product.colour_images)) {
-          product.colour_images = product.colour_images.map((color) => ({
-            ...color,
-            hex: this.colors[color.code].colour,
-          }));
-        }
-
         await product.variants;
         await product.stocks;
-
-        let categories            = await product.categories;
-        // let related_products: any = await this.productCategoryModel.find({ where: { category_id: In(categories.map( category => toPlainObject(category).category_id ) ), product_id: Not(product.id) }, take: 15, cache: true});
-
-        // related_products          = await Promise.all(
-        //     related_products.map( product_category => product_category.product )
-        //                     .map( async product => {
-        //                       await product.variants;
-        //                       await product.stocks;
-        //                       return product;
-        //                     })
-        //                     .map( async product => { 
-        //                         product = await product;
-        //                         return{
-        //                           ...product, 
-        //                           colour_images: product.colour_images.map( (color) => ({
-        //                             ...color,
-        //                             hex: this.colors[color.code].colour,
-        //                           }))
-        //                         }
-        //                       }
-        //                     )
-        // );
 
         // Initialize the favourite object
         let favourite: any = {};

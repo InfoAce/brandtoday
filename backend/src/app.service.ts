@@ -218,14 +218,17 @@ export class AppService {
         // Fetch amrod products
         let products = await this.amrodService.getProducts()  
 
+        // Fetch company
         let company  = await this.companyModel.first();
 
         // Fetch amrod prices  
         let prices   = await this.amrodService.getPrices();  
 
+        // Fetch amrod colour swatches
+        let colour_swatches = await this.amrodService.getColourSwatches();         
+
         products = products.map( product => {
-            let full_code     = product.fullCode.split('-');
-            let productPrices = prices.filter( price => price.simplecode.includes(`${full_code[0]}-${full_code[1]}`) );
+            let productPrices = prices.filter( price => price.simplecode.includes(product.simpleCode) || price.fullCode.includes(product.simpleCode) );
             let maxPrice      = get(maxBy( productPrices,'price'),'price');
             return { ...product, price: maxPrice, code: product.productName.toLowerCase().replace(/\s/g, '') }
         });
@@ -276,7 +279,19 @@ export class AppService {
 
         product_categories = uniqBy(product_categories,'path');
 
-        let colour_images = products.filter( product => !isNull(product.colourImages) ).map( product => product.colourImages.map( images => ({...images, product_code: product.fullCode })) ).flat().map( colour => ({ ...colour, id: uuidv4(), simple_code: `${colour.product_code}-${colour.code}` }) );
+        let colour_images = products.filter( 
+            product => !isNull(product.colourImages) ).map( 
+                product => product.colourImages.map( 
+                    images => ({...images, product_code: product.fullCode })
+                ) 
+            )
+            .flat()
+            .map( colour => ({ 
+                ...colour, 
+                hex:         get(colour_swatches.find( swatch => swatch.code.includes(colour.code) || swatch.name.includes(colour.name) ),'textColour'),      
+                simple_code: `${colour.product_code}-${colour.code}` 
+            }) 
+        );
 
         await Promise.all(
             chunk(uniqBy(products,'code'),1).map( async (products) => {
@@ -301,8 +316,8 @@ export class AppService {
             chunk(colour_images,1).map( async (colour) => {
                 await this.productColourModel.upsert(
                     colour.map( 
-                        ({ name, images, code, product_code, simple_code }) => 
-                            ({ name, images, code, product_code, simple_code }) 
+                        ({ name, images, code, product_code, simple_code, hex }) => 
+                            ({ name, images, code, product_code, simple_code, hex}) 
                     ),
                     {
                         conflictPaths: ["code"],

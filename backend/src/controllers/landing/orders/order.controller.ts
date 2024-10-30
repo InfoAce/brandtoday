@@ -396,7 +396,7 @@ export class OrderController {
         id:              order.id,
         currency:        user.currency,
         amount:          app_env == 'development' ? 1 : totalAmount,
-        description:     `User ${user.email} is paying for ${order.items.length}. The total amount is ${totalAmount}.`,
+        description:     `User ${user.email} is paying for ${order.items.length}. The total amount is ${totalAmount.toFixed(2)}.`,
         callback_url:    `${this.configService.get<string>('app.APP_URL')}/checkout/${order.id}/complete`,
         notification_id: pesapal_ipn.ipn_id,
         billing_address: {

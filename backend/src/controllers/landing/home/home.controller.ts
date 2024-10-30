@@ -12,7 +12,6 @@ import { ConfigService } from '@nestjs/config';
 export class HomeController {
 
     private logger = new Logger(HomeController.name);
-    private colors = Object();
 
     constructor(
       private brandModel:            BrandModel,
@@ -21,9 +20,7 @@ export class HomeController {
       private configService:         ConfigService,
       private productCategoryModel:  ProductCategoryModel,
       private productModel:          ProductModel,
-    ){
-      this.colors = this.configService.get<any>('colors');
-    }
+    ){}
 
 
     @Get('')
@@ -48,17 +45,7 @@ export class HomeController {
             })
           )
         );
-
-        products = await Promise.all(
-          products.map( async(product) => {
-            if (!isNull(product.colour_images)) {
-              product.colour_images = product.colour_images.map((color) => ({ ...color, hex: this.colors[color.code].colour }));
-            }
-            await product.variants;
-            return product;
-          })
-        )
-
+        
         let company = await this.companyModel.first();
 
         return res.status(HttpStatus.OK).json({  brands: company.brands, categories, banners: company.banners, products });

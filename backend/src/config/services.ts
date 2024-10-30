@@ -30,10 +30,10 @@ export default registerAs('services',() => {
                     all: '/Brands/',
                     updated: '/Brands/GetUpdated'  
                 },
-                vendor_uri,
                 categories: {
                     all: 'Categories'
                 },
+                colour_swatches: "/ColourSwatches/", // get colour swatchers
                 login: 'VendorLogin',
                 prices:{
                     all: 'Prices',
@@ -47,7 +47,8 @@ export default registerAs('services',() => {
                 stocks:{
                     all: 'Stock',
                     updated: 'Stock/GetUpdated'
-                }
+                },
+                vendor_uri,
             },
             credentials:{
                 account_number,
@@ -61,12 +62,12 @@ export default registerAs('services',() => {
                 sandbox:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
             },
             endpoints: {
-                auth:         "/Auth/RequestToken", // get authorization token4
-                getipns:      "/URLSetup/GetIpnList", // list all Instant Payment Notification
-                status:       "/Transactions/GetTransactionStatus", // track the transaction status
-                registeripn:  "/URLSetup/RegisterIPN", // register Instant Payment Notification
-                ipn:          "/URLSetup/RegisterIPN", // create an Instant Payment Notification
-                orderRequest: "/Transactions/SubmitOrderRequest", // create an order request for a client
+                auth:            "/Auth/RequestToken", // get authorization token4
+                getipns:         "/URLSetup/GetIpnList", // list all Instant Payment Notification
+                status:          "/Transactions/GetTransactionStatus", // track the transaction status
+                registeripn:     "/URLSetup/RegisterIPN", // register Instant Payment Notification
+                ipn:             "/URLSetup/RegisterIPN", // create an Instant Payment Notification
+                orderRequest:    "/Transactions/SubmitOrderRequest", // create an order request for a client
             },
             configuration:{
                 consumer_key,

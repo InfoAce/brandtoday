@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { get, groupBy, map, pick, set, sum } from 'lodash';
 import * as bcrypt from 'bcrypt';
 import { AdminGuard, ClientGuard, OptionalGuard } from 'src/guards';
-import { AddressBookModel, CompanyModel, OrderModel, RoleModel, TransactionModel, UserModel } from 'src/models';
+import { AddressBookModel, CategoryModel, CompanyModel, OrderModel, PriceModel, ProductModel, ProductVariantModel, RoleModel, TransactionModel, UserModel } from 'src/models';
 import { Between, IsNull, Not } from 'typeorm';
 import * as moment from 'moment';
 
@@ -14,9 +14,13 @@ export class OverviewController {
   private readonly logger = new Logger(OverviewController.name);
 
   constructor(
-    private orderModel: OrderModel,
-    private transactionModel: TransactionModel,
-    private userModel: UserModel,
+    private categoryModel:       CategoryModel,
+    private orderModel:          OrderModel,
+    private productModel:        ProductModel,
+    private productVariantModel: ProductVariantModel,
+    private priceModel:          PriceModel,
+    private transactionModel:    TransactionModel,
+    private userModel:           UserModel,
   ){}
 
   @UseGuards(AdminGuard)
@@ -42,9 +46,18 @@ export class OverviewController {
                                          .groupBy('YEAR(orders.created_at),MONTH(orders.created_at),orders.status')
                                          .getRawMany()
 
-      console.log(order_distribution);
-
+      let categories         = await this.categoryModel.count();
+      let products           = await this.productModel.count();
+      let product_variants   = await this.productVariantModel.count();
+      let prices             = await this.priceModel.count();
+      
       return res.status(HttpStatus.OK).json({ 
+        amrod:{
+          categories,
+          products,
+          product_variants,
+          prices
+        },
         order_distribution,
         summary: { 
           clients, 

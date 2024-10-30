@@ -18,6 +18,11 @@ export class ProductColourEntity {
   })
   images: string;
 
+  @Column({
+    nullable: true
+  })
+  hex: string;  
+
   @ManyToOne(() => ProductEntity, (entity) => entity.colour_images, { onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({
     name: 'product_code',
