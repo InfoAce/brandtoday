@@ -35,6 +35,7 @@
                                     </div>                                            
                                 </div>
                                 <div class="col-lg-7">
+                                    <form autocomplete="off" >
                                     <div class="row">
                                         <div class="col-12" v-show="isEmpty(authUser)">
                                             <div class="row check-out">
@@ -60,7 +61,7 @@
                                                     <label for="phone" class="field-label">Phone Number</label>
                                                     <vue-tel-input 
                                                         @input="getPhoneNumber" 
-                                                        defaultCountry="KE" 
+                                                        defaultCountry="KE"                                                     
                                                         :inputOptions="{ styleClasses: 'form-control m-1', placeholder: 'Phone Number' }" 
                                                         mode="international"
                                                         class="mb-2"
@@ -72,7 +73,7 @@
                                                     <Multiselect 
                                                         v-model="$data.form.currency"
                                                         :options="listCurrencies" 
-                                                        searchable
+                                                        searchable                                                  
                                                         placeholder="Currency"
                                                         class="mb-2"
                                                     />
@@ -95,17 +96,17 @@
                                                 </div>
                                                 <div class="form-group col-md-12 col-sm-12 col-xs-12">
                                                     <div class="field-label">Address Line 1</div>
-                                                    <input type="text" name="field-name"  v-model="$data.form.address_line_1" placeholder="Address Line 1">
+                                                    <input type="text" name="field-name"  autocomplete="off"  v-model="$data.form.address_line_1" placeholder="Address Line 1">
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'address_line_1')">{{$data.errors.address_line_1}}</p>	
                                                 </div>
                                                 <div class="form-group col-md-12 col-sm-12 col-xs-12">
                                                     <div class="field-label">Address Line 2</div>
-                                                    <input type="text" name="field-name" v-model="$data.form.address_line_2" placeholder="Address Line 2">
+                                                    <input type="text" name="field-name"  autocomplete="off" v-model="$data.form.address_line_2" placeholder="Address Line 2">
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'address_line_2')">{{$data.errors.address_line_2}}</p>	
                                                 </div>
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
                                                     <div class="field-label">Postal Code</div>
-                                                    <input type="text" name="field-name" v-model="$data.form.postal_code" placeholder="Postal Code">
+                                                    <input type="text" name="field-name"  autocomplete="off" v-model="$data.form.postal_code" placeholder="Postal Code">
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'postal_code')">{{$data.errors.postal_code}}</p>	
                                                 </div>           
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
@@ -113,19 +114,19 @@
                                                     <Multiselect 
                                                         v-model="$data.form.country"
                                                         :options="listCountries" 
-                                                        searchable
+                                                        searchable                                                
                                                         placeholder="Country"
                                                     />
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'country')">{{$data.errors.country}}</p>	
                                                 </div>                                       
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
                                                     <div class="field-label">State / County</div>
-                                                    <input type="text" name="field-name"  v-model="$data.form.county_state" placeholder="State / County">
+                                                    <input type="text" name="field-name"  autocomplete="off"  v-model="$data.form.county_state" placeholder="State / County">
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'county_state')">{{$data.errors.county_state}}</p>	
                                                 </div>  
                                                 <div class="form-group col-md-6 col-sm-6 col-xs-12">
                                                     <div class="field-label">Town / City</div>
-                                                    <input type="text" name="field-name" v-model="$data.form.city_town" placeholder="Town / City">
+                                                    <input type="text" name="field-name"  autocomplete="off" v-model="$data.form.city_town" placeholder="Town / City">
                                                     <p class="text-danger col col-12 mb-0" v-show="has($data.errors,'city_town')">{{$data.errors.city_town}}</p>	
                                                 </div>                                                                                               
                                             </div>
@@ -136,37 +137,39 @@
                                                     <h3>Address Details</h3>
                                                 </div> 
                                                 <template v-if="!isEmpty($data.addresses)">
-                                                    <div class="col-12 mb-2" v-for="(address, index) in $data.addresses" :key="index">
+                                                    <div class="col-12 mb-2 px-0" v-for="(address, index) in $data.addresses" :key="index">
                                                         <div class="card">
                                                             <div class="card-body d-flex align-items-center justify-content-between">
-                                                                <div class="address-box d-flex align-items-center">
-                                                                    <input class="form-check-input" style="width: 2em; height: 2em;" type="radio" name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">                                                    
-                                                                    <label class="form-check-label px-2">
-                                                                        <strong>
-                                                                            {{ address.address_line_1 }} <br>
-                                                                            {{ address.address_line_2 }}
-                                                                            {{ address.postal_code }}<br>
-                                                                            {{ address.country }},
-                                                                            {{ address.county_state }},
-                                                                            {{ address.city_town }}
-                                                                        </strong>
-                                                                    </label>
-                                                                </div>
+                                                                <input class="form-check-input" style="width: 2em; height: 2em; margin-top: 0 !important; position:relative !important; margin-left: 0 !important;" type="radio" name="address" :value="address.id" @input="selectAddress($event.target.value)" :id="`address_${index}`">                                                    
+                                                                <label class="form-check-label">
+                                                                    <strong>
+                                                                        {{ address.address_line_1 }} <br>
+                                                                        {{ address.address_line_2 }}
+                                                                        {{ address.postal_code }}<br>
+                                                                        {{ address.country }},
+                                                                        {{ address.county_state }},
+                                                                        {{ address.city_town }}
+                                                                    </strong>
+                                                                </label>
                                                                 <div class="btn btn-solid btn-sm">{{ address.category }}</div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <h4 class="text-danger" v-show="has($data.errors,'address_id')">{{ $data.errors.address_id }}</h4>								
                                                 </template>
                                                 <template v-else>
-                                                    <h4 class="text-warning text-center">
-                                                        <i class="fa fa-info-circle"></i>
-                                                        No addresses found.
-                                                    </h4>
+                                                    <div class="col-12 px-0">
+                                                        <h4 class="text-warning text-center">
+                                                            <i class="fa fa-info-circle"></i>
+                                                            No addresses found.
+                                                            Click <router-link :to="$router.resolve({ name: 'AddressBook' }).path">here</router-link > to create an address.
+                                                        </h4>
+                                                    </div>
                                                 </template>
+                                                <h4 class="text-danger" v-show="has($data.errors,'address_id')">{{ $data.errors.address_id }}</h4>								
                                             </div>
                                         </div>
                                     </div>
+                                    </form>
                                 </div>
                                 <div class="col-lg-5">
                                     <div class="checkout-details">
@@ -203,12 +206,12 @@
                                                     <li v-for="(fee,key) in $data.service_fees" :key="key">
                                                         {{ fee.name }}
                                                         <span class="count text-end" v-if="fee.type == 'fixed'">{{ home.company.currency }} {{ fee.amount.toFixed(2) }}</span>
-                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ).toFixed(0) }}</span>
+                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ).toFixed(2) }}</span>
                                                     </li>
                                                 </template>
                                             </ul>
                                             <ul class="total">
-                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(0) }}</span></li>
+                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(2) }}</span></li>
                                             </ul>
                                         </div>                                     
                                     </div>
@@ -232,6 +235,7 @@
 <script setup lang="ts">
 
 import { computed, inject, onBeforeMount, onMounted, reactive, watch } from 'vue';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useStore } from 'vuex';
 import * as yup from "yup";
 import { cloneDeep, debounce, each, first, isEmpty, has, get, omit, set, sum, values } from 'lodash';
@@ -262,12 +266,16 @@ const $data   = reactive({
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 // Computed
+const auth   = computed( () => $store.getters.auth );
 const authUser   = computed( () => $store.getters.auth.user );
 const cart       = computed( () => $store.getters.cart );
 const cart_items = computed( () => $store.getters.cart.map( item => has(item,'sizes') ? item.sizes.map( (size:any) => ({...omit(item,['sizes']),size})): item ).flat() );
 const home       = computed( () => $store.getters.home);
 const sub_total  = computed( () => cart_items.value.map( item => has(item,'size') ? item.price * item.size.quantity : item.price * item.quantity ).reduce( (a,c) => a + c, 0) );
-const total      = computed( () => $data.service_fees.map( (fee) => fee.type == 'percentage' ? ((fee.amount * sub_total.value ) / 100) : fee.amount ).reduce( (a,c) => a + c, 0) + sub_total.value );
+const total      = computed( () => !isEmpty($data.service_fees) ? 
+                        $data.service_fees.map( (fee) => fee.type == 'percentage' ? ((fee.amount * sub_total.value ) / 100) : fee.amount ).reduce( (a,c) => a + c, 0) + sub_total.value
+                    : sub_total.value
+                   );
 
 let formSchema       = yup.object().shape({
     items:            yup.array().min(1).required("*Cart Items is required"),                      
@@ -344,40 +352,55 @@ const validateForm = (field) => {
  * @returns {void}
  */
 const checkTransactionStatus = (statusInterval: number, order_id: string) => {
-    $api.get(`/orders/${order_id}/status`)
-        .then( ({ data: { transaction }}) => {
 
-            // If the transaction is paid, stop the interval and redirect the user to the order success page.
-            if (transaction.status_code === 1) {
-                $data.loader.order = false;
-                clearInterval(statusInterval);
-                document.querySelector('#payment_box').style.visibility = 'hidden';
-                document.querySelector('#payment_box .body iframe').remove();
-                $toast.success('Payment successful. Please check your email for order details.');
+    const { VITE_API_URL } = $store.getters.env;
 
-                setTimeout(() => {
-                    $store.commit('cart', []);
-                    $router.push({ name: "OrderSuccess", params: { order: transaction.order_id }});
-                }, 1000);
-            }
-        })
-        .catch(() => {
-            // If the request fails, set the loader to true.
-            $data.loader.order = true;
-        })
-        .finally(() => {
-            // Set the loader to true after the request is finished.
-            $data.loader.order = true;
-        });
+    let headers: any = {
+        'Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+    };
+
+    if( !isEmpty(authUser.value) ){
+        const { token: { token, token_type } } = $store.getters.auth;
+        headers['Authorization'] = `${token_type} ${token}`;
+    }
+
+    // Create a new EventSource object
+    let es = new EventSourcePolyfill(`${VITE_API_URL}/orders/${order_id}/status`, {
+        headers,
+        heartbeatTimeout: 360000 // 6 minutes
+    });
+
+    // Handle incoming messages from the server
+    es.onmessage = ({ data }) => {
+        let { transaction } = JSON.parse(data);
+        // If the transaction is paid, stop the interval and redirect the user to the order success page.
+        if (transaction.status_code === 1) {
+            $data.loader.order = false;
+            clearInterval(statusInterval);
+            document.querySelector('#payment_box').style.visibility = 'hidden';
+            document.querySelector('#payment_box .body iframe').remove();
+            $toast.success('Payment successful. Please check your email for order details.');
+
+            setTimeout(() => {
+                $store.commit('cart', []);
+                $router.push({ name: "OrderSuccess", params: { order: transaction.order_id }});
+            }, 1000);
+        }
+    }
+
+    es.onerror = (error) => {
+        console.log(error);
+        $data.loader.order = false;
+    }
 }
 
 const  openPesapal = () => {
 
     const { redirect_url, order_id} = $data.order;
     const iframe                    = document.createElement('iframe');
-    const statusInterval            = setInterval( () => {
-        checkTransactionStatus(statusInterval,order_id);
-    },3000);  
 
     iframe.setAttribute('src',redirect_url);
     iframe.setAttribute('height',window.screen.height);
@@ -387,16 +410,61 @@ const  openPesapal = () => {
     document.querySelector('#payment_box .body').append(iframe);
     document.querySelector('#payment_box').style.visibility = 'visible';
 
-    document.querySelector('#transaction_cancel')
-            .addEventListener(
-                'click',
-                () => { 
-                    /* later */
-                    clearInterval(statusInterval);
-                    document.querySelector('#payment_box').style.visibility = 'hidden';
-                    document.querySelector('#payment_box .body iframe').remove();
-                }
-            );
+    document.querySelector('#transaction_cancel').addEventListener(
+        'click',
+        () => { 
+            /* later */
+            clearInterval(statusInterval);
+            document.querySelector('#payment_box').style.visibility = 'hidden';
+            document.querySelector('#payment_box .body iframe').remove();
+        }
+    );
+
+    const { VITE_API_URL } = $store.getters.env;
+
+    let headers: any = {
+        'Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+    };
+
+    if( !isEmpty(authUser.value) ){
+        const { token: { token, token_type } } = $store.getters.auth;
+        headers['Authorization'] = `${token_type} ${token}`;
+    }
+
+    // Create a new EventSource object
+    let es = new EventSourcePolyfill(`${VITE_API_URL}/orders/${order_id}/status`, {
+        headers,
+        heartbeatTimeout: 360000 // 6 minutes
+    });
+
+    // Handle incoming messages from the server
+    es.onmessage = ({ data }) => {
+        let { transaction } = JSON.parse(data);
+        // If the transaction is paid, stop the interval and redirect the user to the order success page.
+        if (transaction.status_code === 1) {
+            $data.loader.order = false;
+            document.querySelector('#payment_box').style.visibility = 'hidden';
+            document.querySelector('#payment_box .body iframe').remove();
+            $toast.success('Payment successful. Please check your email for order details.');
+
+            es.close();
+
+            setTimeout(() => {
+                $store.commit('cart', []);
+                $router.push({ name: "OrderSuccess", params: { order: transaction.order_id }});
+            }, 1000);
+        }
+    }
+
+    es.onerror = (error) => {
+        console.log(error);
+        $data.loader.order = false;
+        $toast.error('An error occurred while processing your payment. Please try again later.');
+        es.close();
+    }            
             
 }
 
@@ -479,6 +547,7 @@ const recaptcha = async () => {
 
 onBeforeMount( async() => {
     try {
+
         $store.commit('loader',true);
         
         const { data: { addresses, service_fees } } = await $api.get('/orders/checkout');
@@ -518,6 +587,8 @@ onBeforeMount( async() => {
                 address_id: yup.string().required("*Select an address"),                     
             });
         }
+
+        $data.form.items   = cloneDeep(cart_items.value);
         
     } catch (error) {
         $store.commit('loader',false);
@@ -530,7 +601,6 @@ onBeforeMount( async() => {
 onMounted( 
     debounce(
         () => {
-            $data.form.items = cloneDeep(cart.value);
             watch(
                 () => $data.form, 
                 (form) => {

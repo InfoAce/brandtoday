@@ -80,7 +80,7 @@ export class AppService {
                 break;
                 case 'product_variants':
                     this.synchronizeProductVariants(queue);
-                  break;
+                break;
                 case 'prices':
                   this.synchronizePrices(queue);
                 break;
@@ -141,8 +141,7 @@ export class AppService {
             chunk(categories,500).map( async (categories) => {
                 await this.categoryModel.upsert(
                     categories.map( 
-                        ({categoryName: name, categoryCode, categoryPath: path }) => 
-                            ({ code: categoryCode.replace(/\s/g, '').toLowerCase(), name, path}) 
+                        (category) => ({ code: category.categoryName.replace(/\s/g, '').toLowerCase(), name: category.categoryName, path: category.categoryPath })
                     ),
                     {
                         conflictPaths: ["code"],
@@ -207,6 +206,12 @@ export class AppService {
         await this.queueModel.updateOne({ type: 'products' },{ status: 'waiting', state: true });
     } catch(error) {
         console.log(error);
+
+        // Logging
+        this.logger.log(`Failed to synchronize categories`);
+        
+        // Update queue status
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) }); 
     }
   }
 
@@ -225,12 +230,12 @@ export class AppService {
         let prices   = await this.amrodService.getPrices();  
 
         // Fetch amrod colour swatches
-        let colour_swatches = await this.amrodService.getColourSwatches();         
-
+        let colour_swatches = await this.amrodService.getColourSwatches();  
+        
         products = products.map( product => {
             let productPrices = prices.filter( price => price.simplecode.includes(product.simpleCode) || price.fullCode.includes(product.simpleCode) );
             let maxPrice      = get(maxBy( productPrices,'price'),'price');
-            return { ...product, price: maxPrice, code: product.productName.toLowerCase().replace(/\s/g, '') }
+            return { ...product, price: maxPrice, code: `${product.productName}_${product.fullCode}`.toLowerCase().replace(/\s/g, '') }
         });
 
         let product_categories  = uniqBy(products,'code').map( 
@@ -243,7 +248,7 @@ export class AppService {
                             sub_category_code:           path[1].toLowerCase().replace(/\s/g, ''),
                             child_sub_category_code:     path[2].toLowerCase().replace(/\s/g, ''),
                             sub_child_sub_category_code: path[3].toLowerCase().replace(/\s/g, ''),
-                            path:                        `${path.join('-')}-${product.fullCode}`,
+                            path:                        `${path.join('-')}-${product.fullCode}`.toLowerCase().replace(/\s/g, '') ,
                             product_code:                product.fullCode 
                         }
                     }        
@@ -252,7 +257,7 @@ export class AppService {
                             category_code:           path[0].toLowerCase().replace(/\s/g, ''), 
                             sub_category_code:       path[1].toLowerCase().replace(/\s/g, ''),
                             child_sub_category_code: path[2].toLowerCase().replace(/\s/g, ''),
-                            path:                    `${path.join('-')}-${product.fullCode}`,
+                            path:                    `${path.join('-')}-${product.fullCode}`.toLowerCase().replace(/\s/g, '') ,
                             product_code:            product.fullCode 
                         }
                     }
@@ -260,14 +265,14 @@ export class AppService {
                         return {  
                             category_code:     path[0].toLowerCase().replace(/\s/g, ''), 
                             sub_category_code: path[1].toLowerCase().replace(/\s/g, ''),
-                            path:              `${path.join('-')}-${product.fullCode}`,
+                            path:              `${path.join('-')}-${product.fullCode}`.toLowerCase().replace(/\s/g, '') ,
                             product_code:      product.fullCode 
                         }
                     }
                     if( path.length == 1) {
                         return { 
                             category_code: path[0].toLowerCase().replace(/\s/g, ''), 
-                            path:         `${path.join('-')}-${product.fullCode}`,
+                            path:         `${path.join('-')}-${product.fullCode}`.toLowerCase().replace(/\s/g, '') ,
                             product_code:  product.fullCode 
                         }
                     }
@@ -288,7 +293,7 @@ export class AppService {
             .flat()
             .map( colour => ({ 
                 ...colour, 
-                hex:         get(colour_swatches.find( swatch => swatch.code.includes(colour.code) || swatch.name.includes(colour.name) ),'textColour'),      
+                hex:         get(colour_swatches.find( swatch => swatch.code == colour.code || swatch.name == colour.name ),'textColour'),      
                 simple_code: `${colour.product_code}-${colour.code}` 
             }) 
         );
@@ -297,15 +302,14 @@ export class AppService {
             chunk(uniqBy(products,'code'),1).map( async (products) => {
                 await this.productModel.upsert(
                     products.map( 
-                        ({ brand, fullCode: full_code, price, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                            ({ brand: !isNull(brand) ? brand.code : null, code: name.toLowerCase().replace(/\s/g, ''), full_code, company_id: company.id, price, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                        ({ brand, code, fullCode: full_code, price, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
+                            ({ brand: !isNull(brand) ? brand.code : null, code, full_code, company_id: company.id, price, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
                     ),
                     {
                         conflictPaths: ["code"],
                         upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );
-                await this.sleep;
             })
         )
 
@@ -320,8 +324,8 @@ export class AppService {
                             ({ name, images, code, product_code, simple_code, hex}) 
                     ),
                     {
-                        conflictPaths: ["code"],
-                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        conflictPaths: ["simple_code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );
                 await this.sleep;
@@ -337,7 +341,7 @@ export class AppService {
                     await this.productCategoryModel.upsert(
                         product_categories,
                         {
-                            conflictPaths: ["path"],
+                            conflictPaths: ["path","product_code"],
                             upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                         },
                     );

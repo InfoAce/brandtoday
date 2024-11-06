@@ -27,17 +27,24 @@
                                         <td>{{ index + 1 }}</td>
                                         <td> # {{ order.num_id }}</td>
                                         <td>{{ order.items.length }}</td>
-                                        <td>{{ home.company.currency }} {{ sum(order.items.map( item => item.price * item.quantity)).toFixed() }}</td>
+                                        <td>{{ home.company.currency }} {{ sum(order.items.map( item => item.price * item.quantity)).toFixed(2) }}</td>
                                         <td>
-                                            <template v-if="order.status == 'pending'"><i class="btn btn-outline-warning">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'paid'"><p class="btn btn-outline-primary">{{ order.status }}</p></template>
-                                            <template v-if="order.status == 'confirmed'"><i class="btn btn-outline-info">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'in_transit'"><i class="btn btn-outline-secondary">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'delivered'"><i class="btn btn-outline-secondary">{{ order.status }}</i></template>
-                                            <template v-if="order.status == 'cencelled'"><i class="btn btn-outline-danger">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'pending'"><i class="badge badge-warning">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'paid'"><p class="badge badge-primary">{{ order.status }}</p></template>
+                                            <template v-if="order.status == 'confirmed'"><i class="badge badge-info">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'in_transit'"><i class="badge badge-secondary">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'delivered'"><i class="badge badge-success">{{ order.status }}</i></template>
+                                            <template v-if="order.status == 'cencelled'"><i class="badge badge-danger">{{ order.status }}</i></template>
                                         </td>
                                         <td>{{ moment(order.created_at).format('Do MMMM, Y') }}</td>   
-                                        <td></td>                                     
+                                        <td>
+                                            <button class="btn btn-solid btn-xs" type="button">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-solid btn-xs ml-2" type="button">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>                                     
                                     </tr>
                                 </template>
                                 <template v-else>
@@ -58,7 +65,7 @@
 </template>
 
 <script setup>
-import { computed, inject, onBeforeMount, reactive } from 'vue';
+import { computed, inject, onBeforeMount, onMounted, reactive } from 'vue';
 import { useStore } from 'vuex';
 import  moment from 'moment';
 import { isEmpty, sum } from 'lodash';

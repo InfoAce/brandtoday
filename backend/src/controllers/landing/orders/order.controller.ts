@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { first, get, has, pick, set, sum } from 'lodash';
@@ -14,6 +14,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ControllerException } from 'src/exceptions/controller.exception';
+import { interval, map, Observable, startWith } from 'rxjs';
 
 @Controller('orders')
 export class OrderController {
@@ -127,14 +128,10 @@ export class OrderController {
         
         await Promise.all(
           form.items.map( async (item) => {
-            if( has(item,'sizes') ){
-              return await Promise.all( 
-                item.sizes.map( async (size) => {
-                  return await this.orderItemModel.save({ ...item, size: size.name, quantity: size.quantity, order_id: order.id });
-                })
-              )
+            if( has(item,'size') ){
+              return await this.orderItemModel.save({ ...item, size: item.size.name, quantity: item.size.quantity, order_id: order.id })
             }
-            if( !has(item,'sizes') ){
+            if( !has(item,'size') ){
               return await this.orderItemModel.save({ ...item, order_id: order.id });
             }
           })
@@ -162,19 +159,15 @@ export class OrderController {
 
         await Promise.all(
           form.items.map( async (item) => {
-            if( has(item,'sizes') ){
-              return await Promise.all( 
-                item.sizes.map( async (size) => {
-                  return await this.orderItemModel.save({ ...item, size: size.name, quantity: size.quantity, order_id: order.id });
-                })
-              )
+            if( has(item,'size') ){
+              return await this.orderItemModel.save({ ...item, size: item.size.name, quantity: item.size.quantity, order_id: order.id })
             }
-            if( !has(item,'sizes') ){
+            if( !has(item,'size') ){
               return await this.orderItemModel.save({ ...item, order_id: order.id });
             }
           })
         )
-  
+        
         order                 = await this.orderModel.findOneBy({ id: order.id });
         orderCreatedEvent.id  = order.id;
         this.eventEmitter.emit('order.created', orderCreatedEvent);
@@ -304,53 +297,60 @@ export class OrderController {
    * @returns {Promise<void>} Promise that resolves with a JSON response containing the transaction status.
    */
   @UseGuards(OptionalGuard)
-  @Get(':order/status')  
+  @Sse(':order/status')  
   async status(
     @Param('order') orderId: string,
     @Req()          req: Request, 
     @Res()          res: Response
-  ) {
-    try {
-
-      // Find the order
-      let order = await this.orderModel.findOneBy({ id: orderId }); 
-
-      // Get the transaction associated with the order
-      let transaction = await order.transaction; 
-
+  ): Promise<Observable<any>> {
       // Authenticate with Pesapal to retrieve the transaction status
       let pesapal_auth       = await this.pesapalService.auth(); 
-      let transaction_status = await this.pesapalService.transactionStatus(transaction.tracking_id,pesapal_auth.token); 
+      // Set up the interval for checking the user's profile
+      return interval(2000).pipe(
+        startWith(0),
+        map( 
+          async () => {
+            try {
 
-      // If the transaction is paid, update the order status
-      if( transaction_status.status_code === 1 ){
-      
-        // Update the transaction status in the database
-        await this.transactionModel.update(transaction.id,{
-          confirmation_code: transaction_status.confirmation_code,
-          payment_method:    transaction_status.payment_method,
-          status:            transaction_status.status,
-          status_code:       transaction_status.status_code,
-        });
-        await this.orderModel.updateOne(order.id,{ status: 'paid' }); 
+              // Find the order
+              let order = await this.orderModel.findOneBy({ id: orderId }); 
 
-        // Create an instance of OrderPaidEvent
-        let orderPaidEvent = new OrderPaidEvent();
-        orderPaidEvent.id  = order.id;
+              // Get the transaction associated with the order
+              let transaction = await order.transaction; 
 
-        // Emit the order paid
-        this.eventEmitter.emit('order.paid', orderPaidEvent);
-      }
+              let transaction_status = await this.pesapalService.transactionStatus(transaction.tracking_id,pesapal_auth.token); 
 
-      // Retrieve the updated transaction
-      transaction = await order.transaction; 
+              // If the transaction is paid, update the order status
+              if( transaction_status.status_code === 1 ){
+              
+                // Update the transaction status in the database
+                await this.transactionModel.update(transaction.id,{
+                  confirmation_code: transaction_status.confirmation_code,
+                  payment_method:    transaction_status.payment_method,
+                  status:            transaction_status.status,
+                  status_code:       transaction_status.status_code,
+                });
+                await this.orderModel.updateOne(order.id,{ status: 'paid' }); 
 
-      // Return the transaction status as a JSON response
-      return res.status(HttpStatus.OK).json({ transaction, transaction_status });     
-    
-    } catch(err){
-      // Handle any errors that occur during the process
-    }
+                // Create an instance of OrderPaidEvent
+                let orderPaidEvent = new OrderPaidEvent();
+                orderPaidEvent.id  = order.id;
+
+                // Emit the order paid
+                this.eventEmitter.emit('order.paid', orderPaidEvent);
+              }
+
+              // Retrieve the updated transaction
+              transaction = await order.transaction; 
+
+              // Return the transaction status as a JSON response
+              res.write(`data: ${JSON.stringify({ transaction, transaction_status })}\nretry: ${10000}\n\n`);
+            } catch(error) {                
+              res.write(`data: ${JSON.stringify({})} retry: ${20000}\n\n`);   
+            }
+          }
+        )
+      );
   }  
 
 
@@ -383,6 +383,7 @@ export class OrderController {
       
       // Process pesapal transaction
       let { token } = await this.pesapalService.auth();
+
       // Register the IPN (Instant Payment Notification) for the order
       let pesapal_ipn  = await this.pesapalService.registerIPN({
         url: `${this.configService.get<string>('app.APP_URL')}/api/v1/orders/${order.id}/status`,

@@ -68,7 +68,7 @@ async function bootstrap() {
                 // print log trace 
                 return `${info.timestamp} ${info.level}: ${info.message} - ${info.context} - ${info.stack.map( val => JSON.stringify(val)).join(',')}`;
               }
-              return `${info.timestamp} ${info.level}: ${info.message}`;
+              return `${info.timestamp} ${info.level}: ${info.context} ${info.message}`;
              }),
             ),
         }),

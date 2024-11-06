@@ -6,7 +6,7 @@ export default registerAs('services',() => {
 
     const home = !process.cwd().includes('backend') ? `${process.cwd()}${sep}backend` : process.cwd();
     const json = require('json-reader-writer');
-    const { 
+    let { 
         amrod: {
             account_number,
             auth_uri,
@@ -58,8 +58,8 @@ export default registerAs('services',() => {
         },
         pesapal: {
             base:{
-                live: "https://cybqa.pesapal.com/pesapal/v3/api", // live phase endpoint
-                sandbox:    "https://pay.pesapal.com/v3/api", // testing phase endpoint
+                live: "https://pay.pesapal.com/v3/api", // live phase endpoint
+                sandbox: "https://cybqa.pesapal.com/pesapalv3/api", // testing phase endpoint
             },
             endpoints: {
                 auth:            "/Auth/RequestToken", // get authorization token4
