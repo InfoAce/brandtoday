@@ -14,7 +14,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ControllerException } from 'src/exceptions/controller.exception';
-import { interval, map, Observable, startWith } from 'rxjs';
+import { interval, map, Observable, startWith, switchMap, takeUntil } from 'rxjs';
 
 @Controller('orders')
 export class OrderController {
@@ -304,53 +304,44 @@ export class OrderController {
     @Res()          res: Response
   ): Promise<Observable<any>> {
       // Authenticate with Pesapal to retrieve the transaction status
-      let pesapal_auth       = await this.pesapalService.auth(); 
+      let pesapal_auth       = await this.pesapalService.auth();
+      let subscription       = interval(2000);
       // Set up the interval for checking the user's profile
-      return interval(2000).pipe(
+      return subscription.pipe(
         startWith(0),
-        map( 
-          async () => {
-            try {
+        switchMap( async () => await this.orderModel.findOneBy({ id: orderId })),
+        switchMap( async (order) => await order.transaction),
+        switchMap( async (transaction) => ({ transaction_status: await this.pesapalService.transactionStatus(transaction.tracking_id,pesapal_auth.token), transaction}) ),
+        switchMap( async ({transaction, transaction_status}) => {
+          try{
+            // If the transaction is paid, update the order status
+            if( transaction_status.status_code === 1 ){
 
-              // Find the order
-              let order = await this.orderModel.findOneBy({ id: orderId }); 
+              // Update the transaction status in the database
+              await this.transactionModel.update(transaction.id,{
+                confirmation_code: transaction_status.confirmation_code,
+                payment_method:    transaction_status.payment_method,
+                status:            transaction_status.status,
+                status_code:       transaction_status.status_code,
+              });
+              await this.orderModel.updateOne(transaction.order_id,{ status: 'paid' }); 
 
-              // Get the transaction associated with the order
-              let transaction = await order.transaction; 
+              // Create an instance of OrderPaidEvent
+              let orderPaidEvent = new OrderPaidEvent();
+              orderPaidEvent.id  = transaction.order_id;
 
-              let transaction_status = await this.pesapalService.transactionStatus(transaction.tracking_id,pesapal_auth.token); 
+              // Emit the order paid
+              this.eventEmitter.emit('order.paid', orderPaidEvent);
 
-              // If the transaction is paid, update the order status
-              if( transaction_status.status_code === 1 ){
-              
-                // Update the transaction status in the database
-                await this.transactionModel.update(transaction.id,{
-                  confirmation_code: transaction_status.confirmation_code,
-                  payment_method:    transaction_status.payment_method,
-                  status:            transaction_status.status,
-                  status_code:       transaction_status.status_code,
-                });
-                await this.orderModel.updateOne(order.id,{ status: 'paid' }); 
-
-                // Create an instance of OrderPaidEvent
-                let orderPaidEvent = new OrderPaidEvent();
-                orderPaidEvent.id  = order.id;
-
-                // Emit the order paid
-                this.eventEmitter.emit('order.paid', orderPaidEvent);
-              }
-
-              // Retrieve the updated transaction
-              transaction = await order.transaction; 
-
-              // Return the transaction status as a JSON response
-              res.write(`data: ${JSON.stringify({ transaction, transaction_status })}\nretry: ${10000}\n\n`);
-            } catch(error) {                
-              res.write(`data: ${JSON.stringify({})} retry: ${20000}\n\n`);   
             }
+
+            // Retrieve the updated transaction  
+            res.write(`data: ${JSON.stringify({ transaction, transaction_status })}\nretry: ${10000}\n\n`);
+          } catch(error) {                
+            res.write(`data: ${JSON.stringify({})} retry: ${20000}\n\n`);   
           }
-        )
-      );
+        }),
+      )
   }  
 
 
