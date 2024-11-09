@@ -35,6 +35,9 @@ export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth
 // Company
 export { UpdateCompanyValidation as UpdateCompanyValidation } from './company/update.company.validation';
 
+// Product 
+export { FetchProductsValidation as FetchProductsValidation } from './product/fetch.validation';
+
 // Queue
 export { UpdateQueueValidation as UpdateQueueValidation } from './queue/update.validation';
 

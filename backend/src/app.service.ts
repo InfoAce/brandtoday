@@ -123,7 +123,7 @@ export class AppService {
     this.logger.log(`Done Synchronizing brands`);
 
     // Update queue status
-    await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+    await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
   }
 
   async synchronizeCategories(queue) {
@@ -202,8 +202,11 @@ export class AppService {
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
 
-        // Update queue status
-        await this.queueModel.updateOne({ type: 'products' },{ status: 'waiting', state: true });
+        if( queue.progress ) {        
+            // Update queue status
+            await this.queueModel.updateOne({ type: 'products' },{ status: 'waiting', state: true, progress: true });
+        }
+
     } catch(error) {
         console.log(error);
 
@@ -211,7 +214,7 @@ export class AppService {
         this.logger.log(`Failed to synchronize categories`);
         
         // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) }); 
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) }); 
     }
   }
 
@@ -235,6 +238,22 @@ export class AppService {
         products = products.map( product => {
             let productPrices = prices.filter( price => price.simplecode.includes(product.simpleCode) || price.fullCode.includes(product.simpleCode) );
             let maxPrice      = get(maxBy( productPrices,'price'),'price');
+
+            if( company.use_exchange_rate ){
+                maxPrice = parseFloat((maxPrice * company.exchange_rate).toFixed(2));
+            }
+
+            if( company.use_product_fee ){
+                switch(company.product_fee_type){
+                    case 'fixed':
+                        maxPrice = parseFloat((maxPrice + company.product_fee).toFixed(2));
+                    break;
+                    case 'percentage':
+                        maxPrice =  parseFloat((maxPrice * (company.product_fee/100)).toFixed(2));
+                    break;
+                }
+            }
+
             return { ...product, price: maxPrice, code: `${product.productName}_${product.fullCode}`.toLowerCase().replace(/\s/g, '') }
         });
 
@@ -354,9 +373,12 @@ export class AppService {
         this.logger.log(`Done saving product categories`);
 
         // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
 
-        await this.queueModel.updateOne({ type: 'product_variants'},{ status: 'waiting', state: true });
+        if(queue.progress){
+
+            await this.queueModel.updateOne({ type: 'product_variants'},{ status: 'waiting', state: true, progress: true });
+        }
 
     } catch (error) {
 
@@ -366,7 +388,7 @@ export class AppService {
         this.logger.log(`Failed to synchronize products`);
         
         // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) });        
     }
   }
 
@@ -416,58 +438,69 @@ export class AppService {
         // Logging
         this.logger.log(`Done Synchronizing product variants`);
 
-        // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        if(queue.progress){
+            // Update queue status
+            await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
 
-        await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true });
-        
-        await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true });
-
+            await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true, progress: false });
+            
+            await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true, progress: false });
+        }
     } catch (error) {
         console.log(error);
         // Logging
         this.logger.log(`Failed to synchronize product variants`);
         
         // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress:false, message: JSON.stringify(error) });        
     }
   }
 
   async synchronizePrices(queue) {
-    // Logging
-    this.logger.log(`Synchronizing prices`);
+    try{
+        // Logging
+        this.logger.log(`Synchronizing prices`);
 
-    // Fetch product variants
-    let variants       = await this.productVariantModel.find(); 
+        // Fetch product variants
+        let variants       = await this.productVariantModel.find(); 
 
-    // Fetch amrod prices
-    let prices         = await this.amrodService.getPrices();  
-    let company        = await this.companyModel.first(); 
+        // Fetch amrod prices
+        let prices         = await this.amrodService.getPrices();  
+        let company        = await this.companyModel.first(); 
 
-    await Promise.all(
-        chunk(
-            uniqBy(intersectionBy(prices.map( price => ({ ...price, full_code: price.fullCode })),variants,'full_code'),'full_code'),
-            1
-        ).map( async (prices) => {
-            await this.priceModel.upsert( 
-                prices.map( 
-                    ({ full_code, simplecode: simple_code, price: amount }) => 
-                        ({ full_code, simple_code, amount, company_id: company.id })
-                ),
-                {
-                    conflictPaths: ["full_code"],
-                    upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-                },
-            );
-            await this.sleep;
-        })
-    );
+        await Promise.all(
+            chunk(
+                uniqBy(intersectionBy(prices.map( price => ({ ...price, full_code: price.fullCode })),variants,'full_code'),'full_code'),
+                1
+            ).map( async (prices) => {
+                await this.priceModel.upsert( 
+                    prices.map( 
+                        ({ full_code, simplecode: simple_code, price: amount }) => 
+                            ({ full_code, simple_code, amount, company_id: company.id })
+                    ),
+                    {
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
+                await this.sleep;
+            })
+        );
 
-    // Logging
-    this.logger.log(`Done Synchronizing prices`);
+        // Logging
+        this.logger.log(`Done Synchronizing prices`);
 
-    // Update queue status
-    await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+
+    } catch (error) {
+        console.log(error);
+
+        // Logging
+        this.logger.log(`Failed to synchronize stocks`);
+        
+        // Update queue status
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) });        
+    }
   }
 
   async synchronizeStocks(queue) {
@@ -513,7 +546,7 @@ export class AppService {
         this.logger.log(`Failed to synchronize stocks`);
         
         // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, message: JSON.stringify(error) });        
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) });        
     }
   }
   

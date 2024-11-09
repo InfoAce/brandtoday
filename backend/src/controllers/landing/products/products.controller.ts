@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Render, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard, ClientGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
@@ -7,10 +7,11 @@ import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
-import { Any, EntityNotFoundError, Equal, ILike, In, Like, Not, Or } from 'typeorm';
+import { Any, Between, EntityNotFoundError, Equal, ILike, In, Like, Not, Or } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { ModelException } from 'src/exceptions';
+import { FetchProductsValidation } from 'src/validation';
 
 @Controller('products')
 export class ProductsController {
@@ -37,7 +38,6 @@ export class ProductsController {
       this.colors = this.configService.get<any>('colors');
     }
 
-    @Get('')
     /**
      * Index method to get products based on the query parameters.
      *
@@ -49,6 +49,8 @@ export class ProductsController {
      * @param {Response} res - The response object.
      * @return {Promise<void>}
      */
+    @Put('')
+    @UsePipes(new ValidationPipe({ transform: true }))
     async index(
       @Query('name',new DefaultValuePipe(String())) queryName: string,
       @Query('category_code',new DefaultValuePipe(String())) category_code: any,
@@ -57,22 +59,43 @@ export class ProductsController {
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
       @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
-      @Req() req: Request,  
-      @Res() res: Response
+      @Body() { brands, price }: FetchProductsValidation,
+      @Req()  req:  Request,  
+      @Res()  res:  Response
     ) {
       try {  
-
         let products       = Array();
         let products_count = Number();
+        let filters        = Object();
 
         if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
-          let product_categories = await this.productCategoryModel.find({ where: { category_code, sub_category_code }, order: { product: { price: 'ASC' } }, skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true});
-          products               = cloneDeep(product_categories).map( (category) => category.product );
+
+          filters = cloneDeep({
+            where: { category_code, sub_category_code, product: { price: Between(price[0],price[1])  } }, 
+            order: { product: { price: querySortPricing.toUpperCase() } }, 
+            skip:  (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
+            take:  parseInt(queryPerPage), 
+            cache: true
+          });
+
+          if( !isEmpty(queryName) ){
+            set(filters.where.product,'name',ILike(`%${queryName}%`));
+          }
+
+          if( !isEmpty(brands) ){
+            set(filters.where.product,'brand',In(brands));
+          }
+
+          let [product_categories, count ] = await this.productCategoryModel.findAndCount(filters);
+
+          products_count                   = count;
+          products                         = cloneDeep(product_categories).map( (category) => category.product );
+        
         }
 
-        if( !isEmpty(queryName) ){
-          [products, products_count] = await this.productModel.findAndCount({ where: [ { name: Like(`%${queryName}%` ) }, { full_code: Like(`%${queryName}%` ) } ], skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
-        }
+        // if( !isEmpty(queryName) ){
+        //   [products, products_count] = await this.productModel.findAndCount({ where: [ { name: Like(`%${queryName}%` ) }, { full_code: Like(`%${queryName}%` ) } ], skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
+        // }
 
         // Send the products, category, and sub categories as a JSON response
         res.status(HttpStatus.OK).json({products, products_count });
@@ -131,7 +154,7 @@ export class ProductsController {
     ) {
       try {
         // Fetch brands
-        let brands = await this.brandModel.find();
+        let brands = await this.brandModel.find({ cache: true });
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
         res.status(HttpStatus.OK).json({ brands });

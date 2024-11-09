@@ -61,7 +61,12 @@
                                           <tr v-for="(queue,index) in $data.queues" :key="index">
                                               <td>{{ index + 1 }}</td>
                                               <td>{{ queue.type }}</td>
-                                              <td><span class="badge badge-info">{{ queue.status }}</span></td>
+                                              <td>
+                                                <span class="badge badge-secondary" v-if="queue.status == 'waiting'">{{ queue.status }}</span>
+                                                <span class="badge badge-info" v-if="queue.status == 'pending'">{{ queue.status }}</span>
+                                                <span class="badge badge-warning" v-if="queue.status == 'failed'">{{ queue.status }}</span>
+                                                <span class="badge badge-success" v-if="queue.status == 'complete'">{{ queue.status }}</span>
+                                              </td>
                                               <td>
                                                 <VueToggles :value="queue.state" @click="toggleSync(queue)" />
                                               </td>
@@ -170,7 +175,7 @@
     try {
 
         const toastId             = $toast(`Synchronizing ${item.type} queue...`,{ type: 'info', isLoading: true });
-        const { data: { queue } } = await $api.put(`/dashboard/queues/${item.id}/update`,{state: !item.state});
+        const { data: { queue } } = await $api.put(`/dashboard/queues/${item.id}/update`,{state: !item.state, status: 'waiting'});
         $data.queues[index]       = cloneDeep(queue);
         
         const interval = setInterval( async() => {

@@ -42,6 +42,13 @@ export class QueueEntity {
   })
   parent: string;
 
+  @Column({
+    nullable: true,
+    type:     'tinyint',
+    default:  false
+  })
+  progress: boolean;
+
   @Seed((faker: Faker, { previousRecord }: SeederContext) => {
     if( has(previousRecord,'first_name') ){
       return 'categories'

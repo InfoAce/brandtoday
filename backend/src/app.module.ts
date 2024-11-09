@@ -101,7 +101,6 @@ import { CustomEmailvalidation } from './helpers/validators/user.validator';
           subscribers: [
             OrderSubscriber,
             PriceSubscriber,
-            ProductSubscriber,
             ProductColourSubscriber,
             StockSubscriber,
             UserSubscriber

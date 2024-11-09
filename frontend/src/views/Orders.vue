@@ -38,11 +38,8 @@
                                         </td>
                                         <td>{{ moment(order.created_at).format('Do MMMM, Y') }}</td>   
                                         <td>
-                                            <button class="btn btn-solid btn-xs" type="button">
+                                            <button class="btn btn-solid btn-xs" type="button" @click="viewOrder(order)">
                                                 <i class="fa fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-solid btn-xs ml-2" type="button">
-                                                <i class="fa fa-trash"></i>
                                             </button>
                                         </td>                                     
                                     </tr>
@@ -91,6 +88,16 @@ const fetch = () => {
         .finally( () => {
             $data.loader = Boolean();
         });
+}
+
+const viewOrder = async (order) => {
+    try {
+        const { data: { order } } = await $api.put(`/orders/${order.id}{/view`);
+    } catch(error) {
+        $data.loader = Boolean();
+    } finally {
+        $data.loader = Boolean();
+    }
 }
 
 onBeforeMount( () => fetch());

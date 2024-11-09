@@ -28,9 +28,92 @@
         <section class="section-b-space ratio_asos" ref="products">
             <div class="collection-wrapper">
                 <div class="container-fluid">
-                    <div class="row px-4">                   
+                    <div class="row px-4">           
+                        <div class="col-12 px-0 mb-4 position-sticky">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label>Search Name</label>
+                                            <input class="form-control" v-model="$data.filter.name" placeholder="Search Name"/>
+                                        </div>
+                                        <div class="col-md-3 d-flex flex-column">
+                                            <label>View Filters</label>
+                                            <a arial-caret="true" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" class="form-control d-flex justify-content-between w-100">
+                                                <span>Filter</span>
+                                                <i class="fa fa-chevron-down"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Sort Pricing</label>
+                                            <select class="form-control" placeholder="Sort Pricing" v-model="$data.filter.sort_pricing">
+                                                <option value="asc">Ascending</option>
+                                                <option value="desc">Descending</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Per Page</label>
+                                            <select class="form-control" placeholder="Per Page" v-model.number="$data.filter.per_page">
+                                                <option value="10">10 Per Page</option>
+                                                <option value="25">25 Per Page</option>
+                                                <option value="50">50 Per Page</option>
+                                                <option value="100">100 Per Page</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="collapse multi-collapse" id="filterDropdown">
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-xs-12">
+                                                    <h3>Brands</h3>
+                                                    <div class="row">
+                                                        <template v-for="(brand,index) in $data.brands" :key="index">
+                                                            <div class="col-md-4 col-sm-6 col-xs-6">
+                                                                <div class="form-group text-nowrap mb-0">
+                                                                    <input type="checkbox" :name="brand.id" :value="brand.code" v-model="$data.form.brands" />
+                                                                    {{ brand.name }}
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12">
+                                                    <h3>Price Range</h3>
+                                                    <VueSlider 
+                                                        v-model="$data.form.price" 
+                                                        :min="slider_options.min" 
+                                                        :max="slider_options.max" 
+                                                        :processStyle="slider_options.processStyle"
+                                                        :tooltip="slider_options.tooltip"
+                                                    />
+                                                </div>
+                                                <div class="col-md-12 d-flex justify-content-between mt-2">
+                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="fetchProducts(false)">Apply</button>
+                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="clearFilters">Clear Filter</button>
+                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                                                      
+                        </div>        
                         <div class="col px-0 collection-product-wrapper">
                             <div class="product-wrapper-grid">
+                                <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <h2 class="text-theme m-0">
+                                                <i class="fa fa-exclamation-circle"></i>
+                                                No product found here!
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
                                 <CardLoader v-if="!isEmpty($data.products)" />
                                 <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
                                 <div class="row" >
@@ -98,9 +181,12 @@ const $data   = reactive({
     filter:{
         page:         Number(1),
         per_page:     Number(10),
-        price:        Array(0,500),
-        sort_pricing: String('descending'),
-        colour:       String()
+        name:         String(),
+        sort_pricing: String('asc'),
+    },
+    form: {
+        brands:       ref(Array()),
+        price:        Array(1,20000),
     },
     products:           Array(),
     loading:            Boolean(),
@@ -110,15 +196,28 @@ const $data   = reactive({
     sub_child_category: String()
 });
 const currency = computed( () => $store.getters.home.company.currency );
+const slider_options = computed( 
+    () => ({
+        tooltip:      "always",
+        processStyle: { backgroundColor: "#7e1414" },
+        min: 1,
+        max: 20000
+    }) 
+);
 
 const fetchFilters = async() =>{
     try {
         $data.loading = Boolean(true);
 
+        let { query, params } = $route;
+
         // Make API call to get brands
         const { data: { brands } }  = await $api.get('/products/brands');
         const { data: { colours } } = await $api.get('/products/colours');
 
+        // Make API call to get category and sub category
+        const { data:{ category, sub_category, products_count } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
+        
         /**
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
@@ -129,51 +228,9 @@ const fetchFilters = async() =>{
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
          */
-        $data.colours  = cloneDeep(colours);                
-        $data.loading  = Boolean();
+        $data.colours  = cloneDeep(colours);   
         
-    } catch(error) {
-        $data.loading        = Boolean();
-        $toast.error('Something went wrong with fetching brands.')
-    } finally {
-        $data.loading        = Boolean();
-    }
-};
-
-/**
- * Fetch products based on the provided data
- * @peram {Object} data - Object containing page, perPage, sub_category, and overwrite options
- */
-const fetchProducts = async (append = false) => {
-
-    // Destructuring assignment for easier access
-    let { query, params } = $route;
-    let { filter: { sort_pricing , per_page, page, price, name } } = $data;
-    let url        = `/products`;
-    
-    if( !isEmpty(params) ){
-
-        url += `?category_code=${params.category}&sub_category_code=${params.sub_category}&page=${page}&perPage=${per_page}&sort_pricing=${sort_pricing}`
-    }
-
-    if( !isEmpty(query) ){
-        url += `?name=${query.name}&page=${page}&perPage=${per_page}`;
-    }
-    
-    if( !isEmpty(name) ){
-        url += `&name=${name}`;
-    }
-
-    if( price[0] != 0 || price[1] != 500 ){
-        url += `&price_range=${price.join('~')}`;
-    }
-
-    $store.commit('card_loader',true);
-    
-    try {
         if( !isEmpty(params) ){
-            // Make API call to get category and sub category
-            const { data:{ category, sub_category, products_count } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
 
             /**
              * Clones the category object and assigns it to the this.category property.
@@ -189,28 +246,102 @@ const fetchProducts = async (append = false) => {
 
             $data.products_count = products_count;
 
+            document.querySelector('title').innerHTML = `Products | ${category.name} - ${sub_category.name} | ${$store.getters.env.VITE_APP_NAME}`;
+
             document.querySelector('meta[name="keywords"]')
                     .setAttribute(
                         'content',
                         `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${category.name}, ${category.code}, ${sub_category.name}, ${sub_category.code}`
                     );
+
         }
-
-
-        // Make API call to get products
-        const { data } = await $api.get(url);
+        $data.loading  = Boolean();
         
-        if( append ){
-            $data.products = $data.products.concat(data.products);
+    } catch(error) {
+        $data.loading        = Boolean();
+        $toast.error('Something went wrong with fetching filters.')
+    } finally {
+        $data.loading        = Boolean();
+    }
+};
+
+/**
+ * Clears all the filters and refetches the products
+ */
+const clearFilters = () => {
+    /**
+     * Resets the selected brands to an empty array
+     * @type {Array}
+     */
+    $data.form.brands = [];
+    
+    /**
+     * Resets the price filter to its default value
+     * @type {Array}
+     */
+    $data.form.price  = [1,20000];
+
+    /**
+     * Refetches the products after clearing the filters
+     * @function fetchProducts
+     */
+    fetchProducts();
+}
+
+/**
+ * Fetch products based on the provided data
+ * @peram {Object} data - Object containing page, perPage, sub_category, and overwrite options
+ */
+const fetchProducts = async (append = false) => {
+
+    // Destructuring assignment for easier access
+    let { query, params } = $route;
+    let { filter: { per_page, page, options, name, sort_pricing } } = $data;
+    let url        = `/products`;
+    
+    if( !isEmpty(params) ){
+        url += `?category_code=${params.category}&sub_category_code=${params.sub_category}&page=${page}&perPage=${per_page}`
+    }
+
+    if( !isEmpty(query) ){
+        url += `?name=${query.name}&page=${page}&perPage=${per_page}`;
+    }
+    
+    if( !isEmpty(name) ){
+        url += `&name=${name}`;
+    }
+
+    if( !isEmpty(sort_pricing) ){
+        url += `&sort_pricing=${sort_pricing}`;
+    }
+    
+
+    $store.commit('card_loader',true);
+    
+    try {
+        // Make API call to get products
+        const { data: { products, products_count } } = await $api.put(url,$data.form);
+        
+        if( isEmpty(products) ){
+            $data.products.splice(0)
         }
 
-        if( !append ){
-            $data.products = cloneDeep(data.products);
+        if( !isEmpty(products) ){
+
+            console.log(append);
+
+            if( append ){
+                $data.products = $data.products.concat(products);
+            }
+
+            if( !append ){
+                console.log(products);
+                $data.products = cloneDeep(products);
+            }   
         }
 
-        if( !isEmpty(query) ){
-            $data.products_count = data.products_count;
-        }
+        $data.products_count = products_count;
+
 
     } catch({ response }){
 
@@ -267,13 +398,12 @@ const selectSubCategory = (value,category) => {
     }
 };
 
-/*************  ✨ Codeium Command ⭐  *************/
 /**
  * Selects a sub child category based on the provided category object.
  * @param {Object} category - The category object to select.
  * @returns {void} - Nothing.
  */
-/******  6cb6fd7d-b553-4c82-a531-6430d184a89f  *******/const selectSubChildCategory = (category) => {
+const selectSubChildCategory = (category) => {
     $data.sub_child_category = btoa(category.categoryName.toLowerCase());
 };
 
@@ -320,17 +450,19 @@ onMounted(
 )
 
 watch(
-    () => $data.filter.sort_pricing,
+    () => $data.filter.per_page,
     () => {
         $store.commit('card_loader',true);
-        fetchProducts({ page: 1, perPage: $data.filter.per_page, overwrite: true });
+        $data.filter.page = 1;
+        fetchProducts();
     }
 )
 
 watch(
-    () => $data.filter.colour,
+    () => $data.filter.sort_pricing,
     () => {
         $store.commit('card_loader',true);
+        $data.filter.page = 1;
         fetchProducts();
     }
 )
@@ -341,20 +473,9 @@ watch(
         $store.commit('card_loader',true);
         $data.filter.page = 1;
         fetchProducts();
-    },500)
+    },1000)
 )
 
-watch(
-    () => $data.filter.price,
-    debounce(() => {
-        $store.commit('card_loader',true);
-        $data.filter.page = 1;
-        fetchProducts();
-    },500),
-    {
-        deep: true
-    }
-)
 
 watch(
     () => $route.query,
@@ -371,12 +492,17 @@ watch(
         $data.filter = {
             page:         Number(1),
             per_page:     Number(10),
-            price:        Array(0,500),
+            options:     {
+                brand:        String(),
+                price:        Array(0,500),
+            },
+            name:         String(),
             sort_pricing: String('descending'),
-            colour:       String()
         };
 
+
         // Fetch the data based on the updated route perameters.
+        fetchFilters();
         fetchProducts();
     },
     {
