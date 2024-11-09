@@ -137,11 +137,23 @@ export class AppService {
         let child_sub_categories     = sub_categories.map( sub_category => sub_category.children.map( child_sub_category => ({ ...child_sub_category, category_code: sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
         let sub_child_sub_categories = child_sub_categories.map( child_sub_category => child_sub_category.children.map( sub_child_sub_category => ({ ...sub_child_sub_category, category_code: child_sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
         
+        categories = await Promise.all(
+            categories.map( async ({categoryName, categoryPath}, index) => {
+                let category = await this.categoryModel.findOne({ where: { code: categoryName.replace(/\s/g, '').toLowerCase() } }) || null;
+                if( category != null ){
+                    return { categoryName: category.name, categoryPath, code: category.code, priority: category.priority };
+                }
+                if( category == null ){
+                    return { categoryName, categoryPath, code: categoryName.replace(/\s/g, '').toLowerCase(), priority: (index + 1)  };
+                }
+            })
+        );
+
         await Promise.all(
             chunk(categories,500).map( async (categories) => {
                 await this.categoryModel.upsert(
                     categories.map( 
-                        (category) => ({ code: category.categoryName.replace(/\s/g, '').toLowerCase(), name: category.categoryName, path: category.categoryPath })
+                        (category) => ({ code: category.code, name: category.categoryName, path: category.categoryPath, priority: category.priority })
                     ),
                     {
                         conflictPaths: ["code"],
@@ -556,7 +568,7 @@ export class AppService {
     try{
         this.logger.log(`Full amrod data synchronization started.`);        
 
-        await this.queueModel.updateOne({ type: 'categories'},{ status: 'waiting', state: true });  
+        await this.queueModel.updateOne({ type: 'categories'},{ status: 'waiting', state: true, progress: true});  
 
         // Logging
         this.logger.log(`Full amrod data synchronization completed.`);        
