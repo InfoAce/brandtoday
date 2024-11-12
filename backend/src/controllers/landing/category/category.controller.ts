@@ -5,7 +5,7 @@ import { AmrodService, AuthService, MailService } from 'src/services';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { cloneDeep, first, get, isEmpty, omit, shuffle, toPlainObject } from 'lodash';
 import { sep } from 'path';
-import { CategoryModel, ProductCategoryModel, SubCategoryModel } from 'src/models';
+import { CategoryModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { EntityNotFoundError, Like } from 'typeorm';
 
 @Controller('categories')
@@ -34,6 +34,7 @@ export class CategoryController {
       private amrodService:         AmrodService,
       private categoryModel:        CategoryModel,
       private subCategoryModel:     SubCategoryModel,
+      private productModel:         ProductModel,
       private productCategoryModel: ProductCategoryModel,
       @Inject(CACHE_MANAGER) private cacheManager: Cache
     ){
@@ -76,7 +77,7 @@ export class CategoryController {
         let sub_category        = await this.subCategoryModel.findOne({ where: { code: sub_category_code } });
 
         // Find the sub category based on the provided sub category id
-        let [_, products_count] = await this.productCategoryModel.findAndCount({ where: { category_code, sub_category_code } });
+        let [_, products_count] = await this.productModel.findAndCount({ relations:['categories'], where: { categories: { category_code, sub_category_code } } });
 
         return res.status(HttpStatus.OK).json({ category, sub_category, products_count });
         

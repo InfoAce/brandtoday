@@ -58,7 +58,7 @@ export class ProductsController {
       @Query('page',new DefaultValuePipe(1)) queryPage: string,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
-      @Query('sort_pricing',new DefaultValuePipe(String('descending'))) querySortPricing: string,
+      @Query('sort_pricing',new DefaultValuePipe(String('DESC'))) querySortPricing: string,
       @Body() { brands, price }: FetchProductsValidation,
       @Req()  req:  Request,  
       @Res()  res:  Response
@@ -71,25 +71,27 @@ export class ProductsController {
         if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
 
           filters = cloneDeep({
-            where: { category_code, sub_category_code, product: { price: Between(price[0],price[1])  } }, 
-            order: { product: { price: querySortPricing.toUpperCase() } }, 
-            skip:  (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
-            take:  parseInt(queryPerPage), 
-            cache: true
+            relation: ['categories'],
+            where:    { categories:{ category_code, sub_category_code }, price: Between(price[0],price[1]) }, 
+            order:    { price: querySortPricing.toUpperCase() }, 
+            skip:     (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
+            take:     parseInt(queryPerPage), 
+            cache:    true
           });
 
           if( !isEmpty(queryName) ){
-            set(filters.where.product,'name',ILike(`%${queryName}%`));
+            set(filters.where,'name',ILike(`%${queryName}%`));
           }
 
           if( !isEmpty(brands) ){
-            set(filters.where.product,'brand',In(brands));
+            set(filters.where,'brand',In(brands));
           }
 
-          let [product_categories, count ] = await this.productCategoryModel.findAndCount(filters);
+          let [results, count ] = await this.productModel.findAndCount(filters);
 
-          products_count                   = count;
-          products                         = cloneDeep(product_categories).map( (category) => category.product );
+          products_count        = count;
+          products              = cloneDeep(results);
+          // products                         = cloneDeep(product_categories).map( (category) => category.product );
         
         }
 
