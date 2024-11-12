@@ -27,7 +27,7 @@
         <!-- Container-fluid starts-->
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-12 col-md-7">
+                <div class="col-xs-12 col-md-8">
                     <div class="row">
                         <div class="col-md-6 col-xs-12">
                             <div class="card o-hidden widget-cards">
@@ -103,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-md-5">
+                <div class="col-xs-12 col-md-4">
                     <div class="row">
                         <div class="col-12">
                             <div class="card o-hidden widget-cards">
@@ -145,6 +145,88 @@
                         </div>                        
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-md-5 col-xs-12">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card o-hidden widget-cards">
+                                        <div class="danger-box card-body">
+                                            <div class="media static-top-widget align-items-center">
+                                                <div class="icons-widgets">
+                                                    <div class="align-self-center text-center"> 
+                                                        <i class="fas fa-list text-white fa-lg"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="media-body media-doller"><span class="m-0"></span>
+                                                    <span class="m-0">Products</span>
+                                                    <h3 class="mb-0">
+                                                        {{ $data.amrod.products }}
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card o-hidden widget-cards">
+                                        <div class="danger-box card-body">
+                                            <div class="media static-top-widget align-items-center">
+                                                <div class="icons-widgets">
+                                                    <div class="align-self-center text-center"> 
+                                                        <i class="fas fa-layer-group text-white fa-lg"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="media-body media-doller"><span class="m-0"></span>
+                                                    <span class="m-0">Product Variants</span>
+                                                    <h3 class="mb-0">
+                                                        {{ $data.amrod.product_variants }}
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 col-xs-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Recent Transactions</h4>
+                                </div>
+                                <div class="card-body">                    
+                                    <div class="table-responsive table-desi">
+                                        <table class="review-table table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Transaction No.</th>
+                                                    <th>Amount</th>
+                                                    <th>Order No.</th>
+                                                    <th>Items</th>
+                                                    <th>Status</th>
+                                                    <th>Created At</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(transaction,index) in $data.transactions" :key="index">
+                                                    <td>#{{ transaction.confirmation_code }}</td>
+                                                    <td>{{ transaction.amount }}</td>
+                                                    <td>#{{ transaction.order.num_id }}</td>
+                                                    <td>{{ transaction.order.items.length }}</td>
+                                                    <td>
+                                                        <span class="badge badge-success" v-if="transaction.status_code == 1">Complete</span>
+                                                        <span class="badge badge-warning" v-if="isNull(transaction.status_code)">Pending</span>
+                                                    </td>
+                                                    <td>{{ moment(transaction.created_at).format('Do MMMM, Y') }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-12">
                 <div class="card">
@@ -162,7 +244,7 @@
 
 <script setup>
 import { computed, inject, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
-import { cloneDeep, debounce, get } from 'lodash';
+import { cloneDeep, debounce, get, isNull } from 'lodash';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -227,7 +309,8 @@ const $data        = reactive({
             backgroundColor: '#d4edda',
             data: []
         } 
-    ]
+    ],
+    transactions: Array()
 });
 const $store       = useStore();
 const $ordersChart = computed( 
@@ -273,10 +356,14 @@ onMounted(
         try {
             $store.commit('loader',true);
 
-            let { data: { order_distribution, summary } } = await $api.get(`/dashboard/overview`);
+            let { data: { amrod,order_distribution, summary, transactions } } = await $api.get(`/dashboard/overview`);
 
-            $data.summary = cloneDeep(summary);
+            $data.summary      = cloneDeep(summary);
 
+            $data.amrod        = cloneDeep(amrod);
+            
+            $data.transactions = cloneDeep(transactions);
+            
             $data.orderStatus = $data.orderStatus.map(
                 (order) => {
                     order.data = $data.listMonths.map( item => parseInt(get(order_distribution.find( dist => dist.date == item.date && dist.status == order.label.toLowerCase() ),'count')) || 0  );

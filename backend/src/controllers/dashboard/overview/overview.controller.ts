@@ -38,6 +38,7 @@ export class OverviewController {
       let staff              = await this.userModel.count({ where: { role: { name: 'staff' } } });
       let orders             = await this.orderModel.count();
       let pending_orders     = await this.orderModel.count({ where: { status: 'pending' } });
+
       let revenue_received   = ( await this.transactionModel.sum('amount', { confirmation_code: Not(IsNull()) }) ) || 0;
       let revenue_pending    = ( await this.transactionModel.sum('amount', { confirmation_code: IsNull() }) ) || 0;
       let order_distribution = await this.orderModel.createQueryBuilder('orders')
@@ -46,28 +47,18 @@ export class OverviewController {
                                          .groupBy('YEAR(orders.created_at),MONTH(orders.created_at),orders.status')
                                          .getRawMany()
 
+      let transactions       = await this.transactionModel.find({ where: { confirmation_code: Not(IsNull()) }, relations:['order','order.user'], take: 5, order: { created_at: 'DESC' } });                                         
       let categories         = await this.categoryModel.count();
       let products           = await this.productModel.count();
       let product_variants   = await this.productVariantModel.count();
-      let prices             = await this.priceModel.count();
+
+      let data               = { 
+        amrod:   { categories, products, product_variants }, order_distribution,
+        summary: { clients, staff, orders, pending_orders, revenue_received, revenue_pending }, 
+        transactions
+      }
       
-      return res.status(HttpStatus.OK).json({ 
-        amrod:{
-          categories,
-          products,
-          product_variants,
-          prices
-        },
-        order_distribution,
-        summary: { 
-          clients, 
-          staff, 
-          orders, 
-          pending_orders, 
-          revenue_received,
-          revenue_pending 
-        }, 
-      });
+      return res.status(HttpStatus.OK).json(data);
 
     } catch (error) {
 
