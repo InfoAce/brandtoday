@@ -46,7 +46,7 @@ export class OptionalGuard implements CanActivate {
         // request.user =;
       } catch (err) {
         // If an error occurs during verification, throw an UnauthorizedException
-        throw new UnauthorizedException();
+        set(request, 'user', {});
       }
     }
 

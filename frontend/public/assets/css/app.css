@@ -33,6 +33,14 @@ p {
   font-weight: unset !important;
 }
 
+.favourite {
+  position: absolute;
+}
+
+.favourite > h1 {
+  cursor: pointer;
+}
+
 .badge {
   font-style: normal !important;
   margin: 0 !important;

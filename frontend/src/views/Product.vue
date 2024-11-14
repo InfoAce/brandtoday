@@ -29,7 +29,13 @@
             <div class="collection-wrapper">
                 <div class="container-fluid">
                     <div class="row px-4">
-                        <div class="col-lg-8 col-md-6 col-xs-12">
+                        <div class="col-lg-8 col-md-6 col-xs-12 px-4">
+                            <div v-if="!$isEmpty($store.getters.auth)" class="favourite px-4 col-12">
+                                <h1 class="text-theme text-right">
+                                    <i class="far fa-heart" v-if="$isEmpty(favourite)" @click="addToFavourites()"></i>
+                                    <i class="fa fa-heart" v-if="!$isEmpty(favourite)"></i>
+                                </h1>
+                            </div>
                             <template v-if="$isEmpty(product) && loading.product">
                                 <div class="ssc">
                                     <div class="ssc-wrapper">
@@ -101,10 +107,7 @@
                         </div>
                         <div class="col-lg-4 col-md-6 col-12 product-details">
                             <div class="product-right px-2 py-4">
-                                <h5 class="text-theme m-0">
-                                    <span><i class="fa fa-heart"></i></span>
-                                    {{ product.full_code }}
-                                </h5>
+                                <h5 class="text-theme m-0">{{ product.full_code }}</h5>
                                 <h2 class="text-theme">{{ product.name }}</h2>
                                 <p>Price</p>
                                 <h3 class="price-detail" v-if="!$isEmpty(product)">{{ currency }} {{ product.price.toFixed(2) }}</h3>
@@ -217,20 +220,10 @@
                                             </button>                                             
                                         </div>
                                         <div class="col-md-6">
-                                            <template v-if="$isEmpty($store.getters.auth)">
-                                                <button class="btn btn-solid btn-animation text-white w-100 p-3" :disabled="isDisabled" data-toggle="tooltip" data-placement="top" title="You need to login.">
-                                                    <i class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
-                                                    wishlist
-                                                </button>    
-                                            </template>
-                                            <template v-else>
-                                                <button class="btn btn-solid btn-animation text-white w-100 p-3" :disabled="!$isEmpty(favourite)" @click="addToFavourites()">
-                                                    <i v-show="!loading.wishlist" class="fa fa-bookmark fz-16 me-2" aria-hidden="true"></i>
-                                                    <i v-show="loading.wishlist" class="fa fa-spinner fa-spin"></i>
-                                                    <span v-show="$isEmpty(favourite)">Wishlist</span>
-                                                    <span v-show="!$isEmpty(favourite)">Already in wishlist</span>
-                                                </button>    
-                                            </template>                                        
+                                            <button class="btn btn-solid hover-solid btn-animation text-white w-100 p-3" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
+                                                <i class="fas fa-file-alt"></i>
+                                                Get Quote
+                                            </button>                                             
                                         </div>
                                     </div>
                                 </div>

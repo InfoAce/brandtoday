@@ -204,6 +204,7 @@ export class ProductsController {
       }
     }
 
+    @UseGuards(OptionalGuard)
     @Put(':full_code')
     /**
      * Show a product by its code.
@@ -234,7 +235,7 @@ export class ProductsController {
 
         // If a user is logged in, find their favourite with the given product code
         if( !isEmpty(user) ) {
-          favourite = (await user.favourites).find( val => val.product.id == product.id ) ?? { };
+          favourite = (await user.favourites).find( val => val.product.full_code == product.full_code ) ?? { };
         }
 
 
