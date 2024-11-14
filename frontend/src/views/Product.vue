@@ -101,7 +101,10 @@
                         </div>
                         <div class="col-lg-4 col-md-6 col-12 product-details">
                             <div class="product-right px-2 py-4">
-                                <h5 class="text-theme m-0">{{ product.full_code }}</h5>
+                                <h5 class="text-theme m-0">
+                                    <span><i class="fa fa-heart"></i></span>
+                                    {{ product.full_code }}
+                                </h5>
                                 <h2 class="text-theme">{{ product.name }}</h2>
                                 <p>Price</p>
                                 <h3 class="price-detail" v-if="!$isEmpty(product)">{{ currency }} {{ product.price.toFixed(2) }}</h3>
@@ -342,6 +345,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import { ProductRatingForm, RelatedProduct } from '../components';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css'
+import { sortSizes } from '../helpers'
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -376,8 +380,8 @@ export default {
         variants(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images)  ? 
                         !isEmpty(this.selections.colour) ? 
-                            this.product.__variants__.filter( variant => variant.code_colour.includes(this.selections.colour.code) ) :
-                                this.product.__variants__.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) ): 
+                            sortSizes(this.product.__variants__.filter( variant => variant.code_colour.includes(this.selections.colour.code) )) :
+                                sortSizes(this.product.__variants__.filter( variant => variant.code_colour.includes(first(this.product.colour_images).code) )): 
                     [];
         },
         selectedColourVariant(){
@@ -398,6 +402,7 @@ export default {
         }
     },
     created(){
+
         this.$isEmpty      = isEmpty;
         this.$isNull       = isNull;
         this.$has          = has;

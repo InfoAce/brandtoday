@@ -328,14 +328,11 @@ const fetchProducts = async (append = false) => {
 
         if( !isEmpty(products) ){
 
-            console.log(append);
-
             if( append ){
                 $data.products = $data.products.concat(products);
             }
 
             if( !append ){
-                console.log(products);
                 $data.products = cloneDeep(products);
             }   
         }

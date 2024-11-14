@@ -204,7 +204,6 @@ export class ProductsController {
       }
     }
 
-    @UseGuards(OptionalGuard)
     @Put(':full_code')
     /**
      * Show a product by its code.
