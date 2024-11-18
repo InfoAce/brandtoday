@@ -38,6 +38,9 @@ export { UpdateCompanyValidation as UpdateCompanyValidation } from './company/up
 // Product 
 export { FetchProductsValidation as FetchProductsValidation } from './product/fetch.validation';
 
+// Quote
+export { CreateQuoteValidation as CreateQuoteValidation } from './quote/create.validation';
+
 // Queue
 export { UpdateQueueValidation as UpdateQueueValidation } from './queue/update.validation';
 

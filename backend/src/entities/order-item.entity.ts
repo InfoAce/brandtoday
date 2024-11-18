@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { AddressBookEntity, OrderEntity, OrderReviewEntity, ProductEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
+import { AddressBookEntity, OrderEntity, OrderReviewEntity, ProductEntity, QuoteEntity, RoleEntity, TransactionEntity, UserEntity } from './index';
 
 @Entity("order-items")
 export class OrderItemEntity {
@@ -56,7 +56,7 @@ export class OrderItemEntity {
   })
   product: ProductEntity;
   
-  @ManyToOne(() => OrderEntity, (entity) => entity.items, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToOne(() => OrderEntity, (entity) => entity.items, { orphanedRowAction: 'nullify',onDelete: 'SET NULL', onUpdate: 'SET NULL' })
   @JoinColumn({
     name:                 "order_id",
     referencedColumnName: "id",
@@ -64,9 +64,21 @@ export class OrderItemEntity {
   order: Promise<OrderEntity>;
 
   @Column({
-    nullable: false
+    nullable: true
   })
   order_id: string;
+
+  @ManyToOne(() => QuoteEntity, (entity) => entity.items, { orphanedRowAction: 'nullify',onDelete: 'SET NULL', onUpdate: 'SET NULL' })
+  @JoinColumn({
+    name:                 "quote_id",
+    referencedColumnName: "id",
+  })
+  quote: Promise<QuoteEntity>;
+
+  @Column({
+    nullable: true
+  })
+  quote_id: string;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

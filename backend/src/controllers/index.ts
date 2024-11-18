@@ -18,6 +18,7 @@ export { CategoryController as CategoryController } from './landing/category/cat
 export { FavouriteController as FavouriteController } from './landing/favourite/favourite.controller'
 export { HeaderController as HeaderController } from './landing/header/header.controller'
 export { HomeController as HomeController } from './landing/home/home.controller'
+export { QuoteController as QuoteController } from './landing/quote/quote.controller'
 export { ProductsController as ProductsController } from './landing/products/products.controller'
 export { DashboardOrderController as DashboardOrderController } from './dashboard/orders/order.controller'
 export { OrderController as OrderController } from './landing/orders/order.controller'

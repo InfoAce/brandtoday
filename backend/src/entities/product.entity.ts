@@ -97,6 +97,12 @@ export class ProductEntity {
   })
   price: number;
 
+  @Column({
+    nullable: true,
+    type: 'int'
+  })
+  stock: number;
+
   @OneToMany( () => FavouriteEntity,(entity) => entity.product, { lazy: true })
   @JoinColumn()
   favourites: FavouriteEntity[];

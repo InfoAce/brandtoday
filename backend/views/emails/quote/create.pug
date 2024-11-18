@@ -1,0 +1,77 @@
+doctype transitional
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width,initial-scale=1')
+  link(rel='icon' href='images/favicon.png' type='image/x-icon')
+  link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
+  link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
+div(style='background-color: #fafafa; width:100%; min-height: 100%; display: flex; flex-direction: column; align-items: center;')
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%;')
+    tbody(style='font-family: Montserrat, sans-serif !important;')
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='display:flex;justify-content:center;')
+          img(src=company_logo alt=company_name width='150px')
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='text-align: center;')
+          h3
+            | Quote #
+            span
+              b=quote_number
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='text-align: center;')                                                                                                            
+  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:80%;border-collapse: collapse;')                
+    tbody(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;')            
+        each item, key in items
+          tr(style="border-bottom: 1px solid #ededed;")
+            td(style='border-collapse: collapse;padding: 10px;display: flex; align-items: center;')
+              img(height="50" src=item.image alt=item.name)    
+              div(style='padding: 0 0 0 10px')
+                p(style='margin: 0px;')=item.name
+                p(style='margin: 0px;')
+                  span(style='padding: 0px 0px 5px 0px;') Quantity:
+                  span(style='margin: 0px 0px 2px 0px;')=item.quantity 
+                  if item.colour
+                    span(style='padding: 0px 0px 0px 5px;') Colour:
+                    span(style='margin: 0px 0px 2px 0px;')=item.colour
+                  if item.size
+                    span(style='padding: 0px 0px 0px 5px;') Size:
+                    span(style='margin: 0px 0px 2px 0px;')=item.size                                                 
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              p              
+                span=currency
+                span 
+                |
+                span=(item.quantity * item.price).toFixed(2)
+        tr(style="border-bottom: 1px solid #ededed;")
+            td(style='border-collapse: collapse; padding: 10px;') Sub Total
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=currency
+              span 
+                |
+              span=total.toFixed(2)
+        each charge, key in extra_charges
+            tr(style="border-bottom: 1px solid #ededed; ")
+              td(style='border-collapse: collapse; padding: 10px;')
+                span=charge.name
+              td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+                span=currency
+                span 
+                  |
+                span=charge.amount.toFixed(2)
+        tr(style="border-bottom: 1px solid #ededed;")
+          td(style='border-collapse: collapse; padding: 10px;') Total Amount
+          td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+            b
+              span=currency 
+              span 
+                |
+              span=(extra_charges.map( charge => charge.amount).reduce( (a,c) => a + c,  0) + total).toFixed(2) 
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%; justify-content: end;')
+    tbody(style='font-family: Montserrat, sans-serif !important;')
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='text-align: center;')
+          p This is a quotation for the list of products displayed above.
+          p 
+            span Generated on 
+            span=created_at

@@ -220,8 +220,9 @@
                                             </button>                                             
                                         </div>
                                         <div class="col-md-6">
-                                            <button class="btn btn-solid hover-solid btn-animation text-white w-100 p-3" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
-                                                <i class="fas fa-file-alt"></i>
+                                            <button class="btn btn-solid hover-solid btn-animation text-white w-100 p-3" :disabled="isDisabled || !$isEmpty(cartItem) || loading.quote" @click="getQuote">
+                                                <i v-if="!loading.quote" class="fas fa-file-alt"></i>
+                                                <i v-if="loading.quote" class="fa fa-spinner fa-spin"></i>
                                                 Get Quote
                                             </button>                                             
                                         </div>
@@ -339,6 +340,9 @@ import { ProductRatingForm, RelatedProduct } from '../components';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css'
 import { sortSizes } from '../helpers'
+import { saveAs } from "file-saver";
+import moment from 'moment';
+
 export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
@@ -403,6 +407,20 @@ export default {
         this.$get          = get;
         this.$convertToHex = (colour) =>  convertCssColorNameToHex(colour.toLowerCase().split(' ').join(""));
 
+
+        this.downloadFile = (pdf, fileName) => {
+            const link = document.createElement('a');
+            // create a blobURI pointing to our Blob
+            link.href     = `data:application/pdf;base64,${pdf}`;
+            link.download = fileName;
+            // some browser needs the anchor to be in the doc
+            document.body.append(link);
+            link.click();
+            link.remove();
+            // // in case the Blob uses a lot of memory
+            // setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+        };
+
         /**
          * Validates a form field based on the provided field name.
          * Uses the formSchema to validate the field and updates the errors object accordingly.
@@ -448,6 +466,7 @@ export default {
             form:        Object(),
             isDisabled:  Boolean(),
             loading:     {
+                quote:   Boolean(),
                 product: Boolean(true),
                 wishlist: Boolean()
             },
@@ -652,6 +671,35 @@ export default {
         },
         fetchStock(code){
             return this.$api.put(`/products/stock/${code}`); // Fetch stock from an item full code
+        },
+        async getQuote(){
+            try {
+                this.loading.quote = Boolean(true);
+
+                let { isVariant, product, selections } = this;
+                let data     = cloneDeep(this.form);
+                let selected = product.__variants__.find( variant => selections.colour.code == variant.code_colour );
+
+                if( has(selections,'colour') && !isEmpty(selections.colour.images) ){
+                    data.image = selections.colour.images[0].urls[0].url;
+                }
+
+                if( isEmpty(selections.colour.images) && !isEmpty(this.product.images) ){
+                    let image  = this.product.images.find( val => val.name == selected.full_code || `${product.full_code}_default`)
+                    data.image = image.urls[0].url;
+                }
+
+                const { data:{ pdf } } = await this.$api.post(`/quotes`,data);
+
+                this.downloadFile(pdf,`${moment().unix()}.pdf`);
+
+                this.$toast.success('This product has been added to your cart.');
+
+            } catch(error) {
+                this.loading.quote = Boolean();
+            } finally {
+                this.loading.quote = Boolean();
+            }
         },
         selectColour(hex,event){
             let variant = window.document.querySelector('.color-variant li.active');

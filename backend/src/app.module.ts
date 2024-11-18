@@ -2,15 +2,15 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ApiMiddleware, CsrfMiddleware, RedirectIfAuthMiddleware } from './middlewares';
 import { JwtStrategy, LocalStrategy } from './guards';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, OrderController, OverviewController, ProductsController, QueueController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
+import { AccountController, AddressBookController, AuthController, CategoryController, CompanyController, DashboardCategoryController, DashboardOrderController, FavouriteController, HeaderController, HomeController, HomeWebsiteController, OrderController, OverviewController, ProductsController, QueueController, QuoteController, SidebarController, SignupController, SystemController, UserController, WebsiteController } from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ConfigApp, ConfigColors, ConfigDatabase, ConfigServices } from './config';
 import { AmrodService, AuthService, MailService, PesapalService } from './services';
-import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule } from './modules';
-import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, RoleEntity, StockEntity, SubCategoryEntity, SubChildSubCategoryEntity, TransactionEntity, UserEntity } from './entities';
+import { AddressBookModule, CompanyModule, MailModule, UserModule, RoleModule, FavouriteModule, OrderModule, TransactionModule, CategoryModule, BrandModule, StockModule, PriceModule, ProductModule, QueueModule, QuoteModule } from './modules';
+import { AddressBookEntity, BrandEntity, CategoryEntity, ChildSubCategoryEntity, CompanyEntity, FavouriteEntity, OrderEntity, OrderItemEntity, OrderReviewEntity, OrderTimelineEntity, PriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductReviewEntity, ProductVariantEntity, QueueEntity, QuoteEntity, RoleEntity, StockEntity, SubCategoryEntity, SubChildSubCategoryEntity, TransactionEntity, UserEntity } from './entities';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { OrderSubscriber, PriceSubscriber, ProductColourSubscriber, ProductSubscriber, StockSubscriber, UserSubscriber } from './subscribers';
 import { HttpModule } from '@nestjs/axios';
@@ -89,6 +89,7 @@ import { CustomEmailvalidation } from './helpers/validators/user.validator';
             ProductColourEntity,
             ProductReviewEntity,
             ProductVariantEntity,
+            QuoteEntity,
             QueueEntity,
             RoleEntity,
             StockEntity,
@@ -131,6 +132,7 @@ import { CustomEmailvalidation } from './helpers/validators/user.validator';
     OrderModule,
     PriceModule,
     ProductModule,
+    QuoteModule,
     QueueModule,
     RoleModule,
     StockModule,
@@ -152,6 +154,7 @@ import { CustomEmailvalidation } from './helpers/validators/user.validator';
     ProductsController,
     OrderController,
     OverviewController,
+    QuoteController,
     QueueController,
     SidebarController,
     SignupController,

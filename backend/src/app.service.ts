@@ -238,6 +238,8 @@ export class AppService {
         // Fetch amrod products
         let products = await this.amrodService.getProducts()  
 
+        fs.writeFileSync('public/logs/products.json',JSON.stringify(products));
+
         // Fetch company
         let company  = await this.companyModel.first();
 
@@ -268,6 +270,7 @@ export class AppService {
 
             return { ...product, price: maxPrice, code: `${product.productName}_${product.fullCode}`.toLowerCase().replace(/\s/g, '') }
         });
+
 
         let product_categories  = uniqBy(products,'code').map( 
             product => product.categories.map( 
@@ -478,6 +481,9 @@ export class AppService {
 
         // Fetch amrod prices
         let prices         = await this.amrodService.getPrices();  
+
+        fs.writeFileSync('public/logs/prices.json',JSON.stringify(prices));
+
         let company        = await this.companyModel.first(); 
 
         await Promise.all(

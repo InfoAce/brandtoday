@@ -16,6 +16,7 @@ export { ProductCategoryRepository as ProductCategoryRepository } from './produc
 export { ProductColourRepository as ProductColourRepository } from './product-colour.repository';
 export { ProductReviewRepository as ProductReviewRepository } from './product-review.repository';
 export { ProductVariantRepository as ProductVariantRepository } from './product-variant.repository';
+export { QuoteRepository as QuoteRepository } from './qoute.repository';
 export { TransactionRepository as TransactionRepository } from './transaction.repository';
 export { StockRepository as StockRepository } from './stock.repository';
 export { SubCategoryRepository as SubCategoryRepository } from './sub-category.repository';
