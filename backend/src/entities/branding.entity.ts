@@ -10,7 +10,7 @@ export class BrandingEntity {
   @Column()
   code: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext' })
   comment: string;
 
   @Column({ unique: true })
