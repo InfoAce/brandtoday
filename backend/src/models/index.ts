@@ -1,5 +1,8 @@
 export { default as AddressBookModel } from './address.book.model';
 export { default as BrandModel } from './brand.model';
+export { default as BrandingModel } from './branding.model';
+export { default as BrandingMethodModel } from './branding-method.model';
+export { default as BrandingPriceModel } from './branding-price.model';
 export { default as CategoryModel } from './category.model';
 export { default as ChildSubCategoryModel } from './child-sub-category.model';
 export { default as CompanyModel } from './company.model';

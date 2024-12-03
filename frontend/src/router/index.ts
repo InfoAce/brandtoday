@@ -62,18 +62,6 @@ const router = createRouter({
               },
               component: () => import('@/views/Reset.vue')
             },
-            // {
-            //   path: ':pathMatch(.*)*',
-            //   name: "TokenNotFound",
-            //   meta: {
-            //     title: 'Token Not Found',
-            //     auth: false,
-            //     redirectIfAuth: false,
-            //     
-            //     
-            //   },
-            //   component: () => import('@/views/Error404.vue')
-            // },
           ],
           component: RouterView
         },
@@ -230,6 +218,22 @@ const router = createRouter({
           },
           component: () => import('@/views/Products.vue')
         },
+        {
+          path: 'branded',
+          children:[
+            {
+              path: ':full_code',
+              name: "BuyBranded",
+              meta: {
+                title: 'Buy Branded',
+                auth:  false,
+                tags:  'Product, Buy Branded'  
+              },
+              component: () => import('@/views/Branded.vue')
+            }
+          ],
+          component: RouterView
+        },  
         {
           path: ':category',
           children:[

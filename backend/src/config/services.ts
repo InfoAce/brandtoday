@@ -30,6 +30,12 @@ export default registerAs('services',() => {
                     all: '/Brands/',
                     updated: '/Brands/GetUpdated'  
                 },
+                branding:{
+                    inclusive: '/InclusiveBrandings',
+                    inclusive_updated: '/InclusiveBrandings/GetUpdated',
+                    prices: '/BrandingPrices',
+                    prices_updated: '/BrandingPrices/GetUpdated',
+                },
                 categories: {
                     all: 'Categories'
                 },

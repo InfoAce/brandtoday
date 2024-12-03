@@ -33,25 +33,29 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2 col-xs-12">
+                                            <label>Include Clearance Items</label> 
+                                            <VueToggles v-model="$data.filter.clearance" checkedText="Yes" uncheckedText="No" checkedBg="#7e1414" />
+                                        </div>
+                                        <div class="col col-xs-12">
                                             <label>Search Name</label>
                                             <input class="form-control" v-model="$data.filter.name" placeholder="Search Name"/>
                                         </div>
-                                        <div class="col-md-3 d-flex flex-column">
+                                        <div class="col col-xs-12 d-flex flex-column">
                                             <label>View Filters</label>
                                             <a arial-caret="true" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" class="form-control d-flex justify-content-between w-100">
                                                 <span>Filter</span>
                                                 <i class="fa fa-chevron-down"></i>
                                             </a>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col col-xs-12">
                                             <label>Sort Pricing</label>
                                             <select class="form-control" placeholder="Sort Pricing" v-model="$data.filter.sort_pricing">
                                                 <option value="asc">Ascending</option>
                                                 <option value="desc">Descending</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col col-xs-12">
                                             <label>Per Page</label>
                                             <select class="form-control" placeholder="Per Page" v-model.number="$data.filter.per_page">
                                                 <option value="10">10 Per Page</option>
@@ -142,6 +146,7 @@
                                                         </a>
                                                         <h6 class="m-0 p-0">{{ currency }} {{ product.price.toFixed(2) }}</h6>                                                    
                                                         <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
+                                                        <h6 class="m-0 p-0">Stock: {{ product.stock }}</h6>
                                                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                             <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
                                                         </ul>
@@ -170,6 +175,7 @@ import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { VueToggles } from "vue-toggles";
 
 const $api    = inject('$api');
 const $toast  = inject('$toast');
@@ -179,6 +185,7 @@ const $router = useRouter();
 const $data   = reactive({
     category:         Object(),
     filter:{
+        clearance:    Boolean(),
         page:         Number(1),
         per_page:     Number(10),
         name:         String(),
@@ -296,7 +303,7 @@ const fetchProducts = async (append = false) => {
 
     // Destructuring assignment for easier access
     let { query, params } = $route;
-    let { filter: { per_page, page, options, name, sort_pricing } } = $data;
+    let { filter: { per_page, page, options, name, sort_pricing, clearance } } = $data;
     let url        = `/products`;
     
     if( !isEmpty(params) ){
@@ -313,6 +320,10 @@ const fetchProducts = async (append = false) => {
 
     if( !isEmpty(sort_pricing) ){
         url += `&sort_pricing=${sort_pricing}`;
+    }
+
+    if( clearance ){
+        url += `&clearance=${clearance}`;
     }
     
 
@@ -471,8 +482,16 @@ watch(
         $data.filter.page = 1;
         fetchProducts();
     },1000)
-)
+);
 
+watch(
+    () => $data.filter.clearance,
+    debounce(() => {
+        $store.commit('card_loader',true);
+        $data.filter.page = 1;
+        fetchProducts();
+    },1000)
+);
 
 watch(
     () => $route.query,

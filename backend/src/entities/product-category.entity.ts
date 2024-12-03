@@ -38,7 +38,7 @@ export class ProductCategoryEntity {
   })
   path: string;
 
-  @ManyToOne(() => ProductEntity,(product) => product.categories, { eager: true, onUpdate: "CASCADE", onDelete: 'CASCADE' })
+  @ManyToOne(() => ProductEntity,(product) => product.categories, { lazy: true, onUpdate: "CASCADE", onDelete: 'CASCADE' })
   @JoinColumn({
     name:                 "product_code",
     referencedColumnName: "full_code",

@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ProductCategoryModel,  ProductColourModel, ProductModel, ProductVariantModel } from '../models';
-import { ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
+import { BrandingModel, BrandingMethodModel, BrandingPriceModel, ProductCategoryModel,  ProductColourModel, ProductModel, ProductVariantModel } from '../models';
+import { BrandingEntity, BrandingMethodEntity, BrandingPriceEntity, ProductCategoryEntity, ProductColourEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductColourSubscriber } from 'src/subscribers';
 
 @Module({
   exports:[
+    BrandingModel,
+    BrandingMethodModel,
+    BrandingPriceModel,
     ProductModel,
     ProductCategoryModel,
     ProductColourModel,
@@ -13,6 +16,9 @@ import { ProductColourSubscriber } from 'src/subscribers';
   ],
   imports: [
     TypeOrmModule.forFeature([
+      BrandingEntity,
+      BrandingMethodEntity,
+      BrandingPriceEntity,
       ProductEntity,
       ProductVariantEntity,
       ProductCategoryEntity,
@@ -20,6 +26,9 @@ import { ProductColourSubscriber } from 'src/subscribers';
     ])
   ],
   providers: [
+    BrandingModel,
+    BrandingPriceModel,
+    BrandingMethodModel,
     ProductModel, 
     ProductCategoryModel,
     ProductCategoryModel,

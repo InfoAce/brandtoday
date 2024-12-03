@@ -33,6 +33,30 @@ p {
   font-weight: unset !important;
 }
 
+.progresses {
+  width:100%;
+  display: flex;
+  align-items: center;
+}
+
+.line{
+  width: inherit;
+  height: 6px;
+  background: #7e1414;
+}
+
+.steps{
+  display: flex;
+  background-color: #7e1414;
+  color: #fff;
+  font-size: 14px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
 .favourite {
   position: absolute;
 }

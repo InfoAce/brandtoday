@@ -52,6 +52,7 @@ export class ProductsController {
     @Put('')
     @UsePipes(new ValidationPipe({ transform: true }))
     async index(
+      @Query('clearance',new DefaultValuePipe(Boolean())) queryClearance: boolean,
       @Query('name',new DefaultValuePipe(String())) queryName: string,
       @Query('category_code',new DefaultValuePipe(String())) category_code: any,
       @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: any,
@@ -70,9 +71,16 @@ export class ProductsController {
 
         if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
 
+          let category_code_data = [category_code]
+
+          if( queryClearance ){
+            let clearance = await this.categoryModel.findOne({ where: { code: ILike(`%clearance%`) } });
+            category_code_data.push(clearance.code);
+          }
+
           filters = cloneDeep({
             relation: ['categories'],
-            where:    { categories:{ category_code, sub_category_code }, price: Between(price[0],price[1]) }, 
+            where:    { categories:{ category_code: In(category_code_data), sub_category_code }, price: Between(price[0],price[1]) }, 
             order:    { price: querySortPricing.toUpperCase() }, 
             skip:     (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
             take:     parseInt(queryPerPage), 

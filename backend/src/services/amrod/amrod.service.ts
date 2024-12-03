@@ -138,7 +138,140 @@ export class AmrodService {
             throw new AmrodServiceException(error);
         }
     }
+
+    /**
+     * Fetches updated products from the Amrod API. This method returns the products
+     * that have been updated since the last time the products were fetched.
+     * Fetches updated products from the Amrod API.
+     * 
+     * @returns {Promise<Array<any>>} A promise that resolves with an array of
+     *         updated product objects.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getBrandingPrices(): Promise<Array<any>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and endpoint for
+            // updated products
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.branding.prices}`;
+
+            // Execute a GET request to fetch updated products from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched updated products data
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Products: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    }
+
+    /**
+     * Fetches updated products from the Amrod API. This method returns the products
+     * that have been updated since the last time the products were fetched.
+     * 
+     * @returns {Promise<Array<any>>} A promise that resolves with an array of
+     *         updated product objects.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getBrandingUpdatedPrices(): Promise<Array<any>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and endpoint for
+            // updated products
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.branding.prices_updated}`;
+
+            // Execute a GET request to fetch updated products from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched updated products data
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Products: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    } 
     
+    /**
+     * Fetches updated products from the Amrod API, including branding information.
+     * This method combines the product data with the branding data to create a single
+     * object containing all the information about each product.
+     * 
+     * @returns {Promise<Array<Object>>} A promise that resolves with an array of objects, each
+     *         containing the product information and branding data.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getBrandingInclusive(): Promise<Array<Object>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and endpoint for updated products
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.branding.inclusive}`;
+
+            // Execute a GET request to fetch updated products from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched updated products data, including branding information
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Products: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    }    
+    
+    /**
+     * Fetches updated branding-inclusive products from the Amrod API.
+     * 
+     * @returns {Promise<Array<any>>} A promise that resolves with an array of updated product objects.
+     * @throws {AmrodServiceException} If an error occurs during the request.
+     */
+    async getBrandingInclusiveUpdated(): Promise<Array<any>> {
+        try {
+            // Retrieve the authentication token from the cache
+            let auth = await this.cacheManager.get('amrod_auth');
+
+            // Construct the request URL using the vendor URI and the endpoint for branding-inclusive updated products
+            let requestUrl = `${this.config.endpoints.vendor_uri}${this.config.endpoints.branding.inclusive_updated}`;
+
+            // Execute a GET request to fetch updated branding-inclusive products from the Amrod API
+            let { data } = await firstValueFrom(
+                this.request({ base_uri: this.config.endpoints.vendor_uri, auth }).get(requestUrl)
+            );
+
+            // Return the fetched data of updated branding-inclusive products
+            return data;
+
+        } catch (error) {
+            // Log any errors encountered during the request
+            this.logger.error(`Branding Inclusive Updated Products: ${error}`);
+
+            // Throw an AmrodServiceException containing the error details
+            throw new AmrodServiceException(error);
+        }
+    }
     
     /**
      * Fetches all products from the Amrod API

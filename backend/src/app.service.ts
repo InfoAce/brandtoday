@@ -4,16 +4,17 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, map, maxBy, take, intersectionBy, uniqBy } from 'lodash';
-import { BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel } from 'src/models';
+import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, map, maxBy, take, intersectionBy, sum, uniqBy } from 'lodash';
+import { BrandingModel, BrandingMethodModel, BrandingPriceModel, BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs'
+
 @Injectable()
 export class AppService {
 
   private readonly logger = new Logger(AppService.name);
 
-  private readonly sleep  = new Promise( (resolve) => setTimeout(resolve, 1000) );
+  private readonly sleep  = new Promise( (resolve) => setTimeout(resolve, 2000) );
 
   /**
    * The constructor for the AppService class.
@@ -34,6 +35,9 @@ export class AppService {
     private configService: ConfigService,
     private queueModel:    QueueModel,
     private brandModel:           BrandModel,
+    private brandingModel:        BrandingModel,
+    private brandingMethodModel:  BrandingMethodModel,
+    private brandingPriceModel:   BrandingPriceModel,
     private categoryModel:        CategoryModel,
     private childSubCategory:     ChildSubCategoryModel,
     private companyModel:         CompanyModel,
@@ -236,15 +240,73 @@ export class AppService {
         this.logger.log(`Synchronizing products`);
 
         // Fetch amrod products
-        let products = await this.amrodService.getProducts()  
-
-        fs.writeFileSync('public/logs/products.json',JSON.stringify(products));
+        let products        = await this.amrodService.getProducts()  
 
         // Fetch company
-        let company  = await this.companyModel.first();
+        let company         = await this.companyModel.first();
 
         // Fetch amrod prices  
-        let prices   = await this.amrodService.getPrices();  
+        let prices          = await this.amrodService.getPrices();  
+                
+        // Fetch amrod branding prices  
+        let branding_prices = await this.amrodService.getBrandingPrices();     
+                
+        // Fetch amrod branding
+        let branding        = products.filter( product => !isEmpty(product.brandings) ).map( product =>
+            product.brandings.map( 
+                brand => ({ 
+                    ...brand, 
+                    full_code: `${product.fullCode}_${brand.positionName}_${brand.positionCode}`.replace(/\s+/g,'').toLowerCase(), 
+                    product_code: product.fullCode 
+                })
+            ) 
+        ).flat();
+
+        // Fetch amrod branding methods
+        let branding_methods = branding.map( branding => 
+            branding.method.map( 
+                value => ({ 
+                    ...value, 
+                    full_code:     `${branding.full_code}_${value.brandingCode}_${branding.positionCode}_${value.displayIndex}`.toLowerCase().replace(/\s+/g,''),
+                    code:          `${value.brandingCode}-${value.displayIndex}`,
+                    branding_code: branding.full_code 
+                })
+            ) 
+        ).flat().filter( method => !isEmpty(method.brandingCode) );
+
+        // Fetch amrod branding prices
+        branding_prices     = branding_prices.map( 
+            branding_price => branding_price.data.map( 
+                price => {
+
+                    if( company.use_exchange_rate ){
+                        price.price = parseFloat((price.price * company.exchange_rate).toFixed(2));
+                        price.setup = parseFloat((price.setup * company.exchange_rate).toFixed(2));
+                    }
+        
+                    if( company.use_product_fee ){
+                        switch(company.product_fee_type){
+                            case 'fixed':
+                                price.price = parseFloat((price.price + company.product_fee).toFixed(2));
+                                price.setup = parseFloat((price.setup + company.product_fee).toFixed(2));
+                            break;
+                            case 'percentage':
+                                price.price =  parseFloat((price.price * (company.product_fee/100)).toFixed(2));
+                                price.setup =  parseFloat((price.setup * (company.product_fee/100)).toFixed(2));
+                            break;
+                        }
+                    }
+
+                    return { 
+                        ...price, 
+                        code: price.printCode,
+                        brandingCode: branding_price.brandingCode,
+                        full_code:   `${branding_price.brandingCode}_${price.printCode}`.toLowerCase().replace(/\s+/g,'')
+                    }
+                }
+            )
+        )
+        .flat();
 
         // Fetch amrod colour swatches
         let colour_swatches = await this.amrodService.getColourSwatches();  
@@ -387,6 +449,94 @@ export class AppService {
         // Logging
         this.logger.log(`Done saving product categories`);
 
+        // Fetch amrod branding
+        await Promise.all(
+            chunk(branding,1).map( 
+                async (branding_chunk) => {
+                    await this.brandingModel.upsert(
+                        branding_chunk.map(
+                            (branding: any) => ({
+                                comment:      branding.positionComment,
+                                code:         branding.positionCode,
+                                full_code:    branding.full_code,
+                                name:         branding.positionName,
+                                multiplier:   branding.positionMultiplier,
+                                product_code: branding.product_code,
+                            })
+                        ),
+                        {
+                            conflictPaths: ["full_code"],
+                            upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        },
+                    );
+                    await this.sleep;
+                }
+            )
+        )
+
+        // Logging
+        this.logger.log(`Done saving branding`);
+
+        // Fetch amrod branding methods
+        await Promise.all(
+            chunk(branding_methods,1).map( 
+                async (branding_method_chunk) => {
+                    await this.brandingMethodModel.upsert(
+                        branding_method_chunk.map(
+                            (method: any) => ({
+                                branding_code:         method.branding_code,
+                                code:                  method.code,
+                                colours:               method.numberOfColours,
+                                department:            method.brandingDepartment,
+                                full_code:             method.full_code,
+                                name:                  method.brandingName,
+                                max_print_width_size:  method.maxPrintingSizeWidth,
+                                max_print_height_size: method.maxPrintingSizeHeight,
+                                multiplier:            method.brandingMultiplier,
+                            })
+                        ),
+                        {
+                            conflictPaths: ["full_code"],
+                            upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        },
+                    );
+                    await this.sleep;
+                }
+            )
+        )
+
+        // Logging
+        this.logger.log(`Done saving branding methods`);
+
+        // Fetch amrod branding prices
+        await Promise.all(
+            chunk(intersectionBy(branding_prices,branding_methods,'code'),1).map( 
+                async (branding_prices_chunk) => {
+                    await this.brandingPriceModel.upsert(
+                        branding_prices_chunk.map(
+                            (price: any) => ({ 
+                                code:          price.printCode,
+                                colours:       price.numberOfColours,
+                                full_code:     price.full_code,
+                                min_quantity:  price.minQuantity,
+                                max_quantity:  price.maxQuantity,
+                                price:         price.price,
+                                setup:         price.setup,
+                            })
+                        ),
+                        {
+                            conflictPaths: ["full_code"],
+                            upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        },
+                    );
+                    await this.sleep;
+                }
+            )
+        )
+
+        // Logging
+        this.logger.log(`Done saving branding prices`);
+
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
 
@@ -452,15 +602,15 @@ export class AppService {
 
         // Logging
         this.logger.log(`Done Synchronizing product variants`);
+       
+        // Update queue status
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
 
         if(queue.progress){
-            // Update queue status
-            await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
-
             await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true, progress: false });
-            
             await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true, progress: false });
         }
+
     } catch (error) {
         console.log(error);
         // Logging
@@ -481,8 +631,6 @@ export class AppService {
 
         // Fetch amrod prices
         let prices         = await this.amrodService.getPrices();  
-
-        fs.writeFileSync('public/logs/prices.json',JSON.stringify(prices));
 
         let company        = await this.companyModel.first(); 
 
@@ -529,10 +677,38 @@ export class AppService {
         // Fetch amrod stock
         let stocks   = await this.amrodService.getStock();
 
+        // Get products
+        let products = await this.productModel.find({ relations:[ 'stocks' ] });
+
         // Get product variants
         let variants = await this.productVariantModel.find();
 
-        stocks = intersectionBy(stocks.map( stock => ({ ...stock, full_code: stock.fullCode })), variants, 'full_code');
+        stocks = intersectionBy(
+            stocks.map( stock => ({ ...stock, full_code: stock.fullCode })), 
+            variants, 
+            'full_code'
+        );
+
+        let sorted_products = products.map(
+            product => {
+                return {
+                    code:  product.code,
+                    stock: sum((get(product,'__stocks__')).map( stock => stock.quantity))
+                }
+            }
+        )
+
+        await Promise.all(
+            chunk(sorted_products,1).map( async (sorted_product) => {
+                await this.productModel.upsert(
+                    sorted_product,
+                    {
+                        conflictPaths: ["code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
+            })
+        )
 
         await Promise.all(
             chunk(stocks,1).map( async (stocks) => {

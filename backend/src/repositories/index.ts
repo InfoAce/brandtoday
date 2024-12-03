@@ -1,6 +1,9 @@
 // Tyeorm repositories
 export { AddressBookRepository as AddressBookRepository } from './address.book.respository';
 export { BrandRepository as BrandRepository } from './brand.repository';
+export { BrandingRepository as BrandingRepository } from './branding.repository';
+export { BrandingMethodRepository as BrandingMethodRepository } from './branding-method.repository';
+export { BrandingPriceRepository as BrandingPriceRepository } from './branding-price.repository';
 export { CategoryRepository as CategoryRepository } from './category.repository';
 export { CompanyRepository as CompanyRepository } from './company.repository';
 export { ChildSubCategoryRepository as ChildSubCategoryRepository } from './child-sub-category.repository';

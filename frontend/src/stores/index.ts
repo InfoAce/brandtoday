@@ -16,8 +16,9 @@ export default createStore({
   },
   state: () => {
     return {
-      auth: {},
-      cart: Array(),
+      auth:    Object(),
+      branded: Object(),
+      cart:    Array(),
       get env(){ return import.meta.env },
       home:{
         categories: Array(),
@@ -37,6 +38,7 @@ export default createStore({
   getters:{
     auth:              (state) => state.auth,
     assetsUrl:         (state) => state.env.VITE_API_URL.replace('/api/v1',''),
+    branded:           (state) => state.branded,
     banner_height:     (state) => state.device_width * 0.3,
     cart:              (state) => state.cart,
     device_width:      (state) => state.device_width,
@@ -51,6 +53,9 @@ export default createStore({
   mutations: {
     auth(state,value) {
       state.auth = value;
+    },
+    branded(state,value) {
+      state.branded = value;
     },
     card_loader(state,value) {
       state.loaders.card = value

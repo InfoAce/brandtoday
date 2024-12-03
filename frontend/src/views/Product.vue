@@ -112,7 +112,7 @@
                                 <p>Price</p>
                                 <h3 class="price-detail" v-if="!$isEmpty(product)">{{ currency }} {{ product.price.toFixed(2) }}</h3>
                                 <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
-                                <div class="border-product my-2">
+                                <div class="border-product my-2" v-if="isColourVariant">
                                     <h5> 
                                         Selected colour: 
                                         <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
@@ -142,7 +142,7 @@
                                     </ul>
                                 </div>
                                 <div id="selectSize" class="addeffect-section product-description border-product">
-                                    <template v-if="isVariant">
+                                    <template v-if="isSizeVariant">
                                         <div class="row pb-2">
                                             <div class="col-12">
                                                 <h5>
@@ -188,7 +188,7 @@
                                             </div>
                                         </div>
                                     </template>
-                                    <template v-if="!isVariant">
+                                    <template v-if="!isSizeVariant">
                                         <h5 class="product-title">Quantity</h5>
                                         <div class="qty-box">
                                             <div class="input-group">
@@ -197,7 +197,8 @@
                                                         <i class="fa fa-angle-left"></i>
                                                     </button> 
                                                 </span>
-                                                <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity"> 
+                                                <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity" v-if="!$isEmpty(selectedColourVariant)" :max="selectedColourVariant.stock.quantity"> 
+                                                <input type="text" :name="`quantity_${product.full_code}`" class="form-control input-number" :value="form.quantity" v-if="$isEmpty(selectedColourVariant)"  :max="product.stock"> 
                                                 <span class="input-group-prepend">
                                                     <button type="button" class="btn quantity-right-plus" data-type="plus" data-field="" @click="() => increaseQuantity()">
                                                         <i class="fa fa-angle-right"></i>
@@ -206,7 +207,10 @@
                                             </div>
                                         </div>
                                         <h5 class="my-2" v-if="!$isEmpty(selectedColourVariant)">
-                                            Stock Available: {{ selectedColourVariant.stock.quantity - selectedColourVariant.stock.reserved_quantity }} 
+                                            Stock Available: {{ selectedColourVariant.stock.quantity }} 
+                                        </h5>
+                                        <h5 class="my-2" v-if="$isEmpty(selectedColourVariant)">
+                                            Stock Available: {{ product.stock }} 
                                         </h5>
                                     </template>
                                 </div>
@@ -220,12 +224,19 @@
                                             </button>                                             
                                         </div>
                                         <div class="col-md-6">
+                                            <button class="btn btn-solid hover-solid btn-animation text-white w-100 p-3" :disabled="isDisabled || !$isEmpty(cartItem) || loading.quote" @click="buyBranded">
+                                                <i v-if="!loading.quote" class="fas fa-file-alt"></i>
+                                                <i v-if="loading.quote" class="fa fa-spinner fa-spin"></i>
+                                                Buy Branded
+                                            </button>                                             
+                                        </div>
+                                        <!-- <div class="col-md-6">
                                             <button class="btn btn-solid hover-solid btn-animation text-white w-100 p-3" :disabled="isDisabled || !$isEmpty(cartItem) || loading.quote" @click="getQuote">
                                                 <i v-if="!loading.quote" class="fas fa-file-alt"></i>
                                                 <i v-if="loading.quote" class="fa fa-spinner fa-spin"></i>
                                                 Get Quote
                                             </button>                                             
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>                                
@@ -357,6 +368,14 @@ export default {
         auth(){
             return this.$store.getters.auth;
         },
+        branded:{
+            get(){
+                return this.$store.getters.branded;
+            },
+            set(value){
+                this.$store.commit('branded',value);
+            }
+        },
         cart:{
             get(){
                 return this.$store.getters.cart;
@@ -394,7 +413,10 @@ export default {
                         ) : 
                     {}
         },
-        isVariant(){
+        isColourVariant(){
+            return !isEmpty(this.product.colour_images);
+        },
+        isSizeVariant(){
             return !isEmpty(this.product) ? !isEmpty(this.product.__variants__.filter( val => !isNull(val.code_size) )) : false
         }
     },
@@ -489,7 +511,7 @@ export default {
     },
     methods:{
         addToCart(){
-            let { isVariant, product, selections } = this;
+            let { isSizeVariant, product, selections } = this;
             let data     = cloneDeep(this.form);
             let selected = product.__variants__.find( variant => selections.colour.code == variant.code_colour );
 
@@ -525,6 +547,25 @@ export default {
                     this.loading.wishlist = false; // Set loader
                 });  
         },
+        buyBranded(){
+            let { isSizeVariant, product, selections } = this;
+
+            let data     = cloneDeep(this.form);
+            let selected = product.__variants__.find( variant => selections.colour.code == variant.code_colour );
+
+            if( has(selections,'colour') && !isEmpty(selections.colour.images) ){
+                data.image = selections.colour.images[0].urls[0].url;
+            }
+
+            if( isEmpty(selections.colour.images) && !isEmpty(this.product.images) ){
+                let image  = this.product.images.find( val => val.name == selected.full_code || `${product.full_code}_default`)
+                data.image = image.urls[0].url;
+            }
+
+            this.branded = cloneDeep(data);
+
+            this.$router.push({ name: 'BuyBranded', params:{ full_code: product.full_code }})
+        },
         close(){
             this.initView();
         },
@@ -532,60 +573,98 @@ export default {
             
             this.product  = cloneDeep(product);
 
+            let form      = Object();
+
             $(`input[name="quantity_${product.full_code}"]`).val(1);
 
-            set(this.form,'full_code',  String(product.full_code));
-            set(this.form,'price',      String());
-            set(this.form,'colour',     String());
-            set(this.form,'image',      String());
-            set(this.form,'name',       String(product.name));
+            set(form,'full_code',  String(product.full_code));
+            set(form,'image',      String());
+            set(form,'name',       String(product.name));
+            set(form,'price',      parseFloat(product.price.toFixed(2)));
 
-            switch( this.isVariant ){   
-                case true: 
-                    // Check if product has variants and add validation of sizes
-                    this.schemaShape.sizes = yup.array().of(
-                        yup.object({
-                            name:     yup.string().required("*Size name is required."),
-                            quantity: yup.number().min(1).required("*Size quantity is required."),
-                        })
-                    )
-                    .min(1)
-                    .required("*Size is required");  
+            if( !isEmpty(product.colour_images) && this.isSizeVariant  ){
+                set(form,'colour',  String());
+                set(form,'hex',     String());
+                set(form,'sizes',   Array());
 
-                    set(this.selections,'sizes',Object());
-                    set(this.form,'sizes',Array());
-                    set(this.form,'price',parseFloat(product.price.toFixed(2)));
-                break;
-                case false:
-                    // Check if product has variants and add validation of quantity if empty
-                    this.schemaShape.quantity = yup.number().required("*Quantity is required.");       
-                    set(this.form,'quantity',Number(1));
-                break;
+                set(this.selections,'sizes', Object());
+                set(this.selections,'colour',Object()); // Initialize colour selection
+
+                this.schemaShape.hex        = yup.string(); // validate product hex colour
+                this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
+
+                // Check if product has variants and add validation of sizes
+                this.schemaShape.sizes = yup.array().of(
+                    yup.object({
+                        name:     yup.string().required("*Size name is required."),
+                        quantity: yup.number().min(1).required("*Size quantity is required."),
+                    })
+                )
+                .min(1)
+                .required("*Size is required");  
             }
+
+            if( !isEmpty(product.colour_images) && !this.isSizeVariant  ){
+                this.schemaShape.hex        = yup.string(); // validate product hex colour
+                this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
+
+                // Check if product has variants and add validation of quantity if empty
+                this.schemaShape.quantity = yup.number().required("*Quantity is required."); 
+
+                set(form,'colour',  String());
+                set(form,'hex',     String());
+                set(form,'quantity',Number(1));      
+
+                set(this.selections,'colour',Object()); // Initialize colour selection
+            }
+
+            if( isEmpty(product.colour_images) && !this.isSizeVariant  ){
+                this.schemaShape.quantity = yup.number().required("*Quantity is required.");       
+                set(form,'quantity',Number(1));                
+                set(form,'image',   String(first(product.images.find( image => image.isDefault ).urls).url));
+            }
+
+            // switch( this.isSizeVariant ){   
+            //     case true: 
+            //         // Check if product has variants and add validation of sizes
+            //         this.schemaShape.sizes = yup.array().of(
+            //             yup.object({
+            //                 name:     yup.string().required("*Size name is required."),
+            //                 quantity: yup.number().min(1).required("*Size quantity is required."),
+            //             })
+            //         )
+            //         .min(1)
+            //         .required("*Size is required");  
+
+            //         set(this.selections,'sizes',Object());
+            //         set(form,'sizes',Array());
+            //     break;
+            //     case false:
+            //     break;
+            // }
+
             
+            // if( !isEmpty(this.cartItem) ){
+            //     this.selections.colour = this.product.colour_images.find( colour => colour.hex.includes(this.cartItem.hex) );
+            //     this.selections.sizes  = this.cartItem.sizes.reduce((a, v) => { a[v.name] = this.cartItem.sizes.findIndex( val => val.name == v.name) ; return a; }, {});
+            //     this.selections.hex    = clone(this.cartItem.hex);
+            //     each(
+            //         this.cartItem,
+            //         (value,key) => {
+            //             set(this.form,key,value);
+            //         }
+            //     );
+            //     this.alreadyInCart();
+            // }
+
             this.schemaShape.full_code  = yup.string().required("*Product is required."); // validate product code   
-            this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
             this.schemaShape.price      = yup.number().required("*Price is required."); // validate product price
-            this.schemaShape.hex        = yup.string(); // validate product hex colour
             this.schemaShape.image      = yup.string(); // validate product image
             this.schemaShape.name       = yup.string(); // validate product image
 
-            set(this.selections,'colour',Object()); // Initialize colour selection
-            
-            this.formSchema          = yup.object().shape(this.schemaShape);  // Initialize validation
+            this.formSchema             = yup.object().shape(this.schemaShape);  // Initialize validation
 
-            if( !isEmpty(this.cartItem) ){
-                this.selections.colour = this.product.colour_images.find( colour => colour.hex.includes(this.cartItem.hex) );
-                this.selections.sizes  = this.cartItem.sizes.reduce((a, v) => { a[v.name] = this.cartItem.sizes.findIndex( val => val.name == v.name) ; return a; }, {});
-                this.selections.hex    = clone(this.cartItem.hex);
-                each(
-                    this.cartItem,
-                    (value,key) => {
-                        set(this.form,key,value);
-                    }
-                );
-                this.alreadyInCart();
-            }
+            this.form                   = cloneDeep(form); // Assign form data
         
         },   
         async alreadyInCart(){
@@ -676,7 +755,7 @@ export default {
             try {
                 this.loading.quote = Boolean(true);
 
-                let { isVariant, product, selections } = this;
+                let { isSizeVariant, product, selections } = this;
                 let data     = cloneDeep(this.form);
                 let selected = product.__variants__.find( variant => selections.colour.code == variant.code_colour );
 
@@ -702,30 +781,52 @@ export default {
             }
         },
         selectColour(hex,event){
-            let variant = window.document.querySelector('.color-variant li.active');
-            let colour  = this.product.colour_images.find( colour => colour.hex.includes(hex) );
+            let target  = event.target;
+            
+            switch(target.classList.contains('active')){
+                case true:
+                    event.target.classList.remove('active');
 
-            if( !isNull(variant) ){ variant.classList.remove('active'); }
-            event.target.classList.add('active');
+                    this.selections.colour = Object();      
+                    this.selections.hex    = String();      
+                    this.form.hex          = String();      
+                    this.form.colour       = String();  
 
-            this.selections.colour = colour;      
-            this.selections.hex    = hex;      
-            this.form.hex          = hex;      
-            this.form.colour       = colour.name;  
+                    if( this.isSizeVariant ){
+                        this.form.sizes.splice(0);
+                        this.selections.sizes = Object();
+                    }
+                break;
+                case false:
+                    event.target.classList.add('active');
 
-            if( !this.isVariant ){
-                let variant     = this.product.__variants__.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
-                this.form.price = this.product.price;
+                    let variant = window.document.querySelector('.color-variant li.active');
+                    let colour  = this.product.colour_images.find( colour => colour.hex.includes(hex) );
+
+                    if( !isNull(variant) ){ variant.classList.remove('active'); }
+
+                    this.selections.colour = colour;      
+                    this.selections.hex    = hex;      
+                    this.form.hex          = hex;      
+                    this.form.colour       = colour.name;  
+
+                    if( this.isSizeVariant ){
+                        if( !isEmpty(this.selections.sizes) ){
+                            this.selections.sizes = Object();
+                        }
+
+                        if( !isEmpty(this.form.sizes) ){
+                            this.form.sizes.splice(0);
+                        }
+                    }
+
+                    // if( !this.isSizeVariant ){
+                    //     let variant     = this.product.__variants__.find( (variant) => variant.code_colour_name.includes(colour.name.toUpperCase()) )
+                    //     this.form.price = this.product.price;
+                    // }
+                    
+                break;
             }
-
-            if( !isEmpty(this.selections.sizes) ){
-                this.selections.sizes = Object();
-            }
-
-            if( !isEmpty(this.form.sizes) ){
-                this.form.sizes.splice(0);
-            }
-
         },
         selectSize(variant,event){
 

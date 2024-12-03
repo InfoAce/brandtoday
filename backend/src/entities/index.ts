@@ -1,5 +1,8 @@
 export { AddressBookEntity as AddressBookEntity } from './address.book.entity';
 export { BrandEntity as BrandEntity } from './brand.entity';
+export { BrandingEntity as BrandingEntity } from './branding.entity';
+export { BrandingMethodEntity as BrandingMethodEntity } from './branding-method.entity';
+export { BrandingPriceEntity as BrandingPriceEntity } from './branding-price.entity';
 export { CategoryEntity as CategoryEntity } from './category.entity';
 export { CompanyEntity as CompanyEntity } from './company.entity';
 export { ChildSubCategoryEntity as ChildSubCategoryEntity } from './child-sub-category.entity';
