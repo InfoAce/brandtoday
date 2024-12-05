@@ -6,45 +6,100 @@ head
   link(rel='icon' href='images/favicon.png' type='image/x-icon')
   link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
   link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
-div(style='background-color: #fafafa; width:100%; min-height: 100%; display: flex; flex-direction: column; align-items: center;')
-  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%;')
-    tbody(style='font-family: Montserrat, sans-serif !important;')
-      tr(style='font-family: Montserrat, sans-serif !important;')
-        td(style='display:flex;justify-content:center;')
-          img(src=company_logo alt=company_name width='150px')
-      tr(style='font-family: Montserrat, sans-serif !important;')
-        td(style='text-align: center;')
-          h3
-            | Quote #
-            span
-              b=quote_number
-      tr(style='font-family: Montserrat, sans-serif !important;')
-        td(style='text-align: center;')                                                                                                            
-  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:80%;border-collapse: collapse;')                
-    tbody(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;')            
+div(style='background-color: #fafafa; width:100%; min-height: 100%; display: flex; flex-direction: column; align-items: center;') 
+  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse; margin-top: 30px;margin-bottom: 30px;')                
+    tbody(style='font-family: Montserrat, sans-serif !important; font-size: 16px; border: 1px solid #ededed;')      
+        tr(style='border-bottom: 1px solid #ededed;')
+            td(style='border-collapse: collapse; width:50%;')
+              div(style='display: flex; flex-direction: column; align-items: start; justify-content: center; margin: 30px;')
+                img(src=company_logo alt=company_name width='50%' style="margin-bottom:20px;")
+                p(style="margin: 0px;")
+                  span 
+                    b
+                      | Date:    
+                  span=created_at 
+                p(style="margin: 0px;")
+                  span 
+                    b
+                      | Address:    
+                p(style="margin: 0px;")
+                  span 
+                    b
+                      | Phone Number:                                      
+            td(style="border-left: 1px solid #ededed; width:50%;")
+              div(style="width: 100%; margin: 30px;")
+                p(style="margin: 0px;")
+                  b
+                    | Quote Number: 
+                  span
+                    b=quote_number   
+                p(style="margin: 0px;")     
+                  span 
+                    b
+                     | Customer:                                                                                                                                                          
+  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse;')  
+    thead(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;')     
+      tr(style="border: 1px solid #ededed;")
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;')
+          | Product 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Colour / Size 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | QTY 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Unit Price    
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Amount                                                    
+    tbody(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;font-size: 12px;')                         
         each item, key in items
           tr(style="border-bottom: 1px solid #ededed;")
             td(style='border-collapse: collapse;padding: 10px;display: flex; align-items: center;')
-              img(height="50" src=item.image alt=item.name)    
-              div(style='padding: 0 0 0 10px')
-                p(style='margin: 0px;')=item.name
+              img(height="50" src=item.image alt=item.name)  
+              div(style='display: flex; flex-direction: column;')
                 p(style='margin: 0px;')
-                  span(style='padding: 0px 0px 5px 0px;') Quantity:
-                  span(style='margin: 0px 0px 2px 0px;')=item.quantity 
-                  if item.colour
-                    span(style='padding: 0px 0px 0px 5px;') Colour:
-                    span(style='margin: 0px 0px 2px 0px;')=item.colour
-                  if item.size
-                    span(style='padding: 0px 0px 0px 5px;') Size:
-                    span(style='margin: 0px 0px 2px 0px;')=item.size                                                 
+                  b=item.name        
+                if item.positions 
+                  each position, index in item.positions 
+                    p Position
+                      span=index + 1
+                    p(style='margin: 0px;')
+                      span=position.branding_name
+                      span
+                        | - 
+                      span=position.code    
+                    p=position.method_name   
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              if item.colour
+                span=item.colour 
+              if !item.colour
+                span 
+                  | N/A
+              if item.sizes
+                span / 
+                span=item.sizes.map( size => size.name ).join(',')
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=item.total_quantity 
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=currency 
+              span
+                | 
+              span=item.price 
+              if item.positions    
+                each position, index in item.positions 
+                  p
+                    span=currency
+                    span=position.price           
+                  p
+                    span=currency 
+                    span=position.setup           
             td(style='border-collapse: collapse; padding: 10px; text-align: left;')
               p              
                 span=currency
                 span 
                 |
-                span=(item.quantity * item.price).toFixed(2)
+                span=item.total_amount.toFixed(2)
         tr(style="border-bottom: 1px solid #ededed;")
-            td(style='border-collapse: collapse; padding: 10px;') Sub Total
+            td(style='border-collapse: collapse; padding: 10px;' colspan="4") Sub Total
             td(style='border-collapse: collapse; padding: 10px; text-align: left;')
               span=currency
               span 
@@ -52,7 +107,7 @@ div(style='background-color: #fafafa; width:100%; min-height: 100%; display: fle
               span=total.toFixed(2)
         each charge, key in extra_charges
             tr(style="border-bottom: 1px solid #ededed; ")
-              td(style='border-collapse: collapse; padding: 10px;')
+              td(style='border-collapse: collapse; padding: 10px;' colspan="4")
                 span=charge.name
               td(style='border-collapse: collapse; padding: 10px; text-align: left;')
                 span=currency
@@ -60,7 +115,7 @@ div(style='background-color: #fafafa; width:100%; min-height: 100%; display: fle
                   |
                 span=charge.amount.toFixed(2)
         tr(style="border-bottom: 1px solid #ededed;")
-          td(style='border-collapse: collapse; padding: 10px;') Total Amount
+          td(style='border-collapse: collapse; padding: 10px;' colspan="4") Total Amount
           td(style='border-collapse: collapse; padding: 10px; text-align: left;')
             b
               span=currency 

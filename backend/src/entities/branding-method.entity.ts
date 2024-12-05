@@ -22,6 +22,10 @@ export class BrandingMethodEntity {
   code: string;
 
   @Column()
+  @Index()
+  simple_code: string;
+
+  @Column()
   colours: string;
 
   @Column()
@@ -42,9 +46,21 @@ export class BrandingMethodEntity {
   @Column()
   multiplier: number;
 
-  @OneToOne(() => BrandingPriceEntity,{ eager: true })
-  @JoinColumn()
-  price: BrandingPriceEntity;
+  @Column()
+  min_quantity: number;
+
+  @Column()
+  max_quantity: number;
+
+  @Column({ type: 'double' })
+  setup: number;
+
+  @Column({ type: 'double'})
+  price: number;
+
+  // @ManyToOne(() => BrandingPriceEntity, (entity) => entity.methods, { eager: true, onDelete: 'CASCADE', onUpdate:'CASCADE'})
+  // @JoinColumn({ name: "code", referencedColumnName: 'code' })
+  // price: BrandingPriceEntity;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

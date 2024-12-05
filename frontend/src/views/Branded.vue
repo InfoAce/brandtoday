@@ -67,9 +67,9 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="form-group mb-0">
-                                                    <select class="form-control" v-model="$data.form.positions[index].method">
+                                                    <select class="form-control" :value="$data.form.positions[index].method" @change="() => selectMethod(index)">
                                                         <option value="">Select Method</option>
-                                                        <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`"  :value="method.full_code"> {{ method.name }} ({{ method.code }})</option>
+                                                        <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`" :value="method.full_code"> {{ method.name }} ({{ method.code }})</option>
                                                     </select>
                                                 </div>
                                                 <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].method`) }}</strong></p>
@@ -160,10 +160,24 @@ const $formSchema = yup.object().shape({
                           .required("*Branding full code is required."),
             code:      yup.string()
                           .required("*Branding position is required."),
+            branding_name: yup.string()
+                          .required("*Branding name is required."),                          
             method:    yup.string().when("step",{
                             is:   (step) => step == 2,
                             then: yup.string().strict().required("*Branding method is required.").test('Method is required', 'Method cannot be empty', value => !isEmpty(value) )
                         }),
+            method_name:yup.string().when("step",{
+                            is:   (step) => step == 2,
+                            then: yup.string().strict().required("*Branding method is required.").test('Method is required', 'Method cannot be empty', value => !isEmpty(value) )
+                        }),                        
+            setup:    yup.number().when("step",{
+                is:   (step) => step == 2,
+                then: yup.number().strict().required("*Branding method is required.").test('Method is required', 'Method cannot be empty', value => value != 0  )
+            }),   
+            price:    yup.number().when("step",{
+                is:   (step) => step == 2,
+                then: yup.number().strict().required("*Branding method is required.").test('Method is required', 'Method cannot be empty', value => value != 0 )
+            }),                                 
             file:      yup.mixed().when("step",{
                             is:   (step) => step == 2,
                             then: yup.mixed().strict().test('File is required', 'At least one file is required', value => !isEmpty(value) )
@@ -243,6 +257,14 @@ const addToCart = () => {
     $router.push({ name: "Cart" });
 }
 
+const selectMethod = (index) => {
+    let method = $selectedPositions.value.map( position => position.methods ).flat().find( method => method.full_code == event.target.value );
+    $data.form.positions[index].method = event.target.value;
+    $data.form.positions[index].method_name = method.name;
+    $data.form.positions[index].price  = method.price;
+    $data.form.positions[index].setup = method.setup;
+}
+
 /**
  * Handles the file upload for the specified position index.
  * Logs the selected file to the console.
@@ -262,10 +284,14 @@ const selectPosition = (branding) => {
     switch(event.target.checked){
         case true:
             $data.form.positions.push({
-                full_code: branding.full_code,
-                code:      branding.code,
-                method:    String(),
-                file:      Object()
+                full_code:     branding.full_code,
+                code:          branding.code,
+                branding_name: branding.name,
+                method:        String(),
+                method_name:   String(),
+                setup:         Number(),
+                price:         Number(),
+                file:          Object()
             });    
         break;
         case false:

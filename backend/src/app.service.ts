@@ -250,7 +250,7 @@ export class AppService {
                 
         // Fetch amrod branding prices  
         let branding_prices = await this.amrodService.getBrandingPrices();     
-                
+
         // Fetch amrod branding
         let branding        = products.filter( product => !isEmpty(product.brandings) ).map( product =>
             product.brandings.map( 
@@ -269,6 +269,7 @@ export class AppService {
                     ...value, 
                     full_code:     `${branding.full_code}_${value.brandingCode}_${branding.positionCode}_${value.displayIndex}`.toLowerCase().replace(/\s+/g,''),
                     code:          `${value.brandingCode}-${value.displayIndex}`,
+                    simple_code:   value.brandingCode,
                     branding_code: branding.full_code 
                 })
             ) 
@@ -299,7 +300,7 @@ export class AppService {
 
                     return { 
                         ...price, 
-                        code: price.printCode,
+                        code:         price.printCode,
                         brandingCode: branding_price.brandingCode,
                         full_code:   `${branding_price.brandingCode}_${price.printCode}`.toLowerCase().replace(/\s+/g,'')
                     }
@@ -307,6 +308,11 @@ export class AppService {
             )
         )
         .flat();
+
+        branding_methods = branding_methods.map( (method) => {
+            let price = branding_prices.find( price => price.code == method.simple_code || price.code == method.code );
+            return {...method, ...price};
+        }).filter( method => has(method,'price') );
 
         // Fetch amrod colour swatches
         let colour_swatches = await this.amrodService.getColourSwatches();  
@@ -493,6 +499,11 @@ export class AppService {
                                 max_print_width_size:  method.maxPrintingSizeWidth,
                                 max_print_height_size: method.maxPrintingSizeHeight,
                                 multiplier:            method.brandingMultiplier,
+                                simple_code:           method.simple_code,
+                                min_quantity:          method.minQuantity,
+                                max_quantity:          method.maxQuantity,
+                                price:                 method.price,
+                                setup:                 method.setup,                                
                             })
                         ),
                         {
@@ -507,35 +518,6 @@ export class AppService {
 
         // Logging
         this.logger.log(`Done saving branding methods`);
-
-        // Fetch amrod branding prices
-        await Promise.all(
-            chunk(intersectionBy(branding_prices,branding_methods,'code'),1).map( 
-                async (branding_prices_chunk) => {
-                    await this.brandingPriceModel.upsert(
-                        branding_prices_chunk.map(
-                            (price: any) => ({ 
-                                code:          price.printCode,
-                                colours:       price.numberOfColours,
-                                full_code:     price.full_code,
-                                min_quantity:  price.minQuantity,
-                                max_quantity:  price.maxQuantity,
-                                price:         price.price,
-                                setup:         price.setup,
-                            })
-                        ),
-                        {
-                            conflictPaths: ["full_code"],
-                            upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-                        },
-                    );
-                    await this.sleep;
-                }
-            )
-        )
-
-        // Logging
-        this.logger.log(`Done saving branding prices`);
 
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });

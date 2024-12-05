@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, Index } from 'typeorm';
 import { BrandingMethodEntity } from './index';
 
 @Entity("branding-prices")
@@ -7,11 +7,8 @@ export class BrandingPriceEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => BrandingMethodEntity, (entity) => entity.price,{ orphanedRowAction: 'nullify', cascade: true, nullable: true } )
-  @JoinColumn({ name: "code", referencedColumnName: 'code' })
-  branding: BrandingMethodEntity;
-
-  @Column({ nullable: true })
+  @Column()
+  @Index()
   code: string;
 
   @Column()
@@ -19,6 +16,10 @@ export class BrandingPriceEntity {
 
   @Column({ unique: true })
   full_code: string;
+
+  // @OneToMany(() => BrandingMethodEntity, (entity) => entity.price,{ lazy: true } )
+  // @JoinColumn({ name: "code", referencedColumnName: 'code' })
+  // methods: BrandingMethodEntity[];
 
   @Column()
   min_quantity: number;

@@ -1,9 +1,9 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
-export class CreateQuoteValidation {
-
+class Item {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     colour: string
 
     @IsString()
@@ -11,7 +11,7 @@ export class CreateQuoteValidation {
     full_code: string
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     hex: string
 
     @IsString()
@@ -22,6 +22,10 @@ export class CreateQuoteValidation {
     @IsNotEmpty()
     name: string
 
+    @IsArray()
+    @IsOptional()
+    positions: any = Array()
+
     @IsNumber()
     @IsNotEmpty()
     price: number
@@ -29,5 +33,22 @@ export class CreateQuoteValidation {
     @IsArray()
     @IsOptional()
     sizes: any = Array()
+
+    @IsNumber()
+    @IsNotEmpty()
+    total_amount: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    total_quantity: number
+}
+
+export class CreateQuoteValidation {
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @ArrayMinSize(1)
+    @Type(() => Item)
+    items: Item[]
 
 }

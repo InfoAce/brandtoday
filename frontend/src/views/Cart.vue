@@ -2,7 +2,7 @@
     <div>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="page-title">
@@ -26,147 +26,97 @@
 
         <!--section start-->
         <section class="cart-section section-b-space">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12 table-responsive-md">
-                        <table class="table cart-table">
-                            <thead>
-                                <tr class="table-head">
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Product name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
+            <div class="container-fluid">
+                <div class="row" v-if="!isEmpty(items)">
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <template v-if="!isEmpty(items)">
+                            <div class="card mb-4" v-for="(item,index) in items" :key="`item_${index}`">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8 col-xs-12 d-flex align-items-center">
+                                            <div>
+                                                <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
+                                                    <img :src="item.image" :alt="item.name" class="img-thumbnail" width="100px">
+                                                </a>
+                                            </div>
+                                            <div class="d-flex flex-column pl-4">
+                                                <a href="#" class="text-theme " @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
+                                                    <strong> {{ item.name }}</strong>
+                                                </a>
+                                                <h6> Colour: {{ item.colour }}</h6>
+                                                <template v-if="isEmpty(item.sizes)">
+                                                    <h6> Quantity: {{ item.quantity }}</h6>
+                                                </template>
+                                                <template v-if="!isEmpty(item.sizes)">
+                                                    <h6> Sizes (Quantity): {{ item.sizes.map( size => `${size.name}(${size.quantity})` ).join(', ') }}</h6>
+                                                </template>
+                                                <h6 v-if="!isEmpty(item.positions)"> Branding: {{ item.sizes.map( size => size.name ).join(',') }}</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-xs-12 d-flex align-items-center">
+                                            <table class="w-100 mt-2">
+                                                <tr>
+                                                    <td><strong>Unit Price:</strong></td>
+                                                    <td> <span class="ml-4">{{ currency }} {{ item.price.toFixed(2) }}</span> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Quantity:</strong></td>
+                                                    <td><span class="ml-4">{{ item.total_quantity }}</span></td>
+                                                </tr>
+                                                <template v-if="has(item,'positions')">
+                                                    <tr>
+                                                        <td><strong>Branding Cost:</strong></td>
+                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_branding_cost }}</span> </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Setup Cost:</strong></td>
+                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_setup_cost }}</span> </td>
+                                                    </tr>
+                                                </template>
+                                                <tr>
+                                                    <td><strong>Total Cost:</strong></td>
+                                                    <td><span class="ml-4">{{ currency }} {{ item.total_amount }}</span> </td>
+                                                </tr>                                                
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a href="#" class="text-theme" @click.prevent="editItem(item)"><i class="fa fa-pencil"></i></a>
+                                    <a href="#" class="text-theme pl-2" @click.prevent="removeItem(item)"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="col-md-4 col-sm-12 col-xs-12 product-details p-4">
+                        <table class="table">
                             <tbody>
-                                <template v-if="!isEmpty(items)">
-                                    <template v-for="(item,index) in items" :key="`item_${index}`">
-                                        <template v-if="has(item,'sizes')">
-                                            <tr v-for="(size,key) in item.sizes" :key="key">
-                                                <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
-                                                        <img :src="item.image" :alt="item.name" class="img-thumbnail">
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})"><strong>{{ item.name }} - {{ size.name }}</strong></a>
-                                                    <div class="mobile-cart-content row">
-                                                        <div class="col">
-                                                            <div class="qty-box">
-                                                                <div class="input-group">
-                                                                    <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <h2 class="td-color">{{ currency }} {{ item.price.toFixed(2) }}</h2>
-                                                        </div>
-                                                        <div class="col">
-                                                            <h2 class="td-color">
-                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
-                                                            </h2>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <h2>{{ currency }} {{ item.price }}</h2>
-                                                </td>
-                                                <td>
-                                                    <div class="qty-box">
-                                                        <div class="input-group">
-                                                            <input type="number" :name="`quantity_${item?.code}_${size.name}`" min="1" class="form-control input-number" v-model="size.quantity">
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <h2 class="td-color">{{ currency }} {{ (item.price * size.quantity).toFixed(2) }}</h2>
-                                                </td>
-                                                <td>
-                                                    <a href="#" class="icon" @click.prevent="removeSizeItem({ item, key, index})"><i class="fa fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                        <template v-else>
-                                            <tr>
-                                                <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})">
-                                                        <img :src="item.image" :alt="item.name" class="img-thumbnail">
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="#" @click.prevent="$router.push({ name:'Product',params:{ product: item.full_code }})"><strong>{{ item.name }}</strong></a>
-                                                    <div class="mobile-cart-content row">
-                                                        <div class="col">
-                                                            <div class="qty-box">
-                                                                <div class="input-group">
-                                                                    <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" v-model="item.quantity">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <h2 class="td-color">{{ currency }} {{ item.price.toFixed(2) }}</h2>
-                                                        </div>
-                                                        <div class="col">
-                                                            <h2 class="td-color">
-                                                                <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
-                                                            </h2>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <h2>{{ currency }} {{ item.price.toFixed(2)}}</h2>
-                                                </td>
-                                                <td>
-                                                    <div class="qty-box" v-if="has(item,'sizes')">
-                                                        <div class="input-group">
-                                                            <input type="text" :name="`quantity_${item?.code}`" class="form-control input-number" disabled :value="sum(item.sizes.map( (size: any) => size.quantity)).toFixed(2)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="qty-box" v-if="!has(item,'sizes')">
-                                                        <div class="input-group">
-                                                            <input type="number" :name="`quantity_${item?.code}`" min="1" class="form-control input-number" v-model="item.quantity">
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <h2 class="td-color" v-if="has(item,'sizes')">{{ currency }} {{ (sum(item.sizes.map( (size: any) => size.quantity)) * item.price).toFixed(2) }}</h2>
-                                                    <h2 class="td-color" v-if="!has(item,'sizes')">{{ currency }} {{ (item.quantity * item.price).toFixed(2) }}</h2>
-                                                </td>
-                                                <td>
-                                                    <a href="#" class="icon" @click.prevent="items.splice(index,1)"><i class="fa fa-trash"></i></a>
-                                                </td>
-                                            </tr>                                            
-                                        </template>
-                                    </template>
-                                    <tr>
-                                        <td colspan="3"></td>
-                                        <td> 
-                                            <h2 class="td-color">Total Amount: </h2>
-                                        </td>
-                                        <td colspan="2">
-                                            <h2 class="td-color"> {{ currency }} {{ total.toFixed(2) }}</h2>
-                                        </td>
-                                    </tr>
-                                </template>
-                                <template v-else>
-                                    <tr>
-                                        <td colspan="7" class="text-center">
-                                            <p class="text-info mb-0">
-                                                <i class="fa fa-exclamation-triangle"></i>
-                                                Nothing found here.
-                                            </p>
-                                        </td>
-                                    </tr>
-                                </template>
+                                <tr>
+                                    <td><strong>Sub Total</strong></td>
+                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sub Total</strong></td>
+                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                </tr>
                             </tbody>
                         </table>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-solid hover-solid btn-animation text-white" @click="$router.push({ name: 'Home' })">Continue Shopping</button>                            
+                            </div>
+                            <div class="col-md-6">
+                                <button :disabled="isEmpty(items)" href="#" class="btn btn-solid hover-solid" @click="$router.push({ name: 'Checkout' })">Check Out</button>
+                            </div>
+                            <div class="col-12 py-2">
+                                <button class="btn btn-solid hover-solid btn-animation text-white" @click="() => getQuote()">Email My Quote</button>                            
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="row cart-buttons">
-                    <div class="col-6"><a href="#" class="btn btn-solid" @click.prevent="$router.push({ name: 'Home' })">continue shopping</a></div>
-                    <div class="col-6"><a v-if="!isEmpty(items)" href="#" class="btn btn-solid" @click.prevent="$router.push({ name: 'Checkout' })">check out</a></div>
                 </div>
             </div>
         </section>
@@ -175,15 +125,40 @@
 </template>
 
 <script setup lang="ts">
-import { isEmpty, has, sum } from 'lodash';
-import { computed } from 'vue';
+import { cloneDeep, isEmpty, has, set, sum } from 'lodash';
+import moment from 'moment';
+import { computed, inject, reactive } from 'vue';
 import { useStore } from 'vuex';
 
+const $api   = inject('$api');
+
+const $data  = reactive({
+    loading: { quote: false },
+});
+const $swal  = inject('$swal');
 const $store = useStore();
+const $toast = inject('$toast');
 
 const items = computed({
     get(): any {
-        return $store.getters.cart;
+        return cloneDeep($store.getters.cart).map( (item: any) => {
+            if( !isEmpty(item.sizes) ){
+                set(item,'total_quantity',sum(item.sizes.map( (size:any) => size.quantity )) );
+                if(has(item,'positions')){
+                    set(item,'total_branding_cost', (sum(item.positions.map( (position:any) => position.price )) * item.total_quantity).toFixed(2));
+                    set(item,'total_setup_cost', (sum(item.positions.map( (position:any) => position.setup )) * item.total_quantity).toFixed(2));
+                    set(item,'total_amount',sum([(item.price * item.total_quantity),item.total_branding_cost,item.total_setup_cost].map( price => parseFloat(price) )) );
+                }
+                if(!has(item,'positions')){
+                    set(item,'total_amount',(item.price * item.total_quantity));                
+                }
+            }
+            if( isEmpty(item.sizes) ){
+                set(item,'total_quantity',item.quantity);
+                set(item,'total_amount',(item.price * item.quantity));                
+            }
+            return item;
+        });
     },
     set(value:any): void {
         $store.commit('cart',value);
@@ -194,17 +169,64 @@ const currency = computed( () => $store.getters.home.company.currency );
 
 const total = computed( () => { 
     return sum(items.value.map( (val:any) => { 
-        return has(val,'sizes') ? (val.price * sum(val.sizes.map( (size: any) => size.quantity))) : (val.price * val.quantity)
+        return val.total_amount
     }));
 });
 
-const removeSizeItem = ({ item, key, index}) => {
+const downloadFile = (pdf: string, fileName: string) => {
+    const link = document.createElement('a');
+    // create a blobURI pointing to our Blob
+    link.href     = `data:application/pdf;base64,${pdf}`;
+    link.download = fileName;
+    // some browser needs the anchor to be in the doc
+    document.body.append(link);
+    link.click();
+    link.remove();
+    // // in case the Blob uses a lot of memory
+    // setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+}
 
-    if( item.sizes.length == 1 ){
-        items.value.splice(index,1);
+const getQuote = async() =>{
+    try {
+        $data.loading.quote = Boolean(true);
+
+        const { data:{ pdf } } = await $api.post(`/quotes`,{ items: cloneDeep(items.value) });
+
+        downloadFile(pdf,`${moment().unix()}.pdf`);
+
+        $toast.success('This product has been added to your cart.');
+
+    } catch(error) {
+        console.log(error);
+        $data.loading.quote = Boolean();
+    } finally {
+        $data.loading.quote = Boolean();
     }
+}
 
-    item.sizes.splice(key,1)
+/**
+ * Removes a cart item by index
+ * @param {number} index
+ */
+const removeItem = (item: any) => {
+        // Show a confirmation dialog to the user
+    $swal.fire({
+        icon:  'question', // Icon to display in the dialog
+        title: 'Delete Product', // Title of the dialog
+        text:  'Are you want to remove this product from cart ?', // Text content of the dialog
+        showCancelButton: true // Whether to show a "Cancel" button
+    }).then((result: any) => {
+        // If the user confirms the deletion
+        if( result.isConfirmed ) {
+            // Remove the item from the cart
+            items.value = items.value.filter((value: any) => value.full_code != item.full_code);
+        }
+    });
+
+};
+
+const editItem = (index: number) => {
+
 }
 
 </script>
@@ -222,4 +244,4 @@ const removeSizeItem = ({ item, key, index}) => {
 .qty-box .input-group {
     justify-content: start;
 }
-</style>
+</style> 
