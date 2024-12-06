@@ -33,10 +33,12 @@ export class QuoteController {
             let data          = Object({ extra_charges: Array(), items: form.items, created_at: moment().format('Do MMMM, YYYY') });
             let company       = await this.companyModel.first();
 
-            data.currency     = company.currency;
-            data.company_logo = `${this.configService.get<string>('APP_URL')}${company.logo}`;
-            data.total        = form.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
-            data.quote_number = moment().unix();
+            data.currency        = company.currency;
+            data.company_logo    = `${this.configService.get<string>('APP_URL')}${company.logo}`;
+            data.company_address = company.address;
+            data.company_phone   = company.phone_number;
+            data.total           = form.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
+            data.quote_number    = moment().unix();
 
             if( !isEmpty(user) ){
                 let quote = await this.quoteModel.save({ num_id: data.quote_number, user_id: user.id});

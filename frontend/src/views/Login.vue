@@ -41,8 +41,8 @@
 								<input type="password" class="form-control mb-2" id="password" v-model="data.form.password" placeholder="Enter your password" required="">
 								<p class="text-danger col col-12 mt-0" v-show="has(data.errors,'password')">{{data.errors.password}}</p>								
 							</div>
-							<div class="col-12 d-flex justify-content-between align-items-center">
-								<button type="submit" class="btn btn-solid" :disabled="data.isDisabled">Login</button>
+							<div class="col-12 d-flex justify-content-between align-items-center px-0">
+								<button type="submit" class="btn btn-theme btn-lg" :disabled="data.isDisabled">Login</button>
 								<router-link :to="router.resolve({ name: 'ForgotPassword' }).path">Forgot Password</router-link>
 							</div>
 						</form>
@@ -54,7 +54,7 @@
 						<h6 class="title-font">Create A Account</h6>
 						<p>Sign up for a free account at our store. Registration is quick and easy. It allows you to be
 							able to order from our shop. To start shopping click register.</p>
-							<router-link to="signup" class="btn btn-solid">Create an Account</router-link >
+							<router-link to="signup" class="btn btn-theme btn-lg w-100">Create an Account</router-link >
 					</div>
 				</div>
 			</div>

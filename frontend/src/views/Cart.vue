@@ -89,31 +89,29 @@
                         </template>
                     </div>
                     <div class="col-md-4 col-sm-12 col-xs-12 product-details p-4">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td><strong>Sub Total</strong></td>
-                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Sub Total</strong></td>
-                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Total</strong></td>
-                                    <td>{{ currency }} {{ total.toFixed(2) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button class="btn btn-solid hover-solid btn-animation text-white" @click="$router.push({ name: 'Home' })">Continue Shopping</button>                            
-                            </div>
-                            <div class="col-md-6">
-                                <button :disabled="isEmpty(items)" href="#" class="btn btn-solid hover-solid" @click="$router.push({ name: 'Checkout' })">Check Out</button>
-                            </div>
-                            <div class="col-12 py-2">
-                                <button class="btn btn-solid hover-solid btn-animation text-white" @click="() => getQuote()">Email My Quote</button>                            
+                        <div class="product-right">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Sub Total</strong></td>
+                                        <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button class="btn btn-theme btn-lg w-100" @click="$router.push({ name: 'Home' })">Continue Shopping</button>                            
+                                </div>
+                                <div class="col-md-6">
+                                    <button :disabled="isEmpty(items)" href="#" class="btn btn-theme btn-lg w-100" @click="$router.push({ name: 'Checkout' })">Check Out</button>
+                                </div>
+                                <div class="col-12 py-2">
+                                    <button class="btn btn-theme btn-lg w-100" @click="() => getQuote()">Email My Quote</button>                            
+                                </div>
                             </div>
                         </div>
                     </div>

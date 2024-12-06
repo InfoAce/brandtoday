@@ -217,7 +217,7 @@
                                     </div>
                                 </div>
                                 <div class="col-12 text-center mt-4">
-                                    <button class="btn-solid btn-xl hover-solid" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
+                                    <button class="btn btn-theme btn-lg" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
                                         <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                         Place Order
                                     </button>

@@ -3446,7 +3446,7 @@ textarea.form-control.is-invalid {
     user-select: none;
     border: var(--bs-btn-border-width) solid var(--bs-btn-border-color);
     border-radius: var(--bs-btn-border-radius);
-    background-color: var(--bs-btn-bg);
+    background-color: var(--bs-btn-bg); 
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
 
@@ -3508,6 +3508,23 @@ fieldset:disabled .btn {
     background-color: var(--bs-btn-disabled-bg);
     border-color: var(--bs-btn-disabled-border-color);
     opacity: var(--bs-btn-disabled-opacity)
+}
+
+.btn-theme {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #7e1414 ;
+    --bs-btn-border-color: #7e1414 ;
+    --bs-btn-hover-color: #7e1414;
+    --bs-btn-hover-bg: #fff ;
+    --bs-btn-hover-border-color: #7e1414 ;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #7e1414 ;
+    --bs-btn-active-border-color: #7e1414 ;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #7e1414 ;
+    --bs-btn-disabled-border-color: #7e1414;
 }
 
 .btn-primary {

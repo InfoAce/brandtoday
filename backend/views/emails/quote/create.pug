@@ -8,35 +8,47 @@ head
   link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
 div(style='background-color: #fafafa; width:100%; min-height: 100%; display: flex; flex-direction: column; align-items: center;') 
   table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse; margin-top: 30px;margin-bottom: 30px;')                
-    tbody(style='font-family: Montserrat, sans-serif !important; font-size: 16px; border: 1px solid #ededed;')      
+    tbody(style='font-family: Montserrat, sans-serif !important; font-size: 12px; border: 1px solid #ededed;')      
         tr(style='border-bottom: 1px solid #ededed;')
-            td(style='border-collapse: collapse; width:50%;')
-              div(style='display: flex; flex-direction: column; align-items: start; justify-content: center; margin: 30px;')
-                img(src=company_logo alt=company_name width='50%' style="margin-bottom:20px;")
-                p(style="margin: 0px;")
-                  span 
-                    b
-                      | Date:    
-                  span=created_at 
-                p(style="margin: 0px;")
-                  span 
-                    b
-                      | Address:    
-                p(style="margin: 0px;")
-                  span 
-                    b
-                      | Phone Number:                                      
-            td(style="border-left: 1px solid #ededed; width:50%;")
-              div(style="width: 100%; margin: 30px;")
-                p(style="margin: 0px;")
-                  b
-                    | Quote Number: 
-                  span
-                    b=quote_number   
-                p(style="margin: 0px;")     
-                  span 
-                    b
-                     | Customer:                                                                                                                                                          
+            td(style='border-collapse: collapse; width:100%;')
+              div(style='display: flex; align-items: center; justify-content: center; margin: 10px; width:100%;')
+                img(src=company_logo alt=company_name width='30%')
+              table(style='width:100%; margin-bottom: 10px;')
+                tbody(style='font-family: Montserrat, sans-serif !important; border: 1px solid #ededed;')  
+                  tr(style='border-bottom: 1px solid #ededed;')
+                    td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                      p(style="margin: 0px;")
+                        span 
+                          b
+                            | Date:    
+                        span=created_at 
+                  tr(style='border-bottom: 1px solid #ededed;')
+                    td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                      p(style="margin: 0px;")
+                        span 
+                          b
+                            | Address:  
+                        span=company_address  
+                  tr(style='border-bottom: 1px solid #ededed;')
+                    td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                      p(style="margin: 0px;")
+                        span 
+                          b
+                            | Phone Number:  
+                        span=company_phone  
+                  tr(style='border-bottom: 1px solid #ededed;')
+                    td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                      p(style="margin: 0px;")
+                        b
+                          | Quote Number: 
+                        span
+                          b=quote_number   
+                  tr(style='border-bottom: 1px solid #ededed;')
+                    td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                      p(style="margin: 0px;")     
+                        span 
+                          b
+                          | Customer:                                                                                                                                                          
   table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse;')  
     thead(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;')     
       tr(style="border: 1px solid #ededed;")
@@ -122,7 +134,7 @@ div(style='background-color: #fafafa; width:100%; min-height: 100%; display: fle
               span 
                 |
               span=(extra_charges.map( charge => charge.amount).reduce( (a,c) => a + c,  0) + total).toFixed(2) 
-  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%; justify-content: end;')
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%; justify-content: end; font-size: 12px;')
     tbody(style='font-family: Montserrat, sans-serif !important;')
       tr(style='font-family: Montserrat, sans-serif !important;')
         td(style='text-align: center;')

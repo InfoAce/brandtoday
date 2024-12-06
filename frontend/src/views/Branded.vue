@@ -88,11 +88,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 d-flex justify-content-center mb-4">
-                            <div :class="`d-flex ${$data.steps.current == 2 ? 'justify-content-between' : 'justify-content-center'} col-md-6 col-xs-12`">
-                                <button class="btn btn-solid hover-solid btn-animation text-white p-3" v-if="$data.steps.current == 2" @click="$data.steps.current = 1">Back</button>   
-                                <button class="btn btn-solid hover-solid btn-animation text-white p-3" :disabled="isEmpty($data.form.positions)" v-if="$data.steps.current == 1" @click="$data.steps.current = 2">Next</button>   
-                                <button class="btn btn-solid hover-solid btn-animation text-white p-3" v-if="$data.steps.current == 2" @click="addToCart">Add To Cart</button>   
+                        <div class="col-12 mb-4">
+                            <div class="row justify-content-center">
+                                <div :class="`d-flex ${$data.steps.current == 2 ? 'justify-content-between' : 'justify-content-center'} col-md-6 col-xs-12`">
+                                    <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="$data.steps.current = 1">Back</button>   
+                                    <button class="btn btn-theme btn-lg w-100 mx-2" :disabled="isEmpty($data.form.positions)" v-if="$data.steps.current == 1" @click="$data.steps.current = 2">Next</button>   
+                                    <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="addToCart">Add To Cart</button>   
+                                </div>
                             </div>
                         </div>
                     </div>
