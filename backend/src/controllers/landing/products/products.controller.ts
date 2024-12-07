@@ -237,6 +237,7 @@ export class ProductsController {
 
         await product.variants;
         await product.stocks;
+        await product.branding;
 
         // Initialize the favourite object
         let favourite: any = {};

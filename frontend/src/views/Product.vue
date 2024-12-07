@@ -223,7 +223,7 @@
                                                 <span v-if="!$isEmpty(cartItem)">already in cart</span> 
                                             </button>                                             
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" v-if="!$isEmpty($data.product.__branding__)">
                                             <button class="btn btn-theme btn-lg w-100" :disabled="isDisabled || !$isEmpty(cartItem) || loading.quote" @click="buyBranded">
                                                 <i v-if="!loading.quote" class="fas fa-file-alt"></i>
                                                 <i v-if="loading.quote" class="fa fa-spinner fa-spin"></i>
@@ -240,15 +240,6 @@
         </section>
         <!-- Section ends -->
 
-        <!-- product-tab starts -->
-        <section class="tab-product m-0">
-            <div class="container">
-                <div class="row">
-
-                </div>
-            </div>
-        </section>
-        <!-- product-tab ends -->
 
         <!-- product section start -->
         <!-- <section class="section-b-space ratio_asos">

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, ValidateNested } from 'class-validator';
 
 class Item {
     @IsString()
@@ -45,10 +45,18 @@ class Item {
 
 export class CreateQuoteValidation {
 
+    @IsEmail()
+    @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,3}$/g,{ message: "Enter a valid email address."})
+    email: string;
+
     @IsArray()
     @ValidateNested({ each: true })
     @ArrayMinSize(1)
     @Type(() => Item)
     items: Item[]
+    
+    @IsString()
+    @IsNotEmpty()
+    name: string
 
 }

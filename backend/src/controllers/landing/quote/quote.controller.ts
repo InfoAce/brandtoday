@@ -7,13 +7,15 @@ import * as moment from 'moment';
 import { CompanyModel, OrderItemModel, QuoteModel } from "src/models";
 import { resolve } from 'path';
 import { ConfigService } from "@nestjs/config";
+import { MailService } from "src/services";
 
 @Controller('quotes')
 export class QuoteController {
 
     constructor(
         private configService: ConfigService,
-        private companyModel:   CompanyModel,
+        private companyModel:  CompanyModel,
+        private mailService:   MailService,
         private orderItemModel: OrderItemModel, // The order model instance.
         private quoteModel: QuoteModel, // The order model instance.
     ){}
@@ -39,6 +41,7 @@ export class QuoteController {
             data.company_phone   = company.phone_number;
             data.total           = form.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
             data.quote_number    = moment().unix();
+            data.customer_name   = form.name;
 
             if( !isEmpty(user) ){
                 let quote = await this.quoteModel.save({ num_id: data.quote_number, user_id: user.id});
@@ -63,11 +66,19 @@ export class QuoteController {
                 data.extra_charges = company.service_fees.map( service => ({ name: service.name, amount: service.type == 'percentage' ? (data.total * service.amount) / 100 : service.amount }) );
             }
 
-            let pdf = await html_to_pdf.generatePdf({ 
+            let content = await html_to_pdf.generatePdf({ 
                 content: pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data)
-            },{ format: 'A4' })
+            },{ format: 'A4' });
 
-            return res.status(HttpStatus.OK).json({ pdf: pdf.toString('base64') });
+            await this.mailService.emailQuote({
+                 email: form.email, 
+                 attachments: [{ 
+                    filename:    `${data.quote_number}.pdf`, 
+                    content
+                }] 
+            });
+
+            return res.status(HttpStatus.OK).json({});
 
         } catch (error) {
 

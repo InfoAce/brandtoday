@@ -110,10 +110,43 @@
                                     <button :disabled="isEmpty(items)" href="#" class="btn btn-theme btn-lg w-100" @click="$router.push({ name: 'Checkout' })">Check Out</button>
                                 </div>
                                 <div class="col-12 py-2">
-                                    <button class="btn btn-theme btn-lg w-100" @click="() => getQuote()">Email My Quote</button>                            
+                                    <button class="btn btn-theme btn-lg w-100" @click="$data.modals.email_quote = true">Email My Quote</button>                            
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="emailQuote" tabindex="-1" role="dialog" aria-labelledby="emailQuoteModal" aria-hidden="true" >
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form @submit.prevent="() => emailQuote()">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Email Quotation</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="$data.modals.email_quote = false" :disabled="$data.loading.email_quote">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control mb-2" id="name" placeholder="Your Name" v-model="$data.form.name">
+                                    <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'name')">{{$data.errors.name}}</p>								
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="text" class="form-control mb-2" id="email" placeholder="Your Email Address" v-model="$data.form.email">
+                                    <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'email')">{{$data.errors.email}}</p>								
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-theme" :disabled="$data.isDisabled || $data.loading.email_quote">
+                                    <span v-if="$data.loading.email_quote" class="mr-2"><i class="fa fa-spin fa-spinner"></i></span>
+                                    <span>Send</span>
+                                </button>
+                                <button type="button" class="btn btn-theme" @click="$data.modals.email_quote = false" :disabled="$data.loading.email_quote">Close</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -123,19 +156,51 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, isEmpty, has, set, sum } from 'lodash';
+import { cloneDeep, each, isEmpty, has, set, sum } from 'lodash';
 import moment from 'moment';
-import { computed, inject, reactive } from 'vue';
+import { computed, inject, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
+import * as yup from "yup";
 
 const $api   = inject('$api');
 
 const $data  = reactive({
-    loading: { quote: false },
+    errors:     Object(),
+    form:       { name: String(), email: String() },
+    isDisabled: Boolean(),
+    loading:    { email_quote: false, quote: false },
+    modals:     { email_quote: false}
 });
 const $swal  = inject('$swal');
 const $store = useStore();
 const $toast = inject('$toast');
+
+const formSchema = yup.object().shape({
+	email: yup.string().email("*Enter a valid email address").required("*Email address is required"),
+	name: yup.string().required("*Name is required"),
+});
+
+/**
+ * Validates a form field based on the provided field name.
+ * Uses the formSchema to validate the field and updates the errors object accordingly.
+ * Updates the isDisabled property based on the presence of errors.
+ *
+ * @param {string} field - The name of the field to validate.
+ */
+ const validateForm = async (field) => {
+    try {
+        // Validate the field using the formSchema
+        await formSchema.validateAt(field, $data.form);
+        // If the field is valid, delete the corresponding error from the errors object
+        delete $data.errors[field];        
+    } catch (error: any) {
+        // If the field is invalid, update the errors object with the error message
+        $data.errors[error.path] = error.message;
+    } finally {
+        // Update the isDisabled property based on the presence of errors
+        $data.isDisabled = !isEmpty($data.errors);
+    }
+}
 
 const items = computed({
     get(): any {
@@ -171,35 +236,23 @@ const total = computed( () => {
     }));
 });
 
-const downloadFile = (pdf: string, fileName: string) => {
-    const link = document.createElement('a');
-    // create a blobURI pointing to our Blob
-    link.href     = `data:application/pdf;base64,${pdf}`;
-    link.download = fileName;
-    // some browser needs the anchor to be in the doc
-    document.body.append(link);
-    link.click();
-    link.remove();
-    // // in case the Blob uses a lot of memory
-    // setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+const emailQuote = async () => {
+    try {
+        $data.loading.email_quote = Boolean(true);
+        await $api.post(`/quotes`,{ items: cloneDeep(items.value), ...cloneDeep($data.form) },);
+        $toast.success('Quotation has been sent');
+        $data.modals.email_quote = false;
+        resetForm();
+    } catch(error) {
+        $toast.success('Something went wrong. Please try again.');
+        $data.loading.email_quote = Boolean();
+    } finally {
+        $data.loading.email_quote = Boolean();
+    }
 }
 
-const getQuote = async() =>{
-    try {
-        $data.loading.quote = Boolean(true);
-
-        const { data:{ pdf } } = await $api.post(`/quotes`,{ items: cloneDeep(items.value) });
-
-        downloadFile(pdf,`${moment().unix()}.pdf`);
-
-        $toast.success('This product has been added to your cart.');
-
-    } catch(error) {
-        console.log(error);
-        $data.loading.quote = Boolean();
-    } finally {
-        $data.loading.quote = Boolean();
-    }
+const resetForm = () => {
+    $data.form = { name: String(), email: String() };
 }
 
 /**
@@ -226,6 +279,35 @@ const removeItem = (item: any) => {
 const editItem = (index: number) => {
 
 }
+
+watch( 
+    () => $data.modals.email_quote,
+    (modal) => {
+        if( modal === true){
+            $('#emailQuote').modal({
+                backdrop: 'static',
+                show: true
+            });
+        }
+        if( modal === false){
+            $('#emailQuote').modal('hide');
+        }
+    },
+)
+
+watch(
+	() => $data.form, 
+	(form) => {
+		each(form,(value,key) => {
+			validateForm(key);
+		});
+	},
+	{ 
+		deep: true,
+        immediate: true
+	}
+);
+
 
 </script>
 <style scoped>
