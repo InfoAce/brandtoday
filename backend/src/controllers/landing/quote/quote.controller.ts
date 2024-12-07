@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpStatus, Logger, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { Request, Response } from "express";
 import { OptionalGuard } from "src/guards";
 import { CreateQuoteValidation } from "src/validation";
@@ -11,6 +11,8 @@ import { MailService } from "src/services";
 
 @Controller('quotes')
 export class QuoteController {
+
+    private logger = new Logger(QuoteController.name);
 
     constructor(
         private configService: ConfigService,
@@ -82,7 +84,10 @@ export class QuoteController {
 
         } catch (error) {
 
-            console.log(error);
+            // Log any errors that occur
+            this.logger.error(error);
+
+            return res.status(error.status).json({});
         }
     }
 }
