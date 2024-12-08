@@ -31,7 +31,7 @@ export class HomeController {
 
       try {
 
-        let categories: any  = await this.categoryModel.find({ relations:{ product_categories: { product: true } } });
+        let categories: any  = await this.categoryModel.find();
         let products: any    = await this.productModel.find({ take: 10 });
 
         categories = await (
