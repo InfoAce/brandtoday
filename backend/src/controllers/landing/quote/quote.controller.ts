@@ -8,6 +8,7 @@ import { CompanyModel, OrderItemModel, QuoteModel } from "src/models";
 import { resolve } from 'path';
 import { ConfigService } from "@nestjs/config";
 import { MailService } from "src/services";
+import puppeteer from 'puppeteer';
 
 @Controller('quotes')
 export class QuoteController {
@@ -68,9 +69,22 @@ export class QuoteController {
                 data.extra_charges = company.service_fees.map( service => ({ name: service.name, amount: service.type == 'percentage' ? (data.total * service.amount) / 100 : service.amount }) );
             }
 
-            let content = await html_to_pdf.generatePdf({ 
-                content: pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data)
-            },{ format: 'A4' });
+            let browser = await puppeteer.launch();
+            let page    = await browser.newPage();
+
+            await page.setContent(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data));
+
+            let pdf     = await page.pdf();
+            let content = `data:application/pdf;base64,${Buffer.from(pdf).toString('base64')}`;
+            
+            console.log(Buffer.from(pdf).toString('base64'));
+
+            // let content = await html_to_pdf.generatePdf({ 
+            //     content: pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data)
+            // },{ format: 'A4' });
+            // htmlPDF.setOptions({ format: "A4" });
+            // htmlPDF.setAutoCloseBrowser(false);
+            // let content = await htmlPDF.create(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data));
 
             await this.mailService.emailQuote({
                  email: form.email, 
