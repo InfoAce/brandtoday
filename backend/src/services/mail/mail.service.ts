@@ -145,8 +145,6 @@ export class MailService {
    */
     async emailQuote({ email, attachments }: any) {
 
-      console.log(attachments[0])
-
       try{
         // Send the email.
         return await this.mailerService.sendMail({

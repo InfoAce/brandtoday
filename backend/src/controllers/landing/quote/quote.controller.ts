@@ -75,22 +75,12 @@ export class QuoteController {
             await page.setContent(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data));
 
             let pdf     = await page.pdf();
-            let content = `data:application/pdf;base64,${Buffer.from(pdf).toString('base64')}`;
-            
-            console.log(Buffer.from(pdf).toString('base64'));
-
-            // let content = await html_to_pdf.generatePdf({ 
-            //     content: pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data)
-            // },{ format: 'A4' });
-            // htmlPDF.setOptions({ format: "A4" });
-            // htmlPDF.setAutoCloseBrowser(false);
-            // let content = await htmlPDF.create(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),data));
 
             await this.mailService.emailQuote({
                  email: form.email, 
                  attachments: [{ 
-                    filename:    `${data.quote_number}.pdf`, 
-                    content
+                    filename: `quotation-${data.quote_number}.pdf`, 
+                    content:  Buffer.from(pdf)
                 }] 
             });
 
