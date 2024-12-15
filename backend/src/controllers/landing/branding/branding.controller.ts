@@ -31,6 +31,8 @@ export class BrandingController {
             // Log any errors that occur
             this.logger.error(error);
 
+            res.status(error.status).json({ message: error.message })
+
         }
     }
 }

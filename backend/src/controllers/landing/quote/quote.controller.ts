@@ -33,7 +33,6 @@ export class QuoteController {
         try {
 
             let user          = get(req,'user');
-            let html_to_pdf   = require('html-pdf-node');
             let pug           = require('pug');
             let data          = Object({ extra_charges: Array(), items: form.items, created_at: moment().format('Do MMMM, YYYY') });
             let company       = await this.companyModel.first();

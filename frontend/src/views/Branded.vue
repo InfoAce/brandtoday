@@ -83,7 +83,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-xs-12">
-                                        <embed :src="$data.product.full_branding_guide" style="width: 100%; height: 75vh; -webkit-transform:scale(1); -moz-transform-scale(1);" type="application/pdf"/>
+                                        <embed :src="`${$data.product.full_branding_guide}#toolbar=0`" style="width: 100%; height: 75vh; -webkit-transform:scale(1); -moz-transform-scale(1);" type="application/pdf"/>
                                     </div>
                                 </div>
                             </div>
