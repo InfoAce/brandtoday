@@ -52,10 +52,10 @@ export class BrandingMethodEntity {
   @Column({ nullable: true, type: 'numeric' })
   max_quantity: number;
 
-  @Column({ type: 'double' })
+  @Column({ nullable: true, type: 'double' })
   setup: number;
 
-  @Column({ type: 'double'})
+  @Column({ nullable: true, type: 'double'})
   price: number;
 
   // @ManyToOne(() => BrandingPriceEntity, (entity) => entity.methods, { eager: true, onDelete: 'CASCADE', onUpdate:'CASCADE'})
