@@ -46,10 +46,10 @@ export class BrandingMethodEntity {
   @Column()
   multiplier: number;
 
-  @Column()
+  @Column({ nullable: true, type: 'numeric' })
   min_quantity: number;
 
-  @Column()
+  @Column({ nullable: true, type: 'numeric' })
   max_quantity: number;
 
   @Column({ type: 'double' })
