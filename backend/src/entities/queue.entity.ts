@@ -17,7 +17,8 @@ export class QueueEntity {
   id: string;
 
   @Column({
-    nullable: true
+    nullable: true,
+    type:     'longtext'
   })
   message: string;
 
