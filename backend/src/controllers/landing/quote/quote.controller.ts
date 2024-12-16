@@ -2,7 +2,7 @@ import { Body, Controller, HttpStatus, Logger, Post, Req, Res, UseGuards } from 
 import { Request, Response } from "express";
 import { OptionalGuard } from "src/guards";
 import { CreateQuoteValidation } from "src/validation";
-import { get, isEmpty, isNull, has } from 'lodash';
+import { get, isEmpty, isNull, has, pick } from 'lodash';
 import * as moment from 'moment';
 import { CompanyModel, OrderItemModel, QuoteModel } from "src/models";
 import { resolve } from 'path';
@@ -80,7 +80,8 @@ export class QuoteController {
                  attachments: [{ 
                     filename: `quotation-${data.quote_number}.pdf`, 
                     content:  Buffer.from(pdf)
-                }] 
+                }],
+                context: pick(data,['company_logo','company_name','company_address','company_phone','customer_name'])
             });
 
             return res.status(HttpStatus.OK).json({});

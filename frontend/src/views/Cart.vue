@@ -23,7 +23,6 @@
         </div>
         <!-- breadcrumb End -->
 
-
         <!--section start-->
         <section class="cart-section section-b-space">
             <div class="container-fluid">
@@ -112,6 +111,18 @@
                                 <div class="col-12 py-2">
                                     <button class="btn btn-theme btn-lg w-100" @click="$data.modals.email_quote = true">Email My Quote</button>                            
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div classs="row" v-if="isEmpty(items)">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h2 class="text-theme m-0">
+                                    <i class="fa fa-exclamation-circle"></i>
+                                    No products found here!
+                                </h2>
                             </div>
                         </div>
                     </div>

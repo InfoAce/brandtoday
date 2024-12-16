@@ -118,25 +118,23 @@
                                         <span v-if="$has(errors,'colour')" class="text-danger">{{errors.colour}}</span>
                                         <span v-if="!$isEmpty(form.colour)"><strong>{{ form.colour }}</strong></span>
                                     </h5>	
-                                    <ul class="color-variant p-0">
-                                        <template v-for="(hex,index) in colour_images">
+                                    <ul class="color-variant p-0 m-0">
+                                        <template v-for="(colour,index) in colour_images" :key="`colour_image_${index}`">
                                             <li   
-                                                v-if="selections.hex.includes(hex)"                                       
-                                                :key="`active_${index}`" 
-                                                class="active"
-                                                :ref="hex"                     
-                                                :style="`background-color: ${hex}`"                       
-                                                @click="($event) => selectColour(hex,$event)"                        
-                                            ></li>
-                                            <li   
-                                                v-if="!selections.hex.includes(hex)"                                
-                                                :key="`inactive_${index}`" 
-                                                :style="`background-color: ${hex}`"                       
-                                                :ref="hex"                   
-                                                @click="($event) => selectColour(hex,$event)"                        
+                                                v-if="selections.code == colour.code"    
+                                                class="text-center"                                    
+                                                :ref="`colour_image_${index}`"                     
+                                                :style="`color: ${colour.tick_colour}; background: ${ colour.hex.length > 1 ? `linear-gradient(to right, ${colour.hex.map( hex => `${hex} ${100/colour.hex.length}%` ).join(',')} )`: colour.hex.map( hex => `${hex}` ).join(',') }`"                       
+                                                @click="($event) => selectColour(colour,$event)"                        
+                                            ><i class="fa fa-check"></i></li>
+                                            <li    
+                                                v-if="selections.code != colour.code"                                                
+                                                :style="`background: ${ colour.hex.length > 1 ? `linear-gradient(to right, ${colour.hex.map( hex => `${hex} ${100/colour.hex.length}%` ).join(',')} )`: colour.hex.map( hex => `${hex}` ).join(',') }`"                                     
+                                                :ref="`colour_image_${index}`"
+                                                @click="($event) => selectColour(colour,$event)"                        
                                             ></li>
                                         </template>
-                                        <template v-if="$isEmpty(colour_images)">
+                                        <template v-if="$isEmpty(product.colour_images)">
                                             <h5 class="text-danger">No colour options found.</h5>
                                         </template>
                                     </ul>
@@ -372,7 +370,7 @@ export default {
             return this.cart.find( val => val.full_code == this.product.full_code ) ?? {};
         },
         colour_images(){
-            return !isEmpty(this.product) && !isEmpty(this.product.colour_images) ? uniq(this.product.colour_images.map( image => image.hex ).flat()) : [];
+            return !isEmpty(this.product) && !isEmpty(this.product.colour_images) ? this.product.colour_images : [];
         },
         currency(){
             return this.$store.getters.home.company.currency
@@ -568,13 +566,13 @@ export default {
 
             if( !isEmpty(product.colour_images) && this.isSizeVariant  ){
                 set(form,'colour',  String());
-                set(form,'hex',     String());
+                set(form,'hex',     Array());
                 set(form,'sizes',   Array());
 
                 set(this.selections,'sizes', Object());
                 set(this.selections,'colour',Object()); // Initialize colour selection
 
-                this.schemaShape.hex        = yup.string(); // validate product hex colour
+                this.schemaShape.hex        = yup.array(); // validate product hex colour
                 this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
 
                 // Check if product has variants and add validation of sizes
@@ -589,14 +587,14 @@ export default {
             }
 
             if( !isEmpty(product.colour_images) && !this.isSizeVariant  ){
-                this.schemaShape.hex        = yup.string(); // validate product hex colour
+                this.schemaShape.hex        = yup.array(); // validate product hex colour
                 this.schemaShape.colour     = yup.string().required("*Select a colour."); // validate product colour
 
                 // Check if product has variants and add validation of quantity if empty
                 this.schemaShape.quantity = yup.number().required("*Quantity is required."); 
 
                 set(form,'colour',  String());
-                set(form,'hex',     String());
+                set(form,'hex',     Array());
                 set(form,'quantity',Number(1));      
 
                 set(this.selections,'colour',Object()); // Initialize colour selection
@@ -764,7 +762,7 @@ export default {
                 this.loading.quote = Boolean();
             }
         },
-        selectColour(hex,event){
+        selectColour(colour,event){
             let target  = event.target;
             
             switch(target.classList.contains('active')){
@@ -772,7 +770,7 @@ export default {
                     event.target.classList.remove('active');
 
                     this.selections.colour = Object();      
-                    this.selections.hex    = String();      
+                    this.selections.code   = String();      
                     this.form.hex          = String();      
                     this.form.colour       = String();  
 
@@ -785,13 +783,12 @@ export default {
                     event.target.classList.add('active');
 
                     let variant = window.document.querySelector('.color-variant li.active');
-                    let colour  = this.product.colour_images.find( colour => colour.hex.includes(hex) );
 
                     if( !isNull(variant) ){ variant.classList.remove('active'); }
 
                     this.selections.colour = colour;      
-                    this.selections.hex    = hex;      
-                    this.form.hex          = hex;      
+                    this.selections.code   = colour.code;      
+                    this.form.hex          = colour.hex;      
                     this.form.colour       = colour.name;  
 
                     if( this.isSizeVariant ){

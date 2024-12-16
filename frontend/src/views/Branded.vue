@@ -69,7 +69,7 @@
                                                 <div class="form-group mb-0">
                                                     <select class="form-control" :value="$data.form.positions[index].method" @change="() => selectMethod(index)">
                                                         <option value="">Select Method</option>
-                                                        <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`" :value="method.full_code"> {{ method.name }} ({{ method.code }})</option>
+                                                        <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`" :value="method.full_code"> {{ method.name }} ({{ method.simple_code }}) - {{ method.colours }}</option>
                                                     </select>
                                                 </div>
                                                 <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].method`) }}</strong></p>

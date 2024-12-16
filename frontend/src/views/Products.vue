@@ -148,7 +148,11 @@
                                                         <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                                                         <h6 class="m-0 p-0">Stock: {{ product.stock }}</h6>
                                                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
-                                                            <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>
+                                                            <li 
+                                                                v-for="(colour,index) in product.colour_images" 
+                                                                :key="index" 
+                                                                :style="`border: 1px solid #cdcdcd; background: ${ colour.hex.length > 1 ? `linear-gradient(to right, ${colour.hex.map( hex => `${hex} ${100/colour.hex.length}%` ).join(',')} )`: colour.hex.map( hex => `${hex}` ).join(',') }`"
+                                                            ></li>
                                                         </ul>
                                                     </div>
                                                 </div>

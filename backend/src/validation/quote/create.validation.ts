@@ -10,9 +10,9 @@ class Item {
     @IsNotEmpty()
     full_code: string
 
-    @IsString()
+    @IsArray()
     @IsOptional()
-    hex: string
+    hex: any
 
     @IsString()
     @IsNotEmpty()

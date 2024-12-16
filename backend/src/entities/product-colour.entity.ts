@@ -19,6 +19,7 @@ export class ProductColourEntity {
   images: string;
 
   @Column({
+    type: 'json',
     nullable: true
   })
   hex: string;  
@@ -39,6 +40,9 @@ export class ProductColourEntity {
   })
   simple_code: string;  
 
+  @Column({ nullable: true })
+  tick_colour: string
+  
   @CreateDateColumn()
   created_at: Date; // Creation date
   

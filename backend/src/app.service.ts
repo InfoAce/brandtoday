@@ -4,7 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
 import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, map, maxBy, take, intersectionBy, sum, uniqBy } from 'lodash';
+import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, pick, map, maxBy, take, intersectionBy, sum, uniqBy } from 'lodash';
 import { BrandingModel, BrandingMethodModel, BrandingPriceModel, BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel } from 'src/models';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs'
@@ -251,6 +251,8 @@ export class AppService {
         // Fetch amrod branding prices  
         let branding_prices = await this.amrodService.getBrandingPrices();     
 
+        fs.writeFileSync('branding_prices_raw.json', JSON.stringify(branding_prices));
+
         // Fetch amrod branding
         let branding        = products.filter( product => !isEmpty(product.brandings) ).map( product =>
             product.brandings.map( 
@@ -265,11 +267,11 @@ export class AppService {
         // Fetch amrod branding methods
         let branding_methods = branding.map( branding => 
             branding.method.map( 
-                value => ({ 
-                    ...value, 
-                    full_code:     `${branding.full_code}_${value.brandingCode}_${branding.positionCode}_${value.displayIndex}`.toLowerCase().replace(/\s+/g,''),
-                    code:          `${value.brandingCode}-${value.displayIndex}`,
-                    simple_code:   value.brandingCode,
+                method => ({ 
+                    ...method, 
+                    full_code:     `${branding.full_code}_${method.brandingCode}_${branding.positionCode}_${method.displayIndex}`.toLowerCase().replace(/\s+/g,''),
+                    code:          `${method.brandingCode}-${method.displayIndex}`,
+                    simple_code:   method.brandingCode,
                     branding_code: branding.full_code 
                 })
             ) 
@@ -277,42 +279,45 @@ export class AppService {
 
         // Fetch amrod branding prices
         branding_prices     = branding_prices.map( 
-            branding_price => branding_price.data.map( 
-                price => {
+            branding_price => {
+                let maxPrice = maxBy(branding_price.data,'setup');
 
-                    if( company.use_exchange_rate ){
-                        price.price = parseFloat((price.price * company.exchange_rate).toFixed(2));
-                        price.setup = parseFloat((price.setup * company.exchange_rate).toFixed(2));
-                    }
-        
-                    if( company.use_product_fee ){
-                        switch(company.product_fee_type){
-                            case 'fixed':
-                                price.price = parseFloat((price.price + company.product_fee).toFixed(2));
-                                price.setup = parseFloat((price.setup + company.product_fee).toFixed(2));
-                            break;
-                            case 'percentage':
-                                price.price =  parseFloat((price.price * (company.product_fee/100)).toFixed(2));
-                                price.setup =  parseFloat((price.setup * (company.product_fee/100)).toFixed(2));
-                            break;
-                        }
-                    }
-
-                    return { 
-                        ...price, 
-                        code:         price.printCode,
-                        brandingCode: branding_price.brandingCode,
-                        full_code:   `${branding_price.brandingCode}_${price.printCode}`.toLowerCase().replace(/\s+/g,'')
+                if( company.use_exchange_rate ){
+                    maxPrice.price = parseFloat((maxPrice.price * company.exchange_rate).toFixed(2));
+                    maxPrice.setup = parseFloat((maxPrice.setup * company.exchange_rate).toFixed(2));
+                }
+    
+                if( company.use_product_fee ){
+                    switch(company.product_fee_type){
+                        case 'fixed':
+                            maxPrice.price = parseFloat((maxPrice.price + company.product_fee).toFixed(2));
+                            maxPrice.setup = parseFloat((maxPrice.setup + company.product_fee).toFixed(2));
+                        break;
+                        case 'percentage':
+                            maxPrice.price =  parseFloat((maxPrice.price * (company.product_fee/100)).toFixed(2));
+                            maxPrice.setup =  parseFloat((maxPrice.setup * (company.product_fee/100)).toFixed(2));
+                        break;
                     }
                 }
-            )
+
+                return { 
+                    ...maxPrice, 
+                    code:         maxPrice.printCode,
+                    brandingCode: branding_price.brandingCode,
+                    full_code:   `${branding_price.brandingCode}_${maxPrice.printCode}`.toLowerCase().replace(/\s+/g,'')
+                }
+            }
         )
         .flat();
 
+        fs.writeFileSync('branding_prices.json', JSON.stringify(branding_prices));
+
         branding_methods = branding_methods.map( (method) => {
-            let price = branding_prices.find( price => price.code == method.simple_code || price.code == method.code );
-            return {...method, ...price};
-        }).filter( method => has(method,'price') );
+            let price = branding_prices.find( price => price.brandingCode == method.simple_code );
+            return {...method, ...pick(price,['price','minQuantity','maxQuantity','setup'])};
+        });
+
+        fs.writeFileSync('branding_methods_priced.json', JSON.stringify(branding_methods));
 
         // Fetch amrod colour swatches
         let colour_swatches = await this.amrodService.getColourSwatches();  
@@ -393,11 +398,15 @@ export class AppService {
                 ) 
             )
             .flat()
-            .map( colour => ({ 
-                ...colour, 
-                hex:         get(colour_swatches.find( swatch => swatch.code == colour.code || swatch.name == colour.name ),'textColour'),      
-                simple_code: `${colour.product_code}-${colour.code}` 
-            }) 
+            .map( colour => { 
+                let swatch = colour_swatches.find( swatch => swatch.code === colour.code );
+                return {
+                    ...colour, 
+                    hex:         get(swatch,'hexValue'),      
+                    tick_colour: get(swatch,'tickColour'),      
+                    simple_code: `${colour.product_code}-${colour.code}` 
+                }
+            }
         );
 
         await Promise.all(
@@ -422,8 +431,8 @@ export class AppService {
             chunk(colour_images,1).map( async (colour) => {
                 await this.productColourModel.upsert(
                     colour.map( 
-                        ({ name, images, code, product_code, simple_code, hex }) => 
-                            ({ name, images, code, product_code, simple_code, hex}) 
+                        ({ name, images, code, product_code, simple_code, hex, tick_colour}) => 
+                            ({ name, images, code, product_code, simple_code, hex, tick_colour}) 
                     ),
                     {
                         conflictPaths: ["simple_code"],

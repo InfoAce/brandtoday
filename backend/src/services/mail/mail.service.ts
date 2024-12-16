@@ -143,7 +143,7 @@ export class MailService {
    * @param user - The user to send the email to.
    * @returns A Promise that resolves when the email is sent.
    */
-    async emailQuote({ email, attachments }: any) {
+    async emailQuote({ email, attachments, context }: any) {
 
       try{
         // Send the email.
@@ -152,7 +152,8 @@ export class MailService {
           // from: '"Support Team" <support@example.com>', // override default from
           subject: `${this.configService.get<string>('APP_NAME') } Quotation`,  // The subject of the email.
           template: 'quote/message',  // The name of the handlebars template to use.  
-          attachments
+          attachments,
+          context
         });
 
       } catch (error) {
