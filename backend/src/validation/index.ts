@@ -6,7 +6,7 @@ export { SePasswordValidation as SePasswordValidation } from './auth/new-passwor
 
 // List of validation
 export { AddressValidation as AddressValidation } from './create.address.validation';
-export { CreateOrderValidation as CreateOrderValidation } from './create.order.validation';
+export { CreateOrderValidation as CreateOrderValidation } from './order/create.validation';
 export { CategoryUpdateValidation as CategoryUpdateValidation } from './category/update.validation';
 export { LoginValidation as LoginValidation } from './login.validation';
 export { RegisterValidation as RegisterValidation } from './register.validation';

@@ -40,6 +40,7 @@ export class QuoteController {
             data.currency        = company.currency;
             data.company_logo    = `${this.configService.get<string>('APP_URL')}${company.logo}`;
             data.company_address = company.address;
+            data.company_name    = company.name;
             data.company_phone   = company.phone_number;
             data.total           = form.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
             data.quote_number    = moment().unix();

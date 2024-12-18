@@ -202,7 +202,6 @@ const validateForm = async (field) => {
         // If the field is valid, delete the corresponding error from the errors object
         delete $data.errors[field];
     } catch(error) {
-        console.log(transformYupErrorsIntoObject(error));
         // If the field is invalid, update the errors object with the error message
         $data.errors = transformYupErrorsIntoObject(error);
     } finally {
@@ -261,25 +260,69 @@ const addToCart = () => {
 
 const selectMethod = (index) => {
     let method = $selectedPositions.value.map( position => position.methods ).flat().find( method => method.full_code == event.target.value );
-    $data.form.positions[index].method = event.target.value;
+    $data.form.positions[index].method      = event.target.value;
     $data.form.positions[index].method_name = method.name;
-    $data.form.positions[index].price  = method.price;
-    $data.form.positions[index].setup = method.setup;
+    $data.form.positions[index].price       = method.price;
+    $data.form.positions[index].setup       = method.setup;
+    $data.form.positions[index].loader      = Boolean();
 }
 
+
+/**
+ * Asynchronously reads the contents of a file as a data URL and returns it.
+ *
+ * @param {Object} target - The target input element containing the file to be read.
+ * @return {Promise} A Promise that resolves to the data URL of the file.
+ */
+const getImageFile = async (target) => {
+    // Create a new FileReader instance
+    return new Promise(resolve => {
+        const reader = new FileReader()
+
+        // Define the onload callback function
+        reader.onload = function () {
+            // Resolve the Promise with the data URL of the file
+            resolve({ 
+                ext:    target.files[0].name.split('.').pop().toLowerCase(),
+                type:   target.files[0].type,
+                result: reader.result 
+            })
+        }
+
+        // Read the contents of the file as a data URL
+        reader.readAsDataURL(target.files[0])
+    })        
+} 
 /**
  * Handles the file upload for the specified position index.
  * Logs the selected file to the console.
  *
  * @param {number} index - The index of the position for which the file is being uploaded.
  */
-const uploadFile = (index) => {
-    let file   = event.target.files[0];
-    let reader = new FileReader();
-    reader.addEventListener('load', (e) => {
-        $data.form.positions[index].file = e.target.result;
-    });
-    reader.readAsDataURL(file);
+const uploadFile = async (index) => {
+
+    try {    
+        $data.form.positions[index].loader = true;
+
+        let { result, ext, type } = await getImageFile(event.target);
+
+        // Create a new File object with the cropped image and a unique filename
+        let file = new File([new Blob([result])], `${new Date().getTime()}.${ext}`, {
+            type,
+            lastModified: new Date().getTime()
+        });
+
+        const { data: { location } } = await $api.post(`/branding/upload`,{ file },{ headers: { 'Content-Type': 'multipart/form-data' }}); 
+
+        $data.form.positions[index].file = location;
+        $data.form.positions[index].loader = false;
+
+    } catch (error) {
+        $toast.error('Something went wrong while uploading file. Please try again.');
+        $data.form.positions[index].loader = false;
+    } finally {
+        $data.form.positions[index].loader = false;
+    }
 }
 
 const selectPosition = (branding) => {
@@ -309,7 +352,6 @@ onBeforeMount( () => fetchProduct() );
 watch(
 	() => $data.form, 
 	(form) => {
-        console.log(form);
 		each(form,(value,key) => {
 			validateForm(key);
 		});

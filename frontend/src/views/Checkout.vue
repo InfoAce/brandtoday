@@ -23,8 +23,8 @@
         <!-- breadcrumb End -->
 
         <!-- section start -->
-        <section class="section-b-space">
-            <div class="container">
+        <section class="section-b-space" v-if="!$data.saved">
+            <div class="container-fluid">
                 <div class="checkout-page">
                     <div class="checkout-form pb-6">
                         <form>
@@ -34,7 +34,7 @@
                                         <h3>Billing Details</h3>
                                     </div>                                            
                                 </div>
-                                <div class="col-lg-7">
+                                <div class="col-md-8">
                                     <form autocomplete="off" >
                                     <div class="row">
                                         <div class="col-12" v-show="isEmpty(authUser)">
@@ -151,7 +151,7 @@
                                                                         {{ address.city_town }}
                                                                     </strong>
                                                                 </label>
-                                                                <div class="btn btn-solid btn-sm">{{ address.category }}</div>
+                                                                <div class="badge badge-danger">{{ address.category }}</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -171,57 +171,41 @@
                                     </div>
                                     </form>
                                 </div>
-                                <div class="col-lg-5">
+                                <div class="col-md-4 col-sm-12 col-xs-12">
                                     <div class="checkout-details">
-								        <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'items')">{{$data.errors.items}}</p>								
+                                        <p class="text-danger col col-12 mt-0" v-show="has($data.errors,'items')">{{$data.errors.items}}</p>
                                         <div class="order-box">
-                                            <div class="title-box pb-0">
-                                                <div>Product <span class="text-end">Total</span></div>
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="text-left"><strong>Sub Total</strong></td>
+                                                        <td class="text-left">{{ currency }} {{ sub_total.toFixed(2) }}</td>
+                                                    </tr>
+                                                    <tr v-for="(fee, index) in $data.service_fees" :key="index">
+                                                        <td class="text-left"><strong>{{ fee.name }}</strong></td>
+                                                        <td class="text-left">{{ currency }} {{ fee.amount.toFixed(2) }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-left"><strong>Total</strong></td>
+                                                        <td class="text-left">{{ currency }} {{ total.toFixed(2) }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="row">
+                                                <div class="col-12 mb-4">
+                                                    <label>Save For Later</label>
+                                                    <VueToggles v-model="$data.form.saved"/>               
+                                                </div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-theme btn-xl w-100" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
+                                                        <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
+                                                        Place Order
+                                                    </button>                      
+                                                </div>
                                             </div>
-                                            <ul class="qty">
-                                                <template  v-for="(item,index) in cart_items">
-                                                    <template v-if="has(item,'size')">
-                                                        <li :key="`${index}`" class="d-flex align-items-center justify-content-between">
-                                                            <div>
-                                                                <img :src="item.image" width="70" class="img-thumbnail"/>
-                                                            </div>
-                                                            <p class="px-2 mb-0">{{ item.name }} <br> {{ item.size.name }} <br> Quantity: {{ item.size.quantity }} </p>
-                                                            <span class="text-end">{{ home.company.currency }} {{ (item.size.quantity * item.price).toFixed(2) }}</span>
-                                                        </li>
-                                                    </template>
-                                                    <template v-else>
-                                                        <li :key="index" class="d-flex align-items-center justify-content-between">
-                                                            <div>
-                                                                <img :src="item.image" width="70" class="img-thumbnail"/>
-                                                            </div>
-                                                            <p class="px-2 mb-0">{{ item.name }} <br> Quantity: {{ item.quantity }} </p>
-                                                            <span class="text-end">{{ home.company.currency }} {{ (item.quantity * item.price).toFixed(2) }}</span>
-                                                        </li>
-                                                    </template>
-                                                </template>
-                                            </ul>
-                                            <ul class="sub-total">
-                                                <li>Subtotal <span class="count text-end">{{ home.company.currency }} {{ sub_total.toFixed(2) }}</span></li>
-                                                <template v-if="!isEmpty($data.service_fees)">
-                                                    <li v-for="(fee,key) in $data.service_fees" :key="key">
-                                                        {{ fee.name }}
-                                                        <span class="count text-end" v-if="fee.type == 'fixed'">{{ home.company.currency }} {{ fee.amount.toFixed(2) }}</span>
-                                                        <span class="count text-end" v-if="fee.type == 'percentage'">{{ home.company.currency }} {{ ( ( fee.amount * sub_total ) / 100 ).toFixed(2) }}</span>
-                                                    </li>
-                                                </template>
-                                            </ul>
-                                            <ul class="total">
-                                                <li>Total <span class="count text-end">{{ home.company.currency }} {{ total.toFixed(2) }}</span></li>
-                                            </ul>
-                                        </div>                                     
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12 text-center mt-4">
-                                    <button class="btn btn-theme btn-lg" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
-                                        <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
-                                        Place Order
-                                    </button>
-                                </div>
+                                </div>        
                             </div>
                         </form>
                     </div>
@@ -229,6 +213,75 @@
             </div>
         </section>
         <!-- section end -->   
+
+        <div class="col-12 p-4" v-if="$data.saved">
+            <!-- thank-you section start -->
+            <section class="section-b-space light-layout">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="success-text">
+                                <div class="checkmark">
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                        </path>
+                                    </svg>
+                                    <svg class="checkmark__check" height="36" viewBox="0 0 48 36" width="48"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M47.248 3.9L43.906.667a2.428 2.428 0 0 0-3.344 0l-23.63 23.09-9.554-9.338a2.432 2.432 0 0 0-3.345 0L.692 17.654a2.236 2.236 0 0 0 .002 3.233l14.567 14.175c.926.894 2.42.894 3.342.01L47.248 7.128c.922-.89.922-2.34 0-3.23">
+                                        </path>
+                                    </svg>
+                                    <svg class="checkmark__background" height="115" viewBox="0 0 120 115" width="120"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M107.332 72.938c-1.798 5.557 4.564 15.334 1.21 19.96-3.387 4.674-14.646 1.605-19.298 5.003-4.61 3.368-5.163 15.074-10.695 16.878-5.344 1.743-12.628-7.35-18.545-7.35-5.922 0-13.206 9.088-18.543 7.345-5.538-1.804-6.09-13.515-10.696-16.877-4.657-3.398-15.91-.334-19.297-5.002-3.356-4.627 3.006-14.404 1.208-19.962C10.93 67.576 0 63.442 0 57.5c0-5.943 10.93-10.076 12.668-15.438 1.798-5.557-4.564-15.334-1.21-19.96 3.387-4.674 14.646-1.605 19.298-5.003C35.366 13.73 35.92 2.025 41.45.22c5.344-1.743 12.628 7.35 18.545 7.35 5.922 0 13.206-9.088 18.543-7.345 5.538 1.804 6.09 13.515 10.696 16.877 4.657 3.398 15.91.334 19.297 5.002 3.356 4.627-3.006 14.404-1.208 19.962C109.07 47.424 120 51.562 120 57.5c0 5.943-10.93 10.076-12.668 15.438z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <h2>Order Successfully Saved</h2>
+                                <p>Your order has been saved. You can click the link below to view the details.</p>
+                                <button class="btn btn-theme btn-lg" @click="$router.push({ name: 'AccountOrders' })" v-if="!isEmpty(auth)">View Order</button>
+                                <button class="btn btn-theme btn-lg" @click="$router.push({ name: 'Home' })" v-if="isEmpty(auth)">Continue Shopping</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Section ends -->
+        </div>
     </div>
 </template>
 <style src="@vueform/multiselect/themes/default.css"></style>
@@ -245,6 +298,7 @@ import { countries } from 'countries-list';
 import Multiselect from '@vueform/multiselect'
 import { useReCaptcha } from 'vue-recaptcha-v3';
 import { useRouter } from 'vue-router';
+import { VueToggles } from "vue-toggles";
 
 // Data variables
 const $api    = inject('$api');
@@ -261,21 +315,49 @@ const $data   = reactive({
     },
     isDisabled:   Boolean(true),
     order:        Object(),
+    saved:        Boolean(),
     service_fees: Array()
 });
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
 
 // Computed
-const auth   = computed( () => $store.getters.auth );
+const auth       = computed( () => $store.getters.auth );
 const authUser   = computed( () => $store.getters.auth.user );
 const cart       = computed( () => $store.getters.cart );
-const cart_items = computed( () => $store.getters.cart.map( item => has(item,'sizes') ? item.sizes.map( (size:any) => ({...omit(item,['sizes']),size})): item ).flat() );
+const currency   = computed( () => $store.getters.home.company.currency );
+const cart_items = computed({
+    get(): any {
+        return cloneDeep($store.getters.cart).map( (item: any) => {
+            if( !isEmpty(item.sizes) ){
+                set(item,'total_quantity',sum(item.sizes.map( (size:any) => size.quantity )) );
+                if(has(item,'positions')){
+                    set(item,'total_branding_cost', (sum(item.positions.map( (position:any) => position.price )) * item.total_quantity).toFixed(2));
+                    set(item,'total_setup_cost', (sum(item.positions.map( (position:any) => position.setup )) * item.total_quantity).toFixed(2));
+                    set(item,'total_amount',sum([(item.price * item.total_quantity),item.total_branding_cost,item.total_setup_cost].map( price => parseFloat(price) )) );
+                }
+                if(!has(item,'positions')){
+                    set(item,'total_amount',(item.price * item.total_quantity));                
+                }
+            }
+            if( isEmpty(item.sizes) ){
+                set(item,'total_quantity',item.quantity);
+                set(item,'total_amount',(item.price * item.quantity));                
+            }
+            return item;
+        });
+    },
+    set(value:any): void {
+        $store.commit('cart',value);
+    }
+});
 const home       = computed( () => $store.getters.home);
-const sub_total  = computed( () => cart_items.value.map( item => has(item,'size') ? item.price * item.size.quantity : item.price * item.quantity ).reduce( (a,c) => a + c, 0) );
-const total      = computed( () => !isEmpty($data.service_fees) ? 
-                        $data.service_fees.map( (fee) => fee.type == 'percentage' ? ((fee.amount * sub_total.value ) / 100) : fee.amount ).reduce( (a,c) => a + c, 0) + sub_total.value
-                    : sub_total.value
-                   );
+const sub_total  = computed( () => sum(cart_items.value.map( (val:any) => val.total_amount )) )
+const total      = computed( () => sum(
+        cart_items.value.map( (val:any) => val.total_amount ).concat(
+            $data.service_fees.map( (fee:any) => fee.type == 'fixed' ? fee.amount : ((fee.amount/100) * sub_total.value) )
+        )
+    )  
+)
 
 let formSchema       = yup.object().shape({
     items:            yup.array().min(1).required("*Cart Items is required"),                      
@@ -306,7 +388,8 @@ let formSchema       = yup.object().shape({
                         .oneOf([yup.ref('password'), null], 'Password mismatch'),
     password:         yup.string()
                         .required("*Password is required"),  
-    type:             yup.string()                       
+    type:             yup.string(),                     
+    saved:            yup.boolean()                       
 });
 const listCountries  = computed( () => values(countries).map( country => ({ label: country.name, value: country.name })) );
 const listCurrencies = computed( () => values(countries).map( country => ({ label: `${country.name} - ${first(country.currency)}`, value: first(country.currency) })) );
@@ -486,20 +569,31 @@ const placeOrder = async () => {
         // Send a POST request to the API to place the order
         const { data: { order } } = await $api.post('/orders',data);
 
-        // Show a success toast
-        $toast.success('Your order has been placed successfully.');
-        
-        // Send a PUT request to the API to update the order's transaction status
-        const { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
+        if( order.saved === true ){
+            $data.saved = order.saved;
+            $store.commit('cart', []);
 
-        // Store the order object in the component's data
-        $data.order               = cloneDeep(orderData);
+            // Show a success toast
+            $toast.success('Your order has been saved. Please check your email for order details.');            
+        }
 
-        // Show a success toast
-        $toast.success('Redirecting you to make payment for your order.');
-        
-        // Open the payment iframe
-        openPesapal();
+        // Set the order status to 'saved'
+        if( order.saved === false ){ 
+            // Show a success toast
+            $toast.success('Your order has been placed successfully.');
+
+            // Send a PUT request to the API to update the order's transaction status
+            const { data: orderData } = await $api.put(`/orders/${order.id}/transaction`);
+
+            // Store the order object in the component's data
+            $data.order               = cloneDeep(orderData);
+
+            // Show a success toast
+            $toast.success('Redirecting you to make payment for your order.');
+            
+            // Open the payment iframe
+            openPesapal();
+        }
     } catch (error) {
         $data.loader.order = false;
 
@@ -557,7 +651,8 @@ onBeforeMount( async() => {
 
         $data.form      = {
             address_id: String(),
-            items:   Array() 
+            items:      Array(),
+            saved:      Boolean()
         }
         
         
@@ -577,14 +672,16 @@ onBeforeMount( async() => {
                 postal_code:      String(),
                 county_state:     String(),
                 city_town:        String(),
-                type:             String('existing')
+                type:             String('existing'),
+                saved:            Boolean()
             };
         }
 
         if( !isEmpty(authUser.value) ){
             formSchema = yup.object().shape({
                 items:      yup.array().min(1).required("*Cart Items is required"),                      
-                address_id: yup.string().required("*Select an address"),                     
+                address_id: yup.string().required("*Select an address"),         
+                saved:      yup.boolean()               
             });
         }
 

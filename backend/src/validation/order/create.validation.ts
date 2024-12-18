@@ -1,5 +1,94 @@
-import { IsEmail, Matches, MaxLength, MinLength ,IsArray, IsNotEmpty, IsString, ValidateIf, Validate } from 'class-validator';
+import { IsEmail, Matches, MaxLength, MinLength ,IsArray, IsNotEmpty, IsString, ValidateIf, Validate, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 import { isEmailUnique } from 'src/helpers/validators/user.validator';
+
+class Position {
+
+    @IsString()
+    @IsNotEmpty()
+    branding_name: string
+
+    @IsString()
+    @IsNotEmpty()
+    code: string
+    
+    @IsString()
+    @IsNotEmpty()
+    file: string
+    
+    @IsString()
+    @IsNotEmpty()
+    full_code: string
+    
+    @IsString()
+    @IsNotEmpty()
+    method: string
+    
+    @IsString()
+    @IsNotEmpty()
+    method_name: string
+
+    @IsNumber()
+    @IsNotEmpty()
+    price: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    setup: number
+}
+
+class Size { 
+
+    @IsString()
+    @IsNotEmpty()
+    name: string
+
+    @IsNumber()
+    @IsNotEmpty()
+    quantity: number
+
+}
+
+class Item {
+    @IsString()
+    @IsOptional()
+    colour: string
+
+    @IsString()
+    @IsNotEmpty()
+    full_code: string
+
+    @IsArray()
+    @IsOptional()
+    hex: any
+
+    @IsString()
+    @IsNotEmpty()
+    image: string
+
+    @IsString()
+    @IsNotEmpty()
+    name: string
+
+    @IsArray()
+    @IsOptional()
+    positions: Position[]
+
+    @IsNumber()
+    @IsNotEmpty()
+    price: number
+
+    @IsArray()
+    @IsOptional()
+    sizes: Size[]
+
+    @IsNumber()
+    @IsNotEmpty()
+    total_amount: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    total_quantity: number
+}
 
 export class CreateOrderValidation {
     @IsString()
@@ -8,7 +97,7 @@ export class CreateOrderValidation {
 
     @IsArray()
     @IsNotEmpty()
-    items: any
+    items: Item[]
 
     @ValidateIf( item => item.type == 'existing' )
     @IsString()
@@ -84,4 +173,8 @@ export class CreateOrderValidation {
     @IsString()
     city_town: string
     
+    @IsBoolean()
+    @IsNotEmpty()
+    saved: boolean
+
 }

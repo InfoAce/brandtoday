@@ -8,6 +8,13 @@ export class OrderItemEntity {
   id: string;
 
   @Column({
+    type:     'tinyint',
+    nullable: true,
+    default:  true
+  })
+  branded: boolean;
+
+  @Column({
     nullable: true
   })
   colour: string;
@@ -33,21 +40,22 @@ export class OrderItemEntity {
   name: string;
 
   @Column({
+    type:    'json',
+    nullable: true
+  })
+  positions: any;
+
+  @Column({
     type: 'double',
     nullable: false
   })
   price: number;
-
+  
   @Column({
     type: 'numeric',
     nullable: false
   })
   quantity: number;
-
-  @Column({
-    nullable: true
-  })
-  size: string;
 
   @ManyToOne(() => ProductEntity, (entity) => entity.order_items, { eager: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({
@@ -79,6 +87,30 @@ export class OrderItemEntity {
     nullable: true
   })
   quote_id: string;
+
+  @Column({
+    type:     'json',
+    nullable: true
+  })
+  sizes: any;
+  
+  @Column({
+    type: 'double',
+    nullable: false
+  })
+  total_amount: number;
+
+  @Column({
+    type: 'double',
+    nullable: true
+  })
+  total_branding_cost: number;
+
+  @Column({
+    type: 'double',
+    nullable: true
+  })
+  total_setup_cost: number;
 
   @CreateDateColumn()
   created_at: Date; // Creation date

@@ -43,6 +43,13 @@ export class OrderEntity {
   })
   status: string;
 
+  @Column({
+    type:     'boolean',
+    nullable: true,
+    default:  false
+  })
+  saved: boolean;
+
   @OneToMany(() => OrderTimelineEntity, timeline => timeline.order)
   @JoinColumn({
     name:                 "id",

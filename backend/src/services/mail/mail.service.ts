@@ -6,9 +6,8 @@ import { sum } from 'lodash';
 import { MailException } from 'src/exceptions/mail.exception';
 import * as moment from 'moment';
 import { isNull } from 'lodash';
-
-const { sep } = require('path'); 
-const fs      = require('fs');
+import puppeteer from 'puppeteer';
+import { resolve } from 'path';
 
 @Injectable()
 export class MailService {
@@ -61,38 +60,62 @@ export class MailService {
       
       // Get the user associated with the order.
       let user    = await order.user;
+      let pug     = require('pug');
+      let context = Object();
 
-      let context = {
-        address:         order.address,
-        company_logo:    `${this.configService.get<string>('APP_URL')}${user.company.logo}`,
-        company_name:    user.company.name,
-        company_address: user.company.address,
-        company_email:   user.company.email,
-        company_phone:   user.company.phone_number,
-        created_at:      moment(order.created_at).format('Do MMMM YYYY'),
-        customer:        {
-          email:           user.email,
-          first_name:      user.first_name,
-          last_name:       user.last_name,
-          phone_number:    user.phone_number
-        },
-        currency:        user.company.currency,
-        extra_charges:   Array(),
-        items:           order.items,
-        order_number:    order.num_id,
-        transaction:     order.transaction,
-        total:           order.items.map( item => item.quantity * item.price ).reduce( (a,c) => a + c, 0)
-      }
+      // let context = {
+      //   address:         order.address,
+      //   company_logo:    `${this.configService.get<string>('APP_URL')}${user.company.logo}`,
+      //   company_name:    user.company.name,
+      //   company_address: user.company.address,
+      //   company_email:   user.company.email,
+      //   company_phone:   user.company.phone_number,
+      //   created_at:      moment(order.created_at).format('Do MMMM YYYY'),
+      //   customer:        {
+      //     email:           user.email,
+      //     first_name:      user.first_name,
+      //     last_name:       user.last_name,
+      //     phone_number:    user.phone_number
+      //   },
+      //   currency:        user.company.currency,
+      //   extra_charges:   Array(),
+      //   items:           order.items,
+      //   order_number:    order.num_id,
+      //   transaction:     order.transaction,
+      //   total:           order.items.map( item => item.quantity * item.price ).reduce( (a,c) => a + c, 0)
+      // }
+
+      context.currency        = user.company.currency;
+      context.company_logo    = `${this.configService.get<string>('APP_URL')}${user.company.logo}`;
+      context.company_address = user.company.address;
+      context.company_name    = user.company.name;
+      context.company_phone   = user.company.phone_number;
+      context.total           = order.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
+      context.quote_number    = moment().unix();
+      context.customer_name   = `${user.first_name} ${user.last_name}`;
+      context.items           = order.items;
+      console.log(order.items);
       
       if( !isNull(user.company.service_fees) ){
         context.extra_charges = user.company.service_fees.map( service => ({ name: service.name, amount: service.type == 'percentage' ? (context.total * service.amount) / 100 : service.amount }) );
       }
 
+      let browser = await puppeteer.launch();
+      let page    = await browser.newPage();
+
+      await page.setContent(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),context));
+
+      let pdf     = await page.pdf();
+
       // Send the email.
       await this.mailerService.sendMail({
         to: user.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
-        template: 'order/create',  // The name of the handlebars template to use.
+        template: 'order/pdf',  // The name of the handlebars template to use.
+        attachments: [{ 
+            filename: `order-${order.num_id}.pdf`, 
+            content:  Buffer.from(pdf)
+        }],
         context,
       });
       
@@ -140,7 +163,7 @@ export class MailService {
   /**
    * Sends a confirmation email to a user.
    * 
-   * @param user - The user to send the email to.
+   * @param user - The user to send the email to. 
    * @returns A Promise that resolves when the email is sent.
    */
     async emailQuote({ email, attachments, context }: any) {
@@ -151,9 +174,8 @@ export class MailService {
           to: email,  // The recipient's email address.
           // from: '"Support Team" <support@example.com>', // override default from
           subject: `${this.configService.get<string>('APP_NAME') } Quotation`,  // The subject of the email.
-          template: 'quote/message',  // The name of the handlebars template to use.  
+          html: `Hi ${context.customer_name}, <br><br> Your quotation is ready. <br><br> Regards,<br> ${context.company_name }`,  // The HTML content of the email.
           attachments,
-          context
         });
 
       } catch (error) {

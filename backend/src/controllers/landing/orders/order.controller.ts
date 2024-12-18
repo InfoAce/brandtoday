@@ -1,7 +1,7 @@
 import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { first, get, has, pick, set, sum } from 'lodash';
+import { first, get, has, pick, set, sum, sumBy} from 'lodash';
 import * as bcrypt from 'bcrypt';
 import { ClientGuard, OptionalGuard } from 'src/guards';
 import { AddressBookModel, CompanyModel, OrderItemModel, OrderModel, OrderTimelineModel, RoleModel, TransactionModel, UserModel } from 'src/models';
@@ -15,6 +15,7 @@ import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ControllerException } from 'src/exceptions/controller.exception';
 import { interval, map, Observable, startWith, switchMap, takeUntil } from 'rxjs';
+import * as fs from 'fs'
 
 @Controller('orders')
 export class OrderController {
@@ -128,15 +129,13 @@ export class OrderController {
         
         await Promise.all(
           form.items.map( async (item) => {
-            if( has(item,'size') ){
-              return await this.orderItemModel.save({ ...item, size: item.size.name, quantity: item.size.quantity, order_id: order.id })
+            if( has(item,'sizes')){
+              set(item,'quantity',parseInt(sumBy(item.sizes,'quantity')));
             }
-            if( !has(item,'size') ){
-              return await this.orderItemModel.save({ ...item, order_id: order.id });
-            }
+            return await this.orderItemModel.save({ ...item, order_id: order.id });
           })
         )
-  
+        
         // Send user confirmation email
         await this.mailService.sendUserConfirmation(user);
 
@@ -155,16 +154,15 @@ export class OrderController {
 
         // Get the logged-in user and save the order
         let user   = get(req,'user');
-        let order  = await this.orderModel.save({ ...pick(form,['address_id']), user_id: user.id, num_id: moment().unix()  });
+
+        let order  = await this.orderModel.save({ ...pick(form,['address_id','saved']), user_id: user.id, num_id: moment().unix()  });
 
         await Promise.all(
           form.items.map( async (item) => {
-            if( has(item,'size') ){
-              return await this.orderItemModel.save({ ...item, size: item.size.name, quantity: item.size.quantity, order_id: order.id })
+            if( has(item,'sizes')){
+              set(item,'quantity',parseInt(sumBy(item.sizes,'quantity')));
             }
-            if( !has(item,'size') ){
-              return await this.orderItemModel.save({ ...item, order_id: order.id });
-            }
+            return await this.orderItemModel.save({ ...item, order_id: order.id });
           })
         )
         

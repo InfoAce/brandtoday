@@ -6,12 +6,18 @@
                     <div class="card-body">
                         <CardLoader :loader="$data.loader.fetch" />
                         <div class="row">
-                            <div class="top-sec col-12">
-                                <h3>Address Book</h3>
-                                <a href="#" class="btn btn-sm btn-solid" @click.prevent="$data.modals.add = true">
-                                    <i class="fa fa-plus"></i>
-                                    Add New
-                                </a>
+                            <div class="col-12 mb-4">
+                                <div class="row">
+                                    <div class="col-md-8 col-xs-12">
+                                        <h2>Address Book</h2>
+                                    </div>
+                                    <div class="col-md-4 col-xs-12">
+                                        <a href="#" class="btn btn-sm btn-solid" @click.prevent="$data.modals.add = true">
+                                            <i class="fa fa-plus"></i>
+                                            Add New
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="address-book-section col-12">
                                 <div class="row" style="height:">
@@ -42,8 +48,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="bottom">
-                                                    <a href="javascript:void(0)" data-bs-target="#edit-address" data-bs-toggle="modal" class="bottom_btn">edit</a>
-                                                    <a href="#" class="bottom_btn">remove</a>
+                                                    <a href="javascript:void(0)" data-bs-target="#edit-address" data-bs-toggle="modal" class="bottom_btn">Edit</a>
+                                                    <a href="#" class="bottom_btn">Delete</a>
                                                 </div>
                                             </div>
                                         </div>

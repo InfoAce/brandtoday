@@ -15,6 +15,7 @@
                                     <th>#</th>
                                     <th>Order #</th>
                                     <th>Items</th>
+                                    <th>Quantity</th>
                                     <th>Amount</th>
                                     <th>Status</th>
                                     <th>Created At</th>
@@ -27,7 +28,8 @@
                                         <td>{{ index + 1 }}</td>
                                         <td> # {{ order.num_id }}</td>
                                         <td>{{ order.items.length }}</td>
-                                        <td>{{ home.company.currency }} {{ sum(order.items.map( item => item.price * item.quantity)).toFixed(2) }}</td>
+                                        <td>{{ sumBy(order.items,'quantity') }}</td>
+                                        <td>{{ home.company.currency }} {{ sumBy(order.items,'total_amount') }}</td>
                                         <td>
                                             <template v-if="order.status == 'pending'"><i class="badge badge-warning">{{ order.status }}</i></template>
                                             <template v-if="order.status == 'paid'"><p class="badge badge-primary">{{ order.status }}</p></template>
@@ -65,7 +67,7 @@
 import { computed, inject, onBeforeMount, onMounted, reactive } from 'vue';
 import { useStore } from 'vuex';
 import  moment from 'moment';
-import { isEmpty, sum } from 'lodash';
+import { isEmpty, sum, sumBy} from 'lodash';
 import { CardLoader } from '../components';
 
 const $api  = inject('$api'); 

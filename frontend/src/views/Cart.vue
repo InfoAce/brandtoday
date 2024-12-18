@@ -24,7 +24,7 @@
         <!-- breadcrumb End -->
 
         <!--section start-->
-        <section class="cart-section section-b-space">
+        <section class="section-b-space">
             <div class="container-fluid">
                 <div class="row" v-if="!isEmpty(items)">
                     <div class="col-md-8 col-sm-12 col-xs-12">
