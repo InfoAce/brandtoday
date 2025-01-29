@@ -179,7 +179,7 @@ import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { VueToggles } from "vue-toggles";
+import VueToggles from "vue-toggles";
 
 const $api    = inject('$api');
 const $toast  = inject('$toast');

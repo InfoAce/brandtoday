@@ -298,7 +298,7 @@ import { countries } from 'countries-list';
 import Multiselect from '@vueform/multiselect'
 import { useReCaptcha } from 'vue-recaptcha-v3';
 import { useRouter } from 'vue-router';
-import { VueToggles } from "vue-toggles";
+import VueToggles from "vue-toggles";
 
 // Data variables
 const $api    = inject('$api');

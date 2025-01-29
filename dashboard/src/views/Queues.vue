@@ -117,7 +117,7 @@
   import { CardLoader } from '../components';
   import { useStore } from 'vuex';
   import moment from 'moment';
-  import { VueToggles } from "vue-toggles";
+  import VueToggles from "vue-toggles";
   
   const store    = useStore();
   const router   = useRouter();
