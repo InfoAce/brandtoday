@@ -122,7 +122,7 @@ import { inject, reactive, ref, watch } from 'vue';
 import { debounce, each, isEmpty, has, pick, cloneDeep } from 'lodash';
 import { useRouter } from 'vue-router';
 import * as yup from "yup";
-import { VueToggles } from "vue-toggles";
+import VueToggles from "vue-toggles";
 
 export default {
     /**
