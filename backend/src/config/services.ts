@@ -19,7 +19,7 @@ export default registerAs('services',() => {
             consumer_secret,
             live
         }
-    } = json.readJSON(`${home}${sep}configurations.json`);
+    } = json.readJSON(`${home}${sep}config.json`);
 
     return {
         amrod:{
