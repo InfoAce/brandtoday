@@ -36,7 +36,7 @@ async function bootstrap() {
               format.printf((error) => {
                 if ( !isEmpty(error.stack) ) {
                   // print log trace 
-                  return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
+                  // return `${error.timestamp} ${error.level}: ${error.message} - ${error.context} - ${error.stack.map( val => JSON.stringify(val)).join(',')}`;
                 }
                 return `${error.timestamp} ${error.level}: ${error.message} - ${error.context}`;
               }),
@@ -66,7 +66,7 @@ async function bootstrap() {
              format.printf((info) => {
               if ( !isEmpty(info.stack) ) {
                 // print log trace 
-                return `${info.timestamp} ${info.level}: ${info.message} - ${info.context} - ${info.stack.map( val => JSON.stringify(val)).join(',')}`;
+                // return `${info.timestamp} ${info.level}: ${info.message} - ${info.context} - ${info.stack.map( val => JSON.stringify(val)).join(',')}`;
               }
               return `${info.timestamp} ${info.level}: ${info.context} ${info.message}`;
              }),

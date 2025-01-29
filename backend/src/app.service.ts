@@ -671,7 +671,7 @@ export class AppService {
         // Get products
         let products = await this.productModel.find({ relations:[ 'stocks' ] });
 
-        // Get product variants
+        // // Get product variants
         let variants = await this.productVariantModel.find();
 
         stocks = intersectionBy(
@@ -682,20 +682,17 @@ export class AppService {
 
         let sorted_products = products.map(
             product => {
-                return {
-                    code:  product.code,
-                    stock: sum((get(product,'__stocks__')).map( stock => stock.quantity))
-                }
+                return { ...product, stock:      sum((get(product,'__stocks__')).map( stock => stock.quantity)) }
             }
-        )
+        );
 
         await Promise.all(
             chunk(sorted_products,1).map( async (sorted_product) => {
                 await this.productModel.upsert(
                     sorted_product,
                     {
-                        conflictPaths: ["code"],
-                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );
             })
