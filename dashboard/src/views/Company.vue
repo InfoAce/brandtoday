@@ -255,7 +255,7 @@ import vueDropzone from 'dropzone-vue3'
 import { CardLoader } from '../components';
 import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import moment from 'moment';
-import { VueToggles } from "vue-toggles";
+import VueToggles from "vue-toggles";
 
 export default {
     beforeCreate(){
