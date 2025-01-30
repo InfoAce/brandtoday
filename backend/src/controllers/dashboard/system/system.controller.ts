@@ -10,7 +10,7 @@ export class SystemController {
 
     private readonly logger = new Logger(SystemController.name);
 
-    private readonly file_path = `${process.cwd()}${sep}configurations.json`;
+    private readonly file_path = `${process.cwd()}${sep}config.json`;
 
     private jsonPlugin         = require('json-reader-writer');
 
