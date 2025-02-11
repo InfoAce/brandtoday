@@ -64,6 +64,8 @@ export class AppService {
           // Get amrod credentials from the configuration service
           let { credentials } = this.configService.get<any>('services.amrod');
 
+          console.log(credentials);
+
           // Login to amrod
           await this.amrodService.login(credentials);
 
