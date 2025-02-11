@@ -172,8 +172,8 @@ export class CategoryController {
 
               products_count += count;
               
-              let product = get(first(shuffle(product_categories)),'product');
-    
+              let product = await (get(first(shuffle(product_categories)),'product'));
+              
               // Get the categories for the child category
               let images: any   = get(product,'images');
     

@@ -25,7 +25,7 @@
         <!-- section start -->
         <section class="section-b-space" v-if="!$data.saved">
             <div class="container-fluid">
-                <div class="checkout-page">
+                <div class="checkout-page px-4">
                     <div class="checkout-form pb-6">
                         <form>
                             <div class="row">
