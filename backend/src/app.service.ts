@@ -251,8 +251,6 @@ export class AppService {
         // Fetch amrod branding prices  
         let branding_prices = await this.amrodService.getBrandingPrices();     
 
-        fs.writeFileSync('branding_prices_raw.json', JSON.stringify(branding_prices));
-
         // Fetch amrod branding
         let branding        = products.filter( product => !isEmpty(product.brandings) ).map( product =>
             product.brandings.map( 
@@ -310,14 +308,10 @@ export class AppService {
         )
         .flat();
 
-        fs.writeFileSync('branding_prices.json', JSON.stringify(branding_prices));
-
         branding_methods = branding_methods.map( (method) => {
             let price = branding_prices.find( price => price.brandingCode == method.simple_code );
             return {...method, ...pick(price,['price','minQuantity','maxQuantity','setup'])};
         });
-
-        fs.writeFileSync('branding_methods_priced.json', JSON.stringify(branding_methods));
 
         // Fetch amrod colour swatches
         let colour_swatches = await this.amrodService.getColourSwatches();  
