@@ -56,96 +56,23 @@
                                     </path>
                                 </svg>
                             </div>
-                            <h2>thank you</h2>
+                            <h2>Payment Successful </h2>
                             <p>Payment is successfully processsed and your order is on the way</p>
-                            <p class="font-weight-bold" v-if="!isEmpty($data.order)">Transaction ID: {{  $data.order.transaction.confirmation_code }}</p>
+                            <p class="font-weight-bold" v-if="!isEmpty($data.transaction)">Transaction ID: {{  $data.transaction.confirmation_code }}</p>
+                            <button class="btn btn-theme btn-lg" @click="$router.push({ name: 'AccountOrders' })" v-if="!isEmpty(auth)">View Order</button>
+                            <button class="btn btn-theme btn-lg" @click="$router.push({ name: 'Login' })" v-if="isEmpty(auth)">Login</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- Section ends -->
-
-        <!-- order-detail section start -->
-        <section class="section-b-space">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="product-order">
-                            <template v-if="!isEmpty($data.order)">
-                                <div class="row product-order-detail" v-for="(item,index) in $data.order.items" :key="index">
-                                    <div class="col-3">
-                                        <img :src="item.image" alt="" class="img-fluid blur-up lazyload">
-                                    </div>
-                                    <div class="col-3 order_detail">
-                                        <div>
-                                            <h4>product name</h4>
-                                            <h5>{{ item.name }}</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-3 order_detail">
-                                        <div>
-                                            <h4>quantity</h4>
-                                            <h5>{{ item.quantity }}</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-3 order_detail">
-                                        <div class="col-12">
-                                            <h4>price</h4>
-                                            <h5>KSH {{ item.price.toFixed() }}</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="final-total total-sec">
-                                    <h3>total <span>KSH {{ sum($data.order.items.map( item => item.price * item.quantity )).toFixed() }}</span></h3>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="order-success-sec" v-if="!isEmpty($data.order)">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <h4>summery</h4>
-                                    <ul class="order-detail">
-                                        <li>order ID: {{$data.order.num_id}}</li>
-                                        <li>Order Date: {{ $moment($data.order.created_at).format('Do MMMM, Y') }}</li>
-                                        <li>Order Total: KSH {{ sum($data.order.items.map( item => item.price * item.quantity )).toFixed() }}</li>
-                                    </ul>
-                                </div>
-                                <div class="col-sm-6">
-                                    <h4>shipping address</h4>
-                                    <ul class="order-detail">
-                                        <li>gerg harvell</li>
-                                        <li>568, suite ave.</li>
-                                        <li>Austrlia, 235153</li>
-                                        <li>Contact No. 987456321</li>
-                                    </ul>
-                                </div>
-                                <div class="col-sm-12 payment-mode">
-                                    <h4>payment method</h4>
-                                    <p>Pay on Delivery (Cash/Card). Cash on delivery (COD) available. Card/Net banking
-                                        acceptance subject to device availability.</p>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="delivery-sec">
-                                        <h3>expected date of delivery: <span>october 22, 2018</span></h3>
-                                        <a href="order-tracking.html">track order</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Section ends -->        
+        <!-- Section ends -->      
     </div>
 </template>
 
 <script lang="ts" setup>
 // Import packages
-import { computed, inject, onBeforeMount, reactive } from 'vue';
+import { computed, inject, onBeforeMount, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { cloneDeep, isEmpty, has, sum} from 'lodash';
@@ -160,31 +87,39 @@ const $store  = useStore();
 
 // Data variables
 const $data   = reactive({
-    order: Object()
+    transaction: Object()
 });
 
+const auth   = computed( () => $store.getters.auth );
+/**
+ * Fetches the order details using the order ID from the route parameters.
+ * If successful, the order data is cloned and stored in the reactive data object.
+ * Commits the loader state to false in case of an error or after the operation completes.
+ */
+const checkOrder = async () => {
+    try {
+        // Send a PUT request to fetch order details using the order ID from the route parameters
+        const { data: { order } } = await $api.put(`/orders/${$route.params.order}/show`);
+        
+        // Clone the fetched order data into the reactive data object
+        $data.transaction = cloneDeep(order.transaction);
+    } catch (error) {
+        // Commit the loader state to false in case of an error
+        $store.commit('loader', false);
+    } finally {
+        // Ensure the loader state is committed to false after the operation completes
+        $store.commit('loader', false);
+    }
+}
 // Before component mount, fetch data from successful order
-onBeforeMount(() => {
-
-    console.log($route.params)
+onBeforeMount( async () => {
+    $store.commit('loader',true);
     if( !has($route.params,'order') ){
         $router.push({ name: 'Error404' });
     }
-
-    $store.commit('loader',true);
-
-    $api.put(`/orders/${$route.params.order}`)
-        .then( ({ data: { order }}) => {
-            $data.order = cloneDeep(order);
-        })
-        .catch( () => {
-            $store.commit('loader',false);
-        })
-        .finally( () =>{
-            $store.commit('loader',false);
-        })
-
 });
 
+// On component mount, fetch data from successful order
+onMounted(checkOrder)
 
 </script>

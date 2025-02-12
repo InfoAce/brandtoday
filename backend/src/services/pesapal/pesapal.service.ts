@@ -3,36 +3,40 @@ import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import { has, isEmpty, pick } from 'lodash';
 import { PesapalServiceException } from "src/exceptions/pesapal.exception";
+import { sep } from 'path';
+
+const json = require('json-reader-writer');
 
 @Injectable()
 export class PesapalService {
 
     private readonly config;
 
+    private readonly home;
+
     constructor(
         private readonly configService: ConfigService,
     ) {
+        this.home   = !process.cwd().includes('backend') ? `${process.cwd()}${sep}backend` : process.cwd();
         this.config = this.configService.get<string>('services.pesapal');
     }
 
     // Interceptor with authentication
     request(data: any = {}){
-        let headers =             {
-            'connection':   'keep-alive',
-            'Content-Type': 'application/json',
-            'Accept':       'application/json'
-        }
+        
+        const headers              = { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+        const { pesapal:{ live } } = json.readJSON(`${this.home}${sep}config.json`);
 
         if( !isEmpty(data) ){
             if( has(data,'auth') ){
                 headers['Authorization'] = `${data.auth.type} ${data.auth.token}`;
-                axios.defaults.timeout = 50000;
+                // axios.defaults.timeout = 50000; 
             }
         }
         
         return axios.create({
-            baseURL: this.config.configuration.live ? this.config.base.live : this.config.base.sandbox,
-            timeout: 50000,
+            baseURL: live ? this.config.base.live : this.config.base.sandbox,
+            timeout: 60000,
             headers
         });
     }
@@ -45,15 +49,11 @@ export class PesapalService {
      * @throws {PesapalServiceException} - If there is an error during authentication
      */
     async auth(){
-        // Retrieve consumer key and secret from config
-        let { 
-            configuration:{
-                consumer_key,
-                consumer_secret
-            }
-        }  = this.config;
 
         try {
+
+            // Retrieve consumer key and secret from config
+            let { pesapal:{ consumer_key, consumer_secret } } = json.readJSON(`${this.home}${sep}config.json`);
 
             // Send POST request to Pesapal API authentication endpoint
             // with consumer key and secret
@@ -63,6 +63,7 @@ export class PesapalService {
             return data;
 
         } catch(error) {
+            console.log(error);
             // Throw PesapalServiceException if there is an error during authentication
             throw new PesapalServiceException(error);
         }

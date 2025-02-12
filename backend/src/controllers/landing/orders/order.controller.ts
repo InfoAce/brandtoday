@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { first, get, has, pick, set, sum, sumBy} from 'lodash';
@@ -16,6 +16,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ControllerException } from 'src/exceptions/controller.exception';
 import { interval, map, Observable, startWith, switchMap, takeUntil } from 'rxjs';
 import * as fs from 'fs'
+import { Http } from 'winston/lib/winston/transports';
 
 @Controller('orders')
 export class OrderController {
@@ -135,7 +136,7 @@ export class OrderController {
             return await this.orderItemModel.save({ ...item, order_id: order.id });
           })
         )
-        
+
         
         // Send user confirmation email
         await this.mailService.sendUserConfirmation(user);
@@ -188,7 +189,7 @@ export class OrderController {
   } 
 
   @UseGuards(OptionalGuard)
-  @Put(':order')
+  @Put(':order/show')
   async show(
     @Param('order') orderId: string,
     @Req()          req: Request,  
@@ -196,9 +197,8 @@ export class OrderController {
   ) {
 
     try{
-    
-      let order                = await this.orderModel.findOne({id: orderId });
-      let cached_products: any = await this.cacheManager.store.get('amrod_products');
+      let order                = await this.orderModel.findOne({ where:{ id: orderId } });
+      // let cached_products: any = await this.cacheManager.store.get('amrod_products');
 
       // order.items = order.items.map( item => {
       //   let product = cached_products.find( value => value.fullCode == item.code )
@@ -209,7 +209,7 @@ export class OrderController {
       return res.status(HttpStatus.OK).json({ order });
 
     } catch (err) {
-
+      throw new HttpException(err.message, err.status);
     }
 
   }  
@@ -363,20 +363,29 @@ export class OrderController {
     try{
 
       // Find the order
-      let order        = await this.orderModel.findOneBy({ id: orderId }); 
+      let order            = await this.orderModel.findOneBy({ id: orderId }); 
+
+      // Get the user associated with the order
+      let user             = await order.user; 
+
+      // Order items amount
+      let totalAmount: any = order.items.map( item => item.price * item.quantity );
 
       // Calculate the order total amount
-      let totalAmount  = sum(order.items.map( item => item.price * item.quantity )); 
-      
-      // Get the user associated with the order
-      let user         = await order.user; 
+      totalAmount  = sum(
+        totalAmount.concat(
+          !isEmpty(user.company.service_fees) ? 
+            user.company.service_fees.map( fee => fee.type == 'percentage' ? ((fee.amount*sum(totalAmount))/100) : sum(totalAmount.concat(fee.amount))  ) :
+              []
+        )
+      )
       
       // Process pesapal transaction
       let { token } = await this.pesapalService.auth();
 
       // Register the IPN (Instant Payment Notification) for the order
       let pesapal_ipn  = await this.pesapalService.registerIPN({
-        url: `${this.configService.get<string>('app.APP_URL')}/api/v1/orders/${order.id}/status`,
+        url: `${this.configService.get<string>('app.APP_URL')}/order/${order.id}/complete`,
         ipn_notification_type: 'GET'
       },token);
 

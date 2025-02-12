@@ -577,6 +577,7 @@ const placeOrder = async () => {
 
         if( order.saved === true ){
             $data.saved = order.saved;
+            
             $store.commit('cart', []);
 
             // Show a success toast

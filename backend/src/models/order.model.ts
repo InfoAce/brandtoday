@@ -23,10 +23,18 @@ export default class OrderModel extends OrderRepository {
     super(orderRepository.target, orderRepository.manager, orderRepository.queryRunner) 
   }
   
-  async find(data:any): Promise<OrderEntity[]>{
-    try{
+  /**
+   * Finds all orders based on the provided data.
+   *
+   * @param {object} data - The data used to find the orders.
+   * @returns {Promise<OrderEntity[]>} A promise that resolves to an array of OrderEntity objects.
+   */
+  async find(data: any): Promise<OrderEntity[]> {
+    try {
+      // Find all orders in the repository based on the provided data.
       return await this.orderRepository.find(data);
-    } catch(error){
+    } catch (error) {
+      // Log any errors that occur during the execution of the function.
       this.logger.error(error);
     }
   }
