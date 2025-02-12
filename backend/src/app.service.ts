@@ -280,23 +280,23 @@ export class AppService {
             branding_price => {
                 let maxPrice = maxBy(branding_price.data,'setup');
 
-                if( company.use_exchange_rate ){
-                    maxPrice.price = parseFloat((maxPrice.price * company.exchange_rate).toFixed(2));
-                    maxPrice.setup = parseFloat((maxPrice.setup * company.exchange_rate).toFixed(2));
-                }
+                // if( company.use_exchange_rate ){
+                //     maxPrice.price = parseFloat((maxPrice.price * company.exchange_rate).toFixed(2));
+                //     maxPrice.setup = parseFloat((maxPrice.setup * company.exchange_rate).toFixed(2));
+                // }
     
-                if( company.use_product_fee ){
-                    switch(company.product_fee_type){
-                        case 'fixed':
-                            maxPrice.price = parseFloat((maxPrice.price + company.product_fee).toFixed(2));
-                            maxPrice.setup = parseFloat((maxPrice.setup + company.product_fee).toFixed(2));
-                        break;
-                        case 'percentage':
-                            maxPrice.price =  parseFloat((maxPrice.price * (company.product_fee/100)).toFixed(2));
-                            maxPrice.setup =  parseFloat((maxPrice.setup * (company.product_fee/100)).toFixed(2));
-                        break;
-                    }
-                }
+                // if( company.use_product_fee ){
+                //     switch(company.product_fee_type){
+                //         case 'fixed':
+                //             maxPrice.price = parseFloat((maxPrice.price + company.product_fee).toFixed(2));
+                //             maxPrice.setup = parseFloat((maxPrice.setup + company.product_fee).toFixed(2));
+                //         break;
+                //         case 'percentage':
+                //             maxPrice.price =  parseFloat((maxPrice.price * (company.product_fee/100)).toFixed(2));
+                //             maxPrice.setup =  parseFloat((maxPrice.setup * (company.product_fee/100)).toFixed(2));
+                //         break;
+                //     }
+                // }
 
                 return { 
                     ...maxPrice, 
@@ -318,22 +318,22 @@ export class AppService {
         
         products = products.map( product => {
             let productPrices = prices.filter( price => price.simplecode.includes(product.simpleCode) || price.fullCode.includes(product.simpleCode) );
-            let maxPrice      = get(maxBy( productPrices,'price'),'price');
+            let maxPrice      = get(maxBy(productPrices,'price'),'price');
 
-            if( company.use_exchange_rate ){
-                maxPrice = parseFloat((maxPrice * company.exchange_rate).toFixed(2));
-            }
+            // if( company.use_exchange_rate ){
+            //     maxPrice = parseFloat((maxPrice * company.exchange_rate).toFixed(2));
+            // }
 
-            if( company.use_product_fee ){
-                switch(company.product_fee_type){
-                    case 'fixed':
-                        maxPrice = parseFloat((maxPrice + company.product_fee).toFixed(2));
-                    break;
-                    case 'percentage':
-                        maxPrice =  parseFloat((maxPrice * (company.product_fee/100)).toFixed(2));
-                    break;
-                }
-            }
+            // if( company.use_product_fee ){
+            //     switch(company.product_fee_type){
+            //         case 'fixed':
+            //             maxPrice = parseFloat((maxPrice + company.product_fee).toFixed(2));
+            //         break;
+            //         case 'percentage':
+            //             maxPrice =  parseFloat((maxPrice * (company.product_fee/100)).toFixed(2));
+            //         break;
+            //     }
+            // }
 
             return { ...product, price: maxPrice, code: `${product.productName}_${product.fullCode}`.toLowerCase().replace(/\s/g, '') }
         });
