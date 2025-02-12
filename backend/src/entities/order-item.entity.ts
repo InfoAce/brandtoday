@@ -10,7 +10,7 @@ export class OrderItemEntity {
   @Column({
     type:     'tinyint',
     nullable: true,
-    default:  true
+    default:  false
   })
   branded: boolean;
 

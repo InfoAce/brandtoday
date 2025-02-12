@@ -63,39 +63,20 @@ export class MailService {
       let pug     = require('pug');
       let context = Object();
 
-      // let context = {
-      //   address:         order.address,
-      //   company_logo:    `${this.configService.get<string>('APP_URL')}${user.company.logo}`,
-      //   company_name:    user.company.name,
-      //   company_address: user.company.address,
-      //   company_email:   user.company.email,
-      //   company_phone:   user.company.phone_number,
-      //   created_at:      moment(order.created_at).format('Do MMMM YYYY'),
-      //   customer:        {
-      //     email:           user.email,
-      //     first_name:      user.first_name,
-      //     last_name:       user.last_name,
-      //     phone_number:    user.phone_number
-      //   },
-      //   currency:        user.company.currency,
-      //   extra_charges:   Array(),
-      //   items:           order.items,
-      //   order_number:    order.num_id,
-      //   transaction:     order.transaction,
-      //   total:           order.items.map( item => item.quantity * item.price ).reduce( (a,c) => a + c, 0)
-      // }
-
       context.currency        = user.company.currency;
       context.company_logo    = `${this.configService.get<string>('APP_URL')}${user.company.logo}`;
       context.company_address = user.company.address;
       context.company_name    = user.company.name;
       context.company_phone   = user.company.phone_number;
+      context.address         = order.address;
+      context.user            = order.user;
       context.total           = order.items.map( item => item.total_amount ).reduce( (a,c) => a + c, 0)
       context.quote_number    = moment().unix();
       context.customer_name   = `${user.first_name} ${user.last_name}`;
       context.items           = order.items;
-      console.log(order.items);
-      
+      context.created_at      = moment(order.created_at).format('Do MMMM YYYY');
+      context.extra_charges   = Array();
+
       if( !isNull(user.company.service_fees) ){
         context.extra_charges = user.company.service_fees.map( service => ({ name: service.name, amount: service.type == 'percentage' ? (context.total * service.amount) / 100 : service.amount }) );
       }
@@ -103,7 +84,7 @@ export class MailService {
       let browser = await puppeteer.launch();
       let page    = await browser.newPage();
 
-      await page.setContent(pug.renderFile(resolve(process.cwd(), "views/emails/quote/create.pug"),context));
+      await page.setContent(pug.renderFile(resolve(process.cwd(), "views/emails/order/attachment.pug"),context));
 
       let pdf     = await page.pdf();
 
@@ -111,10 +92,10 @@ export class MailService {
       await this.mailerService.sendMail({
         to: user.email,  // The recipient's email address.
         subject: `${this.configService.get<string>('APP_NAME') } Order #${order.num_id} Created`,  // The subject of the email.
-        template: 'order/pdf',  // The name of the handlebars template to use.
+        template: 'order/create',  // The name of the handlebars template to use.
         attachments: [{ 
-            filename: `order-${order.num_id}.pdf`, 
-            content:  Buffer.from(pdf)
+          filename: `order-${order.num_id}.pdf`, 
+          content:  Buffer.from(pdf)
         }],
         context,
       });

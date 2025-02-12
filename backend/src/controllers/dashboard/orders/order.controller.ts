@@ -73,10 +73,7 @@ export class DashboardOrderController {
     try {
 
       // Fetch the order with the specified ID, including its associated user.
-      let order = await this.orderModel.findOne({
-        where: { id: orderId },
-        relations: ['user']
-      });
+      let order = await this.orderModel.findOne({ where: { id: orderId }, relations: ['user'] });
 
       // Return the fetched order as a JSON response with a 200 status code.
       return res.status(HttpStatus.OK).json({ order });

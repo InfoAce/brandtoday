@@ -315,7 +315,6 @@ const $data   = reactive({
     },
     isDisabled:   Boolean(true),
     order:        Object(),
-    saved:        Boolean(),
     service_fees: Array()
 });
 const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
@@ -354,7 +353,9 @@ const home       = computed( () => $store.getters.home);
 const sub_total  = computed( () => sum(cart_items.value.map( (val:any) => val.total_amount )) )
 const total      = computed( () => sum(
         cart_items.value.map( (val:any) => val.total_amount ).concat(
-            $data.service_fees.map( (fee:any) => fee.type == 'fixed' ? fee.amount : ((fee.amount/100) * sub_total.value) )
+            !isEmpty($data.service_fees) ? 
+                $data.service_fees.map( (fee:any) => fee.type == 'fixed' ? fee.amount : ((fee.amount/100) * sub_total.value) ) :
+                    []
         )
     )  
 )
@@ -571,10 +572,11 @@ const placeOrder = async () => {
 
         if( order.saved === true ){
             $data.saved = order.saved;
-            $store.commit('cart', []);
+            // $store.commit('cart', []);
 
             // Show a success toast
-            $toast.success('Your order has been saved. Please check your email for order details.');            
+            $toast.success('Your order has been saved. Please check your email for order details.'); 
+   
         }
 
         // Set the order status to 'saved'

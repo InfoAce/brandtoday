@@ -1,0 +1,161 @@
+doctype transitional
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width,initial-scale=1')
+  link(rel='icon' href='images/favicon.png' type='image/x-icon')
+  link(rel='shortcut icon' href='images/favicon.png' type='image/x-icon')
+  link(href='https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap' rel='stylesheet' type='text/css')
+div(style='background-color: #fafafa; width:100%; min-height: 100%; display: flex; flex-direction: column; align-items: center;') 
+  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse; margin-top: 30px;margin-bottom: 30px;')                
+    tbody(style='font-family: Montserrat, sans-serif !important; font-size: 12px; border: 1px solid #ededed;')      
+        tr(style='border-bottom: 1px solid #ededed;')
+            td(style='border-collapse: collapse; width:100%;')
+              div(style='display: flex; align-items: center; justify-content: center; margin: 10px; width:100%;')
+                img(src=company_logo alt=company_name width='30%')
+              table(style='width:100%; margin-bottom: 10px;')
+                tbody(style='font-family: Montserrat, sans-serif !important; border: 1px solid #ededed;')  
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")
+                          span 
+                              b
+                              | Date:    
+                          span=created_at 
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")
+                          span 
+                              b
+                              | Address:  
+                          span=company_address  
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")
+                          span 
+                              b
+                              | Phone Number:  
+                          span=company_phone  
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")
+                          b
+                              | Quote Number: 
+                          span
+                              b=quote_number   
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")     
+                          span 
+                              b
+                              | Customer:        
+                          span=customer_name  
+                    tr(style='border-bottom: 1px solid #ededed;')
+                        td(style='border-collapse: collapse; width:100%;text-align: center;')                          
+                          p(style="margin: 0px;")   
+                          span 
+                              b
+                              | Delivery Address:                               
+                          span=address.address_line_1
+                          span
+                              | ,
+                          span=address.postal_code
+                          span
+                              | ,                                      
+                          span=address.county_state    
+                          span
+                              | ,                                            
+                          span=address.country                                                                                                                                                                                                       
+  table(border='0' cellpadding='0' cellspacing='0' align='left' style='width:90%;border-collapse: collapse;')  
+    thead(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;')     
+      tr(style="border: 1px solid #ededed;")
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;')
+          | Product 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Colour / Size 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | QTY 
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Unit Price    
+        th(style='border-collapse: collapse; padding: 10px;font-size: 12px; text-align: left;') 
+          | Amount                                                    
+    tbody(style='font-family: Montserrat, sans-serif !important;border: 1px solid #ededed;font-size: 12px;')                         
+        each item, key in items
+          tr(style="border-bottom: 1px solid #ededed;")
+            td(style='border-collapse: collapse;padding: 10px;display: flex; align-items: center;')
+              img(height="50" src=item.image alt=item.name)  
+              div(style='display: flex; flex-direction: column;')
+                p(style='margin: 0px;')
+                  b=item.name        
+                if item.positions 
+                  each position, index in item.positions 
+                    p Position
+                      span=index + 1
+                    p(style='margin: 0px;')
+                      span=position.branding_name
+                      span
+                        | - 
+                      span=position.code    
+                    p=position.method_name   
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              if item.colour
+                span=item.colour 
+              if !item.colour
+                span 
+                  | N/A
+              if item.sizes
+                span / 
+                span=item.sizes.map( size => size.name ).join(',')
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=item.total_quantity 
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=currency 
+              span
+                | 
+              span=item.price 
+              if item.positions    
+                each position, index in item.positions 
+                  p
+                    span=currency
+                    span=position.price           
+                  p
+                    span=currency 
+                    span=position.setup           
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              p              
+                span=currency
+                span 
+                |
+                span=item.total_amount.toFixed(2)
+        tr(style="border-bottom: 1px solid #ededed;")
+            td(style='border-collapse: collapse; padding: 10px;' colspan="4") Sub Total
+            td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+              span=currency
+              span 
+                |
+              span=total.toFixed(2)
+        each charge, key in extra_charges
+            tr(style="border-bottom: 1px solid #ededed; ")
+              td(style='border-collapse: collapse; padding: 10px;' colspan="4")
+                span=charge.name
+              td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+                span=currency
+                span 
+                  |
+                span=charge.amount.toFixed(2)
+        tr(style="border-bottom: 1px solid #ededed;")
+          td(style='border-collapse: collapse; padding: 10px;' colspan="4") Total Amount
+          td(style='border-collapse: collapse; padding: 10px; text-align: left;')
+            b
+              span=currency 
+              span 
+                |
+              span=(extra_charges.map( charge => charge.amount).reduce( (a,c) => a + c,  0) + total).toFixed(2) 
+  table(align='center' border='0' cellpadding='0' cellspacing='0' style='margin-top: 30px; width: 100%; justify-content: end; font-size: 12px;')
+    tbody(style='font-family: Montserrat, sans-serif !important;')
+      tr(style='font-family: Montserrat, sans-serif !important;')
+        td(style='text-align: center;')
+          p This is a quotation for the list of products displayed above.
+          p 
+            span Generated on 
+            span=created_at
