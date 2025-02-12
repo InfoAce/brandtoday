@@ -572,7 +572,7 @@ const placeOrder = async () => {
 
         if( order.saved === true ){
             $data.saved = order.saved;
-            // $store.commit('cart', []);
+            $store.commit('cart', []);
 
             // Show a success toast
             $toast.success('Your order has been saved. Please check your email for order details.'); 
