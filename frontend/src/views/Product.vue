@@ -214,20 +214,20 @@
                                 </div>
                                 <div class="product-buttons border-product m-0">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <button class="btn btn-theme btn-lg w-100" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
                                                 <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
                                                 <span v-if="$isEmpty(cartItem)">add to cart</span>
                                                 <span v-if="!$isEmpty(cartItem)">already in cart</span> 
                                             </button>                                             
                                         </div>
-                                        <div class="col-md-6" v-if="!$isEmpty($data.product.__branding__)">
+                                        <!-- <div class="col-md-6" v-if="!$isEmpty($data.product.__branding__)">
                                             <button class="btn btn-theme btn-lg w-100" :disabled="isDisabled || !$isEmpty(cartItem) || loading.quote" @click="buyBranded">
                                                 <i v-if="!loading.quote" class="fas fa-file-alt"></i>
                                                 <i v-if="loading.quote" class="fa fa-spinner fa-spin"></i>
                                                 Buy Branded
                                             </button>                                             
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>                                

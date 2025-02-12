@@ -11,9 +11,7 @@ export class ProductColourSubscriber implements EntitySubscriberInterface<Produc
         private dataSource: DataSource,
         @Inject('ConfigService')
         private readonly configService: ConfigService
-    ){
-        console.log(this);
-    }
+    ){}
 
     listenTo() {
         return ProductColourEntity;
