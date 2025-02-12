@@ -425,7 +425,7 @@ export class OrderController {
       }
       
       // If an error occurs, log the error and return an HTTP 500 status
-      throw new InternalServerErrorException(error);
+      throw new HttpException(error.message,error.status);
     
     }
   }
