@@ -183,7 +183,11 @@
                                                     </tr>
                                                     <tr v-for="(fee, index) in $data.service_fees" :key="index">
                                                         <td class="text-left"><strong>{{ fee.name }}</strong></td>
-                                                        <td class="text-left">{{ currency }} {{ fee.amount.toFixed(2) }}</td>
+                                                        <td class="text-left">
+                                                            {{ currency }} 
+                                                            <span v-if="fee.type == 'fixed'">{{ fee.amount }}"></span>
+                                                            <span v-if="fee.type == 'percentage'">{{ (( fee.amount * sub_total ) / 100 ).toFixed(2) }}</span>
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td class="text-left"><strong>Total</strong></td>
