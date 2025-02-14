@@ -416,21 +416,19 @@ const selectAddress = (value: string) => {
  * @param {string} field - The name of the field to validate.
  * @returns {void}
  */
-const validateForm = (field) => {
-    // Validate the field using the form schema
-    formSchema.validateAt(field, $data.form)
-        .then((value,key) => {
-            // If the field is valid, delete the corresponding error from the errors object
-            delete $data.errors[field];
-        })
-        .catch((err) => {
-            // If the field is invalid, update the errors object with the error message
-            $data.errors[err.path] = err.message;
-        })
-        .finally( () => {
-            // Update the isDisabled property based on the presence of errors
-            $data.isDisabled = !isEmpty($data.errors);
-        })
+const validateForm = async (field) => {
+    try{
+        // Validate the field using the form schema
+        await formSchema.validateAt(field, $data.form)        
+        // If the field is valid, delete the corresponding error from the errors object
+        delete $data.errors[field];
+    } catch(error) {
+        // If the field is invalid, update the errors object with the error message
+        $data.errors[err.path] = error.message;
+    } finally {
+        // Update the isDisabled property based on the presence of errors
+        $data.isDisabled = !isEmpty($data.errors);
+    }
 }
 
 /**
@@ -695,7 +693,6 @@ onBeforeMount( async() => {
         }
 
         $data.form.items   = cloneDeep(cart_items.value);
-        console.log($data.form);
         
     } catch (error) {
         $store.commit('loader',false);
@@ -711,6 +708,7 @@ onMounted(
             watch(
                 () => $data.form, 
                 (form) => {
+                    console.log(form);
                     each(form,(value,key) => {
                         validateForm(key);
                     });
