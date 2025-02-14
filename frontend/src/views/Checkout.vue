@@ -424,7 +424,7 @@ const validateForm = async (field) => {
         delete $data.errors[field];
     } catch(error) {
         // If the field is invalid, update the errors object with the error message
-        $data.errors[err.path] = error.message;
+        $data.errors[error.path] = error.message;
     } finally {
         // Update the isDisabled property based on the presence of errors
         $data.isDisabled = !isEmpty($data.errors);
