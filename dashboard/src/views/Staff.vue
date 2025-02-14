@@ -78,7 +78,7 @@
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="8" class="text-center p-5">
+                                            <td colspan="8" class="text-center p-3">
                                                 <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No staff members found.</h4>
                                             </td>
                                         </tr>

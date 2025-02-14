@@ -54,7 +54,7 @@ import localStorage from 'reactive-localstorage';
 const store  = useStore();
 const router = useRouter();
 const $api   = inject('$api');
-const swal = inject('$swal');
+const swal   = inject('$swal');
 
 const data   = reactive({
 	errors: {},

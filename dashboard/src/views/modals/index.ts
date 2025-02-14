@@ -3,3 +3,4 @@ export { default as AddBrand } from './AddBrand.vue';
 export { default as AddServiceFee } from './AddServiceFee.vue';
 export { default as EditCategory } from './EditCategory.vue';
 export { default as EditOrder } from './EditOrder.vue';
+export { default as OrderTimeline } from './OrderTimeline.vue';
