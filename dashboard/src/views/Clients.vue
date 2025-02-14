@@ -59,10 +59,10 @@
                                 <tbody>
                                     <template v-if="!$isEmpty($data.clients)">
                                         <tr v-for="(client,index) in $data.clients" :key="index">
-                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ getIndex(index) }}</td>
                                             <td>
-                                            <img v-if="!$isNull(client.image)" :src="client.image" :alt="`${client.first_name} ${client.last_name}`"/>
-                                            <h2 v-else><i class="fa fa-user-circle"></i></h2>
+                                                <img v-if="!$isNull(client.image)" :src="client.image" :alt="`${client.first_name} ${client.last_name}`"/>
+                                                <h2 v-else><i class="fa fa-user-circle"></i></h2>
                                             </td>
                                             <td>{{ client.first_name }} {{ client.last_name }}</td>
                                             <td>{{ client.email }}</td>
@@ -76,8 +76,8 @@
                                     </template>
                                     <template v-else>
                                         <tr>
-                                            <td colspan="8" class="text-center p-5">
-                                                <h4 class="mb-0"><i class="fa fa-exclamation-triangle"></i> No clients found.</h4>
+                                            <td colspan="8" class="p-3">
+                                                <h4 class="mb-0 text-center"><i class="fa fa-exclamation-triangle"></i> No clients found.</h4>
                                             </td>
                                         </tr>
                                     </template>
@@ -86,11 +86,12 @@
                         </div>
                         <div class="col-12 py-4 d-flex justify-content-center" v-if="!$isEmpty($data.clients)">
                             <paginate
-                                :page-count="$data.filter.total"
-                                :click-handler="fetchPaginate"
+                                v-model="$data.pagination.page"
+                                :page-count="$data.pagination.pages"
+                                :page-range="2"
                                 :prev-text="'Prev'"
                                 :next-text="'Next'"
-                                :container-class="'className'"
+                                container-class="text-center"
                             />
                         </div>
                     </div>
@@ -120,39 +121,57 @@ const $moment  = moment;
 const $isEmpty = isEmpty;
 const $times   = times;
 const $isNull  = isNull;
-const $data    = reactive({clients: Object(),filter:{ page: 1, perPage: 10, total: 0 }});
+const $data    = reactive({
+    clients: Object(),
+    pagination: {
+        page:  1, 
+        pages: 1,
+        limit: 5
+    }
+});
 
+/**
+ * Fetch clients data
+ * 
+ * @returns {void}
+ */
 const fetch = async () => {
     try {
+        // Show the card loader
         store.commit('card_loader',true);
-        let { page, perPage } = $data.filter,url = `/dashboard/users?type=client&page=${page}&limit=${perPage}`;
-        let { data: { users, count } } = await $api.get(url);
+        // Get the page and per page from the pagination
+        const { page, limit } = $data.pagination;
+        // Fetch the users
+        const { data: { users, count } } = await $api.get(`/dashboard/users?type=client&page=${page}&limit=${limit}`);
+        // Hide the card loader
         store.commit('card_loader',false);
-        $data.clients      = cloneDeep(users);
-        $data.filter.total = count;
+        // Set the clients to the users
+        $data.clients          = cloneDeep(users);
+        // Set the total number of pages
+        $data.pagination.pages = Math.ceil(count/$data.pagination.limit);
     } catch(error) {
+        // Hide the card loader
         store.commit('card_loader',false);
+        // Show a toast error
         $toast.error(`Something went wrong while fetching users.`);
+    } finally {
+        // Hide the card loader
+        store.commit('card_loader',false);        
     }
 }
 
+const getIndex = (index: number) => $data.pagination.page >= 2 ? ((index + 1) + $data.pagination.limit) : (index + 1) 
+
 /**
- * Handles pagination click event.
+ * Fetch categories data before the component is mounted
  * 
- * @param {Object} event The pagination event object.
+ * @returns {void}
  */
-const fetchPaginate = () => {
-    console.log(arguments);
-}
+ onBeforeMount(() => fetch());
 
-onBeforeMount(() => fetch());
+// Watch for page changes
+watch( 
+    () => $data.pagination.page,
+    () => fetch()
+)
 </script>
-
-<style scoped>
-.review-table thead tr th {
-    text-align: center !important;
-}
-.review-table tbody tr td {
-    text-align: center !important;
-}
-</style>

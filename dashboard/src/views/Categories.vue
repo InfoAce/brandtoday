@@ -52,7 +52,7 @@
                                   <tbody>
                                     <template v-if="!isEmpty($data.categories)">
                                         <tr v-for="(category,index) in $data.categories" :key="index">
-                                          <td>{{ index + 1 }}</td>
+                                          <td>{{ getIndex(index) }}</td>
                                           <td>{{ category.name }}</td>
                                           <td>{{ category.code }}</td>
                                           <td>{{ category.path }}</td>
@@ -90,7 +90,6 @@
                                 v-model="$data.pagination.page"
                                 :page-count="$data.pagination.pages"
                                 :page-range="2"
-                                :click-handler="fetchPaginate"
                                 :prev-text="'Prev'"
                                 :next-text="'Next'"
                                 container-class="text-center"
@@ -136,9 +135,9 @@ const $data    = reactive({
         view: false
     },
     pagination: {
-        page: 1, 
-        pages: 0,
-        limit: 10
+        page:  1, 
+        pages: 1,
+        limit: 5
     }
 });
 
@@ -200,14 +199,26 @@ const viewCategory = async ({ id }) => {
     }
 }
 
+const getIndex = (index: number) => $data.pagination.page >= 2 ? ((index + 1) + $data.pagination.limit) : (index + 1) 
 
-const fetchPaginate = () => {
-    console.log(arguments);
-}
+/**
+ * Update the modal visibility
+ * 
+ * @param {boolean} value - The visibility state of the modal
+ * @returns {void}
+ */
+const updateModal = (value) => $data.modals.view = value;
 
-const updateModal = (value) => {
-    $data.modals.view = value
-}
-
+/**
+ * Fetch categories data before the component is mounted
+ * 
+ * @returns {void}
+ */
 onBeforeMount(() => fetch());
+
+// Watch for page changes
+watch( 
+    () => $data.pagination.page,
+    () => fetch()
+)
 </script>
