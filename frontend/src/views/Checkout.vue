@@ -201,6 +201,7 @@
                                                     <VueToggles v-model="$data.form.saved"/>               
                                                 </div>
                                                 <div class="col-12">
+                                                    {{ $data.isDisabled }}
                                                     <button class="btn btn-theme btn-xl w-100" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
                                                         <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                         Place Order
