@@ -695,6 +695,7 @@ onBeforeMount( async() => {
         }
 
         $data.form.items   = cloneDeep(cart_items.value);
+        console.log($data.form);
         
     } catch (error) {
         $store.commit('loader',false);
