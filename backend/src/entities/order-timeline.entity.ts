@@ -6,6 +6,9 @@ export class OrderTimelineEntity {
 
   @PrimaryGeneratedColumn("uuid")
   id: string;
+  
+  @Column()
+  description: string;
 
   @Column()
   name: string;
