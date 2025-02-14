@@ -427,7 +427,7 @@ const validateForm = async (field) => {
         $data.errors[error.path] = error.message;
     } finally {
         // Update the isDisabled property based on the presence of errors
-        $data.isDisabled = !isEmpty($data.errors);
+        $data.isDisabled = isEmpty($data.errors);
     }
 }
 
