@@ -100,3 +100,7 @@ p {
     background-color: #7e1414;
     width:0px;
 }
+
+.table-responsive {
+  overflow-x: hidden !important;
+}
