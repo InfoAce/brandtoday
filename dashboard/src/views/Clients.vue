@@ -68,8 +68,8 @@
                                             <td>{{ client.email }}</td>
                                             <td>{{ client.phone_number }}</td>
                                             <td>
-                                                <h6 v-if="!$isEmpty(client.email_verified_at)" class="badge badge-success p-2"><i class="fa fa-check-circle"></i></h6>
-                                                <h6 v-if="$isEmpty(client.email_verified_at)" class="badge badge-primary p-2"><i class="fa fa-close "></i></h6>
+                                                <h6 v-if="!$isEmpty(client.email_verified_at)" class="badge badge-success p-1 text-center"><i class="fa fa-check-circle"></i></h6>
+                                                <h6 v-if="$isEmpty(client.email_verified_at)"  class="badge badge-primary p-1 text-center"><i class="fa fa-close "></i></h6>
                                             </td>
                                             <td>{{ $moment(client.created_at).format('Do MMMM, Y')}}</td>                                        
                                         </tr>
