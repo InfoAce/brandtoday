@@ -201,7 +201,6 @@
                                                     <VueToggles v-model="$data.form.saved"/>               
                                                 </div>
                                                 <div class="col-12">
-                                                    {{ $data.isDisabled }}
                                                     <button class="btn btn-theme btn-xl w-100" type="button" @click="recaptcha" :disabled="$data.isDisabled || $data.loader.order">
                                                         <i class="fa fa-spinner fa-spin" v-if="$data.loader.order"></i>
                                                         Place Order
@@ -427,7 +426,6 @@ const validateForm = async (field) => {
         // If the field is invalid, update the errors object with the error message
         $data.errors[error.path] = error.message;
     } finally {
-        console.log(!isEmpty($data.errors));
         // Update the isDisabled property based on the presence of errors
         $data.isDisabled = !isEmpty($data.errors);
     }
@@ -721,7 +719,6 @@ onMounted(
             watch(
                 () => $data.form, 
                 (form) => {
-                    console.log(form);
                     each(form,(value,key) => {
                         validateForm(key);
                     });
