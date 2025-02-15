@@ -592,8 +592,7 @@ export class AppService {
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false, progress: false });
 
         if(queue.progress){
-            await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true, progress: false });
-            await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true, progress: false });
+            await this.queueModel.updateOne({ type: 'prices'},{ status: 'waiting', state: true, progress: true });
         }
 
     } catch (error) {
@@ -642,6 +641,10 @@ export class AppService {
         this.logger.log(`Done Synchronizing prices`);
 
         await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+
+        if(queue.progress){
+            await this.queueModel.updateOne({ type: 'stocks'},{ status: 'waiting', state: true, progress: false });
+        }
 
     } catch (error) {
         console.log(error);
