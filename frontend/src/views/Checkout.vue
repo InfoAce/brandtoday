@@ -398,6 +398,7 @@ let formSchema       = yup.object().shape({
     type:             yup.string(),                     
     saved:            yup.boolean()                       
 });
+
 const listCountries  = computed( () => values(countries).map( country => ({ label: country.name, value: country.name })) );
 const listCurrencies = computed( () => values(countries).map( country => ({ label: `${country.name} - ${first(country.currency)}`, value: first(country.currency) })) );
 
@@ -426,8 +427,9 @@ const validateForm = async (field) => {
         // If the field is invalid, update the errors object with the error message
         $data.errors[error.path] = error.message;
     } finally {
+        console.log(!isEmpty($data.errors));
         // Update the isDisabled property based on the presence of errors
-        $data.isDisabled = isEmpty($data.errors);
+        $data.isDisabled = !isEmpty($data.errors);
     }
 }
 
@@ -625,7 +627,18 @@ const placeOrder = async () => {
     }
 }
 
+/**
+ * Get the phone number from the Vue-Tel-Input component.
+ * @param {object|string} $event - The event object from the Vue-Tel-Input component.
+ * @returns {void}
+ */
 const getPhoneNumber = ($event) => {
+    /**
+     * Extract the phone number from the event object.
+     * If the event object is a string, assign it directly to the form's phone number.
+     * If the event object is an object, extract the value from the target property.
+     * @type {string}
+     */
     $data.form.phone_number = $event.constructor == String ? $event : $event.target.value 
 }
 
@@ -715,7 +728,7 @@ onMounted(
                 },
                 { 
                     deep: true,
-                    immediate: true
+                    immediate: false
                 }
             );        
         },500
