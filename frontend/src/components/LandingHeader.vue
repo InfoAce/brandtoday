@@ -12,7 +12,12 @@
                                     <i class="fa fa-phone" aria-hidden="true"></i>
                                     Call Us:
                                     <template v-if="!isEmpty(home.company.phone_number)">
-                                        <a v-for="(phone,key) in home.company.phone_number.split('/')" :href="`tel:${phone}`" class="text-white" :key="key">{{ phone }}</a>
+                                        <a 
+                                            v-for="(phone,key) in home.company.phone_number.split('/')" :href="`tel:${phone}`" 
+                                            class="text-white" :key="key">
+                                                {{ phone }}
+                                                <span v-if="key != (home.company.phone_number.split('/').length - 1)">&bull;</span>
+                                        </a>
                                     </template>
                                 </li>
                                 <li><a href="https://marketing.amrod.co.za/landing/2024digitalcatalogues" target="_blank" class="text-white">Download Digital Catalogues</a></li>
@@ -212,7 +217,6 @@ const backendUri = computed( () => $store.getters.env.VITE_API_BASE_URL.replace(
 const auth       = computed( () => $store.getters.auth);
 const cart       = computed( () => $store.getters.cart);
 const home       = computed({ get: () => $store.getters.home, set(val) { $store.commit('home',val); } });
-
 /**
  * @description
  * This function will update the favicon of the website dynamically.
