@@ -665,9 +665,6 @@ export class AppService {
         // Fetch amrod stock
         let stocks   = await this.amrodService.getStock();
 
-        // Get products
-        // let products = await this.productModel.find({ relations:[ 'stocks' ] });
-
         // // Get product variants
         let variants = await this.productVariantModel.find();
 
@@ -676,7 +673,6 @@ export class AppService {
             variants, 
             'full_code'
         );
-
 
         await Promise.all(
             chunk(stocks,1).map( async (stocks) => {
@@ -698,7 +694,7 @@ export class AppService {
         setTimeout(
             async () => {
                 this.updateProductsStock(queue);
-            },2000
+            },10000
         )
         
     } catch (error) {
