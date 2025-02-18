@@ -30,7 +30,7 @@
                 <div class="container-fluid">
                     <div class="row px-4">
                         <div class="col-lg-8 col-md-6 col-xs-12 px-4">
-                            <div v-if="!$isEmpty($store.getters.auth)" class="favourite px-4 col-12">
+                            <div class="favourite px-4 col-12">
                                 <h1 class="text-theme text-right">
                                     <i class="far fa-heart" v-if="$isEmpty(favourite)" @click="addToFavourites()"></i>
                                     <i class="fa fa-heart" v-if="!$isEmpty(favourite)"></i>
@@ -514,6 +514,12 @@ export default {
             this.form.sizes[this.selections.sizes[sizeName]].quantity = event.target.value;
         },
         addToFavourites(){
+            // Check if authenticated
+            if( isEmpty(this.auth) ){
+                this.$router.push({ name: 'Login', query: { redirect: btoa(this.$route.path) } }); // Redirect to login
+                return;
+            }
+            
             this.loading.wishlist = true; // Set loader
             // Add this product to wishlist
             this.$api
