@@ -666,7 +666,7 @@ export class AppService {
         let stocks   = await this.amrodService.getStock();
 
         // Get products
-        let products = await this.productModel.find({ relations:[ 'stocks' ] });
+        // let products = await this.productModel.find({ relations:[ 'stocks' ] });
 
         // // Get product variants
         let variants = await this.productVariantModel.find();
@@ -677,23 +677,23 @@ export class AppService {
             'full_code'
         );
 
-        let sorted_products = products.map(
-            product => {
-                return { ...product, stock:      sum((get(product,'__stocks__')).map( stock => stock.quantity)) }
-            }
-        );
+        // let sorted_products = products.map(
+        //     product => {
+        //         return { ...product, stock: sum((get(product,'__stocks__')).map( stock => stock.quantity)) }
+        //     }
+        // );
 
-        await Promise.all(
-            chunk(sorted_products,1).map( async (sorted_product) => {
-                await this.productModel.upsert(
-                    sorted_product,
-                    {
-                        conflictPaths: ["full_code"],
-                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-                    },
-                );
-            })
-        )
+        // await Promise.all(
+        //     chunk(sorted_products,1).map( async (sorted_product) => {
+        //         await this.productModel.upsert(
+        //             sorted_product,
+        //             {
+        //                 conflictPaths: ["full_code"],
+        //                 upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+        //             },
+        //         );
+        //     })
+        // )
 
         await Promise.all(
             chunk(stocks,1).map( async (stocks) => {
