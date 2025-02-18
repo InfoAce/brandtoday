@@ -6,8 +6,8 @@
                 <div class="card-body">
                     <CardLoader :loader="$data.loader" />
                     <div class="row">
-                        <div class="top-sec col-12">
-                            <h3>My Wishlist</h3>
+                        <div class="top-sec col-12 mb-0">
+                            <h2 class="mb-0">My Wishlist</h2>
                         </div>
                         <div class="address-book-section col-12">
                             <div class="row">
@@ -19,12 +19,12 @@
                                                     <div class="img-wrapper">
                                                         <div v-if="!isEmpty(product.images)">
                                                             <div class="front">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})">
                                                                     <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
                                                                 </a>
                                                             </div>
                                                             <div class="back" v-if="product.images.length > 1">
-                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})">
+                                                                <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.full_code }})">
                                                                     <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                                                 </a>
                                                             </div>
@@ -34,8 +34,8 @@
                                                         <h6 class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</h6>
                                                         <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.fullCode }})" class="text-theme d-flex justify-content-between">
                                                             <p class="text-wrap p-0 m-0"> {{ product.name }} </p>
-                                                            <p class="m-0 p-0"><strong>{{ currency }} {{ first(get(first(product.__variants__),'price')).amount }}</strong></p>
                                                         </a>
+                                                        <p class="m-0 p-0"><strong>{{ currency }} {{ product.price }}</strong></p>
                                                         <p class="m-0 p-0"><strong>Excl. VAT & Excl. Branding</strong></p>
                                                         <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
                                                             <li v-for="(colour,index) in product.colour_images.map( color => color.hex).flat()" :key="index" :style="`background-color: ${colour}; border: 1px solid #cdcdcd;`"></li>

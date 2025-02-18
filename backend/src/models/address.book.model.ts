@@ -13,42 +13,21 @@ import {
 class AddressBookModelException extends ExceptionsHandler {}
 
 @Injectable()
-export default class AddressBookModel {
+export default class AddressBookModel extends AddressBookRepository {
+  /**
+   * BrandModel constructor.
+   * 
+   * @param repository - The product repository.
+   */
   constructor(
+    /**
+     * The product repository.
+     * This repository is injected by NestJS using the @InjectRepository decorator.
+     * It is used to perform database operations related to the ProductEntity.
+     */
     @InjectRepository(AddressBookEntity)
-    private addressBookRepository: AddressBookRepository,
-  ) {}
-  
-  async find(data:any): Promise<AddressBookEntity[]>{
-    return await this.addressBookRepository.find(data);
-  }
-
-  async findOne(data:any): Promise<AddressBookEntity>{
-    try{
-      return await this.addressBookRepository.findOneOrFail(data);
-    } catch(err) {
-      throw new AddressBookModelException(err);   
-    }
-  }
-
-  async paginate(options: IPaginationOptions): Promise<Pagination<AddressBookEntity>> {
-    return paginate<AddressBookEntity>(this.addressBookRepository, options);
-  }
-
-
-  async updateOne(id: string, data: any): Promise<any>{
-    return await this.addressBookRepository.update({id},data);
-  }
-
-  async save(data: any): Promise<any>{
-    try {
-      return await this.addressBookRepository.save(data);
-    } catch(err){
-      throw new AddressBookModelException(err);   
-    }
-  }
-
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.addressBookRepository.delete(id);
+    private repository: AddressBookRepository,
+  ) {
+    super(repository.target, repository.manager, repository.queryRunner) 
   }
 }

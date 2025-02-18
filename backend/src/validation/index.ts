@@ -5,7 +5,8 @@ export { ResetAuthValidation as ResetAuthValidation } from './auth/reset.validat
 export { SePasswordValidation as SePasswordValidation } from './auth/new-password.validation';
 
 // List of validation
-export { AddressValidation as AddressValidation } from './create.address.validation';
+export { CreateAddressValidation as CreateAddressValidation } from './address/create.validation';
+export { UpdateAddressValidation as UpdateAddressValidation } from './address/update.validation';
 export { CreateOrderValidation as CreateOrderValidation } from './order/create.validation';
 export { CategoryUpdateValidation as CategoryUpdateValidation } from './category/update.validation';
 export { LoginValidation as LoginValidation } from './login.validation';

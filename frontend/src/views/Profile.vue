@@ -25,7 +25,7 @@
 
     <!--  dashboard section start -->
     <section class="dashboard-section section-b-space user-dashboard-section">
-        <div class="container">
+        <div class="container-fluid p-6">
             <div class="row">
                 <div class="col-lg-3">
                     <div class="dashboard-sidebar">
