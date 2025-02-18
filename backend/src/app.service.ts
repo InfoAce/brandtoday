@@ -677,23 +677,6 @@ export class AppService {
             'full_code'
         );
 
-        // let sorted_products = products.map(
-        //     product => {
-        //         return { ...product, stock: sum((get(product,'__stocks__')).map( stock => stock.quantity)) }
-        //     }
-        // );
-
-        // await Promise.all(
-        //     chunk(sorted_products,1).map( async (sorted_product) => {
-        //         await this.productModel.upsert(
-        //             sorted_product,
-        //             {
-        //                 conflictPaths: ["full_code"],
-        //                 upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
-        //             },
-        //         );
-        //     })
-        // )
 
         await Promise.all(
             chunk(stocks,1).map( async (stocks) => {
@@ -712,11 +695,11 @@ export class AppService {
             })
         );
 
-        // Logging
-        this.logger.log(`Done Synchronizing stocks`);
-
-        // Update queue status
-        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        setTimeout(
+            async () => {
+                this.updateProductsStock(queue);
+            },2000
+        )
         
     } catch (error) {
         console.log(error);
@@ -726,6 +709,58 @@ export class AppService {
         
         // Update queue status
         await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) });        
+    }
+  }
+
+  /**
+   * Update the stock count for each product by summing all the stock quantities
+   * @param queue The queue object
+   */
+  async updateProductsStock(queue){
+    try {
+        // Logging
+        this.logger.log(`Updating product stock count`);
+
+        // Get products
+        let products = await this.productModel.find({ relations:[ 'stocks' ] });
+
+        // Sort products by summing all the stock quantities for each product
+        let sorted_products = products.map(
+            product => {
+                return { 
+                    ...product, 
+                    stock: sum((get(product,'__stocks__')).map( stock => stock.quantity)) 
+                }
+            }
+        );
+
+        // Update each product with the new stock count
+        await Promise.all(
+            chunk(sorted_products,1).map( async (sorted_product) => {
+                await this.productModel.upsert(
+                    sorted_product,
+                    {
+                        conflictPaths: ["full_code"],
+                        upsertType: "on-duplicate-key-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
+            })
+        )
+
+        // Logging
+        this.logger.log(`Done Synchronizing stocks`);
+
+        // Update queue status
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'complete', state: false });
+        
+        this.logger.log(`Done updating product stock count`);
+
+    } catch(error) {
+
+        this.logger.log(`Done updating product stock count`);
+
+        await this.queueModel.updateOne({ id: queue.id},{ status: 'failed', state: false, progress: false, message: JSON.stringify(error) });        
+
     }
   }
   
