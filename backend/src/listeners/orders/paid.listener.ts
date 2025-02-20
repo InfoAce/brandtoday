@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { OrderCreatedEvent } from 'src/events';
+import { OrderPaidEvent } from 'src/events';
 import { OrderModel, OrderTimelineModel } from 'src/models';
 import { MailService } from 'src/services';
 
@@ -20,16 +20,23 @@ export class OrderPaidListener {
 
   @OnEvent('order.paid',{ async: true })
   /**
-   * Handles the "OrderCreatedEvent" event
+   * Handles the "OrderPaidEvent" event
    *
-   * @param {OrderCreatedEvent} event - The event object
+   * When an order is paid, this method is called and it updates the order's status to "paid" and sends an email to the user with the order details
+   *
+   * @param {OrderPaidEvent} event - The event object
    *
    * @returns {void}
    */
-  async handleOrderCreatedEvent({ id }: OrderCreatedEvent) {
+  async handleOrderPaidEvent({ id }: OrderPaidEvent) {
     try {
-      let order  = await this.orderModel.findOneBy({ id });
-      await this.orderTimelineModel.save({ order_id: order.id, name: 'paid' })
+      // Fetch the order with the specified ID
+      let order = await this.orderModel.findOneBy({ id });
+
+      // Update the order's status to "paid"
+      await this.orderTimelineModel.save({ order_id: order.id, name: 'paid', description: 'Order has been paid.' });
+
+      // Send an email to the user with the order details
       await this.mailService.payment(order);
     } catch(error) {
       console.log(error);

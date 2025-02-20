@@ -1,7 +1,7 @@
 import { Body, Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Inject, InternalServerErrorException, Logger, NotFoundException, Param, ParseIntPipe, Post, Put, Query, Render, Req, Res, Sse, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
-import { first, get, has, isEmpty, pick, set, sum, sumBy} from 'lodash';
+import { get, has, isEmpty, pick, set, sum, sumBy} from 'lodash';
 import * as bcrypt from 'bcrypt';
 import { ClientGuard, OptionalGuard } from 'src/guards';
 import { AddressBookModel, CompanyModel, OrderItemModel, OrderModel, OrderTimelineModel, RoleModel, TransactionModel, UserModel } from 'src/models';
@@ -14,14 +14,18 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { OrderCreatedEvent, OrderPaidEvent } from 'src/events';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ControllerException } from 'src/exceptions/controller.exception';
-import { interval, map, Observable, startWith, switchMap, takeUntil } from 'rxjs';
-import * as fs from 'fs'
-import { Http } from 'winston/lib/winston/transports';
+import { interval, map, Observable, startWith, switchMap } from 'rxjs';
+import { ViewOrderInterceptor } from 'src/interceptors';
+import { sep } from 'path';
+
+const json = require('json-reader-writer');
 
 @Controller('orders')
 export class OrderController {
 
   private logger = new Logger(OrderController.name);
+
+  private readonly home;
 
   /**
    * The constructor for the OrderController class.
@@ -52,7 +56,9 @@ export class OrderController {
     private transactionModel: TransactionModel, // The transaction model instance.
     private pesapalService: PesapalService, // The pesapal service instance.
     private userModel: UserModel // The user model instance.
-  ) {}
+  ) {
+    this.home   = !process.cwd().includes('backend') ? `${process.cwd()}${sep}backend` : process.cwd();
+  }
 
   /**
    * Retrieves paginated list of orders for a logged-in user.
@@ -213,6 +219,40 @@ export class OrderController {
     }
 
   }  
+  /**
+   * Fetch an order by its ID and return it as a JSON response.
+   *
+   * @param orderId The ID of the order to fetch.
+   * @param req The request object.
+   * @param res The response object.
+   * @returns A JSON response containing the fetched order.
+   */
+  @UseGuards(ClientGuard)
+  @UseInterceptors(ViewOrderInterceptor)
+  @Put(':order/view')
+  async view(
+    @Param('order') orderId: string, // The ID of the order to fetch.
+    @Req() req: Request, // The request object.
+    @Res() res: Response // The response object.
+  ) {
+
+    try {
+
+      // Fetch the order with the specified ID, including its associated user.
+      let order = await this.orderModel.findOne({ where: { id: orderId }, relations: ['user'] });
+
+      // Return the fetched order as a JSON response with a 200 status code.
+      return res.status(HttpStatus.OK).json({ order });
+
+    } catch(error) {
+
+      // Log the error and return a JSON response with the appropriate status code.
+      this.logger.error(error);
+      
+      res.status(error.status).json({order: {} });
+    }
+
+  }  
 
   @UseGuards(OptionalGuard)
   @Get('checkout')
@@ -244,6 +284,26 @@ export class OrderController {
     }
 
   }
+
+  // @UseGuards(OptionalGuard)
+  // @Put('transaction/:transaction/cancel')
+  // async cancel(
+  //   @Param('transaction') transactionId: string,
+  //   @Req()          req: Request,  
+  //   @Res()          res: Response
+  // ) {
+
+  //   try{
+
+
+  //     return res.status(HttpStatus.OK).json({ });
+
+  //   } catch (error) {
+  //     res.status(error.status).json({ message: });
+  //   }
+
+  // }
+
   /**
    * Send an order to the user's email address.
    *
@@ -361,6 +421,8 @@ export class OrderController {
   ) {
     
     try{
+      
+      let { pesapal:{ live } } = json.readJSON(`${this.home}${sep}config.json`);
 
       // Find the order
       let order            = await this.orderModel.findOneBy({ id: orderId }); 
@@ -389,14 +451,12 @@ export class OrderController {
         ipn_notification_type: 'GET'
       },token);
 
-      let app_env = this.configService.get<string>('app.APP_ENV');
-
       // Create the pesapal order
       let pesapal_order = await this.pesapalService.order({
         id:              order.id,
         currency:        user.currency,
-        amount:          app_env == 'development' ? 1 : totalAmount,
-        description:     `User ${user.email} is paying for ${order.items.length}. The total amount is ${totalAmount.toFixed(2)}.`,
+        amount:          live ? totalAmount : 1,
+        description:     `Customer ${user.first_name} ${user.last_name} is paying for ${order.items.length}. The total amount is ${totalAmount.toFixed(2)}.`,
         callback_url:    `${this.configService.get<string>('app.APP_URL')}/checkout/${order.id}/complete`,
         notification_id: pesapal_ipn.ipn_id,
         billing_address: {

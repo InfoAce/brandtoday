@@ -82,6 +82,13 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
+                                        <label for="uri">API URI</label>
+                                        <input class="form-control" id="uri" type="text" v-model="configurations.pesapal.uri">
+                                        <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'uri')">{{errors.uri}}</p>								
+                                    </div>                            
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
                                         <label for="consumer_key">Consumer Key</label>
                                         <input class="form-control" id="consumer_key" type="password" v-model="configurations.pesapal.consumer_key">
                                         <p class="text-danger col col-12 mb-0" v-if="!$isEmpty(errors) && $has(errors,'consumer_key')">{{errors.consumer_key}}</p>								
@@ -188,7 +195,8 @@ export default {
                 pesapal: {
                     consumer_key:    String(),
                     consumer_secret: String(),
-                    live:            Boolean()
+                    live:            Boolean(),
+                    uri:             String()
                 }
             },
             loading: {
@@ -219,11 +227,13 @@ export default {
         // Configurations schema
         this.configPesapalSchema = yup.object().shape({
             consumer_key:   yup.string()
-                               .required("*Consuner key is required"),
+                               .required("*Consumer key is required"),
             consumer_secret:yup.string()
                                .required("*Consumer secret is required"),    
             live:           yup.boolean()
-                               .required("*Live is required"),                                                                                              
+                               .required("*Live is required"),    
+            uri:            yup.string()
+                               .required("*API Uri is required"),                                                                                                                         
         });        
 
     },

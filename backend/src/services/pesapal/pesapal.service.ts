@@ -24,8 +24,8 @@ export class PesapalService {
     // Interceptor with authentication
     request(data: any = {}){
         
-        const headers              = { 'Content-Type': 'application/json', 'Accept': 'application/json' }
-        const { pesapal:{ live } } = json.readJSON(`${this.home}${sep}config.json`);
+        let headers             = { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+        let { pesapal:{ uri } } = json.readJSON(`${this.home}${sep}config.json`);
 
         if( !isEmpty(data) ){
             if( has(data,'auth') ){
@@ -35,7 +35,7 @@ export class PesapalService {
         }
         
         return axios.create({
-            baseURL: live ? this.config.base.live : this.config.base.sandbox,
+            baseURL: uri,
             timeout: 60000,
             headers
         });

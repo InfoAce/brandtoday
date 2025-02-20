@@ -22,16 +22,25 @@ export class OrderCreatedListener {
   /**
    * Handles the "OrderCreatedEvent" event
    *
-   * @param {OrderCreatedEvent} event - The event object
+   * This method is triggered when a new order is created. It updates the order's timeline
+   * and sends a confirmation email to the user.
    *
-   * @returns {void}
+   * @param {OrderCreatedEvent} event - The event object containing the order ID
+   *
+   * @returns {Promise<void>} A promise that resolves when the event handling is complete
    */
-  async handleOrderCreatedEvent({ id }: OrderCreatedEvent) {
+  async handleOrderCreatedEvent({ id }: OrderCreatedEvent): Promise<void> {
     try {
-      let order  = await this.orderModel.findOneBy({ id });
-      await this.orderTimelineModel.save({ order_id: order.id, name: 'created' })
+      // Fetch the order with the specified ID
+      let order = await this.orderModel.findOneBy({ id });
+
+      // Update the order's timeline with a "created" entry
+      await this.orderTimelineModel.save({ order_id: order.id, name: 'created', description:'Order has been created' });
+
+      // Send a confirmation email to the user
       await this.mailService.createOrder(order);
-    } catch(error) {
+    } catch (error) {
+      // Log any errors that occur during the event handling
       console.log(error);
     }
   }
