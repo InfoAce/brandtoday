@@ -164,4 +164,37 @@ export class PesapalService {
         }
 
     }
+
+    /**
+     * Cancels a transaction from Pesapal.
+     * 
+     * @param order_tracking_id - The tracking ID of the order to cancel.
+     * @param auth - The authentication token for accessing Pesapal API.
+     * 
+     * @returns {Promise<Object>} - The response data from Pesapal API.
+     * 
+     * @throws {PesapalServiceException} - If there is an error during the request.
+     */
+    async cancelTransaction(
+        order_tracking_id: string,
+        auth: string
+    ): Promise<any> {
+
+        try {
+
+            // Sends a POST request to the transaction cancel endpoint
+            // with the order tracking ID and authentication token.
+            let { data: response_data } = await this.request({ 
+                auth: { type: 'Bearer', token: auth }
+            }).post(this.config.endpoints.cancel, { order_tracking_id });
+
+            // Return the response data containing the transaction status
+            return response_data;
+
+        } catch (error) {
+            // Throw a PesapalServiceException if there is an error
+            throw new PesapalServiceException(error);
+        }
+
+    }    
 }

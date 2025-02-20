@@ -69,6 +69,7 @@ export default registerAs('services',() => {
             },
             endpoints: {
                 auth:            "/Auth/RequestToken", // get authorization token4
+                cancel:          "/Transactions/CancelOrder",
                 getipns:         "/URLSetup/GetIpnList", // list all Instant Payment Notification
                 status:          "/Transactions/GetTransactionStatus", // track the transaction status
                 registeripn:     "/URLSetup/RegisterIPN", // register Instant Payment Notification

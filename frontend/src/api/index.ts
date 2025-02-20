@@ -36,7 +36,7 @@ export default {
             (error) => {
                 if (error.response.status === 401) {
                     // If the request is successful, save the user and token to local storage
-                    // localStorage.setItem(VITE_APP_ID, JSON.stringify({}));
+                    localStorage.setItem(VITE_APP_ID, JSON.stringify({}));
                 }
                 return Promise.reject(error);
             }

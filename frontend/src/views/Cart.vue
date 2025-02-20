@@ -88,12 +88,21 @@
                         </template>
                     </div>
                     <div class="col-md-4 col-sm-12 col-xs-12 product-details p-4">
+                        <CardLoader :loader="$data.loading.cart" />
                         <div class="product-right">
                             <table class="table">
                                 <tbody>
                                     <tr>
                                         <td><strong>Sub Total</strong></td>
-                                        <td>{{ currency }} {{ total.toFixed(2) }}</td>
+                                        <td>{{ currency }} {{ sub_total.toFixed(2) }}</td>
+                                    </tr>
+                                    <tr v-for="(fee, index) in $data.service_fees" :key="index">
+                                        <td class="text-left"><strong>{{ fee.name }}</strong></td>
+                                        <td class="text-left">
+                                            {{ currency }} 
+                                            <span v-if="fee.type == 'fixed'">{{ fee.amount }}"></span>
+                                            <span v-if="fee.type == 'percentage'">{{ (( fee.amount * sub_total ) / 100 ).toFixed(2) }}</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong>Total</strong></td>
@@ -168,27 +177,40 @@
 
 <script setup lang="ts">
 import { cloneDeep, each, isEmpty, has, set, sum } from 'lodash';
-import moment from 'moment';
-import { computed, inject, reactive, watch } from 'vue';
+import { computed, inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';
 import * as yup from "yup";
+import { CardLoader } from '../components';
 
-const $api   = inject('$api');
+const $api: any   = inject('$api');
 
-const $data  = reactive({
-    errors:     Object(),
-    form:       { name: String(), email: String() },
-    isDisabled: Boolean(),
-    loading:    { email_quote: false, quote: false },
-    modals:     { email_quote: false}
+const $data: any  = reactive({
+    errors:       Object(),
+    form:         { name: String(), email: String() },
+    isDisabled:   Boolean(),
+    loading:      { email_quote: false, quote: false, cart: false },
+    modals:       { email_quote: false },
+    service_fees: Array()
 });
-const $swal  = inject('$swal');
-const $store = useStore();
-const $toast = inject('$toast');
+const $swal:  any = inject('$swal');
+const $store: any = useStore();
+const $toast: any = inject('$toast');
 
+/**
+ * The schema for validating the email quote form.
+ */
 const formSchema = yup.object().shape({
-	email: yup.string().email("*Enter a valid email address").required("*Email address is required"),
-	name: yup.string().required("*Name is required"),
+	/**
+	 * The email address to send the quote to.
+	 */
+	email: yup.string()
+		.email("*Enter a valid email address")
+		.required("*Email address is required"),
+	/**
+	 * The name of the person sending the quote.
+	 */
+	name: yup.string()
+		.required("*Name is required"),
 });
 
 /**
@@ -198,7 +220,7 @@ const formSchema = yup.object().shape({
  *
  * @param {string} field - The name of the field to validate.
  */
- const validateForm = async (field) => {
+ const validateForm = async (field: any) => {
     try {
         // Validate the field using the formSchema
         await formSchema.validateAt(field, $data.form);
@@ -214,51 +236,136 @@ const formSchema = yup.object().shape({
 }
 
 const items = computed({
+    /**
+     * Retrieves and processes the items in the cart from the store.
+     * Calculates total quantities, branding costs, setup costs, and total amounts 
+     * for each item based on their sizes and positions.
+     * @returns {Array} Processed cart items with additional computed properties.
+     */
     get(): any {
-        return cloneDeep($store.getters.cart).map( (item: any) => {
-            if( !isEmpty(item.sizes) ){
-                set(item,'total_quantity',sum(item.sizes.map( (size:any) => size.quantity )) );
-                if(has(item,'positions')){
-                    set(item,'total_branding_cost', (sum(item.positions.map( (position:any) => position.price )) * item.total_quantity).toFixed(2));
-                    set(item,'total_setup_cost', (sum(item.positions.map( (position:any) => position.setup )) * item.total_quantity).toFixed(2));
-                    set(item,'total_amount',sum([(item.price * item.total_quantity),item.total_branding_cost,item.total_setup_cost].map( price => parseFloat(price) )) );
+        return cloneDeep($store.getters.cart).map((item: any) => {
+            if (!isEmpty(item.sizes)) {
+                // Calculate total quantity based on sizes
+                set(item, 'total_quantity', sum(item.sizes.map((size: any) => size.quantity)));
+
+                if (has(item, 'positions')) {
+                    // Calculate total branding and setup costs based on positions
+                    set(item, 'total_branding_cost', (sum(item.positions.map((position: any) => position.price)) * item.total_quantity).toFixed(2));
+                    set(item, 'total_setup_cost', (sum(item.positions.map((position: any) => position.setup)) * item.total_quantity).toFixed(2));
+
+                    // Calculate total amount including price, branding, and setup costs
+                    set(item, 'total_amount', sum([(item.price * item.total_quantity), item.total_branding_cost, item.total_setup_cost].map(price => parseFloat(price))));
+                } else {
+                    // Calculate total amount based only on price and total quantity
+                    set(item, 'total_amount', (item.price * item.total_quantity));
                 }
-                if(!has(item,'positions')){
-                    set(item,'total_amount',(item.price * item.total_quantity));                
-                }
-            }
-            if( isEmpty(item.sizes) ){
-                set(item,'total_quantity',item.quantity);
-                set(item,'total_amount',(item.price * item.quantity));                
+            } else {
+                // Set total quantity and amount when no sizes are present
+                set(item, 'total_quantity', item.quantity);
+                set(item, 'total_amount', (item.price * item.quantity));
             }
             return item;
         });
     },
-    set(value:any): void {
-        $store.commit('cart',value);
+    /**
+     * Updates the cart items in the store.
+     * @param {any} value - The new cart items to set in the store.
+     */
+    set(value: any): void {
+        $store.commit('cart', value);
     }
 });
 
-const currency = computed( () => $store.getters.home.company.currency );
-
-const total = computed( () => { 
-    return sum(items.value.map( (val:any) => { 
-        return val.total_amount
-    }));
+/**
+ * Computed property to retrieve the company's currency from the Vuex store.
+ * 
+ * @returns {string} The currency string of the company.
+ */
+const currency = computed(() => {
+    // Access the currency from the Vuex store
+    return $store.getters.home.company.currency;
 });
 
-const emailQuote = async () => {
+/**
+ * Calculates the total amount of the items in the cart.
+ * @returns {number} The total amount of the items in the cart.
+ */
+ const sub_total = computed( () => { 
+    // Sum up the total_amount of all items in the cart
+    return sum(
+        items.value.map( (val:any) => { 
+            return val.total_amount
+        })
+    );
+});
+
+
+/**
+ * Calculates the total amount of the items in the cart and the service fees.
+ * @returns {number} The total amount of the items in the cart and the service fees.
+ */
+const total = computed((): number => {
+    // Sum up the total_amount of all items in the cart
+    const totalAmount = sum(items.value.map((val: any) => val.total_amount));
+    // Sum up the service fees
+    const serviceFees = !isEmpty($data.service_fees) ? 
+        $data.service_fees.map((fee: any) => fee.type == 'fixed' ? fee.amount : ((fee.amount/100) * sub_total.value)).reduce((a, b) => a + b, 0) :
+        0;
+    // Return the total amount
+    return totalAmount + serviceFees;
+});
+
+/**
+ * Emails a quote to the customer based on the items in the cart and the
+ * customer's email and name.
+ * @returns {Promise<void>}
+ */
+const emailQuote = async (): Promise<void> => {
     try {
+        // Show the loading overlay
         $data.loading.email_quote = Boolean(true);
-        await $api.post(`/quotes`,{ items: cloneDeep(items.value), ...cloneDeep($data.form) },);
+        // Send the POST request to the API
+        await $api.post(`/quotes`,{
+            items: cloneDeep(items.value), // The items in the cart
+            ...cloneDeep($data.form) // The customer's email and name
+        });
+        // Show a success toast
         $toast.success('Quotation has been sent');
+        // Hide the modal
         $data.modals.email_quote = false;
+        // Reset the form
         resetForm();
-    } catch(error) {
-        $toast.success('Something went wrong. Please try again.');
+    } catch (error) {
+        // Show an error toast
+        $toast.error('Something went wrong. Please try again.');
+        // Hide the loading overlay
         $data.loading.email_quote = Boolean();
     } finally {
+        // Hide the loading overlay
         $data.loading.email_quote = Boolean();
+    }
+}
+
+/**
+ * Fetches the service fees from the API and stores them in the component's state.
+ * @returns {Promise<void>}
+ */
+const fetch = async (): Promise<void> => {
+    try {
+        // Show the loading overlay
+        $data.loading.cart = Boolean(true);
+        // Send the GET request to the API
+        const { data: { service_fees } }  = await $api.get(`/orders/cart`);
+        // Store the service fees in the component's state
+        $data.service_fees = cloneDeep(service_fees);
+    } catch (error) {
+        // Show an error toast
+        $toast.error('Something went wrong. Please try again.');
+        // Hide the loading overlay
+        $data.loading.cart = Boolean();
+    } finally {
+        // Hide the loading overlay
+        $data.loading.cart = Boolean();
     }
 }
 
@@ -291,32 +398,50 @@ const editItem = (index: number) => {
 
 }
 
+onBeforeMount( () => fetch());
+
+/**
+ * Watches the email_quote modal state and shows/hides it accordingly.
+ * The modal is shown with a static backdrop to prevent the user from interacting
+ * with the background while the modal is open.
+ * @param {boolean} modal
+ */
 watch( 
     () => $data.modals.email_quote,
     (modal) => {
+        // Show the modal if the state is true
         if( modal === true){
             $('#emailQuote').modal({
-                backdrop: 'static',
-                show: true
+                backdrop: 'static', // Prevent the user from interacting with the background
+                show: true // Show the modal
             });
         }
+        // Hide the modal if the state is false
         if( modal === false){
             $('#emailQuote').modal('hide');
         }
     },
 )
 
+/**
+ * Watches for changes in the form object and validates each field.
+ * The watch is set to be deep, meaning it will observe changes in nested properties.
+ * It is also immediate, performing a validation upon initialization.
+ */
 watch(
-	() => $data.form, 
-	(form) => {
-		each(form,(value,key) => {
-			validateForm(key);
-		});
-	},
-	{ 
-		deep: true,
-        immediate: true
-	}
+    // Watcher function to track changes in the form object.
+    () => $data.form, 
+    // Callback function executed when changes are detected.
+    (form) => {
+        // Iterate over each form field and validate it.
+        each(form, (value, key) => {
+            validateForm(key);
+        });
+    },
+    { 
+        deep: true,      // Enables deep watching for nested properties.
+        immediate: true  // Triggers the callback immediately upon initialization.
+    }
 );
 
 

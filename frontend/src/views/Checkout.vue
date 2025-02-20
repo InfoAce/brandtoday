@@ -307,11 +307,11 @@ import { useRouter } from 'vue-router';
 import VueToggles from "vue-toggles";
 
 // Data variables
-const $api    = inject('$api');
-const $toast  = inject('$toast');
-const $store  = useStore();
+const $api:   any  = inject('$api');
+const $toast: any  = inject('$toast');
+const $store: any  = useStore();
 const $router = useRouter();
-const $data   = reactive({
+const $data: any   = reactive({
     addresses: Array(),
     errors:    Object(),
     form:      Object(),
@@ -324,7 +324,7 @@ const $data   = reactive({
     saved:        Boolean(),
     service_fees: Array()
 });
-const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
+const { executeRecaptcha, recaptchaLoaded }: any = useReCaptcha();
 
 // Computed
 const auth       = computed( () => $store.getters.auth );
@@ -487,10 +487,43 @@ const checkTransactionStatus = (statusInterval: number, order_id: string) => {
     }
 }
 
+/**
+ * Cancels the transaction.
+ * 
+ * @param {EventSourcePolyfill} es - The EventSource object to close.
+ * @returns {Promise<void>}
+ */
+const cancelTransaction = async (es: EventSourcePolyfill) => { 
+    try{
+        // Close the EventSource to stop listening to events from the server
+        es.close();
+
+        // Hide the payment box
+        document.querySelector('#payment_box').style.visibility = 'hidden';
+
+        // Remove the iframe
+        document.querySelector('#payment_box .body iframe').remove();
+
+        const { transaction_id } = $data.order;
+
+        // Send a PUT request to cancel the transaction
+        await $api.put(`/orders/transaction/${transaction_id}/cancel`);
+
+        $data.form = cloneDeep($data.form);
+
+        $toast.info('Transaction has been cancelled.');
+
+    } catch(error) {
+        // Handle any errors that occur
+        console.error(error);
+        // Show an error message to the user
+        $toast.error('An error occurred while processing your payment. Please try again later.');
+    }
+}
 const  openPesapal = () => {
 
-    const { redirect_url, order_id} = $data.order;
-    const iframe                    = document.createElement('iframe');
+    const { redirect_url, order_id, transaction_id } = $data.order;
+    const iframe                                     = document.createElement('iframe');
 
     iframe.setAttribute('src',redirect_url);
     iframe.setAttribute('height',window.screen.height);
@@ -499,16 +532,6 @@ const  openPesapal = () => {
 
     document.querySelector('#payment_box .body').append(iframe);
     document.querySelector('#payment_box').style.visibility = 'visible';
-
-    document.querySelector('#transaction_cancel').addEventListener(
-        'click',
-        () => { 
-            /* later */
-            clearInterval(statusInterval);
-            document.querySelector('#payment_box').style.visibility = 'hidden';
-            document.querySelector('#payment_box .body iframe').remove();
-        }
-    );
 
     const { VITE_API_URL } = $store.getters.env;
 
@@ -525,10 +548,12 @@ const  openPesapal = () => {
     }
 
     // Create a new EventSource object
-    let es = new EventSourcePolyfill(`${VITE_API_URL}/orders/${order_id}/status`, {
+    const es = new EventSourcePolyfill(`${VITE_API_URL}/orders/${order_id}/status`, {
         headers,
         heartbeatTimeout: 360000 // 6 minutes
     });
+
+    document.querySelector('#transaction_cancel').addEventListener('click',() => cancelTransaction(es));
 
     // Handle incoming messages from the server
     es.onmessage = ({ data }) => {

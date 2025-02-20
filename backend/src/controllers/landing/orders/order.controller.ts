@@ -254,6 +254,14 @@ export class OrderController {
 
   }  
 
+  /**
+   * Handles the checkout process. Retrieves the service fees for the company
+   * and the shipping addresses for the logged in user (if any).
+   *
+   * @param req The request object
+   * @param res The response object
+   * @returns A Promise that resolves to the list of service fees and shipping addresses
+   */
   @UseGuards(OptionalGuard)
   @Get('checkout')
   async checkout(
@@ -263,46 +271,89 @@ export class OrderController {
 
     try{
 
-      let addresses    = Array();
-      let service_fees = Array();
-
+      // Retrieve the user's shipping addresses if logged in
+      let addresses = Array();
       if( has(req,'user') ){
         let user     = get(req,'user');
         addresses    = await user.address_book;
-        service_fees = user.company.service_fees;
       }
 
-      if( !has(req,'user') ){
-        let company  = await this.companyModel.first();
-        service_fees = company.service_fees;
-      }
+      // Retrieve the company's service fees
+      let service_fees = Array();
+      let company  = await this.companyModel.first();
+      service_fees = company.service_fees;
 
+      // Return the shipping addresses and service fees as a JSON response
       return res.status(HttpStatus.OK).json({ addresses, service_fees });
 
     } catch (error) {
-
+      res.status(error.status).json({ message: error.message });
     }
 
   }
 
-  // @UseGuards(OptionalGuard)
-  // @Put('transaction/:transaction/cancel')
-  // async cancel(
-  //   @Param('transaction') transactionId: string,
-  //   @Req()          req: Request,  
-  //   @Res()          res: Response
-  // ) {
+  @UseGuards(OptionalGuard)
+  @Get('cart')
+  /**
+   * Retrieves the service fees for the company
+   * @param req The request object
+   * @param res The response object
+   * @returns A Promise that resolves to the list of service fees
+   */
+  async create(
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ) {
+    try{
 
-  //   try{
+      // Retrieve the company
+      let company  = await this.companyModel.first();
 
+      // Return the service fees
+      return res.status(HttpStatus.OK).json({ service_fees: company.service_fees });
 
-  //     return res.status(HttpStatus.OK).json({ });
+    } catch (error) {
+      // Log any errors that occur
+      res.status(error.status).json({ message: 'An error occurred while retrieving the service fees' });
+    }
+  }
 
-  //   } catch (error) {
-  //     res.status(error.status).json({ message: });
-  //   }
+  @UseGuards(OptionalGuard)
+  @Put('transaction/:transaction/cancel')
+  /**
+   * Cancel a transaction with Pesapal
+   *
+   * @param {string} transactionId - The ID of the transaction.
+   * @param {Request} req - The Express request object.
+   * @param {Response} res - The Express response object.
+   * @returns {Promise<void>} Promise that resolves with a JSON response containing the order.
+   */
+  async cancel(
+    @Param('transaction') transactionId: string,
+    @Req()          req: Request,  
+    @Res()          res: Response
+  ) {
+    try{
+      // Authenticate with Pesapal to retrieve the transaction status
+      let  { token }   = await this.pesapalService.auth();
 
-  // }
+      // Retrieve the transaction to cancel
+      let transaction  = await this.transactionModel.findOne({ where: { id: transactionId } });
+
+      // Cancel the transaction with Pesapal
+      await this.pesapalService.cancelTransaction(transaction.tracking_id, token);
+
+      // Delete the transaction from the database
+      await this.transactionModel.delete({ id: transactionId });
+            
+      // Return a JSON response with a 200 status code
+      return res.status(HttpStatus.OK).json({});
+
+    } catch (error) {
+      // Return a JSON response with the appropriate status code
+      res.status(error.status).json({ message: String() });
+    }
+  }
 
   /**
    * Send an order to the user's email address.
@@ -468,14 +519,14 @@ export class OrderController {
       },token);
 
       // Create the order transaction
-      await this.transactionModel.save({
+      let transaction = await this.transactionModel.save({
         amount:      totalAmount,
         tracking_id: pesapal_order.order_tracking_id,
         order_id:    order.id
       });
 
       // Return the redirect URL and order ID in the response
-      return res.status(HttpStatus.OK).json({ redirect_url: pesapal_order.redirect_url, order_id: orderId });      
+      return res.status(HttpStatus.OK).json({ redirect_url: pesapal_order.redirect_url, order_id: orderId, transaction_id: transaction.id });      
 
     } catch(error){
 
