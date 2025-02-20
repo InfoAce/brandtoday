@@ -354,7 +354,6 @@ const fetchProducts = async (append = false) => {
 
         $data.products_count = products_count;
 
-
     } catch({ response }){
 
         $store.commit('card_loader',false);

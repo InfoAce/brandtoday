@@ -80,3 +80,8 @@ export default {
     }
 }
 </script>
+<style lang="scss">
+.faq-tab > .nav .nav-tabs{
+    overflow-x: scroll !important; 
+}
+</style>

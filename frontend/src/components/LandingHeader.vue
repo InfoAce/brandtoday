@@ -49,13 +49,13 @@
                             </li>
                         </ul>
                         <ul class="header-dropdown d-flex align-items-center justify-content-end">
-                            <li class="p-3" v-if="!isEmpty(auth)">
+                            <li class="p-3" v-if="isEmpty(auth)">
                                 <a href="#" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart"></i></a>
                             </li>
                             <li class="onhover-div p-3">
-                                <div>
+                                <!-- <div>
                                     <a href="#" @click.prevent="openSearch"><i class="fa fa-magnifying-glass"></i></a>
-                                </div>
+                                </div> -->
                                 <div id="search-overlay" class="search-overlay">
                                     <div> 
                                         <span class="closebtn" @click.prevent="closeSearch" title="Close Overlay">×</span>
@@ -89,17 +89,28 @@
                             </template>
                             <template v-if="!isEmpty(auth)">
                                 <li class="p-3">
-                                    <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
+                                    <!-- <a href="#" @click.prevent="$router.push({name:'AccountProfile'})">
                                         <i class="fa fa-user-circle" aria-hidden="true"></i>
                                         <span>{{ auth.user.first_name }} {{  auth.user.last_name }}</span>
-                                    </a>
+                                    </a> -->
+                                    <div class="btn-group">
+                                        <a href="#" class="dropdown-toggle text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                            <span class="ml-2">{{ auth.user.first_name }} {{ auth.user.last_name }}</span>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <button class="dropdown-item" type="button" @click.prevent="$router.push({name:'AccountProfile'})"> <i class="fa fa-user-circle" aria-hidden="true"></i>Profile</button>
+                                            <button class="dropdown-item" type="button" @click.prevent="$router.push({ name:'AccountFavourites' })"><i class="fa fa-heart"></i> Whishlist</button>
+                                            <button class="dropdown-item" type="button" @click.prevent="logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</button>
+                                        </div>
+                                    </div>
                                 </li>
-                                <li class="p-3">
+                                <!-- <li class="p-3">
                                     <a href="#" @click.prevent="logout">
                                         <i class="fa fa-sign-out" aria-hidden="true"></i>
                                         Logout
                                     </a>
-                                </li>
+                                </li> -->
                             </template>
                         </ul>
                     </div>
@@ -461,6 +472,11 @@ watch(
 )
 
 onBeforeMount( () => fetchMenus() );
+// onMounted( () => {
+//     $('.dropdown-toggle').on('click', () => {
+//         $(event.target).dropdown('show')
+//     });
+// })
 </script>
 
 <style scoped>

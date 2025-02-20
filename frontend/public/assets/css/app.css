@@ -269,11 +269,6 @@ p {
   color:#7e1414 !important;
 }
 
-.dashboard-section .dashboard-sidebar .faq-tab .nav-tabs {
-  justify-content: center;
-  overflow: hidden !important;
-}
-
 .checkout-details {
   position: sticky !important;
   top: 0 !important;
@@ -460,6 +455,13 @@ p {
 
 }
 
+@media only screen and (max-width: 992px) {
+  .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs {
+    justify-content: center;
+    overflow: hidden !important;
+  }
+}
+
 @media only screen and (max-width: 850px) {
   .search-results {
     width: 50vw;
@@ -486,12 +488,20 @@ p {
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (max-width: 578px) {
+  .cart_qty_cls{
+    display: block !important;
+    top: 0px !important;
+  }
+
+  .dashboard-section .dashboard-sidebar .faq-tab .nav-tabs {
+    justify-content: center;
+    overflow-x: scroll !important;
+  }
+
   .pixelstrap .mobile {
     display: block;
   }
-  .cart_qty_cls {
-    display: none;
-  }
+
   .top-header{
     height: 100% !important;
   }

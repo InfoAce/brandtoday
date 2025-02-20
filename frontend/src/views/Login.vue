@@ -155,6 +155,7 @@ const login = () => {
 			store.commit('loader', false);
 
 			if( has(error,'response') ){
+				const { response } = error;
 				// Display different error messages based on the response status
 				if (!isEmpty(response.data) && response.data.statusCode == 400) {
 					response.data.message.forEach((value) => {
