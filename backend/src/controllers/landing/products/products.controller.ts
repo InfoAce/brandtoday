@@ -60,7 +60,7 @@ export class ProductsController {
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
       @Query('sort_pricing',new DefaultValuePipe(String('DESC'))) querySortPricing: string,
-      @Body() { brands, price }: FetchProductsValidation,
+      @Body() { brands, child_sub_categories, price }: FetchProductsValidation,
       @Req()  req:  Request,  
       @Res()  res:  Response
     ) {
@@ -93,6 +93,10 @@ export class ProductsController {
 
           if( !isEmpty(brands) ){
             set(filters.where,'brand',In(brands));
+          }
+
+          if( !isEmpty(child_sub_categories) ){
+            set(filters.where.categories,'child_sub_category_code',In(child_sub_categories));
           }
 
           let [results, count ] = await this.productModel.findAndCount(filters);

@@ -33,7 +33,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-2 col-xs-12">
+                                        <div class="col-md-3 col-xs-12">
                                             <label>Include Clearance Items</label> 
                                             <VueToggles v-model="$data.filter.clearance" checkedText="Yes" uncheckedText="No" checkedBg="#7e1414" />
                                         </div>
@@ -64,6 +64,14 @@
                                                 <option value="100">100 Per Page</option>
                                             </select>
                                         </div>
+                                        <div class="col-12 mt-4">
+                                            <h4>
+                                                Filters:
+                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_brands)">{{ filter_brandss.join(', ') }}</span>
+                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_child_sub_categories)">{{ filter_child_sub_categories.join(', ') }}</span>
+                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_brands) && isEmpty(filter_child_sub_categories)">No Filters</span>
+                                            </h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>  
@@ -72,20 +80,29 @@
                                     <div class="collapse multi-collapse" id="filterDropdown">
                                         <div class="card card-body">
                                             <div class="row">
-                                                <div class="col-md-6 col-xs-12">
+                                                <div class="col-12">
                                                     <h3>Brands</h3>
-                                                    <div class="row">
-                                                        <template v-for="(brand,index) in $data.brands" :key="index">
-                                                            <div class="col-md-4 col-sm-6 col-xs-6">
-                                                                <div class="form-group text-nowrap mb-0">
-                                                                    <input type="checkbox" :name="brand.id" :value="brand.code" v-model="$data.form.brands" />
-                                                                    {{ brand.name }}
-                                                                </div>
+                                                    <div class="d-flex flex-wrap">
+                                                        <template v-for="(brand,index) in $data.brands" :key="`${brand.id}_${index}`">
+                                                            <div class="form-group text-nowrap mb-0 mr-3">
+                                                                <input type="checkbox" :name="brand.id" :value="brand.code" v-model="$data.form.brands" />
+                                                                {{ brand.name }}
                                                             </div>
                                                         </template>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-xs-12">
+                                                <div class="col-12 mt-4">
+                                                    <h3>Product Categories</h3>
+                                                    <div class="d-flex flex-wrap">
+                                                        <template v-for="(category,index) in $data.child_sub_categories" :key="`${category.id}_${index}`">
+                                                            <div class="form-group text-nowrap mb-0 mr-3">
+                                                                <input type="checkbox" :name="category.id" :value="category.code" v-model="$data.form.child_sub_categories" />
+                                                                {{ category.name }}
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mt-4">
                                                     <h3>Price Range</h3>
                                                     <VueSlider 
                                                         v-model="$data.form.price" 
@@ -97,7 +114,7 @@
                                                 </div>
                                                 <div class="col-md-12 d-flex justify-content-between mt-2">
                                                     <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="fetchProducts(false)">Apply</button>
-                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="clearFilters">Clear Filter</button>
+                                                    <button class="btn btn-solid btn-sm mx-2" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="clearFilters">Clear Filter</button>
                                                     <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown">Close</button>
                                                 </div>
                                             </div>
@@ -173,7 +190,7 @@
 
 </script>
 <script setup >
-import { cloneDeep, debounce, first, isEmpty, isNull, get } from 'lodash';
+import { cloneDeep, debounce, first, isEmpty, isNull, intersectionBy, get } from 'lodash';
 import { CardLoader, PlaceholderLoader, PlaceholderText } from '../components';
 import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
@@ -187,17 +204,19 @@ const $store  = useStore();
 const $route  = useRoute();
 const $router = useRouter();
 const $data   = reactive({
-    category:         Object(),
+    category:             Object(),
+    child_sub_categories: Array(),
     filter:{
-        clearance:    Boolean(),
-        page:         Number(1),
-        per_page:     Number(10),
-        name:         String(),
-        sort_pricing: String('asc'),
+        clearance:          Boolean(),
+        page:               Number(1),
+        per_page:           Number(10),
+        name:               String(),
+        sort_pricing:       String('asc'),
     },
     form: {
         brands:       ref(Array()),
         price:        Array(1,20000),
+        child_sub_categories: ref(Array()),
     },
     products:           Array(),
     loading:            Boolean(),
@@ -216,6 +235,10 @@ const slider_options = computed(
     }) 
 );
 
+const filter_brands = computed(() => intersectionBy($data.brands,$data.form.brands,'code'));
+
+const filter_child_sub_categories = computed(() => intersectionBy($data.child_sub_categories,$data.form.child_sub_categories,'code').map( item => item.name ));
+
 const fetchFilters = async() =>{
     try {
         $data.loading = Boolean(true);
@@ -227,13 +250,15 @@ const fetchFilters = async() =>{
         const { data: { colours } } = await $api.get('/products/colours');
 
         // Make API call to get category and sub category
-        const { data:{ category, sub_category, products_count } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
+        const { data:{ category, sub_category, products_count, child_sub_categories } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
         
         /**
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
          */
         $data.brands   = cloneDeep(brands);
+
+        $data.child_sub_categories = cloneDeep(child_sub_categories);
 
         /**
          * Clones the brands object and assigns it to the $data.brands property.
