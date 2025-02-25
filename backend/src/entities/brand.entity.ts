@@ -16,6 +16,9 @@ export class BrandEntity {
   @Column()
   name: string;
 
+  @Column({ unique: true })
+  path: string;
+
   @CreateDateColumn()
   created_at: Date; // Creation date
   

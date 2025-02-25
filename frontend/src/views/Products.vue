@@ -30,51 +30,6 @@
                 <div class="container-fluid">
                     <div class="row px-4">           
                         <div class="col-12 px-0 mb-4 position-sticky">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3 col-xs-12">
-                                            <label>Include Clearance Items</label> 
-                                            <VueToggles v-model="$data.filter.clearance" checkedText="Yes" uncheckedText="No" checkedBg="#7e1414" />
-                                        </div>
-                                        <div class="col col-xs-12">
-                                            <label>Search Name</label>
-                                            <input class="form-control" v-model="$data.filter.name" placeholder="Search Name"/>
-                                        </div>
-                                        <div class="col col-xs-12 d-flex flex-column">
-                                            <label>View Filters</label>
-                                            <a arial-caret="true" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" class="form-control d-flex justify-content-between w-100">
-                                                <span>Filter</span>
-                                                <i class="fa fa-chevron-down"></i>
-                                            </a>
-                                        </div>
-                                        <div class="col col-xs-12">
-                                            <label>Sort Pricing</label>
-                                            <select class="form-control" placeholder="Sort Pricing" v-model="$data.filter.sort_pricing">
-                                                <option value="asc">Ascending</option>
-                                                <option value="desc">Descending</option>
-                                            </select>
-                                        </div>
-                                        <div class="col col-xs-12">
-                                            <label>Per Page</label>
-                                            <select class="form-control" placeholder="Per Page" v-model.number="$data.filter.per_page">
-                                                <option value="10">10 Per Page</option>
-                                                <option value="25">25 Per Page</option>
-                                                <option value="50">50 Per Page</option>
-                                                <option value="100">100 Per Page</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mt-4">
-                                            <h4>
-                                                Filters:
-                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_brands)">{{ filter_brandss.join(', ') }}</span>
-                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_child_sub_categories)">{{ filter_child_sub_categories.join(', ') }}</span>
-                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_brands) && isEmpty(filter_child_sub_categories)">No Filters</span>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="collapse multi-collapse" id="filterDropdown">
@@ -118,6 +73,55 @@
                                                     <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown">Close</button>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col col-xs-12">
+                                            <label>Search Name</label>
+                                            <input class="form-control" v-model="$data.filter.name" placeholder="Search Name"/>
+                                        </div>
+                                        <div class="col col-xs-12 d-flex flex-column">
+                                            <label>View Filters</label>
+                                            <a arial-caret="true" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" class="form-control d-flex justify-content-between w-100">
+                                                <span>Filter</span>
+                                                <i class="fa fa-chevron-down"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col col-xs-12">
+                                            <label>Sort Pricing</label>
+                                            <select class="form-control" placeholder="Sort Pricing" v-model="$data.filter.sort_pricing">
+                                                <option value="asc">Ascending</option>
+                                                <option value="desc">Descending</option>
+                                            </select>
+                                        </div>
+                                        <div class="col col-xs-12">
+                                            <label>Per Page</label>
+                                            <select class="form-control" placeholder="Per Page" v-model.number="$data.filter.per_page">
+                                                <option value="10">10 Per Page</option>
+                                                <option value="25">25 Per Page</option>
+                                                <option value="50">50 Per Page</option>
+                                                <option value="100">100 Per Page</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mt-4">
+                                            <h4>
+                                                Brand Filter:
+                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_brands)">{{ filter_brands.join(', ') }}</span>
+                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_brands)">No Filters</span>
+                                            </h4>
+                                            <h4>
+                                                Category Filter:
+                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_child_sub_categories)">{{ filter_child_sub_categories.join(', ') }}</span>
+                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_child_sub_categories)">No Filters</span>
+                                            </h4>
+                                            <h4 class="d-flex flex-wrap">
+                                                <span class="mr-2">Clearance Filter:</span>
+                                                <VueToggles v-model="$data.filter.clearance" checkedText="Yes" uncheckedText="No" checkedBg="#7e1414" />
+                                            </h4>
                                         </div>
                                     </div>
                                 </div>
@@ -235,9 +239,11 @@ const slider_options = computed(
     }) 
 );
 
-const filter_brands = computed(() => intersectionBy($data.brands,$data.form.brands,'code'));
+const selected_brands = computed( () => cloneDeep($data.form.brands).map( val => ({ code: val })) );
+const filter_brands   = computed( () => intersectionBy($data.brands,selected_brands.value,'code').map( item => item.name ));
 
-const filter_child_sub_categories = computed(() => intersectionBy($data.child_sub_categories,$data.form.child_sub_categories,'code').map( item => item.name ));
+const selected_child_sub_categories = computed( () => cloneDeep($data.form.child_sub_categories).map( val => ({ code: val })) );
+const filter_child_sub_categories   = computed( () => intersectionBy($data.child_sub_categories,selected_child_sub_categories.value,'code').map( item => item.name ));
 
 const fetchFilters = async() =>{
     try {
@@ -310,6 +316,12 @@ const clearFilters = () => {
      * @type {Array}
      */
     $data.form.brands = [];
+
+    /**
+     * Resets the selected brands to an empty array
+     * @type {Array}
+     */
+     $data.form.child_sub_categories= [];    
     
     /**
      * Resets the price filter to its default value

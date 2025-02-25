@@ -71,11 +71,10 @@ export class ProductsController {
 
         if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
 
-          let category_code_data = [category_code]
+          let category_code_data     = [category_code]
 
           if( queryClearance ){
-            let clearance = await this.categoryModel.findOne({ where: { code: ILike(`%clearance%`) } });
-            category_code_data.push(clearance.code);
+            category_code_data.push('allclearanceitems')
           }
 
           filters = cloneDeep({
@@ -106,10 +105,6 @@ export class ProductsController {
           // products                         = cloneDeep(product_categories).map( (category) => category.product );
         
         }
-
-        // if( !isEmpty(queryName) ){
-        //   [products, products_count] = await this.productModel.findAndCount({ where: [ { name: Like(`%${queryName}%` ) }, { full_code: Like(`%${queryName}%` ) } ], skip: (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), take: parseInt(queryPerPage), cache: true  })
-        // }
 
         // Send the products, category, and sub categories as a JSON response
         res.status(HttpStatus.OK).json({products, products_count });

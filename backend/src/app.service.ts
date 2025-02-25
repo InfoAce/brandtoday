@@ -113,10 +113,10 @@ export class AppService {
         await this.brandModel.upsert(
             brands.map( 
                 ({ code, image, name}) => 
-                    ({ code, name, image }) 
+                    ({ code, name, image, path: `${code.toLowerCase()}_${name.replace(/\s/g, '').toLowerCase()}` }) 
             ),
             {
-                conflictPaths: ["code"],
+                conflictPaths: ["path"],
                 upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
             },
         );
