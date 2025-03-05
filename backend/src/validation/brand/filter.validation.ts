@@ -10,12 +10,16 @@ export class FilterBrandValidation {
     @IsBoolean()
     with_products: boolean
 
-    @ValidateIf( item => item.with_products )
+    @IsOptional()
+    @IsBoolean()
+    categorized: boolean
+
+    @ValidateIf( item => item.categorized )
     @IsString()
     @IsNotEmpty()
     category: string
 
-    @ValidateIf( item => item.with_products )
+    @ValidateIf( item => item.categorized )
     @IsString()
     @IsNotEmpty()
     sub_category: string

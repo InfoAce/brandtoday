@@ -172,11 +172,6 @@ const fetchFilters = async() =>{
         // Make API call to get brands
         const { data: { colours } } = await $api.get('/products/colours');
 
-        // Make API call to get category and sub category
-        const { data:{ category, sub_category, products_count, child_sub_categories } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
-    
-        $data.child_sub_categories = cloneDeep(child_sub_categories);
-
         /**
          * Clones the brands object and assigns it to the $data.brands property.
          * @type {Object}
@@ -184,6 +179,11 @@ const fetchFilters = async() =>{
         $data.colours  = cloneDeep(colours);   
         
         if( !isEmpty(params) ){
+
+            // Make API call to get category and sub category
+            const { data:{ category, sub_category, child_sub_categories } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
+            
+            $data.child_sub_categories = cloneDeep(child_sub_categories);
 
             /**
              * Clones the category object and assigns it to the this.category property.
@@ -206,6 +206,19 @@ const fetchFilters = async() =>{
                     );
 
         }
+
+        if( !isEmpty(query) ){
+
+            document.querySelector('title').innerHTML = `Products | ${$store.getters.env.VITE_APP_NAME}`;
+            document.querySelector('meta[name="keywords"]')
+                    .setAttribute(
+                        'content',
+                        `${document.querySelector('meta[name="keywords"]').attributes.content.value}, Search ${$store.getters.env.VITE_APP_NAME} Products`
+                    );
+
+
+        }
+
         $data.loading  = Boolean();
         
     } catch(error) {
@@ -261,7 +274,7 @@ const fetchProducts = async (append = false): Promise<void> => {
     }
 
     if( !isEmpty(query) ){
-        url += `&page=${page}&perPage=${per_page}`;
+        url += !isEmpty(params) ? `&page=${page}&perPage=${per_page}` : `?page=${page}&perPage=${per_page}`;
         // check if brand has been selected
         if( has(query,'name') ){
             url += `&name=${query.name}`;
@@ -339,7 +352,7 @@ const fetchProducts = async (append = false): Promise<void> => {
  * @returns {Promise<void>}
  */
 const fetchBrands = async (): Promise<void> => {
-    if( !isEmpty($data.products) ){
+    if( !isEmpty($data.products) && !isEmpty($route.params) ){
         try {
             // Show the loader for brands
             $data.loaders.brands       = true;
@@ -348,15 +361,16 @@ const fetchBrands = async (): Promise<void> => {
             const { query, params }    = $route;
 
             // Get the unique brands from the products
-            const unique_brands        = uniq(cloneDeep($data.products).map( (product:any) => product.brand ));
+            const unique_brands        = uniq(cloneDeep($data.products).map( (product:any) => product.brand )).filter( (brand:any) => !isNull(brand) );
+
+            let data: any               = { brands: unique_brands, with_products: true, categorized: !isEmpty(params) };
+
+            if( !isEmpty(params) ){
+                data = { ...data, category: params.category, sub_category: params.sub_category }
+            }
 
             // Make API call to get brands with products
-            const { data: { brands } } = await $api.put('/products/brands',{
-                brands:        unique_brands,
-                with_products: true,
-                category:      params.category,
-                sub_category:  params.sub_category
-            });
+            const { data: { brands } } = await $api.put('/products/brands',data);
 
             // Clone the brands and assign it to the data
             $data.brands               = cloneDeep(brands)
@@ -405,16 +419,10 @@ const viewBrand = ({ code }: any) => {
      * Logs the brand object to the console
      */
     $router.push({ 
-        name: 'Products', 
-        params: { 
-            category: $route.params.category, 
-            sub_category: $route.params.sub_category 
-        }, 
-        query: { 
-            brand: code 
-        } 
+        name:   !isEmpty($route.params) ? 'Products' : 'ViewProducts', 
+        params: !isEmpty($route.params) ? $route.params: {}, 
+        query:  { ...$route.query, brand: code } 
     });
-    console.log(code);
 }
 
 const selectColour = (colour) => {

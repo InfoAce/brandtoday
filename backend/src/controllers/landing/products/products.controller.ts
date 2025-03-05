@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { ModelException } from 'src/exceptions';
 import { FetchProductsValidation, FilterBrandValidation } from 'src/validation';
+import { filter } from 'rxjs';
 
 @Controller('products')
 export class ProductsController {
@@ -69,48 +70,81 @@ export class ProductsController {
       try {  
         let products       = Array();
         let products_count = Number();
-        let filters        = Object();
+        let filters        = Object({
+          cache:    true,
+          order:    { price: querySortPricing.toUpperCase() }, 
+          skip:     (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
+          take:     parseInt(queryPerPage), 
+          where:    [],
+        });
 
-        if( !isEmpty(category_code) && !isEmpty(sub_category_code) ){
+        // Check if category and sub-category codes are provided
+        if (!isEmpty(category_code) && !isEmpty(sub_category_code)) {
+          
+          // Initialize the 'where' filter
+          set(filters, 'where', {});
 
-          let category_code_data     = [category_code]
+          // Set category and sub-category codes in the filter
+          set(filters.where, 'categories', { category_code, sub_category_code });
 
-          if( queryClearance ){
-            category_code_data.push('allclearanceitems')
+          // If child sub-category code is provided, add it to the filter
+          if (!isEmpty(child_sub_category_code)) {
+            set(filters.where.categories, 'child_sub_category_code', child_sub_category_code);
           }
 
-          filters = cloneDeep({
-            relation: ['categories'],
-            where:    { categories:{ category_code: In(category_code_data), sub_category_code }, price: Between(price[0],price[1]) }, 
-            order:    { price: querySortPricing.toUpperCase() }, 
-            skip:     (parseInt(queryPage) - 1) * (parseInt(queryPerPage)), 
-            take:     parseInt(queryPerPage), 
-            cache:    true
-          });
-
-          if( !isEmpty(queryName) ){
-            set(filters.where,'name',ILike(`%${queryName}%`));
+          // If brand is provided, add it to the filter
+          if (!isEmpty(brand)) {
+            set(filters.where, 'brand', brand);
           }
 
-          if( !isEmpty(brands) ){
-            set(filters.where,'brand',In(brands));
+          // If clearance is queried, include 'allclearanceitems' in category codes
+          if (queryClearance) {
+            set(filters.where.categories, 'category_code', In(['allclearanceitems', filters.where.categories.category_code]));
           }
 
-          if( !isEmpty(child_sub_category_code) ){
-            set(filters.where.categories,'child_sub_category_code',child_sub_category_code);
-          }
+          /**
+           * If search name is queried, search for the name in the product name and full code
+           */
+          if (!isEmpty(queryName)) {
+            set(filters.where, 'name', ILike(`%${queryName}%`));
+          }          
 
-          if( !isEmpty(brand) ){
-            set(filters.where,'brand',brand);
-          }
+          // Set relation to 'categories'
+          set(filters, 'relation', ['categories']);
 
-          let [results, count ] = await this.productModel.findAndCount(filters);
-
-          products_count        = count;
-          products              = cloneDeep(results);
-          // products                         = cloneDeep(product_categories).map( (category) => category.product );
-        
+          // Set the price range in the filter
+          set(filters.where, 'price', Between(price[0], price[1]));
         }
+
+        /**
+         * If category and sub-category codes are not provided, then
+         * we need to filter the products based on the query parameters
+         * such as name and clearance.
+         */
+        if (isEmpty(category_code) && isEmpty(sub_category_code)) {
+
+          /**
+           * If clearance is queried, include 'allclearanceitems' in category codes
+           */
+          if (queryClearance) {
+            set(filters, 'relation', ['categories']);
+            filters.where.push({ categories: { category_code: In(['allclearanceitems']) } })
+          }
+          
+          /**
+           * If search name is queried, search for the name in the product name and full code
+           */
+          if (!isEmpty(queryName)) {
+            filters.where.push({name: ILike(`%${queryName}%`)})
+            filters.where.push({full_code: ILike(`%${queryName}%`)})
+          }
+            
+        }
+
+        let [results, count ] = await this.productModel.findAndCount(filters);
+
+        products_count        = count;
+        products              = cloneDeep(results);
 
         // Send the products, category, and sub categories as a JSON response
         res.status(HttpStatus.OK).json({products, products_count });
@@ -173,15 +207,18 @@ export class ProductsController {
         let filter = { cache: true };
         
         // Filter by brand name
-        if( isEmpty(body.brands) ){
-          filter['where'] = { name: In(body.brands) }
+        if( !isEmpty(body.brands) ){
+          filter['where'] = { code: In(body.brands) }
         }
 
         if( body.with_products ){
           filter['relations'] = { products:{ categories: true } }
+        }
+
+        if( body.categorized ){
           filter['where']     = !isEmpty(filter['where']) ? 
-            { ...filter['where'], products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } } :
-              { products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
+          { ...filter['where'], products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } } :
+            { products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
         }
 
         // Fetch brands

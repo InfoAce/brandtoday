@@ -167,7 +167,7 @@
                                 <li v-for="(category,index) in home.categories" :key="index" data-sm-horizontal-sub="true">
                                     <a 
                                         href="javascript:void(0)" 
-                                        :class="has($route.params,'category') && $route.params.category == category.cpde ? 'show' : '' " 
+                                        :class="has($route.params,'category') && $route.params.category == category.code ? 'show' : '' " 
                                     >{{ category.name.toUpperCase()  }}</a>
                                     <ul>
                                         <li>
