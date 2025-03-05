@@ -100,6 +100,10 @@ export class ProductsController {
             set(filters.where.categories,'child_sub_category_code',child_sub_category_code);
           }
 
+          if( !isEmpty(brand) ){
+            set(filters.where,'brand',brand);
+          }
+
           let [results, count ] = await this.productModel.findAndCount(filters);
 
           products_count        = count;

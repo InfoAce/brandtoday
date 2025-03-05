@@ -33,21 +33,21 @@
                             <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
                                 <li class="nav-item">
                                     <a :class="`nav-link ${ $data.tab == 1 ? 'active' : '' }`" id="products" data-bs-toggle="tab" href="#products" role="tab" aria-selected="true" @click.prevent="$data.tab = 1">
-                                        <i class="fa fa-list"></i>
+                                        <i class="fas fa-border-all"></i>
                                         Products
                                     </a>
                                     <div class="material-border"></div>
                                 </li>
                                 <li class="nav-item" v-if="!isEmpty($data.child_sub_categories)">
                                     <a :class="`nav-link ${ $data.tab == 2 ? 'active' : '' }`" id="categories" data-bs-toggle="tab" href="#categories" role="tab" aria-selected="false" @click.prevent="$data.tab = 2">
-                                        <i class="fa fa-grid"></i>
+                                        <i class="fa fa-list"></i>                                    
                                         Categories
                                     </a>
                                     <div class="material-border"></div>
                                 </li>
                                 <li class="nav-item" v-if="!isEmpty($data.brands)">
                                     <a :class="`nav-link ${ $data.tab == 3 ? 'active' : '' }`" id="categories" data-bs-toggle="tab" href="#brands" role="tab" aria-selected="false" @click.prevent="$data.tab = 3">
-                                        <i class="fa fa-grid"></i>
+                                        <i class="fas fa-grip-vertical"></i>
                                         Brands
                                     </a>
                                     <div class="material-border"></div>
@@ -77,6 +77,7 @@
                                             <div class="row">                                        
                                                 <Product 
                                                     :data="product"
+                                                    @show="viewProduct"
                                                     v-for="(product,index) in $data.products"
                                                     :key="index"
                                                 />
@@ -98,6 +99,7 @@
                                     <PlaceholderLoader v-if="isEmpty($data.brands) && $data.loaders.brands" :count="10"/>                        
                                     <div class="row" v-else>
                                         <Brand
+                                            :key="`brand_${index}`"
                                             :data="brand"
                                             @show="viewBrand"
                                             v-for="(brand,index) in $data.brands"
@@ -194,8 +196,6 @@ const fetchFilters = async() =>{
              * @type {Object}
              */
             $data.sub_category   = cloneDeep(sub_category);
-
-            $data.products_count = products_count;
 
             document.querySelector('title').innerHTML = `Products | ${category.name} - ${sub_category.name} | ${$store.getters.env.VITE_APP_NAME}`;
 
@@ -550,6 +550,8 @@ watch(
 watch(
     () => $route,
     async () => {
+        $store.commit('card_loader',true);
+
         // Set loading to true to indicate that data is being fetched.
         $data.loading = true;
 
@@ -570,13 +572,13 @@ watch(
             sort_pricing: String('descending'),
         };
 
+        $data.tab           = 1;
 
         // Fetch the data based on the updated route perameters.
         await fetchFilters();
         await fetchProducts();
         await fetchBrands();
 
-        $data.tab           = 1;
     },
     {
         deep: true

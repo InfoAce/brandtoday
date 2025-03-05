@@ -174,7 +174,8 @@ p {
   top: 0;
 }
 
-.product-card:hover {
+.product-card:hover,
+.selected-card {
   border: 2px solid #7e1414;
 }
    

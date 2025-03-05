@@ -1,7 +1,7 @@
 <template>
     <div class="col-xl-3 col-6 col-grid-box mb-4">
         <div class="card">
-            <div class="card-body product-card">
+            <div :class="`card-body product-card ${selected ? 'selected-card' : ''}`">
                 <a href="#" @click.prevent="$emit('show',brand)">
                     <div class="product-box">
                         <div class="img-wrapper">
@@ -22,8 +22,10 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, defineProps } from 'vue';
-import { isEmpty } from 'lodash';
+import { isEmpty, has } from 'lodash';
+import { useRoute } from 'vue-router';
 
+const $route = useRoute();
 const $props = defineProps({
     data: {
         default: Object(),
@@ -32,5 +34,6 @@ const $props = defineProps({
 });
 const $emit = defineEmits(['show'])
 
-const brand: any = computed(() => $props.data);
+const brand:    any = computed( () => $props.data);
+const selected: any = computed( () => has($route.query, 'brand') ? $route.query.brand == brand.value.code : false );
 </script>

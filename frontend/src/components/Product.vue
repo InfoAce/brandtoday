@@ -6,12 +6,12 @@
                     <div class="img-wrapper">
                         <div v-if="!isEmpty(product.images)">
                             <div class="front">
-                                <a href="#" @click.prevent="viewProduct(product)">
+                                <a href="#" @click.prevent="$emit('show',product)">
                                     <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
                                 </a>
                             </div>
                             <div class="back" v-if="product.images.length > 1">
-                                <a href="#" @click.prevent="viewProduct(product)">
+                                <a href="#" @click.prevent="$emit('show',product)">
                                     <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
                                 </a>
                             </div>
@@ -22,6 +22,7 @@
                         <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})" class="text-theme">
                             <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
                         </a>
+                        <h6 class="m-0 p-0" v-if="!isNull(product.branded)">Brand: {{ product.branded.name }}</h6>
                         <h6 class="m-0 p-0">{{ currency }} {{ product.price.toFixed(2) }}</h6>                                                    
                         <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
                         <h6 class="m-0 p-0">Stock: {{ product.stock }}</h6>
@@ -40,17 +41,18 @@
 </template>
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import { isEmpty, isNull } from 'lodash';
+import { has, isEmpty, isNull } from 'lodash';
 import { useStore } from 'vuex';
 
 const $store  = useStore();
-const $props = defineProps({
+const $props  = defineProps({
     data:{
         default: Object(),
         type: Object
     }
 });
+const $emit = defineEmits(['show'])
 
-const currency = computed( () => $store.getters.home.company.currency );
-const product: any = computed(() => $props.data );
+const currency     = computed( () => $store.getters.home.company.currency );
+const product: any = computed( () => $props.data );
 </script>

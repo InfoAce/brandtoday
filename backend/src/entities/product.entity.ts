@@ -12,7 +12,7 @@ export class ProductEntity {
   })
   brand: string;
 
-  @ManyToOne( () => BrandEntity, (entity) => entity.products, { lazy: true, onDelete:"SET NULL", onUpdate: 'CASCADE' })
+  @ManyToOne( () => BrandEntity, (entity) => entity.products, { eager: true, onDelete:"SET NULL", onUpdate: 'CASCADE' })
   @JoinColumn({
     name:                 "brand",
     referencedColumnName: "code",
