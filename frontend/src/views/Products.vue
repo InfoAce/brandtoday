@@ -55,11 +55,12 @@
                             </ul>
                             <div class="tab-content nav-material" id="top-tabContent">
                                 <div :class="`tab-pane fade ${ $data.tab == 1 ? 'show active' : '' } py-4`" id="products" role="tabpanel" aria-labelledby="products-tab">
-                                    <!-- <ProductFilters
-                                        :brands="filter_brands"
-                                        :filters="$data.filters"
+                                    <ProductFilters
+                                        :filters="$data.filter"
                                         :form="$data.form"
-                                    /> -->
+                                        @update:filters="$data.filters = $event"
+                                        @update:form="$data.form = $event"
+                                    />
                                     <div class="col px-0 collection-product-wrapper">
                                         <div class="product-wrapper-grid">
                                             <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
@@ -89,6 +90,7 @@
                                     <PlaceholderLoader v-if="isEmpty($data.child_sub_categories) && $data.loaders.categories" :count="10"/>                        
                                     <div class="row" v-else>
                                         <Category
+                                            :key="`category_${index}`"
                                             :data="category"
                                             @show="viewCategory"
                                             v-for="(category,index) in $data.child_sub_categories"
@@ -118,11 +120,9 @@
 <script setup lang="ts">
 import { cloneDeep, debounce, first, isEmpty, isNull, intersectionBy, get, uniq, has} from 'lodash';
 import { Brand, Category, CardLoader,Product, ProductFilters, PlaceholderLoader, PlaceholderText } from '../components';
-import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import VueToggles from "vue-toggles";
 
 const $api:    any = inject('$api');
 const $toast:  any = inject('$toast');
@@ -157,11 +157,11 @@ const $data:   any = reactive({
     sub_child_category: String()
 });
 
-const selected_brands = computed( () => cloneDeep($data.form.brands).map( val => ({ code: val })) );
-const filter_brands   = computed( () => intersectionBy($data.brands,selected_brands.value,'code').map( item => item.name ));
+// const selected_brands = computed( () => cloneDeep($data.form.brands).map( val => ({ code: val })) );
+// const filter_brands   = computed( () => intersectionBy($data.brands,selected_brands.value,'code').map( item => item.name ));
 
-const selected_child_sub_categories = computed( () => cloneDeep($data.form.child_sub_categories).map( val => ({ code: val })) );
-const filter_child_sub_categories   = computed( () => intersectionBy($data.child_sub_categories,selected_child_sub_categories.value,'code').map( item => item.name ));
+// const selected_child_sub_categories = computed( () => cloneDeep($data.form.child_sub_categories).map( val => ({ code: val })) );
+// const filter_child_sub_categories   = computed( () => intersectionBy($data.child_sub_categories,selected_child_sub_categories.value,'code').map( item => item.name ));
 
 const fetchFilters = async() =>{
     try {
@@ -554,6 +554,21 @@ watch(
         fetchProducts();
     },1000)
 );
+
+watch(
+    () => $data.form,
+    debounce( 
+        async() => {
+            $store.commit('card_loader',true);
+            $data.filter.page = 1;
+            await fetchProducts();
+        },
+        1000
+    ),
+    {
+        deep: true
+    }
+)
 
 watch(
     () => $route,

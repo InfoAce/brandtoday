@@ -63,7 +63,7 @@ export class ProductsController {
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
       @Query('sort_pricing',new DefaultValuePipe(String('DESC'))) querySortPricing: string,
-      @Body() { brands, child_sub_categories, price }: FetchProductsValidation,
+      @Body() body: FetchProductsValidation,
       @Req()  req:  Request,  
       @Res()  res:  Response
     ) {
@@ -113,7 +113,8 @@ export class ProductsController {
           set(filters, 'relation', ['categories']);
 
           // Set the price range in the filter
-          set(filters.where, 'price', Between(price[0], price[1]));
+          set(filters.where, 'price', Between(body.price[0], body.price[1]));
+
         }
 
         /**

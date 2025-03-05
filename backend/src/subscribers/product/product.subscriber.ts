@@ -17,25 +17,25 @@ export class ProductSubscriber implements EntitySubscriberInterface<ProductEntit
      */
     async afterLoad(product: ProductEntity) {
         
-        if( !isEmpty(product.company)){
+        // if( !isEmpty(product.company)){
             
-            if( product.company.use_exchange_rate ){
-                product.price = product.price * product.company.exchange_rate
-            }
+        //     if( product.company.use_exchange_rate ){
+        //         product.price = product.price * product.company.exchange_rate
+        //     }
 
     
-            if( product.company.use_product_fee ){
-                switch(product.company.product_fee_type){
-                    case 'fixed':
-                        product.price = (product.price + product.company.product_fee);
-                    break;
-                    case 'percentage':
-                        product.price = (product.price * (product.company.product_fee/100));
-                    break;
-                }
-            }
+        //     if( product.company.use_product_fee ){
+        //         switch(product.company.product_fee_type){
+        //             case 'fixed':
+        //                 product.price = (product.price + product.company.product_fee);
+        //             break;
+        //             case 'percentage':
+        //                 product.price = (product.price * (product.company.product_fee/100));
+        //             break;
+        //         }
+        //     }
 
-        }
+        // }
         
         return product;
 
