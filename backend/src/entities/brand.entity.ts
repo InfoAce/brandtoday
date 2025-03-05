@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
-import { OrderEntity } from './index';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, Index } from 'typeorm';
+import { OrderEntity, ProductEntity } from './index';
 
 @Entity("brands")
 export class BrandEntity {
@@ -8,6 +8,7 @@ export class BrandEntity {
   id: string;
 
   @Column()
+  @Index()
   code: string;
 
   @Column()
@@ -18,6 +19,10 @@ export class BrandEntity {
 
   @Column({ unique: true })
   path: string;
+
+  @OneToMany( () => ProductEntity,(entity) => entity.branded, { lazy: true })
+  @JoinColumn()
+  products: ProductEntity[];  
 
   @CreateDateColumn()
   created_at: Date; // Creation date

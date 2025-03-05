@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, ManyToOne, OneToMany, JoinTable } from 'typeorm';
-import { BrandingEntity, CompanyEntity, FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductColourEntity, ProductVariantEntity, StockEntity } from './index';
+import { BrandEntity, BrandingEntity, CompanyEntity, FavouriteEntity, OrderItemEntity, ProductCategoryEntity, ProductColourEntity, ProductVariantEntity, StockEntity } from './index';
 
 @Entity("products")
 export class ProductEntity {
@@ -11,6 +11,13 @@ export class ProductEntity {
     nullable: true,
   })
   brand: string;
+
+  @ManyToOne( () => BrandEntity, (entity) => entity.products, { lazy: true, onDelete:"SET NULL", onUpdate: 'CASCADE' })
+  @JoinColumn({
+    name:                 "brand",
+    referencedColumnName: "code",
+  })
+  branded: BrandEntity;
 
   @OneToMany(() => BrandingEntity,(entity) => entity.product, { lazy: true })
   @JoinColumn()

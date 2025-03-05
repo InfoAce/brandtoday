@@ -33,6 +33,9 @@ export { UpdateServiceFeeValidation as UpdateServiceFeeValidation } from './serv
 // Auth
 export { UpdateAuthValidation as UpdateAuthValidation } from './auth/update.auth.validation';
 
+// Brand
+export { FilterBrandValidation as FilterBrandValidation } from './brand/filter.validation';
+
 // Company
 export { UpdateCompanyValidation as UpdateCompanyValidation } from './company/update.company.validation';
 

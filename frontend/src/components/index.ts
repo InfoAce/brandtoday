@@ -1,10 +1,14 @@
+export { default as Brand } from './Brand.vue';
 export { default as CardLoader } from './CardLoader.vue';
 export { default as CartPopup } from './CartPopup.vue';
+export { default as Category } from './Category.vue';
 export { default as LandingFooter } from './LandingFooter.vue';
 export { default as LandingHeader } from './LandingHeader.vue';
 export { default as LandingLoader } from './LandingLoader.vue';
 export { default as Navbar } from './Navbar.vue';
 export { default as PlaceholderLoader } from './PlaceholderLoader.vue';
 export { default as PlaceholderText } from './PlaceholderText.vue';
+export { default as Product } from './Product.vue';
+export { default as ProductFilters } from './ProductFilters.vue';
 export { default as ProductRatingForm } from './ProductRatingForm.vue';
 export { default as RelatedProduct } from './RelatedProduct.vue';

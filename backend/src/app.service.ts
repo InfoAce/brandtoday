@@ -138,8 +138,8 @@ export class AppService {
         // Fetch amrod product categories
         let categories               = (await this.amrodService.getCategories()).map( category => ({ ...category }));  
         let sub_categories           = categories.map( category => category.children.map( sub_category => ({ ...sub_category, category_code: category.categoryName.toLowerCase().replace(/\s/g, ''), children: sub_category.children, }) ) ).flat();    
-        let child_sub_categories     = sub_categories.map( sub_category => sub_category.children.map( child_sub_category => ({ ...child_sub_category, category_code: sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
-        let sub_child_sub_categories = child_sub_categories.map( child_sub_category => child_sub_category.children.map( sub_child_sub_category => ({ ...sub_child_sub_category, category_code: child_sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
+        let child_sub_categories     = sub_categories.map( sub_category => sub_category.children.map( child_sub_category => ({ ...child_sub_category, categoryPath: child_sub_category.categoryPath.replace(/\s/g, '').toLowerCase(), category_code: sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
+        let sub_child_sub_categories = child_sub_categories.map( child_sub_category => child_sub_category.children.map( sub_child_sub_category => ({ ...sub_child_sub_category, categoryPath: sub_child_sub_category.categoryPath.replace(/\s/g, '').toLowerCase(), category_code: child_sub_category.categoryName.toLowerCase().replace(/\s/g, ''), }) ) ).flat();
         
         categories = await Promise.all(
             categories.map( async ({categoryName, categoryPath}, index) => {

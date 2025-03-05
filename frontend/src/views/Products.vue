@@ -28,161 +28,84 @@
         <section class="section-b-space ratio_asos" ref="products">
             <div class="collection-wrapper">
                 <div class="container-fluid">
-                    <div class="row px-4">           
-                        <div class="col-12 px-0 mb-4 position-sticky">
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="collapse multi-collapse" id="filterDropdown">
-                                        <div class="card card-body">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <h3>Brands</h3>
-                                                    <div class="d-flex flex-wrap">
-                                                        <template v-for="(brand,index) in $data.brands" :key="`${brand.id}_${index}`">
-                                                            <div class="form-group text-nowrap mb-0 mr-3">
-                                                                <input type="checkbox" :name="brand.id" :value="brand.code" v-model="$data.form.brands" />
-                                                                {{ brand.name }}
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12 mt-4">
-                                                    <h3>Product Categories</h3>
-                                                    <div class="d-flex flex-wrap">
-                                                        <template v-for="(category,index) in $data.child_sub_categories" :key="`${category.id}_${index}`">
-                                                            <div class="form-group text-nowrap mb-0 mr-3">
-                                                                <input type="checkbox" :name="category.id" :value="category.code" v-model="$data.form.child_sub_categories" />
-                                                                {{ category.name }}
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12 mt-4">
-                                                    <h3>Price Range</h3>
-                                                    <VueSlider 
-                                                        v-model="$data.form.price" 
-                                                        :min="slider_options.min" 
-                                                        :max="slider_options.max" 
-                                                        :processStyle="slider_options.processStyle"
-                                                        :tooltip="slider_options.tooltip"
-                                                    />
-                                                </div>
-                                                <div class="col-md-12 d-flex justify-content-between mt-2">
-                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="fetchProducts(false)">Apply</button>
-                                                    <button class="btn btn-solid btn-sm mx-2" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" @click="clearFilters">Clear Filter</button>
-                                                    <button class="btn btn-solid btn-sm" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>  
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col col-xs-12">
-                                            <label>Search Name</label>
-                                            <input class="form-control" v-model="$data.filter.name" placeholder="Search Name"/>
-                                        </div>
-                                        <div class="col col-xs-12 d-flex flex-column">
-                                            <label>View Filters</label>
-                                            <a arial-caret="true" data-toggle="collapse" data-target="#filterDropdown" aria-expanded="false" aria-controls="filterDropdown" class="form-control d-flex justify-content-between w-100">
-                                                <span>Filter</span>
-                                                <i class="fa fa-chevron-down"></i>
-                                            </a>
-                                        </div>
-                                        <div class="col col-xs-12">
-                                            <label>Sort Pricing</label>
-                                            <select class="form-control" placeholder="Sort Pricing" v-model="$data.filter.sort_pricing">
-                                                <option value="asc">Ascending</option>
-                                                <option value="desc">Descending</option>
-                                            </select>
-                                        </div>
-                                        <div class="col col-xs-12">
-                                            <label>Per Page</label>
-                                            <select class="form-control" placeholder="Per Page" v-model.number="$data.filter.per_page">
-                                                <option value="10">10 Per Page</option>
-                                                <option value="25">25 Per Page</option>
-                                                <option value="50">50 Per Page</option>
-                                                <option value="100">100 Per Page</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 mt-4">
-                                            <h4>
-                                                Brand Filter:
-                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_brands)">{{ filter_brands.join(', ') }}</span>
-                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_brands)">No Filters</span>
-                                            </h4>
-                                            <h4>
-                                                Category Filter:
-                                                <span class="badge badge-primary mx-2" v-if="!isEmpty(filter_child_sub_categories)">{{ filter_child_sub_categories.join(', ') }}</span>
-                                                <span class="badge badge-primary mx-2" v-if="isEmpty(filter_child_sub_categories)">No Filters</span>
-                                            </h4>
-                                            <h4 class="d-flex flex-wrap">
-                                                <span class="mr-2">Clearance Filter:</span>
-                                                <VueToggles v-model="$data.filter.clearance" checkedText="Yes" uncheckedText="No" checkedBg="#7e1414" />
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                                                      
-                        </div>        
-                        <div class="col px-0 collection-product-wrapper">
-                            <div class="product-wrapper-grid">
-                                <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
-                                    <div class="card">
-                                        <div class="card-body text-center">
-                                            <h2 class="text-theme m-0">
-                                                <i class="fa fa-exclamation-circle"></i>
-                                                No product found here!
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <CardLoader v-if="!isEmpty($data.products)" />
-                                <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
-                                <div class="row" >
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-4" v-for="(product,index) in $data.products" :key="index">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="product-box">
-                                                    <div class="img-wrapper">
-                                                        <div v-if="!isEmpty(product.images)">
-                                                            <div class="front">
-                                                                <a href="#" @click.prevent="viewProduct(product)">
-                                                                    <img class="img-fluid blur-up lazyload bg-img" :src="product.images[0].urls[0].url" alt="">
-                                                                </a>
-                                                            </div>
-                                                            <div class="back" v-if="product.images.length > 1">
-                                                                <a href="#" @click.prevent="viewProduct(product)">
-                                                                    <img :src="product.images[1].urls[0].url" class="img-fluid blur-up lazyload bg-img" alt="" />
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 px-0 pt-3 ">
-                                                        <p class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</p>
-                                                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})" class="text-theme">
-                                                            <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
-                                                        </a>
-                                                        <h6 class="m-0 p-0">{{ currency }} {{ product.price.toFixed(2) }}</h6>                                                    
-                                                        <p class="m-0 p-0">Excl. VAT & Excl. Branding</p>
-                                                        <h6 class="m-0 p-0">Stock: {{ product.stock }}</h6>
-                                                        <ul class="color-variant p-0" v-if="!isEmpty(product.colour_images) && !isNull(product.colour_images)">
-                                                            <li 
-                                                                v-for="(colour,index) in product.colour_images" 
-                                                                :key="index" 
-                                                                :style="`border: 1px solid #cdcdcd; background: ${ colour.hex.length > 1 ? `linear-gradient(to right, ${colour.hex.map( hex => `${hex} ${100/colour.hex.length}%` ).join(',')} )`: colour.hex.map( hex => `${hex}` ).join(',') }`"
-                                                            ></li>
-                                                        </ul>
+                    <div class="row px-4">  
+                        <div class="col-12 px-0">
+                            <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a :class="`nav-link ${ $data.tab == 1 ? 'active' : '' }`" id="products" data-bs-toggle="tab" href="#products" role="tab" aria-selected="true" @click.prevent="$data.tab = 1">
+                                        <i class="fa fa-list"></i>
+                                        Products
+                                    </a>
+                                    <div class="material-border"></div>
+                                </li>
+                                <li class="nav-item" v-if="!isEmpty($data.child_sub_categories)">
+                                    <a :class="`nav-link ${ $data.tab == 2 ? 'active' : '' }`" id="categories" data-bs-toggle="tab" href="#categories" role="tab" aria-selected="false" @click.prevent="$data.tab = 2">
+                                        <i class="fa fa-grid"></i>
+                                        Categories
+                                    </a>
+                                    <div class="material-border"></div>
+                                </li>
+                                <li class="nav-item" v-if="!isEmpty($data.brands)">
+                                    <a :class="`nav-link ${ $data.tab == 3 ? 'active' : '' }`" id="categories" data-bs-toggle="tab" href="#brands" role="tab" aria-selected="false" @click.prevent="$data.tab = 3">
+                                        <i class="fa fa-grid"></i>
+                                        Brands
+                                    </a>
+                                    <div class="material-border"></div>
+                                </li>
+                            </ul>
+                            <div class="tab-content nav-material" id="top-tabContent">
+                                <div :class="`tab-pane fade ${ $data.tab == 1 ? 'show active' : '' } py-4`" id="products" role="tabpanel" aria-labelledby="products-tab">
+                                    <!-- <ProductFilters
+                                        :brands="filter_brands"
+                                        :filters="$data.filters"
+                                        :form="$data.form"
+                                    /> -->
+                                    <div class="col px-0 collection-product-wrapper">
+                                        <div class="product-wrapper-grid">
+                                            <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <h2 class="text-theme m-0">
+                                                            <i class="fa fa-exclamation-circle"></i>
+                                                            No product found here!
+                                                        </h2>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <CardLoader v-if="!isEmpty($data.products)" />
+                                            <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
+                                            <div class="row">                                        
+                                                <Product 
+                                                    :data="product"
+                                                    v-for="(product,index) in $data.products"
+                                                    :key="index"
+                                                />
+                                            </div>
                                         </div>
+                                    </div>
+                                </div>                        
+                                <div :class="`tab-pane fade ${ $data.tab == 2 ? 'show active' : '' } py-4`" id="categories" role="tabpanel" aria-labelledby="categories-tab" v-if="!isEmpty($data.child_sub_categories)">
+                                    <PlaceholderLoader v-if="isEmpty($data.child_sub_categories) && $data.loaders.categories" :count="10"/>                        
+                                    <div class="row" v-else>
+                                        <Category
+                                            :data="category"
+                                            @show="viewCategory"
+                                            v-for="(category,index) in $data.child_sub_categories"
+                                        />
+                                    </div>
+                                </div>
+                                <div :class="`tab-pane fade ${ $data.tab == 3 ? 'show active' : '' } py-4`" id="brands" role="tabpanel" aria-labelledby="brands-tab" v-if="!isEmpty($data.brands)">
+                                    <PlaceholderLoader v-if="isEmpty($data.brands) && $data.loaders.brands" :count="10"/>                        
+                                    <div class="row" v-else>
+                                        <Brand
+                                            :data="brand"
+                                            @show="viewBrand"
+                                            v-for="(brand,index) in $data.brands"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>         
                     </div>
                 </div>
             </div>
@@ -190,24 +113,21 @@
         <!-- section End -->        
     </div>
 </template>
-<script setup >
-
-</script>
-<script setup >
-import { cloneDeep, debounce, first, isEmpty, isNull, intersectionBy, get } from 'lodash';
-import { CardLoader, PlaceholderLoader, PlaceholderText } from '../components';
+<script setup lang="ts">
+import { cloneDeep, debounce, first, isEmpty, isNull, intersectionBy, get, uniq, has} from 'lodash';
+import { Brand, Category, CardLoader,Product, ProductFilters, PlaceholderLoader, PlaceholderText } from '../components';
 import VueSlider from "vue-3-slider-component";
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import VueToggles from "vue-toggles";
 
-const $api    = inject('$api');
-const $toast  = inject('$toast');
-const $store  = useStore();
-const $route  = useRoute();
-const $router = useRouter();
-const $data   = reactive({
+const $api:    any = inject('$api');
+const $toast:  any = inject('$toast');
+const $store:  any = useStore();
+const $route:  any = useRoute();
+const $router: any = useRouter();
+const $data:   any = reactive({
     category:             Object(),
     child_sub_categories: Array(),
     filter:{
@@ -222,22 +142,18 @@ const $data   = reactive({
         price:        Array(1,20000),
         child_sub_categories: ref(Array()),
     },
+    tab:                Number(1),
     products:           Array(),
+    loaders:            {
+        brands:     false,
+        categories: false
+    },
     loading:            Boolean(),
     brands:             Array(),
     colours:            Array(),
     sub_category:       Object(),
     sub_child_category: String()
 });
-const currency = computed( () => $store.getters.home.company.currency );
-const slider_options = computed( 
-    () => ({
-        tooltip:      "always",
-        processStyle: { backgroundColor: "#7e1414" },
-        min: 1,
-        max: 20000
-    }) 
-);
 
 const selected_brands = computed( () => cloneDeep($data.form.brands).map( val => ({ code: val })) );
 const filter_brands   = computed( () => intersectionBy($data.brands,selected_brands.value,'code').map( item => item.name ));
@@ -252,18 +168,11 @@ const fetchFilters = async() =>{
         let { query, params } = $route;
 
         // Make API call to get brands
-        const { data: { brands } }  = await $api.get('/products/brands');
         const { data: { colours } } = await $api.get('/products/colours');
 
         // Make API call to get category and sub category
         const { data:{ category, sub_category, products_count, child_sub_categories } } = await $api.get(`/categories/${params.category}/${params.sub_category}`);
-        
-        /**
-         * Clones the brands object and assigns it to the $data.brands property.
-         * @type {Object}
-         */
-        $data.brands   = cloneDeep(brands);
-
+    
         $data.child_sub_categories = cloneDeep(child_sub_categories);
 
         /**
@@ -340,7 +249,7 @@ const clearFilters = () => {
  * Fetch products based on the provided data
  * @peram {Object} data - Object containing page, perPage, sub_category, and overwrite options
  */
-const fetchProducts = async (append = false) => {
+const fetchProducts = async (append = false): Promise<void> => {
 
     // Destructuring assignment for easier access
     let { query, params } = $route;
@@ -352,7 +261,19 @@ const fetchProducts = async (append = false) => {
     }
 
     if( !isEmpty(query) ){
-        url += `?name=${query.name}&page=${page}&perPage=${per_page}`;
+        url += `&page=${page}&perPage=${per_page}`;
+        // check if brand has been selected
+        if( has(query,'name') ){
+            url += `&name=${query.name}`;
+        }        
+        // check if brand has been selected
+        if( has(query,'brand') ){
+            url += `&brand=${query.brand}`;
+        }
+        // Check if category has been selected
+        if( has(query,'category') ){
+            url += `&child_sub_category_code=${query.category}`;
+        }
     }
     
     if( !isEmpty(name) ){
@@ -386,7 +307,8 @@ const fetchProducts = async (append = false) => {
 
             if( !append ){
                 $data.products = cloneDeep(products);
-            }   
+            }  
+            
         }
 
         $data.products_count = products_count;
@@ -411,6 +333,89 @@ const fetchProducts = async (append = false) => {
     }            
 
 };
+
+/**
+ * Fetches brands based on the provided data
+ * @returns {Promise<void>}
+ */
+const fetchBrands = async (): Promise<void> => {
+    if( !isEmpty($data.products) ){
+        try {
+            // Show the loader for brands
+            $data.loaders.brands       = true;
+
+            // Get the query and params from the route
+            const { query, params }    = $route;
+
+            // Get the unique brands from the products
+            const unique_brands        = uniq(cloneDeep($data.products).map( (product:any) => product.brand ));
+
+            // Make API call to get brands with products
+            const { data: { brands } } = await $api.put('/products/brands',{
+                brands:        unique_brands,
+                with_products: true,
+                category:      params.category,
+                sub_category:  params.sub_category
+            });
+
+            // Clone the brands and assign it to the data
+            $data.brands               = cloneDeep(brands)
+
+        } catch(error){
+            // Hide the loader for brands
+            $data.loaders.brands       = false;
+        } finally {
+            // Hide the loader for brands
+            $data.loaders.brands       = false;
+        }
+    }
+}
+
+/**
+ * Handles the click event of the view category button.
+ * 
+ * @param {Object} category - The category object.
+ * @returns {void} - Nothing.
+ */
+const viewCategory = ({ code }: any) => {
+    /**
+     * Logs the category object to the console
+     */
+     $router.push({ 
+        name: 'Products', 
+        params: { 
+            category: $route.params.category, 
+            sub_category: $route.params.sub_category 
+        }, 
+        query: { 
+            category: code 
+        } 
+    });
+}
+
+/**
+ * Handles the click event of the view brand button.
+ * 
+ * @param {Object} brand - The brand object.
+ * 
+ * @returns {void} - Nothing.
+ */
+const viewBrand = ({ code }: any) => {
+    /**
+     * Logs the brand object to the console
+     */
+    $router.push({ 
+        name: 'Products', 
+        params: { 
+            category: $route.params.category, 
+            sub_category: $route.params.sub_category 
+        }, 
+        query: { 
+            brand: code 
+        } 
+    });
+    console.log(code);
+}
 
 const selectColour = (colour) => {
     $data.filter.colour = colour;
@@ -469,7 +474,16 @@ const viewProduct = (product) => {
     return $router.push({ name: 'Product', params: { product: product.full_code }});
 }
 
-onBeforeMount(fetchFilters(),fetchProducts());
+onBeforeMount(
+    async () => { 
+        $data.loading = true;
+        $store.commit('card_loader',true);
+        await fetchFilters();
+        await fetchProducts();
+        await fetchBrands();
+        $data.tab     = 1;
+    }
+);
 
 onMounted(
     debounce(
@@ -534,8 +548,8 @@ watch(
 );
 
 watch(
-    () => $route.query,
-    () => {
+    () => $route,
+    async () => {
         // Set loading to true to indicate that data is being fetched.
         $data.loading = true;
 
@@ -558,8 +572,11 @@ watch(
 
 
         // Fetch the data based on the updated route perameters.
-        fetchFilters();
-        fetchProducts();
+        await fetchFilters();
+        await fetchProducts();
+        await fetchBrands();
+
+        $data.tab           = 1;
     },
     {
         deep: true

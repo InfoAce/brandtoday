@@ -11,7 +11,7 @@ import { Any, Between, EntityNotFoundError, Equal, ILike, In, Like, Not, Or } fr
 import { ConfigService } from '@nestjs/config';
 import { PriceEntity, ProductEntity, ProductVariantEntity } from 'src/entities';
 import { ModelException } from 'src/exceptions';
-import { FetchProductsValidation } from 'src/validation';
+import { FetchProductsValidation, FilterBrandValidation } from 'src/validation';
 
 @Controller('products')
 export class ProductsController {
@@ -54,8 +54,10 @@ export class ProductsController {
     async index(
       @Query('clearance',new DefaultValuePipe(Boolean())) queryClearance: boolean,
       @Query('name',new DefaultValuePipe(String())) queryName: string,
-      @Query('category_code',new DefaultValuePipe(String())) category_code: any,
-      @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: any,
+      @Query('category_code',new DefaultValuePipe(String())) category_code: string,
+      @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: string,
+      @Query('child_sub_category_code',new DefaultValuePipe(String())) child_sub_category_code: string,
+      @Query('brand',new DefaultValuePipe(String())) brand: string,
       @Query('page',new DefaultValuePipe(1)) queryPage: string,
       @Query('perPage',new DefaultValuePipe(10)) queryPerPage: string,
       @Query('price_range',new DefaultValuePipe(String())) queryPriceRange: string,
@@ -94,8 +96,8 @@ export class ProductsController {
             set(filters.where,'brand',In(brands));
           }
 
-          if( !isEmpty(child_sub_categories) ){
-            set(filters.where.categories,'child_sub_category_code',In(child_sub_categories));
+          if( !isEmpty(child_sub_category_code) ){
+            set(filters.where.categories,'child_sub_category_code',child_sub_category_code);
           }
 
           let [results, count ] = await this.productModel.findAndCount(filters);
@@ -148,7 +150,7 @@ export class ProductsController {
       }
     }
 
-    @Get('brands')
+    @Put('brands')
     /**
      * Show a product by its code.
      *
@@ -159,11 +161,34 @@ export class ProductsController {
      */
     async brands(
       @Req() req: Request,  // The request object
-      @Res() res: Response // The response object
+      @Res() res: Response, // The response object
+      @Body() body: FilterBrandValidation
     ) {
       try {
+
+        let filter = { cache: true };
+        
+        // Filter by brand name
+        if( isEmpty(body.brands) ){
+          filter['where'] = { name: In(body.brands) }
+        }
+
+        if( body.with_products ){
+          filter['relations'] = { products:{ categories: true } }
+          filter['where']     = !isEmpty(filter['where']) ? 
+            { ...filter['where'], products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } } :
+              { products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
+        }
+
         // Fetch brands
-        let brands = await this.brandModel.find({ cache: true });
+        let brands = await this.brandModel.find(filter);
+
+        if( body.with_products ){
+          brands = brands.map( (brand: any) => {
+            brand.product_count = brand.__products__.length;
+            return omit(brand,['__products__']);
+          });
+        }
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
         res.status(HttpStatus.OK).json({ brands });
