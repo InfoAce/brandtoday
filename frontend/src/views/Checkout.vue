@@ -1,27 +1,29 @@
 <template>
-    <div>
-        <!-- breadcrumb start -->
-        <div class="breadcrumb-section">
-            <div class="container-fluid">
-                <div class="row px-4">
-                    <div class="col-sm-6">
-                        <div class="page-title">
-                            <h4>Checkout</h4>
+    <Layout>
+
+        <template #breadcrumb>
+            <!-- breadcrumb start -->
+            <div class="breadcrumb-section">
+                <div class="container-fluid">
+                    <div class="row px-4">
+                        <div class="col-sm-6">
+                            <div class="page-title">
+                                <h4>Checkout</h4>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#" @click="$router.push({ name: 'Home' })">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
-                            </ol>
-                        </nav>
+                        <div class="col-sm-6">
+                            <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" @click="$router.push({ name: 'Home' })">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- breadcrumb End -->
-
+            <!-- breadcrumb End -->
+        </template>
         <!-- section start -->
         <section class="section-b-space" v-if="!$data.saved">
             <div class="container-fluid">
@@ -288,11 +290,11 @@
             </section>
             <!-- Section ends -->
         </div>
-    </div>
+    </Layout>
 </template>
 <style src="@vueform/multiselect/themes/default.css"></style>
 <script setup lang="ts">
-
+import { Layout } from '../components'
 import { computed, inject, onBeforeMount, onMounted, reactive, watch } from 'vue';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useStore } from 'vuex';

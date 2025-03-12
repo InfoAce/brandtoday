@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <Layout>
         
         <!-- Home slider -->
         <section class="p-0">
@@ -323,9 +323,10 @@
             </div>
         </section>
           
-    </div>
+    </Layout>
 </template>
 <script setup>
+import { Layout } from '../components';
 import { computed, inject, nextTick, onBeforeMount, onMounted, reactive, watch } from 'vue';
 import { cloneDeep, debounce, isEmpty, isNull, first,get} from 'lodash';
 import { useStore } from 'vuex';

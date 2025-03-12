@@ -1,27 +1,28 @@
 <template>
-    <div>
-	<!-- breadcrumb start -->
-	<div class="breadcrumb-section">
-		<div class="container-fluid">
-			<div class="row px-4">
-				<div class="col-sm-6">
-					<div class="page-title">
-						<h2>Get To Know Us</h2>
+<Layout>
+	<template #breadcrumb>
+		<!-- breadcrumb start -->
+		<div class="breadcrumb-section">
+			<div class="container-fluid">
+				<div class="row px-4">
+					<div class="col-sm-6">
+						<div class="page-title">
+							<h2>Get To Know Us</h2>
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-6">
-					<nav aria-label="breadcrumb" class="theme-breadcrumb">
-						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-							<li class="breadcrumb-item active">Get To Know Us</li>
-						</ol>
-					</nav>
+					<div class="col-sm-6">
+						<nav aria-label="breadcrumb" class="theme-breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+								<li class="breadcrumb-item active">Get To Know Us</li>
+							</ol>
+						</nav>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- breadcrumb End -->
-
+		<!-- breadcrumb End -->
+	</template>
 
 	<!--section start-->
 	<section class="login-page section-b-space">
@@ -36,13 +37,13 @@
 	</section>
 	<!--Section ends-->
 		
-</div>	
+</Layout>	
 </template>
 
 <script setup>
 import { inject, onBeforeMount, reactive } from 'vue';
 import { clone } from 'lodash';
-import { PlaceholderText } from '../components';
+import { Layout, PlaceholderText } from '../components';
 
 const $api = inject('$api');
 const $data = reactive({ loader: Boolean(true), about_us: String() });

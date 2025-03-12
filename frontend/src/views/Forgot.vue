@@ -1,27 +1,28 @@
 <template>
-    <div>
-        <!-- breadcrumb start -->
-        <div class="breadcrumb-section">
-            <div class="container-fluid">
-                <div class="row px-4">
-                    <div class="col-sm-6">
-                        <div class="page-title">
-                            <h4>Forgot Password</h4>
+    <Layout>
+        <template #breadcrumb>
+            <!-- breadcrumb start -->
+            <div class="breadcrumb-section">
+                <div class="container-fluid">
+                    <div class="row px-4">
+                        <div class="col-sm-6">
+                            <div class="page-title">
+                                <h4>Forgot Password</h4>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-                                <li class="breadcrumb-item active">Forgot Password</li>
-                            </ol>
-                        </nav>
+                        <div class="col-sm-6">
+                            <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+                                    <li class="breadcrumb-item active">Forgot Password</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- breadcrumb End -->
-    
+            <!-- breadcrumb End -->
+        </template>
         <!--section start-->
         <section class="login-page section-b-space">
             <div class="container">
@@ -43,10 +44,11 @@
         </section>
         <!--Section ends-->
             
-    </div>	
-    </template>
+    </Layout>	
+</template>
     
-    <script setup>
+<script setup>
+    import { Layout } from '../components';
     import { inject, reactive, watch } from 'vue';
     import { each, isEmpty, has } from 'lodash';
     import * as yup from "yup";

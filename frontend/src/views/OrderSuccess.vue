@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <Layout>
         <!-- thank-you section start -->
         <section class="section-b-space light-layout">
             <div class="container">
@@ -67,11 +67,12 @@
             </div>
         </section>
         <!-- Section ends -->      
-    </div>
+    </Layout>
 </template>
 
 <script lang="ts" setup>
 // Import packages
+import { Layout } from '../components';
 import { computed, inject, onBeforeMount, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';

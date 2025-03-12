@@ -1,28 +1,30 @@
 <template>
-    <div>
-        <!-- breadcrumb start -->
-        <div class="breadcrumb-section">
-            <div class="container-fluid">
-                <div class="row px-4">
-                    <div class="col-sm-6">
-                        <div class="page-title">
-                            <h4 class="m-0">{{ product.name }}</h4>
+    <Layout>
+
+        <template #breadcrumb>
+            <!-- breadcrumb start -->
+            <div class="breadcrumb-section">
+                <div class="container-fluid">
+                    <div class="row px-4">
+                        <div class="col-sm-6">
+                            <div class="page-title">
+                                <h4 class="m-0">{{ product.name }}</h4>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#" @click="$router.push({ name: 'Home' })">Home</a></li>
-                                <li class="breadcrumb-item"><a href="#" @click="$router.go(-1)">Products</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
-                            </ol>
-                        </nav>
+                        <div class="col-sm-6">
+                            <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" @click="$router.push({ name: 'Home' })">Home</a></li>
+                                    <li class="breadcrumb-item"><a href="#" @click="$router.go(-1)">Products</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- breadcrumb End -->
-
+            <!-- breadcrumb End -->
+        </template>
 
         <!-- section start -->
         <section>
@@ -320,16 +322,16 @@
         <!-- product section end -->
 
 
-    </div>
+    </Layout>
 </template>
 
-<script>
+<script lang="ts">
 import { clone, cloneDeep, debounce, each, first, get, groupBy, isEmpty, isNull, keys, has, omit, set, min, transform, uniq } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
-import { ProductRatingForm, RelatedProduct } from '../components';
+import { Layout, ProductRatingForm, RelatedProduct } from '../components';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css'
 import { sortSizes } from '../helpers'
@@ -344,7 +346,7 @@ export default {
         });
     },
     components:{
-        Carousel, InnerImageZoom, Slide, Pagination, Navigation, ProductRatingForm, RelatedProduct
+        Carousel, Layout, InnerImageZoom, Slide, Pagination, Navigation, ProductRatingForm, RelatedProduct
     },
     computed:{
         auth(){

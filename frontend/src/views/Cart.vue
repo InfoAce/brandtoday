@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <Layout>
+
+        <template #breadcrumb>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
             <div class="container-fluid">
@@ -22,6 +24,7 @@
             </div>
         </div>
         <!-- breadcrumb End -->
+        </template>
 
         <!--section start-->
         <section class="section-b-space">
@@ -172,10 +175,11 @@
             </div>
         </section>
         <!--section end-->        
-    </div>
+    </Layout>
 </template>
 
 <script setup lang="ts">
+import { Layout } from '../components';
 import { cloneDeep, each, isEmpty, has, set, sum } from 'lodash';
 import { computed, inject, onBeforeMount, reactive, watch } from 'vue';
 import { useStore } from 'vuex';

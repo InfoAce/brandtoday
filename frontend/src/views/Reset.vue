@@ -1,27 +1,29 @@
 <template>
-    <div>
-        <!-- breadcrumb start -->
-        <div class="breadcrumb-section">
-            <div class="container-fluid">
-                <div class="row px-4">
-                    <div class="col-sm-6">
-                        <div class="page-title">
-                            <h4>Reset Password</h4>
+    <Layout>
+
+        <template #breadcrumb>
+            <!-- breadcrumb start -->
+            <div class="breadcrumb-section">
+                <div class="container-fluid">
+                    <div class="row px-4">
+                        <div class="col-sm-6">
+                            <div class="page-title">
+                                <h4>Reset Password</h4>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-                                <li class="breadcrumb-item active">Reset Password</li>
-                            </ol>
-                        </nav>
+                        <div class="col-sm-6">
+                            <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+                                    <li class="breadcrumb-item active">Reset Password</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- breadcrumb End -->
-    
+            <!-- breadcrumb End -->
+        </template>
     
         <!--section start-->
         <section class="login-page section-b-space">
@@ -49,7 +51,7 @@
         </section>
         <!--Section ends-->
             
-    </div>	
+    </Layout>	
 </template>
     
 <script setup>
@@ -58,6 +60,7 @@
     import * as yup from "yup";
     import { toast  } from "vue3-toastify";
     import { useRoute, useRouter } from 'vue-router';
+    import { Layout } from '../components';
     
     const $route  = useRoute();
     const $router = useRouter();

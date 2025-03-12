@@ -1,27 +1,29 @@
 <template>
-<div>
-	<!-- breadcrumb start -->
-	<div class="breadcrumb-section">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="page-title">
-						<h4>Login</h4>
+<Layout>
+
+	<template #breadcrumb>
+		<!-- breadcrumb start -->
+		<div class="breadcrumb-section">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="page-title">
+							<h4>Login</h4>
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-6">
-					<nav aria-label="breadcrumb" class="theme-breadcrumb">
-						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-							<li class="breadcrumb-item active">Login</li>
-						</ol>
-					</nav>
+					<div class="col-sm-6">
+						<nav aria-label="breadcrumb" class="theme-breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+								<li class="breadcrumb-item active">Login</li>
+							</ol>
+						</nav>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- breadcrumb End -->
-
+		<!-- breadcrumb End -->
+	</template>
 
 	<!--section start-->
 	<section class="login-page section-b-space">
@@ -62,10 +64,11 @@
 	</section>
 	<!--Section ends-->
 		
-</div>	
+</Layout>	
 </template>
 
 <script setup>
+import { Layout } from '../components';
 import { inject, reactive, ref, watch } from 'vue';
 import { each, get, isEmpty, has } from 'lodash';
 import { useRoute, useRouter } from 'vue-router';

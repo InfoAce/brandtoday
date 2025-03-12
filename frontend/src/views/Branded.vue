@@ -1,5 +1,6 @@
 <template>
-    <div>
+<Layout>
+    <template #breadcrumb>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
             <div class="container-fluid">
@@ -22,90 +23,92 @@
             </div>
         </div>
         <!-- breadcrumb End -->
-                 <!-- section start -->
-        <section>
-            <div class="collection-wrapper">
-                <div class="container-fluid">
-                    <div class="row px-4">
-                        <div class="col-12 mb-4 text-center">
-                            <h2>{{ $data.product.name }}</h2>
-                        </div>
-                        <div class="col-12 d-flex justify-content-center">
-                            <div class="col-md-6 col-xs-12">
-                                <div class="progresses">
-                                    <div class="steps">
-                                        <span><i class="fa fa-check" v-if="$data.steps.one.complete"></i></span>
-                                        <span class="font-weight-bold" v-if="!$data.steps.one.complete">1</span>
-                                    </div>
-                                    <span class="line"></span>
-                                    <div class="steps">
-                                        <span><i class="fa fa-check" v-if="$data.steps.two.complete"></i></span>
-                                        <span class="font-weight-bold" v-if="!$data.steps.two.complete">2</span>
-                                    </div>                    
-                                </div>                                     
-                            </div>
-                        </div>
-                        <div class="col-12 text-center my-3">
-                            <h3 class="text-theme mb-0">Select Branding Position(s)</h3>
-                        </div>
-                        <div class="col-12 my-4 d-flex align-items-center flex-column" v-if="$data.steps.current == 1">
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex flex-column">
-                                <div class="form-group d-flex" v-for="(branding,index) in $branding" :key="index">
-                                    <input type="checkbox" @change="() => selectPosition(branding)" :id="branding.full_code" :value="branding.full_code" :checked="!isEmpty($data.form.positions.find( value => value.full_code == branding.full_code))" />
-                                    <label class="mb-0 ml-2"><strong>{{ branding.name }}</strong></label>
+    </template>
+    <!-- section start -->
+    <section>
+        <div class="collection-wrapper">
+            <div class="container-fluid">
+                <div class="row px-4">
+                    <div class="col-12 mb-4 text-center">
+                        <h2>{{ $data.product.name }}</h2>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="col-md-6 col-xs-12">
+                            <div class="progresses">
+                                <div class="steps">
+                                    <span><i class="fa fa-check" v-if="$data.steps.one.complete"></i></span>
+                                    <span class="font-weight-bold" v-if="!$data.steps.one.complete">1</span>
                                 </div>
-                            </div>
-                            <h5 class="text-danger" v-if="!isEmpty($data.errors) && has($data.errors,'positions')">{{  $data.errors.positions }}</h5>
+                                <span class="line"></span>
+                                <div class="steps">
+                                    <span><i class="fa fa-check" v-if="$data.steps.two.complete"></i></span>
+                                    <span class="font-weight-bold" v-if="!$data.steps.two.complete">2</span>
+                                </div>                    
+                            </div>                                     
                         </div>
-                        <div class="col-12 my-4" v-if="$data.steps.current == 2">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-6 col-xs-12">
-                                        <div class="card mb-3" v-for="(position,index) in $selectedPositions" :key="index">
-                                            <div class="card-header">
-                                                <label class="mb-0"><strong>{{ position.name }} - Position {{ position.code }}</strong></label>
+                    </div>
+                    <div class="col-12 text-center my-3">
+                        <h3 class="text-theme mb-0">Select Branding Position(s)</h3>
+                    </div>
+                    <div class="col-12 my-4 d-flex align-items-center flex-column" v-if="$data.steps.current == 1">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex flex-column">
+                            <div class="form-group d-flex" v-for="(branding,index) in $branding" :key="index">
+                                <input type="checkbox" @change="() => selectPosition(branding)" :id="branding.full_code" :value="branding.full_code" :checked="!isEmpty($data.form.positions.find( value => value.full_code == branding.full_code))" />
+                                <label class="mb-0 ml-2"><strong>{{ branding.name }}</strong></label>
+                            </div>
+                        </div>
+                        <h5 class="text-danger" v-if="!isEmpty($data.errors) && has($data.errors,'positions')">{{  $data.errors.positions }}</h5>
+                    </div>
+                    <div class="col-12 my-4" v-if="$data.steps.current == 2">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6 col-xs-12">
+                                    <div class="card mb-3" v-for="(position,index) in $selectedPositions" :key="index">
+                                        <div class="card-header">
+                                            <label class="mb-0"><strong>{{ position.name }} - Position {{ position.code }}</strong></label>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group mb-0">
+                                                <select class="form-control" :value="$data.form.positions[index].method" @change="() => selectMethod(index)">
+                                                    <option value="">Select Method</option>
+                                                    <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`" :value="method.full_code"> {{ method.name }} ({{ method.simple_code }}) - {{ method.colours }}</option>
+                                                </select>
                                             </div>
-                                            <div class="card-body">
-                                                <div class="form-group mb-0">
-                                                    <select class="form-control" :value="$data.form.positions[index].method" @change="() => selectMethod(index)">
-                                                        <option value="">Select Method</option>
-                                                        <option v-for="(method,key) in position.methods" :key="`method_${key}`" :name="`${method.full_code}_method`" :value="method.full_code"> {{ method.name }} ({{ method.simple_code }}) - {{ method.colours }}</option>
-                                                    </select>
-                                                </div>
-                                                <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].method`) }}</strong></p>
+                                            <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].method`) }}</strong></p>
+                                        </div>
+                                        <div class="card-footer" v-if="!isEmpty($data.form.positions[index].method)">
+                                            <div class="form-group mb-0">
+                                                <input type="file" :name="`${position.full_code}_file`" @change="() => uploadFile(index)" accept="application/pdf"/>
                                             </div>
-                                            <div class="card-footer" v-if="!isEmpty($data.form.positions[index].method)">
-                                                <div class="form-group mb-0">
-                                                    <input type="file" :name="`${position.full_code}_file`" @change="() => uploadFile(index)" accept="application/pdf"/>
-                                                </div>
-                                                <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].file`) }}</strong></p>
-                                            </div>
+                                            <p class="text-danger mb-0"><strong>{{ get($data.errors,`positions[${index}].file`) }}</strong></p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-xs-12">
-                                        <embed :src="`${$data.product.full_branding_guide}#toolbar=0`" style="width: 100%; height: 75vh; -webkit-transform:scale(1); -moz-transform-scale(1);" type="application/pdf"/>
-                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xs-12">
+                                    <embed :src="`${$data.product.full_branding_guide}#toolbar=0`" style="width: 100%; height: 75vh; -webkit-transform:scale(1); -moz-transform-scale(1);" type="application/pdf"/>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 mb-4">
-                            <div class="row justify-content-center">
-                                <div :class="`d-flex ${$data.steps.current == 2 ? 'justify-content-between' : 'justify-content-center'} col-md-6 col-xs-12`">
-                                    <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="$data.steps.current = 1">Back</button>   
-                                    <button class="btn btn-theme btn-lg w-100 mx-2" :disabled="isEmpty($data.form.positions)" v-if="$data.steps.current == 1" @click="$data.steps.current = 2">Next</button>   
-                                    <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="addToCart">Add To Cart</button>   
-                                </div>
+                    </div>
+                    <div class="col-12 mb-4">
+                        <div class="row justify-content-center">
+                            <div :class="`d-flex ${$data.steps.current == 2 ? 'justify-content-between' : 'justify-content-center'} col-md-6 col-xs-12`">
+                                <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="$data.steps.current = 1">Back</button>   
+                                <button class="btn btn-theme btn-lg w-100 mx-2" :disabled="isEmpty($data.form.positions)" v-if="$data.steps.current == 1" @click="$data.steps.current = 2">Next</button>   
+                                <button class="btn btn-theme btn-lg w-100 mx-2" v-if="$data.steps.current == 2" @click="addToCart">Add To Cart</button>   
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+</Layout>
 </template>
 
 
 <script setup>
+import { Layout } from '../components';
 import { cloneDeep, each, get, isEmpty, has, set } from 'lodash';
 import { computed, inject, reactive, ref, onBeforeMount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

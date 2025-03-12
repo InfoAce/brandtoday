@@ -1,14 +1,16 @@
 <template>
 	<div class="theme-color-1">
 		<LandingLoader />
-		<LandingHeader />
-		<router-view></router-view>
+		<LandingHeader>
+            <slot name="breadcrumb"/>
+        </LandingHeader>
+        <slot />
 		<LandingFooter />
 	</div>
 </template>
 
 <script setup lang="ts">
-import { LandingFooter, LandingHeader, LandingLoader } from './components';
+import { LandingFooter, LandingHeader, LandingLoader } from '.';
 import { useStore } from 'vuex'
 import { inject, onBeforeMount, onMounted, watch } from 'vue';
 import { debounce, isEmpty } from 'lodash';

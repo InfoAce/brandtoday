@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <Layout>
+
+        <template #breadcrumb>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
             <div class="container">
@@ -21,7 +23,7 @@
             </div>
         </div>
         <!-- breadcrumb End -->
-
+        </template>
 
         <!--section start-->
         <section class="login-page section-b-space">
@@ -49,7 +51,7 @@
         </section>
         <!--Section ends-->
             
-    </div>
+    </Layout>
 </template>
 
 <script setup>
@@ -59,6 +61,7 @@ import { useRouter, useRoute } from 'vue-router';
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { useStore } from 'vuex';
+import { Layout } from '../components';
 
 const store  = useStore();
 const route  = useRoute();

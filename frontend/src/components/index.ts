@@ -5,6 +5,7 @@ export { default as Category } from './Category.vue';
 export { default as LandingFooter } from './LandingFooter.vue';
 export { default as LandingHeader } from './LandingHeader.vue';
 export { default as LandingLoader } from './LandingLoader.vue';
+export { default as Layout } from './Layout.vue';
 export { default as Navbar } from './Navbar.vue';
 export { default as PlaceholderLoader } from './PlaceholderLoader.vue';
 export { default as PlaceholderText } from './PlaceholderText.vue';

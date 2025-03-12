@@ -1,30 +1,28 @@
 <template>
-	<div>
-
-	
-    <!-- breadcrumb start -->
-    <div class="breadcrumb-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="page-title">
-                        <h4>create account</h4>
+<Layout>
+    <template #breadcrumb>
+        <!-- breadcrumb start -->
+        <div class="breadcrumb-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="page-title">
+                            <h4>create account</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
-                            <li class="breadcrumb-item active" aria-current="page">create account</li>
-                        </ol>
-                    </nav>
+                    <div class="col-sm-6">
+                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><router-link to="/">Home</router-link></li>
+                                <li class="breadcrumb-item active" aria-current="page">create account</li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- breadcrumb End -->
-
-
+        <!-- breadcrumb End -->
+    </template>
     <!--section start-->
     <section class="register-page section-b-space">
         <div class="container">
@@ -86,7 +84,7 @@
         </div>
     </section>
     <!--Section ends-->
-</div>
+</Layout>
 </template>
 
 <script>
@@ -106,6 +104,7 @@ import { toast } from "vue3-toastify";
 import { useStore } from 'vuex';
 import { VueTelInput } from 'vue3-tel-input'
 import 'vue3-tel-input/dist/vue3-tel-input.css'
+import { Layout } from '../components';
 
 const store  = useStore();
 const router = useRouter();

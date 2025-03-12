@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <Layout>
+        <template #breadcrumb>
         <!-- breadcrumb start -->
         <div class="breadcrumb-section">
             <div class="container">
@@ -21,7 +22,7 @@
             </div>
         </div>
         <!-- breadcrumb End -->
-
+        </template>
 
         <!-- section start -->
         <section class="p-0">
@@ -39,5 +40,9 @@
         </section>
         <!-- Section ends -->
 
-    </div>
+    </Layout>
 </template>
+
+<script lang="ts" setup>
+import { Layout } from '../components';
+</script>

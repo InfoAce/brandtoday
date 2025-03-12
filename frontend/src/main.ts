@@ -3,7 +3,7 @@
 import appStore from './stores';
 import api from './api'
 
-import { createApp } from 'vue'
+import { createApp, h } from 'vue'
 
 import router from './router'
 
@@ -20,7 +20,7 @@ import "skeleton-screen-css";
 import { RouterView } from 'vue-router';
 import App from './App.vue';
 
-const app                         = createApp(App)
+const app                         = createApp({ render: () => h(RouterView) });
 const { VITE_RECAPTCHA_SITE_KEY } = import.meta.env;
 
 app.use(toast);

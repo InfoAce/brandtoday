@@ -1,7 +1,7 @@
 <template>
     
     <!-- header start -->
-    <header>
+    <header style="position:sticky;top:0;z-index:1000;">
         <div class="top-header">
             <div class="container-fluid">
                 <div class="row">
@@ -191,6 +191,7 @@
                 </div>
             </div>
         </div>
+        <slot />
     </header>
     <!-- header end -->
 </template>

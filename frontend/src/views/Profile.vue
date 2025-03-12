@@ -1,27 +1,28 @@
 <template>
-<div>
-    <!-- breadcrumb start -->
-    <div class="breadcrumb-section">
-        <div class="container-fluid">
-            <div class="row px-4">
-                <div class="col-sm-6">
-                    <div class="page-title">
-                        <h4>Profile</h4>
+<Layout>
+    <template #breadcrumb>
+        <!-- breadcrumb start -->
+        <div class="breadcrumb-section">
+            <div class="container-fluid">
+                <div class="row px-4">
+                    <div class="col-sm-6">
+                        <div class="page-title">
+                            <h4>Profile</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({ name: 'Home' })">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Profile</li>
-                        </ol>
-                    </nav>
+                    <div class="col-sm-6">
+                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({ name: 'Home' })">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- breadcrumb End -->
-
+        <!-- breadcrumb End -->
+    </template>
 
     <!--  dashboard section start -->
     <section class="dashboard-section section-b-space user-dashboard-section">
@@ -68,11 +69,13 @@
         </div>
     </section>
     <!--  dashboard section end -->
-</div>
+</Layout>
 </template>
-<script>
+<script lang="ts">
+import { Layout } from '../components';
 import { get } from 'lodash';
 export default {
+    components: { Layout },
     computed: {
         user(){
             return get(this.$store.getters.auth,'user') 

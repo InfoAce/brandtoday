@@ -1,31 +1,32 @@
 <template>
-    <div>
-        <!-- breadcrumb start -->
-        <div class="breadcrumb-section">
-            <div class="container-fluid">
-                <div class="row px-4">
-                    <div class="col-sm-6">
-                        <div class="page-title">
-                            <h4 class="text-theme">Products - {{ $data.products_count }}</h4>
+    <Layout>
+        <template #breadcrumb>
+            <!-- breadcrumb start -->
+            <div class="breadcrumb-section">
+                <div class="container-fluid">
+                    <div class="row px-4">
+                        <div class="col-sm-6">
+                            <div class="page-title">
+                                <h4 class="text-theme">Products - {{ $data.products_count }}</h4>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6" v-if="!isEmpty($data.category) && !isEmpty($data.sub_category)">
-                        <nav aria-label="breadcrumb" class="theme-breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page"><a href="#" @click.prevent="$router.push({name:'Category',query: { category: $data.category.id }})">{{ $data.category.name }}</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $data.sub_category.name }}</li>
-                            </ol>
-                        </nav>
+                        <div class="col-sm-6" v-if="!isEmpty($data.category) && !isEmpty($data.sub_category)">
+                            <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="#" @click.prevent="$router.push({name:'Home'})">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page"><a href="#" @click.prevent="$router.push({name:'Category',query: { category: $data.category.id }})">{{ $data.category.name }}</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">{{ $data.sub_category.name }}</li>
+                                </ol>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- breadcrumb end -->
-
+            <!-- breadcrumb end -->
+        </template>
 
         <!-- section start -->
-        <section class="section-b-space ratio_asos" ref="products">
+        <section class="pt-4 ratio_asos" ref="products">
             <div class="collection-wrapper">
                 <div class="container-fluid">
                     <div class="row px-4">  
@@ -54,34 +55,38 @@
                                 </li>
                             </ul>
                             <div class="tab-content nav-material" id="top-tabContent">
-                                <div :class="`tab-pane fade ${ $data.tab == 1 ? 'show active' : '' } py-4`" id="products" role="tabpanel" aria-labelledby="products-tab">
-                                    <ProductFilters
-                                        :filters="$data.filter"
-                                        :form="$data.form"
-                                        @update:filters="$data.filters = $event"
-                                        @update:form="$data.form = $event"
-                                    />
-                                    <div class="col px-0 collection-product-wrapper">
-                                        <div class="product-wrapper-grid">
-                                            <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
-                                                <div class="card">
-                                                    <div class="card-body text-center">
-                                                        <h2 class="text-theme m-0">
-                                                            <i class="fa fa-exclamation-circle"></i>
-                                                            No product found here!
-                                                        </h2>
+                                <div :class="`tab-pane fade col-12 ${ $data.tab == 1 ? 'show active' : '' } py-4`" id="products" role="tabpanel" aria-labelledby="products-tab">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-12 col-xs-12 px-0">
+                                            <ProductFilters
+                                                :filters="$data.filter"
+                                                :form="$data.form"
+                                                @update:filters="$data.filters = $event"
+                                                @update:form="$data.form = $event"
+                                            />
+                                        </div>
+                                        <div class="col-lg-9 colcol-xs-12 collection-product-wrapper" style="overflow-y: scroll;">
+                                            <div class="row px-2 vh-100">
+                                                <div class="col-12 px-0" v-if="isEmpty($data.products) && !$store.getters.loaders.card">
+                                                    <div class="card">
+                                                        <div class="card-body text-center">
+                                                            <h2 class="text-theme m-0">
+                                                                <i class="fa fa-exclamation-circle"></i>
+                                                                No product found here!
+                                                            </h2>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <CardLoader v-if="!isEmpty($data.products)" />
-                                            <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
-                                            <div class="row">                                        
-                                                <Product 
-                                                    :data="product"
-                                                    @show="viewProduct"
-                                                    v-for="(product,index) in $data.products"
-                                                    :key="index"
-                                                />
+                                                <CardLoader v-if="!isEmpty($data.products)" />
+                                                <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
+                                                <div class="row">                                        
+                                                    <Product 
+                                                        :data="product"
+                                                        @show="viewProduct"
+                                                        v-for="(product,index) in $data.products"
+                                                        :key="index"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -115,11 +120,11 @@
             </div>
         </section>
         <!-- section End -->        
-    </div>
+    </Layout>
 </template>
 <script setup lang="ts">
 import { cloneDeep, debounce, first, isEmpty, isNull, intersectionBy, get, uniq, has} from 'lodash';
-import { Brand, Category, CardLoader,Product, ProductFilters, PlaceholderLoader, PlaceholderText } from '../components';
+import { Brand, Category, CardLoader, Layout, Product, ProductFilters, PlaceholderLoader, PlaceholderText } from '../components';
 import { computed, inject, reactive, onBeforeMount, ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
