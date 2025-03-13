@@ -1,11 +1,11 @@
-import { Body, Controller, DefaultValuePipe, Get, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Render, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, HttpException, HttpStatus, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Param, Post, Put, Query, Render, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard, ClientGuard, OptionalGuard } from '../../../guards';
 import { Request, Response } from 'express';
 import { AmrodService, AuthService, MailService } from 'src/services';
 import { cloneDeep, flatMap, intersectionBy, isEmpty, isNull, first, has, get, omit, shuffle, set, sortBy, take, toPlainObject, uniqBy, uniq } from 'lodash';
 import { paginate } from "src/helpers";
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { BrandModel, CategoryModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
+import { BrandModel, CategoryModel, ColourModel, FavouriteModel, PriceModel, ProductCategoryModel, ProductModel, SubCategoryModel } from 'src/models';
 import { sep } from 'path';
 import { Any, Between, EntityNotFoundError, Equal, ILike, In, Like, Not, Or } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -17,8 +17,6 @@ import { filter } from 'rxjs';
 @Controller('products')
 export class ProductsController {
 
-    private colors          = Object();
-
     private logger          = new Logger(ProductsController.name);
 
     /**
@@ -28,16 +26,10 @@ export class ProductsController {
      * @param cacheManager - The instance of CacheManager
      */
     constructor(
-      private brandModel:            BrandModel,
-      private categoryModel:         CategoryModel,
-      private configService:         ConfigService,
-      private priceModel:            PriceModel,
-      private productModel:          ProductModel,
-      private productCategoryModel:  ProductCategoryModel,
-      private subCategoryModel:      SubCategoryModel
-    ){
-      this.colors = this.configService.get<any>('colors');
-    }
+      private brandModel:    BrandModel,
+      private productModel:  ProductModel,
+      private colourModel:   ColourModel,
+    ){}
 
     /**
      * Index method to get products based on the query parameters.
@@ -54,6 +46,7 @@ export class ProductsController {
     @UsePipes(new ValidationPipe({ transform: true }))
     async index(
       @Query('clearance',new DefaultValuePipe(Boolean())) queryClearance: boolean,
+      @Query('colours',new DefaultValuePipe(String())) queryColours: string,
       @Query('name',new DefaultValuePipe(String())) queryName: string,
       @Query('category_code',new DefaultValuePipe(String())) category_code: string,
       @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: string,
@@ -69,6 +62,7 @@ export class ProductsController {
     ) {
       try {  
         let products       = Array();
+        let relations      = Array();
         let products_count = Number();
         let filters        = Object({
           cache:    true,
@@ -109,8 +103,13 @@ export class ProductsController {
             set(filters.where, 'name', ILike(`%${queryName}%`));
           }          
 
+          if( !isEmpty(queryColours) ){
+            relations.push('colour_images')
+            set(filters.where, 'colour_images', { code: In(queryColours.split(',')) });
+          }
+
           // Set relation to 'categories'
-          set(filters, 'relation', ['categories']);
+          relations.push('categories')
 
           // Set the price range in the filter
           set(filters.where, 'price', Between(body.price[0], body.price[1]));
@@ -128,7 +127,7 @@ export class ProductsController {
            * If clearance is queried, include 'allclearanceitems' in category codes
            */
           if (queryClearance) {
-            set(filters, 'relation', ['categories']);
+            relations.push('categories')
             filters.where.push({ categories: { category_code: In(['allclearanceitems']) } })
           }
           
@@ -140,6 +139,10 @@ export class ProductsController {
             filters.where.push({full_code: ILike(`%${queryName}%`)})
           }
             
+        }
+
+        if( !isEmpty(relations) ){
+          set(filters, 'relations', relations);
         }
 
         let [results, count ] = await this.productModel.findAndCount(filters);
@@ -158,6 +161,7 @@ export class ProductsController {
         }
 
         throw new ModelException(error);
+        
       }
     } 
 
@@ -185,6 +189,7 @@ export class ProductsController {
 
         // Log any errors that occur
         this.logger.error(error);
+        throw new HttpException(error.message, error.status);
 
       }
     }
@@ -239,7 +244,7 @@ export class ProductsController {
 
         // Log any errors that occur
         this.logger.error(error);
-
+        throw new HttpException(error.message, error.status);
       }
     }
 
@@ -253,19 +258,44 @@ export class ProductsController {
      * @return {Promise<void>}
      */
     async colours(
+      @Query('brand',new DefaultValuePipe(String())) brand: string,
+      @Query('category_code',new DefaultValuePipe(String())) category_code: string,
+      @Query('sub_category_code',new DefaultValuePipe(String())) sub_category_code: string,
+      @Query('child_sub_category_code',new DefaultValuePipe(String())) child_sub_category_code: string,
       @Req() req: Request,  // The request object
       @Res() res: Response // The response object
     ) {
       try {
-        // Fetch brands
-        let colours = this.configService.get<any>('colors');
-        colours     = uniq(flatMap(colours,(item) => item.colour ));
+
+        let filters: any = {};
+
+        if( !isEmpty(brand) ){
+          filters = { where: { product_colours: { product: { brand } } } };
+        }
+
+        if( !isEmpty(category_code) ){
+          if( has(filters,'where') ){
+            set(filters['where']['product_colours']['product'], 'categories', { category_code });
+          } 
+          if( !has(filters,'where') ){
+            filters = { where: { product_colours: { product: { categories: { category_code } } } } };        
+          }
+        }
+
+        if( !isEmpty(sub_category_code) ){
+          set(filters.where.product_colours.product.categories, 'sub_category_code', sub_category_code);
+        }
+
+        if( !isEmpty(child_sub_category_code) ){
+          set(filters.where.product_colours.product.categories, 'child_sub_category_code', child_sub_category_code);
+        }
         
-        // hexs.map( 
-        //   (hex) => {
-        //     console.log(flatMap(colours,(item,key) => ({ colours: item.colour, code: key}) ).filter( colour => colour.colours.includes(hex) ));
-        //   }
-        // )
+        if( has(filters.where,'product_colours') ){
+          set(filters,'relations',{ product_colours: true });
+        }
+
+        // Fetch brands
+        let colours = await this.colourModel.find(filters);
 
         // Send the product and favourite as a JSON response with a status code of 200 (OK)
         res.status(HttpStatus.OK).json({ colours });
@@ -274,7 +304,7 @@ export class ProductsController {
 
         // Log any errors that occur
         this.logger.error(error);
-
+        throw new HttpException(error.message, error.status);
       }
     }
 
@@ -321,7 +351,7 @@ export class ProductsController {
 
         // Log any errors that occur
         this.logger.error(error);
-
+        throw new HttpException(error.message, error.status);
       }
     }
 }

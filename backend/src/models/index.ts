@@ -6,6 +6,7 @@ export { default as BrandingPriceModel } from './branding-price.model';
 export { default as CategoryModel } from './category.model';
 export { default as ChildSubCategoryModel } from './child-sub-category.model';
 export { default as CompanyModel } from './company.model';
+export { default as ColourModel } from './colour.model';
 export { default as FavouriteModel } from './favourite.model';
 export { default as RoleModel } from './role.model';
 export { default as QueueModel } from './queue.model';

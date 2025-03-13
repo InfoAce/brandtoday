@@ -1,13 +1,9 @@
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
-import { sep } from 'path';
-import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, pick, map, maxBy, take, intersectionBy, sum, uniqBy } from 'lodash';
-import { BrandingModel, BrandingMethodModel, BrandingPriceModel, BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel } from 'src/models';
-import { v4 as uuidv4 } from 'uuid';
-import * as fs from 'fs'
+import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, pick, map, maxBy, omit, take, intersectionBy, sum, uniqBy } from 'lodash';
+import { BrandingModel, BrandingMethodModel, BrandingPriceModel, BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel, ColourModel } from 'src/models';
 
 @Injectable()
 export class AppService {
@@ -41,6 +37,7 @@ export class AppService {
     private categoryModel:        CategoryModel,
     private childSubCategory:     ChildSubCategoryModel,
     private companyModel:         CompanyModel,
+    private colourModel:          ColourModel,
     private priceModel:           PriceModel,
     private productModel:         ProductModel,
     private productColourModel:   ProductColourModel,
@@ -239,8 +236,11 @@ export class AppService {
         // Logging
         this.logger.log(`Synchronizing products`);
 
+        // Fetch amrod colours
+        let colour_swatches  = await this.amrodService.getColourSwatches();        
+
         // Fetch amrod products
-        let products        = await this.amrodService.getProducts()  
+        let products        = await this.amrodService.getProducts();
 
         // Fetch company
         let company         = await this.companyModel.first();
@@ -312,9 +312,6 @@ export class AppService {
             let price = branding_prices.find( price => price.brandingCode == method.simple_code );
             return {...method, ...pick(price,['price','minQuantity','maxQuantity','setup'])};
         });
-
-        // Fetch amrod colour swatches
-        let colour_swatches = await this.amrodService.getColourSwatches();  
         
         products = products.map( product => {
             let productPrices = prices.filter( price => price.simplecode.includes(product.simpleCode) || price.fullCode.includes(product.simpleCode) );
@@ -412,6 +409,20 @@ export class AppService {
                     ),
                     {
                         conflictPaths: ["code"],
+                        upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
+                    },
+                );
+            })
+        )
+
+        await Promise.all(
+            chunk(colour_swatches,1).map( async (colours) => {
+                await this.colourModel.upsert(
+                    colours.map( 
+                        (colour) => ({ ...omit(colour,['isDeleted','id']), amrod_id: colour.id }) 
+                    ),
+                    {
+                        conflictPaths: ["amrod_id"],
                         upsertType: "on-conflict-do-update", //  "on-conflict-do-update" | "on-duplicate-key-update" | "upsert" - optionally provide an UpsertType - 'upsert' is currently only supported by CockroachDB
                     },
                 );

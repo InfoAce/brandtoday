@@ -6,6 +6,7 @@ export { BrandingMethodRepository as BrandingMethodRepository } from './branding
 export { BrandingPriceRepository as BrandingPriceRepository } from './branding-price.repository';
 export { CategoryRepository as CategoryRepository } from './category.repository';
 export { CompanyRepository as CompanyRepository } from './company.repository';
+export { ColourRepository as ColourRepository } from './colour.repository';
 export { ChildSubCategoryRepository as ChildSubCategoryRepository } from './child-sub-category.repository';
 export { FavouriteRepository as FavouriteRepository } from './favourite.repository';
 export { RoleRepository as RoleRepository } from './role.repository';

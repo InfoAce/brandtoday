@@ -47,7 +47,7 @@
                                     <div class="material-border"></div>
                                 </li>
                                 <li class="nav-item" v-if="!isEmpty($data.brands)">
-                                    <a :class="`nav-link ${ $data.tab == 3 ? 'active' : '' }`" id="categories" data-bs-toggle="tab" href="#brands" role="tab" aria-selected="false" @click.prevent="$data.tab = 3">
+                                    <a :class="`nav-link ${ $data.tab == 3 ? 'active' : '' }`" id="brands" data-bs-toggle="tab" href="#brands" role="tab" aria-selected="false" @click.prevent="$data.tab = 3">
                                         <i class="fas fa-grip-vertical"></i>
                                         Brands
                                     </a>
@@ -61,6 +61,7 @@
                                             <ProductFilters
                                                 :filters="$data.filter"
                                                 :form="$data.form"
+                                                :colours="$data.colours"
                                                 @update:filters="$data.filters = $event"
                                                 @update:form="$data.form = $event"
                                             />
@@ -79,7 +80,7 @@
                                                 </div>
                                                 <CardLoader v-if="!isEmpty($data.products)" />
                                                 <PlaceholderLoader v-if="isEmpty($data.products) && $store.getters.loaders.card" :count="10"/>                        
-                                                <div class="row">                                        
+                                                <div class="row" id="list-products">                                        
                                                     <Product 
                                                         :data="product"
                                                         @show="viewProduct"
@@ -139,14 +140,15 @@ const $data:   any = reactive({
     child_sub_categories: Array(),
     filter:{
         clearance:          Boolean(),
+        colours:            ref(Array()),
         page:               Number(1),
         per_page:           Number(10),
         name:               String(),
         sort_pricing:       String('asc'),
     },
     form: {
-        brands:       ref(Array()),
-        price:        Array(1,20000),
+        brands:               ref(Array()),
+        price:                Array(1,20000),
         child_sub_categories: ref(Array()),
     },
     tab:                Number(1),
@@ -174,8 +176,25 @@ const fetchFilters = async() =>{
 
         let { query, params } = $route;
 
+        let url               = '/products/colours';
+
+        if( !isEmpty(params) ){
+            url += `?category_code=${params.category}&sub_category_code=${params.sub_category}`
+        }
+
+        if( !isEmpty(query) ){
+            // check if brand has been selected
+            if( has(query,'brand') ){
+                url += `&brand=${query.brand}`;
+            }
+            // Check if category has been selected
+            if( has(query,'category') ){
+                url += `&child_sub_category_code=${query.category}`;
+            }
+        }
+
         // Make API call to get brands
-        const { data: { colours } } = await $api.get('/products/colours');
+        const { data: { colours } } = await $api.get(url);
 
         /**
          * Clones the brands object and assigns it to the $data.brands property.
@@ -271,7 +290,7 @@ const fetchProducts = async (append = false): Promise<void> => {
 
     // Destructuring assignment for easier access
     let { query, params } = $route;
-    let { filter: { per_page, page, options, name, sort_pricing, clearance } } = $data;
+    let { filter: { colours, per_page, page, options, name, sort_pricing, clearance } } = $data;
     let url        = `/products`;
     
     if( !isEmpty(params) ){
@@ -300,6 +319,10 @@ const fetchProducts = async (append = false): Promise<void> => {
 
     if( !isEmpty(sort_pricing) ){
         url += `&sort_pricing=${sort_pricing}`;
+    }
+
+    if( !isEmpty(colours) ){
+        url += `&colours=${colours.join(',')}`;
     }
 
     if( clearance ){
@@ -440,7 +463,7 @@ const selectColour = (colour) => {
  * @param {Event} event - The event object.
  * @returns {void} - Nothing.
  */
-const loadMore = (event) => { 
+const loadMore = () => { 
     
     // Increment the page number
     $data.filter.page = $data.filter.page + 1;
@@ -498,30 +521,40 @@ onBeforeMount(
     }
 );
 
-onMounted(
-    debounce(
-        () => {
-            /**
-             * Window scroll event listener that triggers loading of products
-             * when the user has scrolled to the bottom of the page and the
-             * loader is not already active.
-             */
-            window.addEventListener(
-                'scroll',
-                debounce(
-                    () =>{
-                        const { scrollTop, clientHeight } = document.documentElement;
-                        const { scrollHeight: targetHeight } = document.querySelector('.collection-wrapper')
+// onMounted(
+//     debounce(
+//         () => {
+    
+//         },2000
+//     )
+// )
 
-                        if((clientHeight + scrollTop >= targetHeight ) && ($data.products_count > $data.products.length) && !$store.getters.loaders.card) {
-                            loadMore();
-                        }
+watch(
+    () => $data.products,
+    () => {
+        /**
+         * Window scroll event listener that triggers loading of products
+         * when the user has scrolled to the bottom of the page and the
+         * loader is not already active.
+         */
+         document.querySelector('.collection-product-wrapper').addEventListener(
+            'scroll',
+            debounce(
+                function(event){
+                    const { bottom, height }          = event.target.getBoundingClientRect();
+                    const { scrollTop, scrollHeight } = event.target; 
 
-                    },200
-                )
-            );      
-        },2000
-    )
+                    if( (scrollHeight - height) == scrollTop && $data.products.length < $data.products_count ){
+                        loadMore();
+                    }
+                },
+                500
+            )
+        );   
+    },
+    {
+        deep: true
+    }
 )
 
 watch(
@@ -535,6 +568,15 @@ watch(
 
 watch(
     () => $data.filter.sort_pricing,
+    () => {
+        $store.commit('card_loader',true);
+        $data.filter.page = 1;
+        fetchProducts();
+    }
+)
+
+watch(
+    $data.filter.colours,
     () => {
         $store.commit('card_loader',true);
         $data.filter.page = 1;
@@ -590,6 +632,7 @@ watch(
         $store.commit('loader',true);
 
         $data.filter = {
+            colours:      Array(),
             page:         Number(1),
             per_page:     Number(10),
             options:     {

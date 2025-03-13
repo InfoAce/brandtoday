@@ -5,6 +5,7 @@ export { BrandingMethodEntity as BrandingMethodEntity } from './branding-method.
 export { BrandingPriceEntity as BrandingPriceEntity } from './branding-price.entity';
 export { CategoryEntity as CategoryEntity } from './category.entity';
 export { CompanyEntity as CompanyEntity } from './company.entity';
+export { ColourEntity as ColourEntity } from './colour.entity';
 export { ChildSubCategoryEntity as ChildSubCategoryEntity } from './child-sub-category.entity';
 export { FavouriteEntity as FavouriteEntity } from './favourite.entity';
 export { RoleEntity as RoleEntity } from './role.entity';

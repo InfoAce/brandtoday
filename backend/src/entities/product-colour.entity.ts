@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, Index, ManyToOne, ManyToMany, JoinTable} from 'typeorm';
-import { ProductCategoryEntity, ProductEntity, ProductVariantEntity } from '.';
+import { ColourEntity, ProductCategoryEntity, ProductEntity, ProductVariantEntity } from '.';
 
 @Entity("product-colours")
 export class ProductColourEntity {
@@ -8,6 +8,7 @@ export class ProductColourEntity {
   id: string;
 
   @Column()
+  @Index()
   code: string;
 
   @Column()
@@ -23,6 +24,13 @@ export class ProductColourEntity {
     nullable: true
   })
   hex: string;  
+
+  @ManyToOne(() => ColourEntity, (entity) => entity.product_colours, { onDelete:"CASCADE", onUpdate: 'CASCADE' })
+  @JoinColumn({
+    name: 'code',
+    referencedColumnName: 'code'
+  })
+  colour: ColourEntity
 
   @ManyToOne(() => ProductEntity, (entity) => entity.colour_images, { onDelete:"CASCADE", onUpdate: 'CASCADE' })
   @JoinColumn({
