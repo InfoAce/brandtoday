@@ -23,4 +23,9 @@ export class FilterBrandValidation {
     @IsString()
     @IsNotEmpty()
     sub_category: string
+
+    @ValidateIf( item => item.categorized )
+    @IsString()
+    @IsOptional()
+    child_sub_category: string
 }

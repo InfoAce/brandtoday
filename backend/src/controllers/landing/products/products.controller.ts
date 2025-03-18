@@ -212,19 +212,20 @@ export class ProductsController {
 
         let filter = { cache: true };
         
-        // Filter by brand name
-        if( !isEmpty(body.brands) ){
-          filter['where'] = { code: In(body.brands) }
-        }
-
         if( body.with_products ){
           filter['relations'] = { products:{ categories: true } }
         }
 
         if( body.categorized ){
-          filter['where']     = !isEmpty(filter['where']) ? 
-          { ...filter['where'], products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } } :
-            { products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
+          if( !isEmpty(filter['where']) ){
+            filter['where'] = { ...filter['where'], products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
+          }
+          if( isEmpty(filter['where']) ){
+            filter['where'] = { products: { categories: { category_code: body.category, sub_category_code: body.sub_category } } }
+          }
+          if( !isEmpty(body.child_sub_category) ){
+            filter['where']['products']['categories']['child_sub_category_code'] = body.child_sub_category
+          }
         }
 
         // Fetch brands

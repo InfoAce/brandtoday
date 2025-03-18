@@ -388,13 +388,14 @@ const fetchBrands = async (): Promise<void> => {
             // Get the query and params from the route
             const { query, params }    = $route;
 
-            // Get the unique brands from the products
-            const unique_brands        = uniq(cloneDeep($data.products).map( (product:any) => product.brand )).filter( (brand:any) => !isNull(brand) );
-
-            let data: any               = { brands: unique_brands, with_products: true, categorized: !isEmpty(params) };
+            let data: any               = { with_products: true, categorized: !isEmpty(params) };
 
             if( !isEmpty(params) ){
                 data = { ...data, category: params.category, sub_category: params.sub_category }
+            }
+            
+            if( !isEmpty(query) ){
+                data = { ...data, child_sub_category: query.category }
             }
 
             // Make API call to get brands with products
