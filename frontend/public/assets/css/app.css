@@ -377,6 +377,10 @@ p {
     justify-content: space-evenly;
   }
 
+  .pixelstrap li ul li a {
+    padding: 10px !important;
+  }
+
   .pixelstrap li a {
     font-weight: bold !important;
     font-size: small !important;
@@ -407,6 +411,10 @@ p {
   .menu-list > nav > ul {
     display: flex;
     justify-content: space-evenly;
+  }
+
+  .pixelstrap li ul li a {
+    padding: 10px !important;
   }
 
   .pixelstrap li a {
