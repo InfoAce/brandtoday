@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-12 px-0 pt-3 ">
                         <p class="text-wrap p-0 m-0 text-theme">{{ product.full_code }}</p>
-                        <a href="#" @click.prevent="$router.push({ name: 'Product', params: { product: product.id }})" class="text-theme">
+                        <a href="#" @click.prevent="$emit('show',product)" class="text-theme">
                             <h5 class="text-wrap p-0 m-0"> {{ product.name }} </h5>
                         </a>
                         <h6 class="m-0 p-0" v-if="!isNull(product.branded)">Brand: {{ product.branded.name }}</h6>
