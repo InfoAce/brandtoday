@@ -226,7 +226,7 @@ const fetchFilters = async() =>{
             document.querySelector('meta[name="keywords"]')
                     .setAttribute(
                         'content',
-                        `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${category.name}, ${category.code}, ${sub_category.name}, ${sub_category.code}`
+                        `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${sub_category.name}`
                     );
 
         }

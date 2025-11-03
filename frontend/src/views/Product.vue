@@ -216,7 +216,7 @@
                                 </div>
                                 <div class="product-buttons border-product m-0">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <button class="btn btn-theme btn-lg w-100" :disabled="isDisabled || !$isEmpty(cartItem)" @click="addToCart">
                                                 <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>
                                                 <span v-if="$isEmpty(cartItem)">add to cart</span>
@@ -326,7 +326,7 @@
 </template>
 
 <script lang="ts">
-import { clone, cloneDeep, debounce, each, first, get, groupBy, isEmpty, isNull, keys, has, omit, set, min, transform, uniq } from 'lodash';
+import { capitalize, cloneDeep, each, first, get, isEmpty, isNull, has, set, min, transform } from 'lodash';
 import * as yup from "yup";
 import convertCssColorNameToHex from 'convert-css-color-name-to-hex';
 import 'vue3-carousel/dist/carousel.css'
@@ -335,8 +335,8 @@ import { Layout, ProductRatingForm, RelatedProduct } from '../components';
 import InnerImageZoom from 'vue-inner-image-zoom';
 import 'vue-inner-image-zoom/lib/vue-inner-image-zoom.css'
 import { sortSizes } from '../helpers'
-import { saveAs } from "file-saver";
 import moment from 'moment';
+import * as cheerio from 'cheerio';
 
 export default {
     beforeRouteEnter(to, from, next) {
@@ -716,16 +716,31 @@ export default {
             
             // Fetch product details
             this.$api.put(`/products/${product}`)
-                .then( ({ data:{ product, favourite,related_products }}) => {
+                .then( ({ data:{ product, favourite, related_products }}) => {
                     // Update state with fetched data
                     this.favourite = cloneDeep(favourite);
-                    this.related_products = cloneDeep(related_products)
-                    
+                    this.related_products = cloneDeep(related_products)                
+
+                    // Load into Cheerio
+                    const $ = cheerio.load(product.description);
+
+                    // Extract all text (Cheerio automatically strips HTML tags)
+                    const text = $.text();
+
+                    // Clean up extra whitespace
+                    const cleanText = text.replace(/\s+/g, ' ').trim();  
+
                     document.querySelector('meta[name="keywords"]')
                             .setAttribute(
                                 'content',
-                                `${document.querySelector('meta[name="keywords"]').attributes.content.value}, ${product.full_code}, ${product.name}`
+                                `${product.name}, ${product.categories.map( (value: any) => capitalize(value.sub_category_code) ).join(', ')}`
                             );
+
+                    document.querySelector('meta[name="description"]')
+                            .setAttribute(
+                                'content',
+                                cleanText
+                            );                            
 
                     // Initialize view
                     this.initView(product);
