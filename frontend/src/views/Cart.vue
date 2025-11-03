@@ -68,16 +68,16 @@
                                                 <template v-if="has(item,'positions')">
                                                     <tr>
                                                         <td><strong>Branding Cost:</strong></td>
-                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_branding_cost }}</span> </td>
+                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_branding_cost.toFixed(2) }}</span> </td>
                                                     </tr>
                                                     <tr>
                                                         <td><strong>Setup Cost:</strong></td>
-                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_setup_cost }}</span> </td>
+                                                        <td> <span class="ml-4">{{ currency }} {{ item.total_setup_cost.toFixed(2) }}</span> </td>
                                                     </tr>
                                                 </template>
                                                 <tr>
                                                     <td><strong>Total Cost:</strong></td>
-                                                    <td><span class="ml-4">{{ currency }} {{ item.total_amount }}</span> </td>
+                                                    <td><span class="ml-4">{{ currency }} {{ item.total_amount.toFixed(2) }}</span> </td>
                                                 </tr>                                                
                                             </table>
                                         </div>

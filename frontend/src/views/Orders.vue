@@ -29,7 +29,7 @@
                                         <td> # {{ order.num_id }}</td>
                                         <td>{{ order.items.length }}</td>
                                         <td>{{ sumBy(order.items,'quantity') }}</td>
-                                        <td>{{ home.company.currency }} {{ sumBy(order.items,'total_amount') }}</td>
+                                        <td>{{ home.company.currency }} {{ sumBy(order.items,'total_amount').toFixed(0) }}</td>
                                         <td>
                                             <template v-if="order.status == 'pending'"><i class="badge badge-warning">{{ order.status }}</i></template>
                                             <template v-if="order.status == 'paid'"><p class="badge badge-primary">{{ order.status }}</p></template>
