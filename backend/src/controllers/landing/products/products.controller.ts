@@ -310,7 +310,7 @@ export class ProductsController {
     }
 
     @UseGuards(OptionalGuard)
-    @Put(':full_code')
+    @Put(':slug')
     /**
      * Show a product by its code.
      *
@@ -320,7 +320,7 @@ export class ProductsController {
      * @return {Promise<void>}
      */
     async show(
-      @Param('full_code') full_code: string, // The code of the product
+      @Param('slug') slug: string, // The code of the product
       @Req() req: Request,  // The request object
       @Res() res: Response // The response object
     ) {
@@ -328,9 +328,9 @@ export class ProductsController {
 
         // Get the user from the request object
         let user: any   = get(req,'user');
-        
+
         // Find the product with the given code
-        let product: any = await this.productModel.findOne({ where: { full_code: full_code }});
+        let product: any = await this.productModel.findOne({ where: { slug }});
 
         await product.variants;
         await product.stocks;
@@ -341,7 +341,7 @@ export class ProductsController {
 
         // If a user is logged in, find their favourite with the given product code
         if( !isEmpty(user) ) {
-          favourite = (await user.favourites).find( val => val.product.full_code == product.full_code ) ?? { };
+          favourite = (await user.favourites).filter( favourite => !isNull(favourite.product) ).find( val => val.product.full_code == product.full_code );
         }
 
 

@@ -86,6 +86,9 @@ export class ProductEntity {
   @Column()
   simple_code: string;
 
+  @Column({ nullable: true })
+  slug: string;  
+
   @Column({
     unique: true
   })

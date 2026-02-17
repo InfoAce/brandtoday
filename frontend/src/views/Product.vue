@@ -377,6 +377,9 @@ export default {
         currency(){
             return this.$store.getters.home.company.currency
         },
+        env(){
+            return this.$store.getters.env;
+        },                
         variants(){
             return !isEmpty(this.product) && !isEmpty(this.product.colour_images)  ? 
                         !isEmpty(this.selections.colour) ? 
@@ -740,7 +743,9 @@ export default {
                             .setAttribute(
                                 'content',
                                 cleanText
-                            );                            
+                            );  
+                            
+                    document.title = `${product.name} | ${this.env.VITE_APP_NAME}`                         
 
                     // Initialize view
                     this.initView(product);

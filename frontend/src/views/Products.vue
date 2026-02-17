@@ -450,7 +450,7 @@ const viewBrand = ({ code }: any) => {
     $router.push({ 
         name:   !isEmpty($route.params) ? 'Products' : 'ViewProducts', 
         params: !isEmpty($route.params) ? $route.params: {}, 
-        query:  { ...$route.query, brand: code } 
+        query:  { ...$route.query, slug: code } 
     });
 }
 
@@ -506,9 +506,9 @@ const openFilter = () => {
     $(".filter-bottom-content").slideToggle("");
 }
 
-const viewProduct = (product) => {
+const viewProduct = ({slug}) => {
     window.removeEventListener('scroll', () => {});
-    return $router.push({ name: 'Product', params: { product: product.full_code }});
+    return $router.push({ name: 'Product', params: { product: slug }});
 }
 
 onBeforeMount(

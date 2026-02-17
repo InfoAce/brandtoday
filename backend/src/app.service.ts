@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { AmrodService, MailService } from './services';
 import { ConfigService } from '@nestjs/config';
-import { cloneDeep, chunk, isEmpty, isNull, flatten, get, groupBy, has, pick, map, maxBy, omit, take, intersectionBy, sum, uniqBy } from 'lodash';
+import { cloneDeep, chunk, differenceBy, isEmpty, isNull, flatten, get, groupBy, has, pick, map, maxBy, omit, take, intersectionBy, sum, uniqBy } from 'lodash';
 import { BrandingModel, BrandingMethodModel, BrandingPriceModel, BrandModel, CategoryModel, ChildSubCategoryModel, CompanyModel, PriceModel, ProductCategoryModel, ProductColourModel, ProductModel, ProductVariantModel, QueueModel, StockModel, SubCategoryModel, SubChildSubCategoryModel, UserModel, ColourModel } from 'src/models';
 
 @Injectable()
@@ -242,6 +242,9 @@ export class AppService {
         // Fetch amrod products
         let products        = await this.amrodService.getProducts();
 
+        // Fetch stored products
+        let stored_products = await this.productModel.find();
+
         // Fetch company
         let company         = await this.companyModel.first();
 
@@ -274,6 +277,17 @@ export class AppService {
                 })
             ) 
         ).flat().filter( method => !isEmpty(method.brandingCode) );
+
+        let delete_products = differenceBy(
+            stored_products,
+            products.map( product => ({...product, full_code: product.fullCode })),
+            'full_code'
+        )
+
+        if( !isEmpty(delete_products) ){
+            this.logger.log(`Deleting ${delete_products.length} products`)
+            await this.productModel.delete(delete_products.map( product => product.id ) )
+        }
 
         // Fetch amrod branding prices
         branding_prices     = branding_prices.map( 
@@ -405,7 +419,7 @@ export class AppService {
                 await this.productModel.upsert(
                     products.map( 
                         ({ brand, code, fullCode: full_code, price, simpleCode: simple_code, gender, images, variants, brandingTemplates: branding_templates, fullBrandingGuide: full_branding_guide, logo24BrandingGuide: logo_branding_guide, description, productName: name, companionCodes: companion_codes }) => 
-                            ({ brand: !isNull(brand) ? brand.code : null, code, full_code, company_id: company.id, price, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name }) 
+                            ({ brand: !isNull(brand) ? brand.code : null, code, full_code, company_id: company.id, price, simple_code, gender, branding_templates, variants, images, companion_codes, description, full_branding_guide, logo_branding_guide, name, slug: name.replaceAll(/[-/.\s]/g,' ').toLowerCase().replaceAll(' ','-') }) 
                     ),
                     {
                         conflictPaths: ["code"],
@@ -736,6 +750,7 @@ export class AppService {
             product => {
                 return { 
                     ...product, 
+                    slug: product.name.replaceAll(/[-/.\s]/g,' ').toLowerCase().replaceAll(' ','-'),                   
                     stock: sum((get(product,'__stocks__')).map( stock => stock.quantity)) 
                 }
             }
